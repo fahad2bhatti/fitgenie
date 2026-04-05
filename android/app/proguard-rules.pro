@@ -1,0 +1,10 @@
+-keep class io.flutter.** { *; }
+-keep class io.flutter.plugins.** { *; }
+-keep class com.google.firebase.** { *; }
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+-keep class com.google.android.gms.fitness.** { *; }
+-keep class ** extends com.google.protobuf.GeneratedMessageLite { *; }
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
