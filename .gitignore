@@ -1,0 +1,74 @@
+# Flutter
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# ═══════════════════════════════════════
+# 🔒 SECURITY — NEVER PUSH THESE
+# ═══════════════════════════════════════
+
+# Environment files
+*.env
+.env
+.env.*
+.env.local
+.env.production
+
+# Firebase config files
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+lib/firebase_options.dart
+
+# ═══════════════════════════════════════
+# 🛠️ BUILD FILES
+# ═══════════════════════════════════════
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.flutter-plugins
+
+# ═══════════════════════════════════════
+# 💻 IDE FILES
+# ═══════════════════════════════════════
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# ═══════════════════════════════════════
+# 🗃️ LOCAL STORAGE
+# ═══════════════════════════════════════
+*.hive
+*.lock
+!pubspec.lock
+
+# ═══════════════════════════════════════
+# 📦 GENERATED FILES
+# ═══════════════════════════════════════
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Release signing
+android/app/upload-keystore.jks
+android/key.properties
+
+google-services.json
+.env
+*.jks
+*.keystore
+key.properties
