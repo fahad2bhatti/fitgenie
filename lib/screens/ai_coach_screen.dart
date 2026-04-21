@@ -1,15 +1,15 @@
-// lib/services/ai_service.dart
+// lib/screens/ai_coach_screen.dart
 
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AIService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // ⚠️ NEW API KEY DALO - purani delete karo!
-  static const String _apiKey = 'AIzaSyAj0DQZweojF1LEBlcH30TvukoCxoWrYI0';
+  static String get _apiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
   /// First: Check which models are available
   Future<List<String>> getAvailableModels() async {
@@ -28,7 +28,6 @@ class AIService {
         for (var model in models) {
           final name = model['name'] as String?;
           if (name != null && name.contains('gemini')) {
-            // Extract just the model name
             final shortName = name.replaceAll('models/', '');
             modelNames.add(shortName);
             debugPrint('✅ Found: $shortName');
@@ -53,7 +52,6 @@ class AIService {
     debugPrint('🚀 AI Chat Started');
 
     try {
-      // Get available models first
       final availableModels = await getAvailableModels();
 
       if (availableModels.isEmpty) {
@@ -68,10 +66,8 @@ Please check:
 Ya phir API quota khatam ho gaya.''';
       }
 
-      // Use first available gemini model
       String modelToUse = availableModels.first;
 
-      // Prefer these models if available
       for (var preferred in ['gemini-pro', 'gemini-1.0-pro', 'gemini-1.5-flash', 'gemini-1.5-pro']) {
         if (availableModels.contains(preferred)) {
           modelToUse = preferred;
@@ -81,10 +77,8 @@ Ya phir API quota khatam ho gaya.''';
 
       debugPrint('🎯 Using model: $modelToUse');
 
-      // Get user context
       final userContext = await _getUserContext(uid);
 
-      // Build prompt
       final prompt = '''
 Tu FitGenie AI Coach hai - ek professional fitness trainer.
 
@@ -103,7 +97,6 @@ RULES:
 USER KA SAWAAL: $userMessage
 ''';
 
-      // Call API
       final url = 'https://generativelanguage.googleapis.com/v1beta/models/$modelToUse:generateContent?key=$_apiKey';
 
       final response = await http.post(
