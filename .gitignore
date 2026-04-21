@@ -72,3 +72,6 @@ google-services.json
 *.jks
 *.keystore
 key.properties
+
+android/app/google-services*.json
+app/google-services*.json
