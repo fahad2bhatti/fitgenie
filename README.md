@@ -1,8 +1,3 @@
-
-
-# 🧞‍♂️ FitGenie — Fresh README
-
-```markdown
 # 🧞‍♂️ FitGenie — AI Powered Fitness Companion
 
 > **Your personal pocket trainer that tracks workouts, nutrition, steps, and gives AI coaching in Hinglish.**
@@ -294,7 +289,7 @@ users/{userId}
 │   ├── stepsSource, googleFitEnabled
 │   ├── updatedAt
 │   │
-│   └── entries/{entryId}                        ← Meal entries
+│   └── entries/{entryId}
 │       ├── name, quantity, mealType
 │       ├── calories, protein, carbs, fats
 │       ├── source (manual | scanner | database | saved_meal)
@@ -348,7 +343,7 @@ users/{userId}
 ### 2. Clone & Install
 
 ```bash
-git clone https://github.com/yourusername/fitgenie.git
+git clone https://github.com/fahad2bhatti/fitgenie.git
 cd fitgenie
 flutter pub get
 ```
@@ -508,12 +503,14 @@ This project is licensed under the MIT License — see `LICENSE` file for detail
 
 ---
 
-## 👨‍💻 Developer
+## 👨‍💻 Author
 
-**Muhammad Fahad Saeed**
-- GitHub: [@fahad2bhatti](https://github.com/fahad2bhatti)
-- LinkedIn: [Muhammad Fahad Saeed](https://www.linkedin.com/in/muhammad-fahad-saeed-3402a038b/)
-- Fiverr: [@fahad261](https://www.fiverr.com/fahad261)
+**Fahad Saeed**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://linkedin.com/in/fahad-saeed-3402a038b)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/fahad2bhatti)
+
+---
 
 <p align="center">
   Built with ❤️ using Flutter, Firebase & Gemini AI
@@ -522,26 +519,3 @@ This project is licensed under the MIT License — see `LICENSE` file for detail
 <p align="center">
   ⭐ If you found this useful, please star the repo! ⭐
 </p>
-```
-
----
-
-# ✅ Done!
-
-## Is README me kya kya covered hai:
-
-| Section | Detail |
-|---------|--------|
-| **App Overview** | ✅ One-line summary |
-| **Key Features** | ✅ Workout + Nutrition + AI + Steps — sab detailed |
-| **Tech Stack** | ✅ Full table |
-| **File Tree** | ✅ Complete project structure |
-| **Firestore Structure** | ✅ Every collection documented |
-| **Getting Started** | ✅ Step-by-step setup |
-| **Dependencies** | ✅ All packages listed |
-| **Release Build** | ✅ APK + AAB commands |
-| **Screenshots** | ✅ Placeholder layout |
-| **Future Roadmap** | ✅ 10 upcoming features |
-| **Contributing** | ✅ Standard flow |
-| **License** | ✅ MIT |
-| **Author** | ✅ Social links |
