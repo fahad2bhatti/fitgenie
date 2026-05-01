@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.fitgenie.app"
+    namespace = "com.fahadapps.fitgenie"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.fitgenie.app"
+        applicationId = "com.fahadapps.fitgenie"
         // Chahe to yahan direct 23 likh sakta hai:
         // minSdk = 23
         minSdk = flutter.minSdkVersion
