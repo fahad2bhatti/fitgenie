@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "fitgenie",
-      "version": "1.0.0+1",
+      "version": "2.0.0+2",
       "dependencies": [
         "cached_network_image",
         "cloud_firestore",
