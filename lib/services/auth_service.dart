@@ -26,7 +26,9 @@ class AuthResult {
 class AuthService {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId: '387230689296-h6ggsbl2jl9tmqcgsanmecc1l5d3rg47.apps.googleusercontent.com',
+  );
 
   // ✅ Brute Force Protection
   int _loginAttempts = 0;
