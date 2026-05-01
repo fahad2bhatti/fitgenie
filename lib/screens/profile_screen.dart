@@ -350,8 +350,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildSettingsCard(),
           const SizedBox(height: 16),
           _buildLogoutButton(),
+          const SizedBox(height: 12),
+          _buildDeleteAccountButton(),
           const SizedBox(height: 20),
-          const Text('FitGenie v1.0.0', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          const Text('FitGenie v2.0.0', style: TextStyle(color: Colors.grey, fontSize: 12)),
           const SizedBox(height: 30),
         ],
       ),
@@ -595,7 +597,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   // ═══════════════════════════════════════════
-  // 🏋️ GOOGLE FIT STATUS CARD — NEW!
+  // 🏋️ GOOGLE FIT STATUS CARD
   // ═══════════════════════════════════════════
   Widget _buildGoogleFitStatusCard() {
     final bool isConnected = _googleFitStatus == GoogleFitConnectionStatus.connected ||
@@ -613,7 +615,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
           Row(
             children: [
               Container(
@@ -635,24 +636,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     const Text(
                       'Google Fit',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       _getStatusText(_googleFitStatus),
-                      style: TextStyle(
-                        color: statusColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
               ),
-              // Refresh Button
               IconButton(
                 onPressed: _isGoogleFitLoading ? null : _checkGoogleFitStatus,
                 icon: _isGoogleFitLoading
@@ -665,10 +658,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
-
           const SizedBox(height: 20),
-
-          // Status Checklist
           _buildStatusCheckRow('Health Connect Available', _healthConnectAvailable, Icons.phone_android),
           const SizedBox(height: 8),
           _buildStatusCheckRow('Activity Permission', _activityPermission, Icons.directions_walk),
@@ -677,7 +667,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 8),
           _buildStatusCheckRow('Data Syncing', _dataAccessible, Icons.sync),
 
-          // Steps Display (if connected)
           if (isConnected) ...[
             const SizedBox(height: 16),
             Container(
@@ -695,17 +684,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Today's Steps",
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
+                      const Text("Today's Steps", style: TextStyle(color: Colors.white70, fontSize: 12)),
                       Text(
                         '$_googleFitSteps',
-                        style: const TextStyle(
-                          color: Colors.greenAccent,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(color: Colors.greenAccent, fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -716,21 +698,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.greenAccent.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
-                      'LIVE',
-                      style: TextStyle(
-                        color: Colors.greenAccent,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: const Text('LIVE', style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
             ),
           ],
 
-          // Error Message
           if (_googleFitError.isNotEmpty && !isConnected) ...[
             const SizedBox(height: 12),
             Container(
@@ -745,10 +719,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const Icon(Icons.info_outline, color: Colors.orange, size: 16),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      _googleFitError,
-                      style: const TextStyle(color: Colors.orange, fontSize: 12),
-                    ),
+                    child: Text(_googleFitError, style: const TextStyle(color: Colors.orange, fontSize: 12)),
                   ),
                 ],
               ),
@@ -756,31 +727,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
 
           const SizedBox(height: 16),
-
-          // Connect / Disconnect Button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _isGoogleFitLoading
                   ? null
                   : (isConnected ? _disconnectGoogleFit : _connectGoogleFit),
-              icon: Icon(
-                isConnected ? Icons.link_off : Icons.link,
-                size: 20,
-              ),
+              icon: Icon(isConnected ? Icons.link_off : Icons.link, size: 20),
               label: Text(
                 isConnected ? 'Disconnect Google Fit' : 'Connect Google Fit',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isConnected
-                    ? Colors.red.withOpacity(0.8)
-                    : Colors.greenAccent,
+                backgroundColor: isConnected ? Colors.red.withOpacity(0.8) : Colors.greenAccent,
                 foregroundColor: isConnected ? Colors.white : Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
@@ -794,12 +756,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Icon(icon, color: Colors.white38, size: 18),
         const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-        ),
+        Expanded(child: Text(label, style: const TextStyle(color: Colors.white70, fontSize: 13))),
         Container(
           padding: const EdgeInsets.all(2),
           decoration: BoxDecoration(
@@ -910,12 +867,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             onTap: _showAboutDialog,
           ),
+
+          // ── DELETE ACCOUNT ──
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.delete_forever, color: Colors.red, size: 20),
+            ),
+            title: const Text('Delete Account', style: TextStyle(color: Colors.red)),
+            subtitle: const Text('Permanently delete your account & data', style: TextStyle(color: Colors.grey, fontSize: 12)),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            onTap: _showDeleteAccountDialog,
+          ),
         ],
       ),
     );
   }
 
-  // ============ LOGOUT ============
+  // ============ LOGOUT BUTTON ============
   Widget _buildLogoutButton() {
     return SizedBox(
       width: double.infinity,
@@ -932,6 +906,127 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ============ DELETE ACCOUNT BUTTON ============
+  Widget _buildDeleteAccountButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _showDeleteAccountDialog,
+        icon: const Icon(Icons.delete_forever, color: Colors.red),
+        label: const Text('Delete Account', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Colors.red),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    );
+  }
+
+  // ============ DELETE ACCOUNT DIALOG ============
+  void _showDeleteAccountDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        title: const Row(children: [
+          Icon(Icons.warning, color: Colors.red),
+          SizedBox(width: 8),
+          Text('Delete Account', style: TextStyle(color: Colors.red)),
+        ]),
+        content: const Text(
+          'This will permanently delete your account and ALL data including:\n\n• Workouts & custom plans\n• Nutrition logs & saved meals\n• Profile & goals\n• AI chat history\n\nThis action CANNOT be undone.',
+          style: TextStyle(color: Colors.white70, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _deleteAccount();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete Forever', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============ DELETE ACCOUNT LOGIC ============
+  Future<void> _deleteAccount() async {
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        backgroundColor: Color(0xFF1A1A1A),
+        content: Row(
+          children: [
+            CircularProgressIndicator(color: Colors.red),
+            SizedBox(width: 16),
+            Text('Deleting account...'),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      final uid = widget.userId;
+
+      // 1. Delete all subcollections
+      final collections = [
+        'goals',
+        'dailyLogs',
+        'workouts',
+        'customWorkouts',
+        'recentFoods',
+        'savedMeals',
+        'aiChats',
+        'settings',
+      ];
+
+      for (final col in collections) {
+        final snap = await _firestore
+            .collection('users')
+            .doc(uid)
+            .collection(col)
+            .get();
+        for (final doc in snap.docs) {
+          await doc.reference.delete();
+        }
+      }
+
+      // 2. Delete main user document
+      await _firestore.collection('users').doc(uid).delete();
+
+      // 3. Delete Firebase Auth account
+      await _auth.currentUser?.delete();
+
+      // Close loading dialog
+      if (mounted) Navigator.pop(context);
+
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) Navigator.pop(context);
+
+      debugPrint('Delete account error: $e');
+
+      // If re-authentication needed
+      if (e.toString().contains('requires-recent-login')) {
+        _showSnackbar(
+          'Please logout and login again, then try deleting.',
+          Colors.orange,
+        );
+      } else {
+        _showSnackbar('Error deleting account. Please try again.', Colors.red);
+      }
+    }
+  }
+
   // ============ DIALOGS ============
 
   void _showEditProfileDialog() {
@@ -946,7 +1041,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+          padding: EdgeInsets.only(
+              left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -974,19 +1070,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 16),
                 const Text('Goal', style: TextStyle(color: Colors.grey)),
                 const SizedBox(height: 8),
-                _buildDropdown(selectedGoal, ['Lose Weight', 'Build Muscle', 'Stay Fit', 'Gain Strength'], (val) {
-                  if (val != null) setModalState(() => selectedGoal = val);
-                }),
+                _buildDropdown(selectedGoal, ['Lose Weight', 'Build Muscle', 'Stay Fit', 'Gain Strength'],
+                        (val) {
+                      if (val != null) setModalState(() => selectedGoal = val);
+                    }),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      await _updateProfile(name: nameController.text, fitnessLevel: selectedLevel, goal: selectedGoal);
+                      await _updateProfile(
+                          name: nameController.text,
+                          fitnessLevel: selectedLevel,
+                          goal: selectedGoal);
                       if (mounted) Navigator.pop(context);
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.primary, padding: const EdgeInsets.symmetric(vertical: 16)),
-                    child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: FitGenieTheme.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16)),
+                    child: const Text('Save',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -1006,7 +1109,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           value: value,
           isExpanded: true,
           dropdownColor: const Color(0xFF1A1A1A),
-          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(color: Colors.white)))).toList(),
+          items: items
+              .map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(color: Colors.white))))
+              .toList(),
           onChanged: onChanged,
         ),
       ),
@@ -1024,7 +1129,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: const Color(0xFF1A1A1A),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => Padding(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+        padding: EdgeInsets.only(
+            left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1036,11 +1142,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            TextField(controller: wc, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white), decoration: _inputDecoration('Weight (kg)', Icons.monitor_weight)),
+            TextField(
+                controller: wc,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: _inputDecoration('Weight (kg)', Icons.monitor_weight)),
             const SizedBox(height: 12),
-            TextField(controller: hc, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white), decoration: _inputDecoration('Height (cm)', Icons.height)),
+            TextField(
+                controller: hc,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: _inputDecoration('Height (cm)', Icons.height)),
             const SizedBox(height: 12),
-            TextField(controller: ac, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white), decoration: _inputDecoration('Age', Icons.cake)),
+            TextField(
+                controller: ac,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: _inputDecoration('Age', Icons.cake)),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -1053,8 +1171,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                   if (mounted) Navigator.pop(context);
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.primary, padding: const EdgeInsets.symmetric(vertical: 16)),
-                child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: FitGenieTheme.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16)),
+                child: const Text('Save',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -1074,7 +1195,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: const Color(0xFF1A1A1A),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => Padding(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+        padding: EdgeInsets.only(
+            left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1086,11 +1208,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            TextField(controller: cc, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white), decoration: _inputDecoration('Calories (kcal)', Icons.local_fire_department)),
+            TextField(
+                controller: cc,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: _inputDecoration('Calories (kcal)', Icons.local_fire_department)),
             const SizedBox(height: 12),
-            TextField(controller: pc, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white), decoration: _inputDecoration('Protein (g)', Icons.egg_alt)),
+            TextField(
+                controller: pc,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: _inputDecoration('Protein (g)', Icons.egg_alt)),
             const SizedBox(height: 12),
-            TextField(controller: wc, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white), decoration: _inputDecoration('Water (glasses)', Icons.water_drop)),
+            TextField(
+                controller: wc,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(color: Colors.white),
+                decoration: _inputDecoration('Water (glasses)', Icons.water_drop)),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -1103,8 +1237,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   );
                   if (mounted) Navigator.pop(context);
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.primary, padding: const EdgeInsets.symmetric(vertical: 16)),
-                child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: FitGenieTheme.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16)),
+                child: const Text('Save',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -1126,10 +1263,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ============ UPDATE FUNCTIONS ============
 
-  Future<void> _updateProfile({required String name, required String fitnessLevel, required String goal}) async {
+  Future<void> _updateProfile(
+      {required String name, required String fitnessLevel, required String goal}) async {
     try {
       await _firestore.collection('users').doc(widget.userId).set({
-        'name': name, 'fitnessLevel': fitnessLevel, 'goal': goal, 'updatedAt': FieldValue.serverTimestamp(),
+        'name': name,
+        'fitnessLevel': fitnessLevel,
+        'goal': goal,
+        'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
       setState(() {
         _name = name;
@@ -1142,10 +1283,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _updateBodyStats({required double weight, required double height, required int age}) async {
+  Future<void> _updateBodyStats(
+      {required double weight, required double height, required int age}) async {
     try {
       await _firestore.collection('users').doc(widget.userId).set({
-        'weight': weight, 'height': height, 'age': age, 'updatedAt': FieldValue.serverTimestamp(),
+        'weight': weight,
+        'height': height,
+        'age': age,
+        'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
       setState(() {
         _weight = weight;
@@ -1158,10 +1303,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _updateGoals({required int calories, required int protein, required int water}) async {
+  Future<void> _updateGoals(
+      {required int calories, required int protein, required int water}) async {
     try {
-      await _firestore.collection('users').doc(widget.userId).collection('goals').doc('main').set({
-        'caloriesGoal': calories, 'proteinGoal': protein, 'waterGoal': water,
+      await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('goals')
+          .doc('main')
+          .set({
+        'caloriesGoal': calories,
+        'proteinGoal': protein,
+        'waterGoal': water,
       }, SetOptions(merge: true));
       setState(() {
         _caloriesGoal = calories;
@@ -1174,7 +1327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // ============ LOGOUT CONFIRMATION ============
+  // ============ LOGOUT ============
   void _showLogoutConfirmation() {
     showDialog(
       context: context,
@@ -1205,14 +1358,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
-        title: const Row(children: [Icon(Icons.fitness_center, color: FitGenieTheme.primary), SizedBox(width: 8), Text('FitGenie')]),
-        content: const Text('Version 1.0.0\n\nYour AI Fitness Coach! 💪'),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+        title: const Row(children: [
+          Icon(Icons.fitness_center, color: FitGenieTheme.primary),
+          SizedBox(width: 8),
+          Text('FitGenie'),
+        ]),
+        content: const Text('Version 2.0.0\n\nYour AI Fitness Coach! 💪'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+        ],
       ),
     );
   }
 
   void _showSnackbar(String msg, Color color) {
-    if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: color));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg), backgroundColor: color),
+      );
+    }
   }
 }
