@@ -49,48 +49,29 @@ class AuthService {
   // ═══════════════════════════════════════════
   String _sanitizeInput(String input) {
     if (input.isEmpty) return '';
-
     String cleaned = input.trim();
-
-    // Remove HTML tags
     cleaned = cleaned.replaceAll(RegExp(r'<[^>]*>'), '');
-
-    // Remove script injections
     cleaned = cleaned.replaceAll(
       RegExp(r'(javascript|script|onclick|onerror|onload)', caseSensitive: false),
       '',
     );
-
-    // Remove SQL keywords
     cleaned = cleaned.replaceAll(
       RegExp(r'\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE)\b', caseSensitive: false),
       '',
     );
-
-    // Remove dangerous characters - semicolon
     cleaned = cleaned.replaceAll(';', '');
-
-    // Remove quotes
     cleaned = cleaned.replaceAll("'", '');
     cleaned = cleaned.replaceAll('"', '');
-
     return cleaned;
   }
 
   String _sanitizeName(String name) {
     String cleaned = _sanitizeInput(name);
-
-    // Only allow letters, spaces, dot and hyphen
     cleaned = cleaned.replaceAll(RegExp(r'[^a-zA-Z\s]'), '');
-
-    // Remove extra spaces
     cleaned = cleaned.replaceAll(RegExp(r'\s+'), ' ');
-
-    // Limit length
     if (cleaned.length > 50) {
       cleaned = cleaned.substring(0, 50);
     }
-
     return cleaned.trim();
   }
 
@@ -108,37 +89,19 @@ class AuthService {
   }
 
   String? _validatePassword(String password) {
-    if (password.isEmpty) {
-      return 'Password daal bhai';
-    }
-    if (password.length < 8) {
-      return 'Password 8+ characters ka hona chahiye';
-    }
-    if (!password.contains(RegExp(r'[A-Z]'))) {
-      return 'Password mein ek capital letter daal (A-Z)';
-    }
-    if (!password.contains(RegExp(r'[a-z]'))) {
-      return 'Password mein ek small letter daal (a-z)';
-    }
-    if (!password.contains(RegExp(r'[0-9]'))) {
-      return 'Password mein ek number daal (0-9)';
-    }
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]'))) {
-      return 'Password mein ek special character daal (!@#\$%^&*)';
-    }
+    if (password.isEmpty) return 'Please enter your password.';
+    if (password.length < 8) return 'Password must be at least 8 characters.';
+    if (!password.contains(RegExp(r'[A-Z]'))) return 'Password must contain at least one uppercase letter (A-Z).';
+    if (!password.contains(RegExp(r'[a-z]'))) return 'Password must contain at least one lowercase letter (a-z).';
+    if (!password.contains(RegExp(r'[0-9]'))) return 'Password must contain at least one number (0-9).';
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]'))) return 'Password must contain at least one special character (!@#\$%^&*).';
     return null;
   }
 
   String? _validateName(String name) {
-    if (name.trim().isEmpty) {
-      return 'Naam daal bhai';
-    }
-    if (name.trim().length < 2) {
-      return 'Naam kam se kam 2 letters ka ho';
-    }
-    if (name.trim().length > 50) {
-      return 'Naam bahut lamba hai (max 50 characters)';
-    }
+    if (name.trim().isEmpty) return 'Please enter your name.';
+    if (name.trim().length < 2) return 'Name must be at least 2 characters.';
+    if (name.trim().length > 50) return 'Name is too long (max 50 characters).';
     return null;
   }
 
@@ -148,7 +111,7 @@ class AuthService {
   String? _checkBruteForce() {
     if (_lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!)) {
       final remaining = _lockoutUntil!.difference(DateTime.now()).inSeconds;
-      return 'Bahut zyada attempts! $remaining seconds baad try kar.';
+      return 'Too many attempts. Please try again in $remaining seconds.';
     }
     return null;
   }
@@ -156,7 +119,6 @@ class AuthService {
   void _recordFailedAttempt() {
     _loginAttempts++;
     debugPrint('⚠️ Failed attempt: $_loginAttempts/$_maxAttempts');
-
     if (_loginAttempts >= _maxAttempts) {
       _lockoutUntil = DateTime.now().add(_lockoutDuration);
       _loginAttempts = 0;
@@ -173,8 +135,14 @@ class AuthService {
   // 🔐 GOOGLE SIGN IN
   // ═══════════════════════════════════════════
   Future<AuthResult> signInWithGoogle() async {
-    try {
-      debugPrint('🔄 Starting Google Sign-in...');
+
+      try {
+        // Sirf agar already signed in ho tab signOut karo
+        if (await _googleSignIn.isSignedIn()) {
+          await _googleSignIn.disconnect(); // Firebase affect nahi hoga
+        }
+
+        debugPrint('🔄 Starting Google Sign-in...');
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
@@ -182,14 +150,13 @@ class AuthService {
         debugPrint('❌ Google Sign-in cancelled by user');
         return AuthResult(
           success: false,
-          message: 'Google Sign-in cancel kar diya.',
+          message: 'Google Sign-in was cancelled.',
         );
       }
 
       debugPrint('✅ Google account selected: ${googleUser.email}');
 
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -213,7 +180,7 @@ class AuthService {
 
       return AuthResult(
         success: false,
-        message: 'Google Sign-in failed.',
+        message: 'Google Sign-in failed. Please try again.',
       );
     } on FirebaseAuthException catch (e) {
       debugPrint('❌ FirebaseAuthException: ${e.code} - ${e.message}');
@@ -225,7 +192,7 @@ class AuthService {
       debugPrint('❌ Google Sign-in error: $e');
       return AuthResult(
         success: false,
-        message: 'Google Sign-in mein error. Internet check kar.',
+        message: 'Google Sign-in failed. Please check your internet connection.',
       );
     }
   }
@@ -233,8 +200,7 @@ class AuthService {
   // ═══════════════════════════════════════════
   // 👤 CREATE GOOGLE USER DOC
   // ═══════════════════════════════════════════
-  Future<void> _createGoogleUserDoc(
-      User user, GoogleSignInAccount googleUser) async {
+  Future<void> _createGoogleUserDoc(User user, GoogleSignInAccount googleUser) async {
     final docRef = _firestore.collection('users').doc(user.uid);
     final doc = await docRef.get();
 
@@ -286,15 +252,9 @@ class AuthService {
 
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty) {
-        return AuthResult(success: false, message: 'Email daal bhai');
-      }
-      if (!_isValidEmail(cleanEmail)) {
-        return AuthResult(success: false, message: 'Email format sahi nahi hai');
-      }
-      if (password.isEmpty) {
-        return AuthResult(success: false, message: 'Password daal bhai');
-      }
+      if (cleanEmail.isEmpty) return AuthResult(success: false, message: 'Please enter your email.');
+      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
+      if (password.isEmpty) return AuthResult(success: false, message: 'Please enter your password.');
 
       debugPrint('🔄 Attempting login for: $cleanEmail');
 
@@ -319,19 +279,11 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       debugPrint('❌ FirebaseAuthException: ${e.code} - ${e.message}');
       _recordFailedAttempt();
-
-      return AuthResult(
-        success: false,
-        message: _getFirebaseErrorMessage(e.code),
-      );
+      return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
       debugPrint('❌ Unknown error: $e');
       _recordFailedAttempt();
-
-      return AuthResult(
-        success: false,
-        message: 'Kuch gadbad ho gayi. Internet check kar.',
-      );
+      return AuthResult(success: false, message: 'Something went wrong. Please check your internet connection.');
     }
   }
 
@@ -349,27 +301,16 @@ class AuthService {
       final cleanName = _sanitizeName(name);
 
       final nameError = _validateName(cleanName);
-      if (nameError != null) {
-        return AuthResult(success: false, message: nameError);
-      }
+      if (nameError != null) return AuthResult(success: false, message: nameError);
 
-      if (cleanEmail.isEmpty) {
-        return AuthResult(success: false, message: 'Email daal bhai');
-      }
-      if (!_isValidEmail(cleanEmail)) {
-        return AuthResult(success: false, message: 'Email format sahi nahi hai');
-      }
+      if (cleanEmail.isEmpty) return AuthResult(success: false, message: 'Please enter your email.');
+      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
 
       final passwordError = _validatePassword(password);
-      if (passwordError != null) {
-        return AuthResult(success: false, message: passwordError);
-      }
+      if (passwordError != null) return AuthResult(success: false, message: passwordError);
 
       if (confirmPassword != null && password != confirmPassword) {
-        return AuthResult(
-          success: false,
-          message: 'Dono passwords match nahi kar rahe',
-        );
+        return AuthResult(success: false, message: 'Passwords do not match.');
       }
 
       debugPrint('🔄 Attempting signup for: $cleanEmail');
@@ -389,27 +330,18 @@ class AuthService {
 
         return AuthResult(
           success: true,
-          message: 'Account ban gaya! Email verify kar le. 🎉',
+          message: 'Account created! Please verify your email. 🎉',
           user: user,
         );
       }
 
-      return AuthResult(
-        success: false,
-        message: 'Signup failed. Dobara try kar.',
-      );
+      return AuthResult(success: false, message: 'Signup failed. Please try again.');
     } on FirebaseAuthException catch (e) {
       debugPrint('❌ FirebaseAuthException: ${e.code}');
-      return AuthResult(
-        success: false,
-        message: _getFirebaseErrorMessage(e.code),
-      );
+      return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
       debugPrint('❌ Unknown error: $e');
-      return AuthResult(
-        success: false,
-        message: 'Kuch gadbad ho gayi. Internet check kar.',
-      );
+      return AuthResult(success: false, message: 'Something went wrong. Please check your internet connection.');
     }
   }
 
@@ -430,7 +362,7 @@ class AuthService {
   Future<void> logout() async {
     try {
       if (await _googleSignIn.isSignedIn()) {
-        await _googleSignIn.signOut();
+        await _googleSignIn.disconnect().catchError((_) {});
       }
       await _auth.signOut();
       _resetAttempts();
@@ -447,29 +379,19 @@ class AuthService {
     try {
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty) {
-        return AuthResult(success: false, message: 'Email daal bhai');
-      }
-      if (!_isValidEmail(cleanEmail)) {
-        return AuthResult(success: false, message: 'Email format sahi nahi hai');
-      }
+      if (cleanEmail.isEmpty) return AuthResult(success: false, message: 'Please enter your email.');
+      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
 
       await _auth.sendPasswordResetEmail(email: cleanEmail);
 
       return AuthResult(
         success: true,
-        message: 'Password reset link email pe bhej diya! 📧',
+        message: 'Password reset link has been sent to your email! 📧',
       );
     } on FirebaseAuthException catch (e) {
-      return AuthResult(
-        success: false,
-        message: _getFirebaseErrorMessage(e.code),
-      );
+      return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
-      return AuthResult(
-        success: false,
-        message: 'Error ho gaya. Dobara try kar.',
-      );
+      return AuthResult(success: false, message: 'Something went wrong. Please try again.');
     }
   }
 
@@ -506,8 +428,7 @@ class AuthService {
   Future<void> _ensureUserDoc(User user) async {
     final docRef = _firestore.collection('users').doc(user.uid);
     final email = user.email ?? '';
-    final derivedName =
-    (email.contains('@') ? email.split('@').first : '').trim();
+    final derivedName = (email.contains('@') ? email.split('@').first : '').trim();
     final cleanName = _sanitizeName(derivedName);
 
     await docRef.set({
@@ -536,25 +457,18 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateUserName(String name) async {
     final user = currentUser;
-    if (user == null) {
-      return AuthResult(success: false, message: 'User logged in nahi hai');
-    }
+    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
 
     final cleanName = _sanitizeName(name);
     final nameError = _validateName(cleanName);
-    if (nameError != null) {
-      return AuthResult(success: false, message: nameError);
-    }
+    if (nameError != null) return AuthResult(success: false, message: nameError);
 
     try {
       await user.updateDisplayName(cleanName);
-      await _firestore.collection('users').doc(user.uid).update({
-        'name': cleanName,
-      });
-
-      return AuthResult(success: true, message: 'Name update ho gaya! ✅');
+      await _firestore.collection('users').doc(user.uid).update({'name': cleanName});
+      return AuthResult(success: true, message: 'Name updated successfully! ✅');
     } catch (e) {
-      return AuthResult(success: false, message: 'Name update nahi ho paya');
+      return AuthResult(success: false, message: 'Failed to update name. Please try again.');
     }
   }
 
@@ -563,23 +477,16 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateEmail(String newEmail) async {
     final user = currentUser;
-    if (user == null) {
-      return AuthResult(success: false, message: 'User logged in nahi hai');
-    }
+    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
 
     final cleanEmail = _sanitizeEmail(newEmail);
-    if (!_isValidEmail(cleanEmail)) {
-      return AuthResult(success: false, message: 'Email format sahi nahi hai');
-    }
+    if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
 
     try {
       await user.verifyBeforeUpdateEmail(cleanEmail);
-      return AuthResult(
-        success: true,
-        message: 'Verification email bhej diya. Check karo! 📧',
-      );
+      return AuthResult(success: true, message: 'Verification email sent. Please check your inbox! 📧');
     } catch (e) {
-      return AuthResult(success: false, message: 'Email update nahi ho paya');
+      return AuthResult(success: false, message: 'Failed to update email. Please try again.');
     }
   }
 
@@ -588,23 +495,16 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updatePassword(String newPassword) async {
     final user = currentUser;
-    if (user == null) {
-      return AuthResult(success: false, message: 'User logged in nahi hai');
-    }
+    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
 
     final passwordError = _validatePassword(newPassword);
-    if (passwordError != null) {
-      return AuthResult(success: false, message: passwordError);
-    }
+    if (passwordError != null) return AuthResult(success: false, message: passwordError);
 
     try {
       await user.updatePassword(newPassword);
-      return AuthResult(success: true, message: 'Password update ho gaya! 🔐');
+      return AuthResult(success: true, message: 'Password updated successfully! 🔐');
     } catch (e) {
-      return AuthResult(
-        success: false,
-        message: 'Password update nahi ho paya. Re-login karke try kar.',
-      );
+      return AuthResult(success: false, message: 'Failed to update password. Please log in again and retry.');
     }
   }
 
@@ -613,53 +513,46 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> deleteAccount() async {
     final user = currentUser;
-    if (user == null) {
-      return AuthResult(success: false, message: 'User logged in nahi hai');
-    }
+    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
 
     try {
       await _firestore.collection('users').doc(user.uid).delete();
       await user.delete();
-
-      return AuthResult(success: true, message: 'Account delete ho gaya');
+      return AuthResult(success: true, message: 'Account deleted successfully.');
     } catch (e) {
-      return AuthResult(
-        success: false,
-        message: 'Account delete nahi ho paya. Re-login karke try kar.',
-      );
+      return AuthResult(success: false, message: 'Failed to delete account. Please log in again and retry.');
     }
   }
 
   // ═══════════════════════════════════════════
-  // 🔤 FIREBASE ERROR MESSAGES (Hinglish)
+  // 🔤 FIREBASE ERROR MESSAGES (English)
   // ═══════════════════════════════════════════
   String _getFirebaseErrorMessage(String code) {
     switch (code) {
       case 'email-already-in-use':
-        return 'Ye email already registered hai. Login kar.';
+        return 'This email is already registered. Please sign in instead.';
       case 'invalid-email':
-        return 'Email format galat hai.';
+        return 'The email address is not valid.';
       case 'weak-password':
-        return 'Password zyada strong rakh.';
+        return 'Password is too weak. Please choose a stronger password.';
       case 'user-not-found':
-        return 'Is email se koi account nahi hai.';
+        return 'No account found with this email address.';
       case 'wrong-password':
-        return 'Password galat hai.';
+        return 'Incorrect password. Please try again.';
       case 'invalid-credential':
-        return 'Email ya password galat hai.';
+        return 'Incorrect email or password. Please try again.';
       case 'user-disabled':
-        return 'Ye account disable hai. Support se baat kar.';
+        return 'This account has been disabled. Please contact support.';
       case 'too-many-requests':
-        return 'Bahut zyada attempts! Thodi der baad try kar.';
+        return 'Too many attempts. Please wait a moment and try again.';
       case 'network-request-failed':
-        return 'Internet check kar bhai.';
+        return 'Network error. Please check your internet connection.';
       case 'requires-recent-login':
-        return 'Dobara login karke try kar.';
+        return 'Please log in again to complete this action.';
       case 'operation-not-allowed':
-        return 'Ye feature abhi available nahi hai.';
+        return 'This sign-in method is not enabled. Please contact support.';
       default:
-        return  'Kuch gadbad ho gayi. Dobara try kar.';
+        return 'Something went wrong. Please try again.';
     }
   }
 }
-

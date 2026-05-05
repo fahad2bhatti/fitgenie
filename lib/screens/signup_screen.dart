@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
 import '../services/auth_service.dart';
-import 'login_screen.dart';
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -21,12 +21,10 @@ class _SignupScreenState extends State<SignupScreen>
   final _auth = AuthService();
 
   bool _loading = false;
-  bool _googleLoading = false;
   bool _agreeToTerms = false;
   bool _showPassword = false;
   bool _showConfirmPassword = false;
 
-  // Animation
   late AnimationController _animController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -59,32 +57,19 @@ class _SignupScreenState extends State<SignupScreen>
     super.dispose();
   }
 
-  // ============================================
-  // ✅ UI VALIDATION (Quick checks)
-  // ============================================
   String? _validateInputsQuick() {
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
-    final confirmPassword = _confirmPasswordController.text;
-
-    if (name.isEmpty) return 'Naam daal bhai';
-    if (email.isEmpty) return 'Email daal bhai';
-    if (password.isEmpty) return 'Password daal bhai';
-    if (confirmPassword.isEmpty) return 'Confirm password daal bhai';
-    if (password != confirmPassword) return 'Dono passwords match nahi kar rahe';
-    if (!_agreeToTerms) return 'Terms & Conditions accept kar';
-
+    if (_nameController.text.trim().isEmpty) return 'Please enter your name.';
+    if (_emailController.text.trim().isEmpty) return 'Please enter your email.';
+    if (_passwordController.text.isEmpty) return 'Please enter a password.';
+    if (_confirmPasswordController.text.isEmpty) return 'Please confirm your password.';
+    if (_passwordController.text != _confirmPasswordController.text) return 'Passwords do not match.';
+    if (!_agreeToTerms) return 'Please accept the Terms & Conditions.';
     return null;
   }
 
-  // ============================================
-  // 🔐 SIGN UP - SECURED
-  // ============================================
   Future<void> _signUp() async {
     FocusScope.of(context).unfocus();
 
-    // ✅ Quick UI validation
     final quickError = _validateInputsQuick();
     if (quickError != null) {
       _showSnackBar(quickError, isError: true);
@@ -94,7 +79,6 @@ class _SignupScreenState extends State<SignupScreen>
     setState(() => _loading = true);
 
     try {
-      // ✅ Use AuthResult for complete validation
       final result = await _auth.signUpWithName(
         email: _emailController.text.trim(),
         password: _passwordController.text,
@@ -106,46 +90,19 @@ class _SignupScreenState extends State<SignupScreen>
 
       if (result.success) {
         _showSnackBar(result.message, isError: false);
-        // Navigation will be handled by AuthGate automatically
+        // AuthGate handles navigation automatically
       } else {
         _showSnackBar(result.message, isError: true);
       }
     } catch (e) {
       if (mounted) {
-        _showSnackBar('Kuch gadbad ho gayi. Dobara try kar.', isError: true);
+        _showSnackBar('Something went wrong. Please try again.', isError: true);
       }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  // ============================================
-  // 🔐 GOOGLE SIGN IN
-  // ============================================
-  Future<void> _signInWithGoogle() async {
-    setState(() => _googleLoading = true);
-
-    try {
-      final result = await _auth.signInWithGoogle();
-
-      if (!mounted) return;
-
-      if (result.success) {
-        _showSnackBar(result.message, isError: false);
-      } else {
-        _showSnackBar(result.message, isError: true);
-      }
-    } catch (e) {
-      if (!mounted) return;
-      _showSnackBar('Google Sign-in mein error aaya.', isError: true);
-    } finally {
-      if (mounted) setState(() => _googleLoading = false);
-    }
-  }
-
-  // ============================================
-  // 📢 SNACKBAR
-  // ============================================
   void _showSnackBar(String message, {required bool isError}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -168,18 +125,9 @@ class _SignupScreenState extends State<SignupScreen>
     );
   }
 
+// ✅ NAYA:
   void _goToLogin() {
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-        const LoginScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
+    Navigator.pop(context);
   }
 
   @override
@@ -227,7 +175,6 @@ class _SignupScreenState extends State<SignupScreen>
 
                             const SizedBox(height: 20),
 
-                            // Title
                             const Text(
                               'Create Account',
                               style: TextStyle(
@@ -264,7 +211,7 @@ class _SignupScreenState extends State<SignupScreen>
                             ),
                             const SizedBox(height: 12),
 
-                            // Password Field with strength hint
+                            // Password Field
                             _buildTextField(
                               controller: _passwordController,
                               icon: Icons.lock_outline,
@@ -278,8 +225,8 @@ class _SignupScreenState extends State<SignupScreen>
                                   color: FitGenieTheme.muted,
                                   size: 20,
                                 ),
-                                onPressed: () =>
-                                    setState(() => _showPassword = !_showPassword),
+                                onPressed: () => setState(
+                                        () => _showPassword = !_showPassword),
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -298,8 +245,9 @@ class _SignupScreenState extends State<SignupScreen>
                                   color: FitGenieTheme.muted,
                                   size: 20,
                                 ),
-                                onPressed: () => setState(
-                                        () => _showConfirmPassword = !_showConfirmPassword),
+                                onPressed: () => setState(() =>
+                                _showConfirmPassword =
+                                !_showConfirmPassword),
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -316,8 +264,8 @@ class _SignupScreenState extends State<SignupScreen>
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    onChanged: (v) =>
-                                        setState(() => _agreeToTerms = v ?? false),
+                                    onChanged: (v) => setState(
+                                            () => _agreeToTerms = v ?? false),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -332,7 +280,8 @@ class _SignupScreenState extends State<SignupScreen>
                                           fontSize: 12,
                                         ),
                                         children: [
-                                          const TextSpan(text: 'I agree to the '),
+                                          const TextSpan(
+                                              text: 'I agree to the '),
                                           TextSpan(
                                             text: 'Terms of Service',
                                             style: TextStyle(
@@ -356,7 +305,7 @@ class _SignupScreenState extends State<SignupScreen>
                               ],
                             ),
 
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 28),
 
                             // Sign Up Button
                             SizedBox(
@@ -367,8 +316,8 @@ class _SignupScreenState extends State<SignupScreen>
                                   backgroundColor: FitGenieTheme.primary,
                                   disabledBackgroundColor:
                                   FitGenieTheme.primary.withOpacity(0.5),
-                                  padding:
-                                  const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
@@ -392,53 +341,37 @@ class _SignupScreenState extends State<SignupScreen>
                               ),
                             ),
 
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 28),
 
-                            // Divider
-                            Row(
+                            // Already have account + Google hint
+                            Column(
                               children: [
-                                Expanded(
-                                    child: Divider(
-                                        color: Colors.white.withOpacity(0.1))),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  child: Text(
-                                    'OR',
-                                    style: TextStyle(
-                                        color: FitGenieTheme.muted, fontSize: 12),
-                                  ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Already have an account?',
+                                      style: TextStyle(
+                                          color: FitGenieTheme.muted,
+                                          fontSize: 13),
+                                    ),
+                                    TextButton(
+                                      onPressed: _goToLogin,
+                                      child: const Text(
+                                        'Sign In',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Expanded(
-                                    child: Divider(
-                                        color: Colors.white.withOpacity(0.1))),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-
-                            // Google Button
-                            _GoogleSignInButton(
-                              onTap: _signInWithGoogle,
-                              loading: _googleLoading,
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Already have account
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'Already have an account?',
+                                Text(
+                                  'Want to use Google? Sign in from the login page.',
                                   style: TextStyle(
-                                      color: FitGenieTheme.muted, fontSize: 13),
-                                ),
-                                TextButton(
-                                  onPressed: _goToLogin,
-                                  child: const Text(
-                                    'Sign In',
-                                    style:
-                                    TextStyle(fontWeight: FontWeight.bold),
+                                    color: FitGenieTheme.muted.withOpacity(0.5),
+                                    fontSize: 11,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
@@ -528,68 +461,6 @@ class _SignupScreenState extends State<SignupScreen>
           hintText: hint,
           hintStyle: const TextStyle(color: FitGenieTheme.muted),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
-        ),
-      ),
-    );
-  }
-}
-
-// ============================================
-// 🔘 GOOGLE SIGN-IN BUTTON
-// ============================================
-class _GoogleSignInButton extends StatelessWidget {
-  final VoidCallback onTap;
-  final bool loading;
-
-  const _GoogleSignInButton({
-    required this.onTap,
-    this.loading = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: loading ? null : onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (loading)
-              const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.black54,
-                ),
-              )
-            else ...[
-              Image.network(
-                'https://www.google.com/favicon.ico',
-                height: 20,
-                width: 20,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.g_mobiledata,
-                      color: Colors.red, size: 24);
-                },
-              ),
-              const SizedBox(width: 10),
-              const Text(
-                'Continue with Google',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
-                ),
-              ),
-            ],
-          ],
         ),
       ),
     );
