@@ -149,6 +149,7 @@ class AuthGate extends StatefulWidget {
 class _AuthGateState extends State<AuthGate> {
   String? _cachedUid;
   Future<String>? _cachedNameFuture;
+  String? _lastInitializedUid;
 
   Future<String> _resolveUserName(User user) async {
     try {
@@ -181,8 +182,9 @@ class _AuthGateState extends State<AuthGate> {
     return _cachedNameFuture!;
   }
 
-  // ✅ NEW: Initialize step counter as soon as user is authenticated
   void _initializeStepCounter(String userId) {
+    if (_lastInitializedUid == userId) return;
+    _lastInitializedUid = userId;
     final stepService = StepCounterService();
     stepService.initialize(userId).then((success) {
       if (success) {
@@ -206,11 +208,62 @@ class _AuthGateState extends State<AuthGate> {
           }
 
           final user = snapshot.data;
+
+          // Not logged in
           if (user == null) {
             return const login_screen.LoginScreen();
           }
 
-          // ✅ NEW: Pre-initialize step counter when user logs in
+          // ✅ Email verification check (only for email/password users)
+          final isEmailUser = user.providerData
+              .any((p) => p.providerId == 'password') &&
+              !user.providerData.any((p) => p.providerId == 'google.com');
+
+          if (!user.emailVerified && isEmailUser) {
+            return Scaffold(
+              backgroundColor: FitGenieTheme.bg,
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.email, color: Colors.blue, size: 64),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Email Verify Karo!',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Email pe verification link bheja hai. Verify karo phir login karo.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await user.reload();
+                        },
+                        child: const Text('Check karo'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                        },
+                        child: const Text('Logout'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // ✅ User logged in — initialize step counter
           _initializeStepCounter(user.uid);
 
           return FutureBuilder<String>(

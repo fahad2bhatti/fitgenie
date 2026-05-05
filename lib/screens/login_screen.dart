@@ -155,17 +155,12 @@ class _LoginScreenState extends State<LoginScreen>
   // ============================================
   // 🚀 GO TO SIGNUP
   // ============================================
+
+// ✅ NAYA:
   void _goToSignup() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-        const SignupScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
+      MaterialPageRoute(builder: (_) => const SignupScreen()),
     );
   }
 
