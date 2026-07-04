@@ -66,7 +66,7 @@ class OfflineBanner extends StatelessWidget {
                 gradient: LinearGradient(
                   colors: [
                     FitGenieTheme.hot,
-                    FitGenieTheme.hot.withOpacity(0.8),
+                    FitGenieTheme.hot.withValues(alpha: 0.8),
                   ],
                 ),
               ),
@@ -98,7 +98,7 @@ class OfflineBanner extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Text(

@@ -347,7 +347,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: enabled ? FitGenieTheme.primary.withOpacity(0.3) : Colors.transparent,
+          color: enabled ? FitGenieTheme.primary.withValues(alpha: 0.3) : Colors.transparent,
         ),
       ),
       child: Column(
@@ -357,7 +357,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.2),
+                  color: iconColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: iconColor, size: 24),
@@ -388,7 +388,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               Switch(
                 value: enabled,
                 onChanged: onToggle,
-                activeColor: FitGenieTheme.primary,
+                activeThumbColor: FitGenieTheme.primary,
               ),
             ],
           ),
@@ -434,7 +434,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _waterEnabled ? FitGenieTheme.primary.withOpacity(0.3) : Colors.transparent,
+          color: _waterEnabled ? FitGenieTheme.primary.withValues(alpha: 0.3) : Colors.transparent,
         ),
       ),
       child: Column(
@@ -444,7 +444,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.2),
+                  color: Colors.blue.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(Icons.water_drop, color: Colors.blue, size: 24),
@@ -475,7 +475,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               Switch(
                 value: _waterEnabled,
                 onChanged: (val) => setState(() => _waterEnabled = val),
-                activeColor: FitGenieTheme.primary,
+                activeThumbColor: FitGenieTheme.primary,
               ),
             ],
           ),
@@ -523,3 +523,4 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     );
   }
 }
+

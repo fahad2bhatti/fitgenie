@@ -362,7 +362,7 @@ class AuthService {
   Future<void> logout() async {
     try {
       if (await _googleSignIn.isSignedIn()) {
-        await _googleSignIn.disconnect().catchError((_) {});
+        await _googleSignIn.disconnect().catchError((_) => null);
       }
       await _auth.signOut();
       _resetAttempts();
@@ -556,3 +556,4 @@ class AuthService {
     }
   }
 }
+

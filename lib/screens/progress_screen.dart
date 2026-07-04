@@ -370,7 +370,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: FitGenieTheme.primary.withOpacity(0.2),
+                          color: FitGenieTheme.primary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -427,7 +427,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                                 toY: _weeklyWorkouts[index] > 0 ? _weeklyWorkouts[index] : 0.3,
                                 color: hasWorkout
                                     ? FitGenieTheme.primary
-                                    : FitGenieTheme.primary.withOpacity(0.2),
+                                    : FitGenieTheme.primary.withValues(alpha: 0.2),
                                 width: 28,
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                               ),
@@ -459,7 +459,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: FitGenieTheme.hot.withOpacity(0.2),
+                          color: FitGenieTheme.hot.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -518,7 +518,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           horizontalInterval: _caloriesGoal / 4,
                           getDrawingHorizontalLine: (value) {
                             return FlLine(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               strokeWidth: 1,
                             );
                           },
@@ -534,12 +534,12 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                               BarChartRodData(
                                 toY: cals > 0 ? cals : 50,
                                 color: cals == 0
-                                    ? FitGenieTheme.hot.withOpacity(0.2)
+                                    ? FitGenieTheme.hot.withValues(alpha: 0.2)
                                     : percentage >= 1.0
                                     ? Colors.green
                                     : percentage >= 0.7
                                     ? FitGenieTheme.hot
-                                    : FitGenieTheme.hot.withOpacity(0.6),
+                                    : FitGenieTheme.hot.withValues(alpha: 0.6),
                                 width: 28,
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                               ),
@@ -571,7 +571,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: FitGenieTheme.teal.withOpacity(0.2),
+                          color: FitGenieTheme.teal.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -614,7 +614,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                             ),
                             belowBarData: BarAreaData(
                               show: true,
-                              color: FitGenieTheme.teal.withOpacity(0.2),
+                              color: FitGenieTheme.teal.withValues(alpha: 0.2),
                             ),
                           ),
                           // Goal line
@@ -623,7 +623,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                               return FlSpot(index.toDouble(), _proteinGoal.toDouble());
                             }),
                             isCurved: false,
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                             barWidth: 2,
                             dotData: const FlDotData(show: false),
                             dashArray: [5, 5],
@@ -656,7 +656,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           horizontalInterval: _proteinGoal / 4,
                           getDrawingHorizontalLine: (value) {
                             return FlLine(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               strokeWidth: 1,
                             );
                           },
@@ -768,7 +768,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     Center(
                       child: Column(
                         children: [
-                          Icon(Icons.lightbulb_outline, size: 40, color: Colors.purple.withOpacity(0.5)),
+                          Icon(Icons.lightbulb_outline, size: 40, color: Colors.purple.withValues(alpha: 0.5)),
                           const SizedBox(height: 8),
                           Text(
                             'Tap "Get Insight" for AI analysis',
@@ -781,7 +781,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.purple.withOpacity(0.1),
+                        color: Colors.purple.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -831,9 +831,9 @@ Short motivating feedback do (2-3 lines max) with tips.''',
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: FitGenieTheme.primary.withOpacity(0.1),
+        color: FitGenieTheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: FitGenieTheme.primary.withOpacity(0.3)),
+        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -934,8 +934,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.amber.withOpacity(0.1),
-              Colors.orange.withOpacity(0.05),
+              Colors.amber.withValues(alpha: 0.1),
+              Colors.orange.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(12),
@@ -1029,11 +1029,11 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isToday
-                    ? FitGenieTheme.primary.withOpacity(0.1)
+                    ? FitGenieTheme.primary.withValues(alpha: 0.1)
                     : FitGenieTheme.card,
                 borderRadius: BorderRadius.circular(12),
                 border: isToday
-                    ? Border.all(color: FitGenieTheme.primary.withOpacity(0.3))
+                    ? Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3))
                     : null,
               ),
               child: Row(
@@ -1074,7 +1074,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: FitGenieTheme.primary.withOpacity(0.2),
+                              color: FitGenieTheme.primary.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -1111,7 +1111,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -1129,7 +1129,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         decoration: BoxDecoration(
           color: FitGenieTheme.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
@@ -1203,7 +1203,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               final weight = double.tryParse(controller.text);
               if (weight != null && weight > 0) {
                 await _saveWeight(weight);
-                Navigator.pop(context);
+                if (context.mounted) Navigator.pop(context);
               }
             },
             style: ElevatedButton.styleFrom(
@@ -1231,10 +1231,11 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         'date': FieldValue.serverTimestamp(),
       });
 
+      if (!mounted) return;
+
       setState(() {
         _currentWeight = weight;
       });
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Weight logged! 💪')),
       );

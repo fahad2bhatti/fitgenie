@@ -9,7 +9,7 @@ import '../widgets/fg_progress.dart';
 import '../widgets/quick_action_tile.dart';
 import '../services/step_counter_service.dart';
 import 'challenges_screen.dart';
-import 'meal_scanner_screen.dart';
+
 
 class DashboardScreen extends StatefulWidget {
   final String userId;
@@ -547,7 +547,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             decoration: BoxDecoration(
               color: const Color(0xFF1A1A1A),
               shape: BoxShape.circle,
-              border: Border.all(color: FitGenieTheme.primary.withOpacity(0.3)),
+              border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3)),
             ),
             child: const Icon(Icons.notifications_outlined,
                 color: FitGenieTheme.primary, size: 22),
@@ -569,7 +569,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.5),
+            color: color.withValues(alpha: 0.5),
             blurRadius: 4,
             spreadRadius: 1,
           ),
@@ -659,10 +659,10 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FitGenieTheme.primary.withOpacity(0.2)),
+        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: FitGenieTheme.primary.withOpacity(0.1),
+            color: FitGenieTheme.primary.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -676,7 +676,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: FitGenieTheme.primary.withOpacity(0.2),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -708,7 +708,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.2),
+                              color: Colors.green.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Row(
@@ -862,8 +862,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: goalAchieved
-                  ? Colors.green.withOpacity(0.15)
-                  : Colors.white.withOpacity(0.05),
+                  ? Colors.green.withValues(alpha: 0.15)
+                  : Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -891,8 +891,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   decoration: BoxDecoration(
                     color: _stepCounterService.isUsingHealthConnect
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.blue.withOpacity(0.1),
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -954,7 +954,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.15),
+                    color: Colors.green.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -1085,7 +1085,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: FitGenieTheme.primary.withOpacity(0.15),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -1135,7 +1135,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             ? LinearGradient(
                           colors: [
                             FitGenieTheme.primary,
-                            FitGenieTheme.primary.withOpacity(0.6),
+                            FitGenieTheme.primary.withValues(alpha: 0.6),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -1143,7 +1143,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             : null,
                         color: workoutCount > 0
                             ? null
-                            : Colors.grey.withOpacity(0.2),
+                            : Colors.grey.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -1230,17 +1230,34 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: QuickActionTile(
-                icon: Icons.camera_alt,
-                title: 'Scan Meal',
-                color: Colors.teal,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const MealScannerScreen()),
-                  );
-                },
+              child: Stack(
+                children: [
+                  QuickActionTile(
+                    icon: Icons.camera_alt,
+                    title: 'Scan Meal',
+                    color: Colors.teal,
+                    onTap: _showComingSoonDialog,
+                  ),
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'SOON',
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -1305,9 +1322,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
@@ -1321,6 +1338,33 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 style: TextStyle(color: Colors.grey[500], fontSize: 11)),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showComingSoonDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.workspace_premium, color: Colors.amber),
+            SizedBox(width: 8),
+            Text('Coming Soon'),
+          ],
+        ),
+        content: const Text(
+          '📸 Meal Scanner ek Premium feature banega — jald hi available hoga!',
+          style: TextStyle(color: Colors.grey),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
@@ -1426,7 +1470,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.2),
+          color: Colors.blue.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -1533,7 +1577,7 @@ class _StepRingPainter extends CustomPainter {
     final radius = (math.min(size.width, size.height) - stroke) / 2;
 
     final bg = Paint()
-      ..color = Colors.white.withOpacity(0.08)
+      ..color = Colors.white.withValues(alpha: 0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
@@ -1545,7 +1589,7 @@ class _StepRingPainter extends CustomPainter {
     final paint = Paint()
       ..shader = SweepGradient(
         startAngle: -math.pi / 2,
-        colors: [progressColor.withOpacity(0.6), progressColor],
+        colors: [progressColor.withValues(alpha: 0.6), progressColor],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke

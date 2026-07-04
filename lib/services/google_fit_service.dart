@@ -56,9 +56,7 @@ class GoogleFitService {
   Future<bool> isAuthorized() async {
     try {
       // Check 1: Try silent sign in first
-      if (_currentUser == null) {
-        _currentUser = await _googleSignIn.signInSilently();
-      }
+      _currentUser ??= await _googleSignIn.signInSilently();
 
       // ✅ FIX: If silent sign in fails, user needs to manually connect
       // Don't auto-popup sign in dialog here

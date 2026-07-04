@@ -29,12 +29,12 @@ class QuickActionTile extends StatelessWidget {
           color: FitGenieTheme.card,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: tileColor.withOpacity(0.3),
+            color: tileColor.withValues(alpha: 0.3),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: tileColor.withOpacity(0.1),
+              color: tileColor.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -46,7 +46,7 @@ class QuickActionTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: tileColor.withOpacity(0.15),
+                color: tileColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: tileColor, size: 24),

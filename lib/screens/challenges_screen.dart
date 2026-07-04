@@ -259,7 +259,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       Challenge(
         id: 'daily_water',
         title: 'Stay Hydrated',
-        description: 'Drink ${_waterGoal} glasses of water',
+        description: 'Drink $_waterGoal glasses of water',
         icon: '💧',
         targetValue: _waterGoal,
         currentValue: _todayWater,
@@ -560,12 +560,12 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            FitGenieTheme.primary.withOpacity(0.2),
-            Colors.purple.withOpacity(0.1),
+            FitGenieTheme.primary.withValues(alpha: 0.2),
+            Colors.purple.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: FitGenieTheme.primary.withOpacity(0.3)),
+        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -582,7 +582,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: FitGenieTheme.primary.withOpacity(0.4),
+                      color: FitGenieTheme.primary.withValues(alpha: 0.4),
                       blurRadius: 10,
                     ),
                   ],
@@ -623,7 +623,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: progressToNextLevel,
-                        backgroundColor: Colors.white.withOpacity(0.1),
+                        backgroundColor: Colors.white.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           FitGenieTheme.primary,
                         ),
@@ -722,7 +722,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
                     value: completed / total,
-                    backgroundColor: Colors.white.withOpacity(0.1),
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       completed == total ? Colors.green : FitGenieTheme.primary,
                     ),
@@ -877,13 +877,13 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isCompleted
-            ? Colors.green.withOpacity(0.1)
+            ? Colors.green.withValues(alpha: 0.1)
             : FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isCompleted
-              ? Colors.green.withOpacity(0.3)
-              : Colors.white.withOpacity(0.06),
+              ? Colors.green.withValues(alpha: 0.3)
+              : Colors.white.withValues(alpha: 0.06),
         ),
       ),
       child: Column(
@@ -895,8 +895,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 height: 50,
                 decoration: BoxDecoration(
                   color: isCompleted
-                      ? Colors.green.withOpacity(0.2)
-                      : FitGenieTheme.primary.withOpacity(0.2),
+                      ? Colors.green.withValues(alpha: 0.2)
+                      : FitGenieTheme.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -930,8 +930,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                           ),
                           decoration: BoxDecoration(
                             color: isCompleted
-                                ? Colors.green.withOpacity(0.2)
-                                : Colors.amber.withOpacity(0.2),
+                                ? Colors.green.withValues(alpha: 0.2)
+                                : Colors.amber.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -966,7 +966,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: Colors.white.withOpacity(0.1),
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       isCompleted ? Colors.green : FitGenieTheme.primary,
                     ),
@@ -1005,19 +1005,19 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: unlocked
-              ? Colors.amber.withOpacity(0.1)
+              ? Colors.amber.withValues(alpha: 0.1)
               : FitGenieTheme.card,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: unlocked
-                ? Colors.amber.withOpacity(0.5)
-                : Colors.white.withOpacity(0.06),
+                ? Colors.amber.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.06),
             width: unlocked ? 2 : 1,
           ),
           boxShadow: unlocked
               ? [
             BoxShadow(
-              color: Colors.amber.withOpacity(0.2),
+              color: Colors.amber.withValues(alpha: 0.2),
               blurRadius: 8,
             ),
           ]
@@ -1058,7 +1058,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       decoration: BoxDecoration(
         color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.06)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),
       child: Row(
         children: [
@@ -1066,7 +1066,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -1074,7 +1074,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 achievement.icon,
                 style: TextStyle(
                   fontSize: 24,
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.grey.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -1106,9 +1106,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: progress,
-                          backgroundColor: Colors.white.withOpacity(0.1),
+                          backgroundColor: Colors.white.withValues(alpha: 0.1),
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.amber.withOpacity(0.7),
+                            Colors.amber.withValues(alpha: 0.7),
                           ),
                           minHeight: 6,
                         ),
@@ -1165,8 +1165,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               height: 80,
               decoration: BoxDecoration(
                 color: isUnlocked
-                    ? Colors.amber.withOpacity(0.2)
-                    : Colors.grey.withOpacity(0.2),
+                    ? Colors.amber.withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isUnlocked ? Colors.amber : Colors.grey,
@@ -1199,8 +1199,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: isUnlocked
-                    ? Colors.green.withOpacity(0.2)
-                    : Colors.amber.withOpacity(0.2),
+                    ? Colors.green.withValues(alpha: 0.2)
+                    : Colors.amber.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(

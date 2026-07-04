@@ -155,7 +155,7 @@ class FitGenieTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.06)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
