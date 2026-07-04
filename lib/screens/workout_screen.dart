@@ -161,7 +161,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
           gradient: LinearGradient(
             colors: isRestDay
                 ? [Colors.grey.shade800, Colors.grey.shade700]
-                : [FitGenieTheme.primary, FitGenieTheme.primary.withOpacity(0.7)],
+                : [FitGenieTheme.primary, FitGenieTheme.primary.withValues(alpha: 0.7)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -170,7 +170,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               ? []
               : [
             BoxShadow(
-              color: FitGenieTheme.primary.withOpacity(0.4),
+              color: FitGenieTheme.primary.withValues(alpha: 0.4),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -181,7 +181,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Text(
@@ -198,7 +198,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                     todayInfo['day'] ?? 'Today',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -216,7 +216,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                     isRestDay
                         ? 'Recovery & stretch karo aaj'
                         : 'AI will generate your workout plan',
-                    style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13),
                   ),
                 ],
               ),
@@ -225,7 +225,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.play_arrow, color: Colors.white, size: 24),
@@ -298,7 +298,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         decoration: BoxDecoration(
           color: FitGenieTheme.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -320,7 +320,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -388,7 +388,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         decoration: BoxDecoration(
           color: FitGenieTheme.card,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,7 +400,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
+                    color: color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -476,19 +476,19 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color(0xFFFF6F00).withOpacity(0.3),
-              const Color(0xFFFF6F00).withOpacity(0.1),
+              const Color(0xFFFF6F00).withValues(alpha: 0.3),
+              const Color(0xFFFF6F00).withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFFFF6F00).withOpacity(0.3)),
+          border: Border.all(color: const Color(0xFFFF6F00).withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF6F00).withOpacity(0.2),
+                color: const Color(0xFFFF6F00).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Text('🏆', style: TextStyle(fontSize: 30)),
@@ -566,7 +566,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: FitGenieTheme.teal.withOpacity(0.2),
+                                color: FitGenieTheme.teal.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(Icons.bookmark, color: FitGenieTheme.teal, size: 20),
@@ -639,9 +639,9 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withOpacity(0.15),
+                    color: FitGenieTheme.primary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: FitGenieTheme.primary.withOpacity(0.3)),
+                    border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3)),
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -677,7 +677,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   decoration: BoxDecoration(
                     color: FitGenieTheme.card,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -800,7 +800,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: FitGenieTheme.primary.withOpacity(0.15),
+                          color: FitGenieTheme.primary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(child: Text(emoji, style: const TextStyle(fontSize: 20))),
@@ -1004,7 +1004,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                   decoration: BoxDecoration(
                     color: FitGenieTheme.background,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: FitGenieTheme.primary.withOpacity(0.3)),
+                    border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3)),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<Exercise>(
@@ -1028,7 +1028,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: FitGenieTheme.primary.withOpacity(0.2)),
+                      border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.2)),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
@@ -1054,7 +1054,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     spacing: 6,
                     children: selectedExercise!.musclesWorked.map((m) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(color: Colors.green.withOpacity(0.2), borderRadius: BorderRadius.circular(6)),
+                      decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(6)),
                       child: Text('💪 $m', style: const TextStyle(fontSize: 11, color: Colors.green)),
                     )).toList(),
                   ),
@@ -1126,7 +1126,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                       },
                       icon: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: FitGenieTheme.hot.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(color: FitGenieTheme.hot.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
                         child: const Icon(Icons.remove, color: FitGenieTheme.hot),
                       ),
                     ),
@@ -1150,7 +1150,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                       },
                       icon: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: Colors.green.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
                         child: const Icon(Icons.add, color: Colors.green),
                       ),
                     ),
@@ -1167,6 +1167,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                       for (int i = 0; i < selectedSets; i++) {
                         await _logSet(selectedExercise!.name, double.tryParse(weightController.text) ?? 0, selectedReps);
                       }
+                      if (!context.mounted) return;
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('$selectedSets sets logged! 💪'), duration: const Duration(seconds: 1)),
@@ -1332,7 +1333,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(color: Colors.purple.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(color: Colors.purple.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
                         child: const Icon(Icons.smart_toy, color: Colors.purple, size: 20),
                       ),
                       const SizedBox(width: 10),
@@ -1375,7 +1376,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                   const Text('Logged Sets', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(color: Colors.green.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
                     child: Row(
                       children: [
                         const Icon(Icons.timer, size: 16, color: Colors.green),
@@ -1421,7 +1422,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                         children: [
                           Container(
                             width: 36, height: 36,
-                            decoration: BoxDecoration(color: FitGenieTheme.primary.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                            decoration: BoxDecoration(color: FitGenieTheme.primary.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
                             child: Center(child: Text('${i + 1}', style: const TextStyle(fontWeight: FontWeight.bold, color: FitGenieTheme.primary))),
                           ),
                           const SizedBox(width: 12),

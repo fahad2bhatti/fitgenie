@@ -29,7 +29,7 @@ class QuickActionButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: background,
           borderRadius: BorderRadius.circular(radius),
-          border: Border.all(color: Colors.white.withOpacity(0.06)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
         ),
         child: Row(
           children: [

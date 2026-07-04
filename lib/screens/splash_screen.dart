@@ -229,10 +229,10 @@ class _SplashScreenState extends State<SplashScreen>
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: FitGenieTheme.primary.withOpacity(opacity),
+              color: FitGenieTheme.primary.withValues(alpha: opacity),
               boxShadow: [
                 BoxShadow(
-                  color: FitGenieTheme.primary.withOpacity(opacity * 0.5),
+                  color: FitGenieTheme.primary.withValues(alpha: opacity * 0.5),
                   blurRadius: size * 2,
                   spreadRadius: size * 0.5,
                 ),
@@ -264,12 +264,12 @@ class _SplashScreenState extends State<SplashScreen>
                   // Glow effect behind logo (no circle border)
                   boxShadow: [
                     BoxShadow(
-                      color: FitGenieTheme.primary.withOpacity(0.4),
+                      color: FitGenieTheme.primary.withValues(alpha: 0.4),
                       blurRadius: 60,
                       spreadRadius: 10,
                     ),
                     BoxShadow(
-                      color: FitGenieTheme.primary.withOpacity(0.2),
+                      color: FitGenieTheme.primary.withValues(alpha: 0.2),
                       blurRadius: 100,
                       spreadRadius: 20,
                     ),
@@ -284,7 +284,7 @@ class _SplashScreenState extends State<SplashScreen>
                       shaderCallback: (bounds) => LinearGradient(
                         colors: [
                           FitGenieTheme.primary,
-                          FitGenieTheme.primary.withOpacity(0.7),
+                          FitGenieTheme.primary.withValues(alpha: 0.7),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -352,7 +352,7 @@ class _SplashScreenState extends State<SplashScreen>
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  FitGenieTheme.primary.withOpacity(0.5),
+                  FitGenieTheme.primary.withValues(alpha: 0.5),
                 ],
               ),
             ),
@@ -374,7 +374,7 @@ class _SplashScreenState extends State<SplashScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  FitGenieTheme.primary.withOpacity(0.5),
+                  FitGenieTheme.primary.withValues(alpha: 0.5),
                   Colors.transparent,
                 ],
               ),
@@ -409,7 +409,7 @@ class _SplashScreenState extends State<SplashScreen>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: FitGenieTheme.primary.withOpacity(0.2),
+                        color: FitGenieTheme.primary.withValues(alpha: 0.2),
                         width: 2,
                       ),
                     ),
@@ -430,13 +430,13 @@ class _SplashScreenState extends State<SplashScreen>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: FitGenieTheme.primary.withOpacity(0.1),
+                        color: FitGenieTheme.primary.withValues(alpha: 0.1),
                         width: 2,
                       ),
                     ),
                     child: CustomPaint(
                       painter: _ArcPainter(
-                        color: FitGenieTheme.primary.withOpacity(0.7),
+                        color: FitGenieTheme.primary.withValues(alpha: 0.7),
                         strokeWidth: 2,
                         startAngle: math.pi,
                       ),
@@ -452,7 +452,7 @@ class _SplashScreenState extends State<SplashScreen>
                     color: FitGenieTheme.primary,
                     boxShadow: [
                       BoxShadow(
-                        color: FitGenieTheme.primary.withOpacity(0.5),
+                        color: FitGenieTheme.primary.withValues(alpha: 0.5),
                         blurRadius: 10,
                       ),
                     ],

@@ -161,7 +161,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                               width: 52,
                               height: 52,
                               decoration: BoxDecoration(
-                                color: FitGenieTheme.primary.withOpacity(0.15),
+                                color: FitGenieTheme.primary.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Center(
@@ -267,7 +267,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: FitGenieTheme.primary.withOpacity(0.12),
+                              color: FitGenieTheme.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Center(
@@ -297,7 +297,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.14),
+        color: color.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

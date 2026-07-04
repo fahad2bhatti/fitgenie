@@ -18,7 +18,7 @@ class FGLinearProgress extends StatelessWidget {
       borderRadius: BorderRadius.circular(999),
       child: Container(
         height: 10,
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         child: Align(
           alignment: Alignment.centerLeft,
           child: FractionallySizedBox(
@@ -26,7 +26,7 @@ class FGLinearProgress extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [color, FitGenieTheme.primary.withOpacity(0.95)],
+                  colors: [color, FitGenieTheme.primary.withValues(alpha: 0.95)],
                 ),
               ),
             ),

@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
-import '../services/ai_service.dart';
+//import '../services/ai_service.dart';
 import '../services/nutrition_service.dart';
 import '../widgets/fg_card.dart';
 import '../widgets/fg_progress.dart';
-import 'meal_scanner_screen.dart';
+//import 'meal_scanner_screen.dart';
 import 'food_search_screen.dart';
 import 'saved_meals_screen.dart';
 
@@ -228,44 +228,31 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   // ============================================================
 
   Future<void> _openMealScanner() async {
-    final result = await Navigator.push<MealAnalysis>(
-      context,
-      MaterialPageRoute(builder: (_) => const MealScannerScreen()),
-    );
-
-    if (result == null || !mounted) return;
-
-    final mealType = await _pickMealType(initial: 'lunch');
-    if (mealType == null) return;
-
-    final entry = MealEntry(
-      name: result.foodName,
-      quantity: result.quantity,
-      mealType: mealType,
-      calories: result.calories,
-      protein: result.protein,
-      carbs: 0,
-      fats: 0,
-      source: 'scanner',
-    );
-
-    await _service.addMealEntry(
-      uid: _uid,
-      entry: entry,
-      date: _selectedDate,
-    );
-
-    await _load();
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-            '${result.foodName} added to ${mealType.toUpperCase()} ✅'),
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: FitGenieTheme.cardDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.workspace_premium, color: Colors.amber),
+            SizedBox(width: 8),
+            Text('Coming Soon'),
+          ],
+        ),
+        content: const Text(
+          '📸 Meal Scanner ek Premium feature banega — jald hi available hoga!',
+          style: TextStyle(color: FitGenieTheme.muted),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
       ),
     );
   }
-
   // ============================================================
   // 📚 SAVED MEALS PICKER
   // ============================================================
@@ -397,86 +384,6 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   // 🍽 MEAL TYPE PICKER
   // ============================================================
 
-  Future<String?> _pickMealType({String initial = 'breakfast'}) async {
-    String selected = initial;
-
-    return showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: FitGenieTheme.cardDark,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          final mealTypes = {
-            'breakfast': '🍳 Breakfast',
-            'lunch': '🍛 Lunch',
-            'dinner': '🍽 Dinner',
-            'snacks': '🍿 Snacks',
-          };
-
-          return Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Select Meal Type',
-                  style:
-                  TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                const SizedBox(height: 16),
-                ...mealTypes.entries.map((entry) {
-                  final isSelected = selected == entry.key;
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: GestureDetector(
-                      onTap: () =>
-                          setModalState(() => selected = entry.key),
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? FitGenieTheme.primary.withOpacity(0.18)
-                              : FitGenieTheme.card,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: isSelected
-                                ? FitGenieTheme.primary
-                                : Colors.transparent,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(child: Text(entry.value)),
-                            if (isSelected)
-                              const Icon(Icons.check_circle,
-                                  color: FitGenieTheme.primary),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context, selected),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: FitGenieTheme.primary,
-                    ),
-                    child: const Text('Continue',
-                        style: TextStyle(color: Colors.white)),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   // ============================================================
   // 💧 WATER
@@ -561,7 +468,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                       waterGoal:
                       int.tryParse(waterCtrl.text.trim()) ?? 8,
                     );
-                    if (mounted) Navigator.pop(context);
+                    if (context.mounted) Navigator.pop(context);
                     await _load();
                   },
                   style: ElevatedButton.styleFrom(
@@ -687,7 +594,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                           decoration: BoxDecoration(
                             color: selected
                                 ? FitGenieTheme.primary
-                                .withOpacity(0.2)
+                                .withValues(alpha: 0.2)
                                 : FitGenieTheme.background,
                             borderRadius:
                             BorderRadius.circular(20),
@@ -817,7 +724,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                           );
                         }
 
-                        if (mounted) Navigator.pop(context);
+                        if (context.mounted) Navigator.pop(context);
                         await _load();
                       },
                       style: ElevatedButton.styleFrom(
@@ -1020,7 +927,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         decoration: BoxDecoration(
           color: FitGenieTheme.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.25)),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1061,7 +968,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             icon: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.15),
+                color: Colors.red.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.remove,
@@ -1076,7 +983,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             icon: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.15),
+                color: Colors.green.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.add,
@@ -1116,7 +1023,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.12),
+                      color: Colors.amber.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Row(
@@ -1185,11 +1092,11 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: FitGenieTheme.primary
-                          .withOpacity(0.12),
+                          .withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                           color: FitGenieTheme.primary
-                              .withOpacity(0.2)),
+                              .withValues(alpha: 0.2)),
                     ),
                     child: const Row(
                       mainAxisAlignment:
@@ -1217,10 +1124,10 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     padding:
                     const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.12),
+                      color: Colors.amber.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: Colors.amber.withOpacity(0.2)),
+                          color: Colors.amber.withValues(alpha: 0.2)),
                     ),
                     child: const Row(
                       mainAxisAlignment:
@@ -1324,7 +1231,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     color: FitGenieTheme.card2,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: Colors.white.withOpacity(0.05)),
+                        color: Colors.white.withValues(alpha: 0.05)),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1467,7 +1374,7 @@ class _MealEntryTile extends StatelessWidget {
         color: FitGenieTheme.card2,
         borderRadius: BorderRadius.circular(12),
         border:
-        Border.all(color: Colors.white.withOpacity(0.05)),
+        Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -1476,8 +1383,8 @@ class _MealEntryTile extends StatelessWidget {
             height: 42,
             decoration: BoxDecoration(
               color: entry.source == 'scanner'
-                  ? FitGenieTheme.primary.withOpacity(0.18)
-                  : FitGenieTheme.teal.withOpacity(0.18),
+                  ? FitGenieTheme.primary.withValues(alpha: 0.18)
+                  : FitGenieTheme.teal.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -1543,3 +1450,5 @@ class _MealEntryTile extends StatelessWidget {
     );
   }
 }
+
+

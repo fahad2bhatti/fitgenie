@@ -212,14 +212,14 @@ class WorkoutDetailScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            color.withOpacity(0.35),
-            color.withOpacity(0.12),
+            color.withValues(alpha: 0.35),
+            color.withValues(alpha: 0.12),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +230,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                 width: 58,
                 height: 58,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.12),
+                  color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
@@ -256,7 +256,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                     Text(
                       formattedDate,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.75),
+                        color: Colors.white.withValues(alpha: 0.75),
                         fontSize: 12,
                       ),
                     ),
@@ -320,9 +320,9 @@ class WorkoutDetailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.18),
+        color: color.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -350,7 +350,7 @@ class WorkoutDetailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.18),
+        color: Colors.black.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -567,12 +567,12 @@ class WorkoutDetailScreen extends StatelessWidget {
         final sets = entry.value;
         final exercise = _findExerciseByName(exerciseName);
 
-        final totalExerciseVolume = sets.fold<double>(0, (sum, set) {
+        final totalExerciseVolume = sets.fold<double>(0, (runningTotal, set) {
           final weight = (set['weight'] is num)
               ? (set['weight'] as num).toDouble()
               : double.tryParse(set['weight'].toString()) ?? 0;
           final reps = _extractNumber(set['reps']?.toString() ?? '0');
-          return sum + (weight * reps);
+          return runningTotal + (weight * reps);
         });
 
         return Container(
@@ -673,7 +673,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: FitGenieTheme.primary.withOpacity(0.15),
+                            color: FitGenieTheme.primary.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Center(
@@ -749,7 +749,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withOpacity(0.16),
+                    color: FitGenieTheme.primary.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
@@ -846,3 +846,7 @@ class WorkoutDetailScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+

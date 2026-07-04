@@ -133,7 +133,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 color: FitGenieTheme.card,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: FitGenieTheme.primary.withOpacity(0.3),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.3),
                   width: 2,
                 ),
               ),
@@ -151,7 +151,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                   Icon(
                     Icons.restaurant_menu,
                     size: 80,
-                    color: FitGenieTheme.muted.withOpacity(0.5),
+                    color: FitGenieTheme.muted.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -225,9 +225,9 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -293,7 +293,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            FitGenieTheme.primary.withOpacity(0.2),
+            FitGenieTheme.primary.withValues(alpha: 0.2),
             FitGenieTheme.card,
           ],
         ),
@@ -304,7 +304,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: FitGenieTheme.primary.withOpacity(0.2),
+              color: FitGenieTheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Text('🍽️', style: TextStyle(fontSize: 32)),
@@ -402,13 +402,13 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _analysis!.isHealthy
-            ? Colors.green.withOpacity(0.1)
-            : Colors.orange.withOpacity(0.1),
+            ? Colors.green.withValues(alpha: 0.1)
+            : Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _analysis!.isHealthy
-              ? Colors.green.withOpacity(0.3)
-              : Colors.orange.withOpacity(0.3),
+              ? Colors.green.withValues(alpha: 0.3)
+              : Colors.orange.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -457,9 +457,9 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
+          color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

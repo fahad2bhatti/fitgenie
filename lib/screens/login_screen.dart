@@ -225,8 +225,10 @@ class _LoginScreenState extends State<LoginScreen>
                     _showSnackBar(result.message, isError: !result.success);
                   }
                 } catch (e) {
-                  Navigator.pop(context);
-                  _showSnackBar('Failed to send reset email', isError: true);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    _showSnackBar('Failed to send reset email', isError: true);
+                  }
                 }
               },
               style: FilledButton.styleFrom(
@@ -365,7 +367,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 style: FilledButton.styleFrom(
                                   backgroundColor: FitGenieTheme.primary,
                                   disabledBackgroundColor:
-                                  FitGenieTheme.primary.withOpacity(0.5),
+                                  FitGenieTheme.primary.withValues(alpha: 0.5),
                                   padding:
                                   const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
@@ -398,7 +400,7 @@ class _LoginScreenState extends State<LoginScreen>
                               children: [
                                 Expanded(
                                     child: Divider(
-                                        color: Colors.white.withOpacity(0.1))),
+                                        color: Colors.white.withValues(alpha: 0.1))),
                                 const Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 16),
                                   child: Text(
@@ -410,7 +412,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 Expanded(
                                     child: Divider(
-                                        color: Colors.white.withOpacity(0.1))),
+                                        color: Colors.white.withValues(alpha: 0.1))),
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -470,7 +472,7 @@ class _LoginScreenState extends State<LoginScreen>
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: FitGenieTheme.primary.withOpacity(0.5),
+            color: FitGenieTheme.primary.withValues(alpha: 0.5),
             blurRadius: 100,
             offset: const Offset(0, 0),
           ),
@@ -486,7 +488,7 @@ class _LoginScreenState extends State<LoginScreen>
                 gradient: LinearGradient(
                   colors: [
                     FitGenieTheme.primary,
-                    FitGenieTheme.primary.withOpacity(0.7),
+                    FitGenieTheme.primary.withValues(alpha: 0.7),
                   ],
                 ),
                 shape: BoxShape.circle,
@@ -518,7 +520,7 @@ class _LoginScreenState extends State<LoginScreen>
       decoration: BoxDecoration(
         color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.06)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),
       child: TextField(
         controller: controller,

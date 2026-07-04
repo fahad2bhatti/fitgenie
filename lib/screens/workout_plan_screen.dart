@@ -120,7 +120,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         icon: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.arrow_back_ios_new,
@@ -134,7 +134,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           icon: Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -157,8 +157,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                color.withOpacity(0.45),
-                color.withOpacity(0.15),
+                color.withValues(alpha: 0.45),
+                color.withValues(alpha: 0.15),
                 FitGenieTheme.background,
               ],
               begin: Alignment.topCenter,
@@ -178,7 +178,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     Text(
                       widget.plan.subtitle,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.85),
+                        color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                       ),
@@ -238,9 +238,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               padding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: color.withOpacity(0.25)),
+                border: Border.all(color: color.withValues(alpha: 0.25)),
               ),
               child: Text(
                 '💪 $muscle',
@@ -392,7 +392,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         child: FGCard(
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: color.withOpacity(0.2),
+              backgroundColor: color.withValues(alpha: 0.2),
               child: Text('${index + 1}',
                   style: TextStyle(color: color)),
             ),
@@ -450,7 +450,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.9),
+                            color: color.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -478,7 +478,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.65),
+                            color: Colors.black.withValues(alpha: 0.65),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -516,7 +516,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                             height: 44,
                             margin: const EdgeInsets.only(right: 12),
                             decoration: BoxDecoration(
-                              color: color.withOpacity(0.2),
+                              color: color.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(
@@ -570,7 +570,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.15),
+                            color: Colors.green.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -694,7 +694,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     icon: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.close,
@@ -798,10 +798,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.15),
+                              color: Colors.green.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Colors.green.withOpacity(0.3),
+                                color: Colors.green.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Text(
@@ -823,10 +823,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
+                          color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: color.withOpacity(0.25)),
+                              color: color.withValues(alpha: 0.25)),
                         ),
                         child: Row(
                           crossAxisAlignment:
@@ -930,9 +930,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Text(
         title,
@@ -956,7 +956,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             height: 30,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [color, color.withOpacity(0.6)],
+                colors: [color, color.withValues(alpha: 0.6)],
               ),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -995,7 +995,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, size: 16, color: color),
@@ -1019,7 +1019,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1044,7 +1044,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.18),
+        color: color.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
@@ -1108,9 +1108,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.35)),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

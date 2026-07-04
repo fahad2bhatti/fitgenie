@@ -33,7 +33,7 @@ class FGCard extends StatelessWidget {
           color: color ?? FitGenieTheme.card,
           borderRadius: BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
           border: border ?? Border.all(
-            color: Colors.white.withOpacity(0.06),
+            color: Colors.white.withValues(alpha: 0.06),
             width: 1,
           ),
           boxShadow: boxShadow,

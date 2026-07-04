@@ -234,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 leading: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withOpacity(0.2),
+                    color: FitGenieTheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.camera_alt, color: FitGenieTheme.primary),
@@ -252,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 leading: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.2),
+                    color: Colors.purple.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.photo_library, color: Colors.purple),
@@ -271,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.red.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(Icons.delete, color: Colors.red),
@@ -373,7 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: 110,
                   height: 110,
                   decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withOpacity(0.2),
+                    color: FitGenieTheme.primary.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                     border: Border.all(color: FitGenieTheme.primary, width: 3),
                   ),
@@ -459,7 +459,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildInitialAvatar() {
     return Container(
-      color: FitGenieTheme.primary.withOpacity(0.2),
+      color: FitGenieTheme.primary.withValues(alpha: 0.2),
       child: Center(
         child: Text(
           _name.isNotEmpty ? _name[0].toUpperCase() : 'U',
@@ -477,7 +477,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -586,7 +586,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(color: color.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
           child: Icon(icon, color: color, size: 20),
         ),
         const SizedBox(width: 12),
@@ -610,7 +610,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A2E),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: statusColor.withOpacity(0.5), width: 1.5),
+        border: Border.all(color: statusColor.withValues(alpha: 0.5), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -620,7 +620,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.2),
+                  color: statusColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -673,9 +673,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.greenAccent.withOpacity(0.1),
+                color: Colors.greenAccent.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.greenAccent.withOpacity(0.3)),
+                border: Border.all(color: Colors.greenAccent.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -695,7 +695,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.greenAccent.withOpacity(0.2),
+                      color: Colors.greenAccent.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text('LIVE', style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.bold)),
@@ -711,7 +711,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -739,7 +739,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isConnected ? Colors.red.withOpacity(0.8) : Colors.greenAccent,
+                backgroundColor: isConnected ? Colors.red.withValues(alpha: 0.8) : Colors.greenAccent,
                 foregroundColor: isConnected ? Colors.white : Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -760,7 +760,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Container(
           padding: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: (isOk ? Colors.greenAccent : Colors.redAccent).withOpacity(0.2),
+            color: (isOk ? Colors.greenAccent : Colors.redAccent).withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -833,7 +833,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.2),
+                color: Colors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.notifications, color: Colors.orange, size: 20),
@@ -857,7 +857,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.2),
+                color: Colors.blue.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.info_outline, color: Colors.blue, size: 20),
@@ -874,7 +874,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.2),
+                color: Colors.red.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.delete_forever, color: Colors.red, size: 20),
@@ -1083,7 +1083,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           name: nameController.text,
                           fitnessLevel: selectedLevel,
                           goal: selectedGoal);
-                      if (mounted) Navigator.pop(context);
+                      if (context.mounted) Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: FitGenieTheme.primary,
@@ -1169,7 +1169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: double.tryParse(hc.text) ?? _height,
                     age: int.tryParse(ac.text) ?? _age,
                   );
-                  if (mounted) Navigator.pop(context);
+                  if (context.mounted) Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
@@ -1235,7 +1235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     protein: int.tryParse(pc.text) ?? _proteinGoal,
                     water: int.tryParse(wc.text) ?? _waterGoal,
                   );
-                  if (mounted) Navigator.pop(context);
+                  if (context.mounted) Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
@@ -1379,3 +1379,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 }
+
+

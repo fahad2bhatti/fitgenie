@@ -86,7 +86,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.15),
+                            color: Colors.orange.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Text(
@@ -130,7 +130,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: selected
-                                ? FitGenieTheme.primary.withOpacity(0.18)
+                                ? FitGenieTheme.primary.withValues(alpha: 0.18)
                                 : FitGenieTheme.background,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
@@ -180,7 +180,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: selected
-                                ? FitGenieTheme.teal.withOpacity(0.18)
+                                ? FitGenieTheme.teal.withValues(alpha: 0.18)
                                 : FitGenieTheme.background,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
@@ -334,7 +334,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: FitGenieTheme.primary.withOpacity(0.15),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -380,7 +380,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.15),
+                        color: Colors.orange.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
@@ -471,7 +471,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
                         color: selected
-                            ? FitGenieTheme.primary.withOpacity(0.18)
+                            ? FitGenieTheme.primary.withValues(alpha: 0.18)
                             : FitGenieTheme.card,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(

@@ -110,11 +110,11 @@ class _StepCounterCardState extends State<StepCounterCard>
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: FitGenieTheme.primary.withOpacity(0.2),
+          color: FitGenieTheme.primary.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: FitGenieTheme.primary.withOpacity(0.1),
+            color: FitGenieTheme.primary.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -128,7 +128,7 @@ class _StepCounterCardState extends State<StepCounterCard>
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: FitGenieTheme.primary.withOpacity(0.2),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -187,7 +187,7 @@ class _StepCounterCardState extends State<StepCounterCard>
                   size: const Size(160, 160),
                   painter: _StepProgressPainter(
                     progress: progress,
-                    backgroundColor: Colors.white.withOpacity(0.1),
+                    backgroundColor: Colors.white.withValues(alpha: 0.1),
                     progressColor: FitGenieTheme.primary,
                     strokeWidth: 12,
                   ),
@@ -277,8 +277,8 @@ class _StepCounterCardState extends State<StepCounterCard>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: progress >= 1.0
-                  ? Colors.green.withOpacity(0.2)
-                  : FitGenieTheme.primary.withOpacity(0.1),
+                  ? Colors.green.withValues(alpha: 0.2)
+                  : FitGenieTheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -309,7 +309,7 @@ class _StepCounterCardState extends State<StepCounterCard>
           width: 8,
           height: 8,
           decoration: BoxDecoration(
-            color: _getStatusColor().withOpacity(opacity),
+            color: _getStatusColor().withValues(alpha: opacity),
             shape: BoxShape.circle,
           ),
         );
@@ -387,7 +387,7 @@ class _StepCounterCardState extends State<StepCounterCard>
     return Container(
       width: 1,
       height: 40,
-      color: Colors.white.withOpacity(0.1),
+      color: Colors.white.withValues(alpha: 0.1),
     );
   }
 
@@ -433,7 +433,7 @@ class _StepProgressPainter extends CustomPainter {
       ..shader = SweepGradient(
         startAngle: -math.pi / 2,
         colors: [
-          progressColor.withOpacity(0.6),
+          progressColor.withValues(alpha: 0.6),
           progressColor,
         ],
       ).createShader(Rect.fromCircle(center: center, radius: radius))

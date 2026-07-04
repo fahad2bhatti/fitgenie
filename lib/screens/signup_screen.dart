@@ -315,7 +315,7 @@ class _SignupScreenState extends State<SignupScreen>
                                 style: FilledButton.styleFrom(
                                   backgroundColor: FitGenieTheme.primary,
                                   disabledBackgroundColor:
-                                  FitGenieTheme.primary.withOpacity(0.5),
+                                  FitGenieTheme.primary.withValues(alpha: 0.5),
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 16),
                                   shape: RoundedRectangleBorder(
@@ -368,7 +368,7 @@ class _SignupScreenState extends State<SignupScreen>
                                 Text(
                                   'Want to use Google? Sign in from the login page.',
                                   style: TextStyle(
-                                    color: FitGenieTheme.muted.withOpacity(0.5),
+                                    color: FitGenieTheme.muted.withValues(alpha: 0.5),
                                     fontSize: 11,
                                   ),
                                   textAlign: TextAlign.center,
@@ -400,7 +400,7 @@ class _SignupScreenState extends State<SignupScreen>
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: FitGenieTheme.primary.withOpacity(0.3),
+            color: FitGenieTheme.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -416,7 +416,7 @@ class _SignupScreenState extends State<SignupScreen>
                 gradient: LinearGradient(
                   colors: [
                     FitGenieTheme.primary,
-                    FitGenieTheme.primary.withOpacity(0.7),
+                    FitGenieTheme.primary.withValues(alpha: 0.7),
                   ],
                 ),
                 shape: BoxShape.circle,
@@ -446,7 +446,7 @@ class _SignupScreenState extends State<SignupScreen>
       decoration: BoxDecoration(
         color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.06)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),
       child: TextField(
         controller: controller,

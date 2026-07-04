@@ -175,13 +175,13 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    FitGenieTheme.primary.withOpacity(0.28),
-                    FitGenieTheme.primary.withOpacity(0.08),
+                    FitGenieTheme.primary.withValues(alpha: 0.28),
+                    FitGenieTheme.primary.withValues(alpha: 0.08),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: FitGenieTheme.primary.withOpacity(0.25),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.25),
                 ),
               ),
               child: Row(
@@ -189,7 +189,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.12),
+                      color: Colors.white.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: const Text('📚', style: TextStyle(fontSize: 28)),
@@ -267,7 +267,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                                   width: 52,
                                   height: 52,
                                   decoration: BoxDecoration(
-                                    color: color.withOpacity(0.18),
+                                    color: color.withValues(alpha: 0.18),
                                     borderRadius: BorderRadius.circular(14),
                                   ),
                                   child: Center(
@@ -471,7 +471,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -496,7 +496,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
         width: 42,
         height: 42,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
+          color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, color: color, size: 20),
@@ -918,7 +918,7 @@ class _CustomWorkoutBuilderScreenState
                           horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: selected
-                            ? FitGenieTheme.primary.withOpacity(0.2)
+                            ? FitGenieTheme.primary.withValues(alpha: 0.2)
                             : FitGenieTheme.card,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
@@ -959,7 +959,7 @@ class _CustomWorkoutBuilderScreenState
                 color: FitGenieTheme.card,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: FitGenieTheme.primary.withOpacity(0.15),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.15),
                 ),
               ),
               child: Column(
@@ -1464,7 +1464,7 @@ class _CustomWorkoutSessionScreenState
                                 : repsController.text.trim(),
                           );
                         }
-                        if (mounted) Navigator.pop(context);
+                        if (context.mounted) Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: FitGenieTheme.primary,
@@ -1652,7 +1652,7 @@ class _CustomWorkoutSessionScreenState
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.15),
+                      color: Colors.green.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -1777,7 +1777,7 @@ class _CustomWorkoutSessionScreenState
                   ),
                 ),
               );
-            }).toList(),
+            }),
 
             if (_started) ...[
               const SizedBox(height: 18),
@@ -1814,7 +1814,7 @@ class _CustomWorkoutSessionScreenState
                             height: 34,
                             decoration: BoxDecoration(
                               color:
-                              FitGenieTheme.primary.withOpacity(0.18),
+                              FitGenieTheme.primary.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Center(
@@ -1904,3 +1904,5 @@ class _CustomWorkoutSessionScreenState
     );
   }
 }
+
+

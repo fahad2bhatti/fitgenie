@@ -57,7 +57,7 @@ class _ShellScreenState extends State<ShellScreen> {
           color: const Color(0xFF1A1A1A),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -324,7 +324,7 @@ Please dobara try karo ya internet check karo.
               gradient: LinearGradient(
                 colors: [
                   FitGenieTheme.primary,
-                  FitGenieTheme.primary.withOpacity(0.6),
+                  FitGenieTheme.primary.withValues(alpha: 0.6),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -332,7 +332,7 @@ Please dobara try karo ya internet check karo.
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: FitGenieTheme.primary.withOpacity(0.3),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -401,7 +401,7 @@ Please dobara try karo ya internet check karo.
       decoration: BoxDecoration(
         color: const Color(0xFF121212),
         border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.05)),
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
       ),
       child: ListView(
@@ -434,7 +434,7 @@ Please dobara try karo ya internet check karo.
               color: const Color(0xFF1E1E1E),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: FitGenieTheme.primary.withOpacity(0.3),
+                color: FitGenieTheme.primary.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
@@ -470,7 +470,7 @@ Please dobara try karo ya internet check karo.
         color: const Color(0xFF1A1A1A),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -485,7 +485,7 @@ Please dobara try karo ya internet check karo.
                 color: const Color(0xFF0D0D0D),
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
-                  color: FitGenieTheme.primary.withOpacity(0.2),
+                  color: FitGenieTheme.primary.withValues(alpha: 0.2),
                 ),
               ),
               child: TextField(
@@ -527,7 +527,7 @@ Please dobara try karo ya internet check karo.
                 gradient: LinearGradient(
                   colors: _isLoading
                       ? [Colors.grey, Colors.grey.shade700]
-                      : [FitGenieTheme.primary, FitGenieTheme.primary.withOpacity(0.7)],
+                      : [FitGenieTheme.primary, FitGenieTheme.primary.withValues(alpha: 0.7)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -536,7 +536,7 @@ Please dobara try karo ya internet check karo.
                     ? []
                     : [
                   BoxShadow(
-                    color: FitGenieTheme.primary.withOpacity(0.4),
+                    color: FitGenieTheme.primary.withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -573,7 +573,7 @@ Please dobara try karo ya internet check karo.
                 gradient: LinearGradient(
                   colors: [
                     FitGenieTheme.primary,
-                    FitGenieTheme.primary.withOpacity(0.6),
+                    FitGenieTheme.primary.withValues(alpha: 0.6),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(10),
@@ -603,12 +603,12 @@ Please dobara try karo ya internet check karo.
                 ),
                 border: isUser
                     ? null
-                    : Border.all(color: Colors.white.withOpacity(0.05)),
+                    : Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 boxShadow: [
                   BoxShadow(
                     color: isUser
-                        ? FitGenieTheme.primary.withOpacity(0.3)
-                        : Colors.black.withOpacity(0.2),
+                        ? FitGenieTheme.primary.withValues(alpha: 0.3)
+                        : Colors.black.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -691,7 +691,7 @@ Please dobara try karo ya internet check karo.
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Container(
             height: 1,
-            color: FitGenieTheme.primary.withOpacity(0.3),
+            color: FitGenieTheme.primary.withValues(alpha: 0.3),
           ),
         ));
       }
@@ -779,7 +779,7 @@ Please dobara try karo ya internet check karo.
               gradient: LinearGradient(
                 colors: [
                   FitGenieTheme.primary,
-                  FitGenieTheme.primary.withOpacity(0.6),
+                  FitGenieTheme.primary.withValues(alpha: 0.6),
                 ],
               ),
               borderRadius: BorderRadius.circular(10),
@@ -798,7 +798,7 @@ Please dobara try karo ya internet check karo.
                 bottomLeft: Radius.circular(4),
                 bottomRight: Radius.circular(18),
               ),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -837,7 +837,7 @@ Please dobara try karo ya internet check karo.
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: FitGenieTheme.primary.withOpacity(opacity),
+            color: FitGenieTheme.primary.withValues(alpha: opacity),
             shape: BoxShape.circle,
           ),
         );
@@ -863,7 +863,7 @@ Please dobara try karo ya internet check karo.
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: FitGenieTheme.primary.withOpacity(0.2),
+                color: FitGenieTheme.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(Icons.psychology, color: FitGenieTheme.primary, size: 24),
@@ -965,3 +965,4 @@ class _ChatMessage {
     required this.timestamp,
   });
 }
+

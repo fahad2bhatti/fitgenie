@@ -92,7 +92,7 @@ class _MuscleGroupExercisesScreenState
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: _showGifs
-                            ? FitGenieTheme.primary.withOpacity(0.15)
+                            ? FitGenieTheme.primary.withValues(alpha: 0.15)
                             : FitGenieTheme.card,
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -161,7 +161,7 @@ class _MuscleGroupExercisesScreenState
         icon: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.arrow_back_ios_new,
@@ -181,8 +181,8 @@ class _MuscleGroupExercisesScreenState
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                widget.color.withOpacity(0.4),
-                widget.color.withOpacity(0.1),
+                widget.color.withValues(alpha: 0.4),
+                widget.color.withValues(alpha: 0.1),
                 FitGenieTheme.background,
               ],
               begin: Alignment.topCenter,
@@ -198,14 +198,14 @@ class _MuscleGroupExercisesScreenState
                 Text(
                   '${_allExercises.length} Exercises',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                   ),
                 ),
                 Text(
                   'with animated demos 🎬',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
                   ),
                 ),
@@ -241,7 +241,7 @@ class _MuscleGroupExercisesScreenState
                           horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? widget.color.withOpacity(0.2)
+                            ? widget.color.withValues(alpha: 0.2)
                             : FitGenieTheme.card,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
@@ -299,7 +299,7 @@ class _MuscleGroupExercisesScreenState
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? diffColor.withOpacity(0.2)
+                          ? diffColor.withValues(alpha: 0.2)
                           : FitGenieTheme.card,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
@@ -369,7 +369,7 @@ class _MuscleGroupExercisesScreenState
                                   height: 30,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: widget.color.withOpacity(0.5),
+                                    color: widget.color.withValues(alpha: 0.5),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -392,7 +392,7 @@ class _MuscleGroupExercisesScreenState
                               children: [
                                 Icon(Icons.fitness_center,
                                     size: 40,
-                                    color: widget.color.withOpacity(0.3)),
+                                    color: widget.color.withValues(alpha: 0.3)),
                                 const SizedBox(height: 8),
                                 Text(exercise.name,
                                     style: TextStyle(
@@ -412,7 +412,7 @@ class _MuscleGroupExercisesScreenState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.7),
+                            color: Colors.black.withValues(alpha: 0.7),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -449,7 +449,7 @@ class _MuscleGroupExercisesScreenState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: widget.color.withOpacity(0.9),
+                            color: widget.color.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -469,7 +469,7 @@ class _MuscleGroupExercisesScreenState
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
+                            color: Colors.black.withValues(alpha: 0.6),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.info_outline,
@@ -495,7 +495,7 @@ class _MuscleGroupExercisesScreenState
                             height: 44,
                             margin: const EdgeInsets.only(right: 12),
                             decoration: BoxDecoration(
-                              color: widget.color.withOpacity(0.2),
+                              color: widget.color.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(
@@ -548,7 +548,7 @@ class _MuscleGroupExercisesScreenState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.15),
+                          color: Colors.green.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text('💪 $muscle',
@@ -579,7 +579,7 @@ class _MuscleGroupExercisesScreenState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: widget.color.withOpacity(0.15),
+                            color: widget.color.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -659,7 +659,7 @@ class _MuscleGroupExercisesScreenState
                     icon: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.close,
@@ -677,7 +677,7 @@ class _MuscleGroupExercisesScreenState
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                        color: widget.color.withOpacity(0.3)),
+                        color: widget.color.withValues(alpha: 0.3)),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
@@ -771,12 +771,12 @@ class _MuscleGroupExercisesScreenState
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color:
-                            Colors.green.withOpacity(0.15),
+                            Colors.green.withValues(alpha: 0.15),
                             borderRadius:
                             BorderRadius.circular(20),
                             border: Border.all(
                                 color: Colors.green
-                                    .withOpacity(0.3)),
+                                    .withValues(alpha: 0.3)),
                           ),
                           child: Text('💪 $m',
                               style: const TextStyle(
@@ -891,9 +891,9 @@ class _MuscleGroupExercisesScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(title,
           style: TextStyle(
@@ -916,7 +916,7 @@ class _MuscleGroupExercisesScreenState
               gradient: LinearGradient(
                 colors: [
                   widget.color,
-                  widget.color.withOpacity(0.6),
+                  widget.color.withValues(alpha: 0.6),
                 ],
               ),
               borderRadius: BorderRadius.circular(8),
@@ -952,7 +952,7 @@ class _MuscleGroupExercisesScreenState
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
+              color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(icon, size: 16, color: color),
@@ -975,7 +975,7 @@ class _MuscleGroupExercisesScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -997,7 +997,7 @@ class _MuscleGroupExercisesScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(text,
@@ -1032,9 +1032,9 @@ class _MuscleGroupExercisesScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

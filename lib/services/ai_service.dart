@@ -45,7 +45,7 @@ class AIService {
 
   Future<List<String>> fetchModelNames() async {
     debugPrint('🔍 Fetching available models...');
-    if (!isConfigured) return ['models/gemini-1.5-flash-latest'];
+    if (!isConfigured) return ['models/gemini-flash-latest'];
 
     final url = 'https://generativelanguage.googleapis.com/v1beta/models?key=$_apiKey';
     try {
@@ -62,7 +62,7 @@ class AIService {
       return names;
     } catch (e) {
       debugPrint('❌ Error fetching models: $e');
-      return ['models/gemini-1.5-flash-latest'];
+      return ['models/gemini-flash-latest'];
     }
   }
 
@@ -111,7 +111,7 @@ Return ONLY a valid JSON object (no markdown, no code blocks, just pure JSON):
 }
 All numbers should be integers. isHealthy should be boolean.''';
 
-      final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$_apiKey';
+      final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
 
       final response = await http.post(
         Uri.parse(url),
@@ -259,7 +259,7 @@ Max 150 words:''';
 
   Future<String?> _tryDirectModel(String prompt) async {
     try {
-      return await _callGeminiAPI('models/gemini-1.5-flash-latest', prompt);
+      return await _callGeminiAPI('models/gemini-flash-latest', prompt);
     } catch (e) {
       debugPrint('⚠️ Direct model failed: $e');
       return null;
