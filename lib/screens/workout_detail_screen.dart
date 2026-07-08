@@ -143,11 +143,11 @@ class WorkoutDetailScreen extends StatelessWidget {
 
   Color _workoutColor() {
     final t = workoutType.toLowerCase();
-    if (t.contains('chest')) return Colors.red;
+    if (t.contains('chest')) return FitGenieTheme.error;
     if (t.contains('back') || t.contains('pull')) return Colors.blue;
-    if (t.contains('leg') || t.contains('lower')) return Colors.green;
+    if (t.contains('leg') || t.contains('lower')) return FitGenieTheme.success;
     if (t.contains('shoulder')) return Colors.purple;
-    if (t.contains('arm')) return Colors.orange;
+    if (t.contains('arm')) return FitGenieTheme.warning;
     if (t.contains('core')) return Colors.teal;
     if (t.contains('cardio')) return Colors.pink;
     if (t.contains('full')) return Colors.amber;
@@ -315,7 +315,7 @@ class WorkoutDetailScreen extends StatelessWidget {
 
   Widget _buildStatusBadge() {
     final completed = status == 'completed';
-    final color = completed ? Colors.green : Colors.orange;
+    final color = completed ? FitGenieTheme.success : FitGenieTheme.warning;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -401,7 +401,7 @@ class WorkoutDetailScreen extends StatelessWidget {
             icon: Icons.scale,
             value: totalVolume.toStringAsFixed(0),
             label: 'Volume',
-            color: Colors.orange,
+            color: FitGenieTheme.warning,
           ),
         ),
         const SizedBox(width: 10),
@@ -698,7 +698,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                           ),
                         ),
                         const Icon(Icons.check_circle,
-                            size: 18, color: Colors.green),
+                            size: 18, color: FitGenieTheme.success),
                       ],
                     ),
                   );

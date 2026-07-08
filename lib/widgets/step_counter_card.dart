@@ -167,7 +167,7 @@ class _StepCounterCardState extends State<StepCounterCard>
               ),
               if (!_hasPermission)
                 IconButton(
-                  icon: const Icon(Icons.warning, color: Colors.orange),
+                  icon: const Icon(Icons.warning, color: FitGenieTheme.warning),
                   onPressed: _requestPermission,
                   tooltip: 'Enable Permission',
                 ),
@@ -252,7 +252,7 @@ class _StepCounterCardState extends State<StepCounterCard>
                 icon: Icons.local_fire_department,
                 value: '${_calories.round()}',
                 label: 'kcal',
-                color: Colors.orange,
+                color: FitGenieTheme.warning,
               ),
               _buildDivider(),
               _buildStatItem(
@@ -277,7 +277,7 @@ class _StepCounterCardState extends State<StepCounterCard>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: progress >= 1.0
-                  ? Colors.green.withValues(alpha: 0.2)
+                  ? FitGenieTheme.success.withValues(alpha: 0.2)
                   : FitGenieTheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
             ),
@@ -288,7 +288,7 @@ class _StepCounterCardState extends State<StepCounterCard>
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: progress >= 1.0 ? Colors.green : FitGenieTheme.primary,
+                color: progress >= 1.0 ? FitGenieTheme.success : FitGenieTheme.primary,
               ),
             ),
           ),
@@ -332,12 +332,12 @@ class _StepCounterCardState extends State<StepCounterCard>
   }
 
   Color _getStatusColor() {
-    if (!_hasPermission) return Colors.orange;
+    if (!_hasPermission) return FitGenieTheme.warning;
     if (!_isInitialized) return Colors.grey;
 
     switch (_status) {
       case 'walking':
-        return Colors.green;
+        return FitGenieTheme.success;
       case 'stopped':
         return Colors.grey;
       default:

@@ -241,10 +241,10 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   // ============================================================
   Widget _buildMuscleGroupsGrid() {
     final groups = [
-      {'name': 'Chest', 'emoji': '🏋️', 'color': Colors.red, 'count': ExerciseData.chest.length},
+      {'name': 'Chest', 'emoji': '🏋️', 'color': FitGenieTheme.error, 'count': ExerciseData.chest.length},
       {'name': 'Back', 'emoji': '🔙', 'color': Colors.blue, 'count': ExerciseData.back.length},
-      {'name': 'Legs', 'emoji': '🦵', 'color': Colors.green, 'count': ExerciseData.legs.length},
-      {'name': 'Arms', 'emoji': '💪', 'color': Colors.orange, 'count': ExerciseData.biceps.length + ExerciseData.triceps.length},
+      {'name': 'Legs', 'emoji': '🦵', 'color': FitGenieTheme.success, 'count': ExerciseData.legs.length},
+      {'name': 'Arms', 'emoji': '💪', 'color': FitGenieTheme.warning, 'count': ExerciseData.biceps.length + ExerciseData.triceps.length},
       {'name': 'Shoulders', 'emoji': '🎯', 'color': Colors.purple, 'count': ExerciseData.shoulders.length},
       {'name': 'Core', 'emoji': '🔥', 'color': Colors.teal, 'count': ExerciseData.core.length},
     ];
@@ -833,7 +833,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         children: [
                           Icon(
                             status == 'completed' ? Icons.check_circle : Icons.access_time,
-                            color: status == 'completed' ? Colors.green : Colors.orange,
+                            color: status == 'completed' ? FitGenieTheme.success : FitGenieTheme.warning,
                             size: 22,
                           ),
                           const SizedBox(height: 4),
@@ -958,7 +958,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Workout started! 🔥'), backgroundColor: Colors.green),
+        const SnackBar(content: Text('Workout started! 🔥'), backgroundColor: FitGenieTheme.success),
       );
     }
   }
@@ -1054,8 +1054,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     spacing: 6,
                     children: selectedExercise!.musclesWorked.map((m) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(6)),
-                      child: Text('💪 $m', style: const TextStyle(fontSize: 11, color: Colors.green)),
+                      decoration: BoxDecoration(color: FitGenieTheme.success.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(6)),
+                      child: Text('💪 $m', style: const TextStyle(fontSize: 11, color: FitGenieTheme.success)),
                     )).toList(),
                   ),
                 ],
@@ -1150,8 +1150,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                       },
                       icon: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
-                        child: const Icon(Icons.add, color: Colors.green),
+                        decoration: BoxDecoration(color: FitGenieTheme.success.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+                        child: const Icon(Icons.add, color: FitGenieTheme.success),
                       ),
                     ),
                   ],
@@ -1269,11 +1269,11 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         actions: [
           TextButton(
             onPressed: () { Navigator.pop(context); Navigator.pop(context); },
-            child: const Text('Discard', style: TextStyle(color: Colors.red)),
+            child: const Text('Discard', style: TextStyle(color: FitGenieTheme.error)),
           ),
           ElevatedButton(
             onPressed: () { Navigator.pop(context); _finishWorkout(); },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.success),
             child: const Text('Save & Exit', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -1302,7 +1302,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
           if (_isWorkoutStarted)
             TextButton(
               onPressed: _finishWorkout,
-              child: const Text('FINISH', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+              child: const Text('FINISH', style: TextStyle(color: FitGenieTheme.success, fontWeight: FontWeight.bold)),
             ),
         ],
       ),
@@ -1362,7 +1362,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                   icon: const Icon(Icons.play_arrow, color: Colors.white),
                   label: const Text('Start Workout', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: FitGenieTheme.success,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
@@ -1376,16 +1376,16 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                   const Text('Logged Sets', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(color: FitGenieTheme.success.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
                     child: Row(
                       children: [
-                        const Icon(Icons.timer, size: 16, color: Colors.green),
+                        const Icon(Icons.timer, size: 16, color: FitGenieTheme.success),
                         const SizedBox(width: 4),
                         StreamBuilder(
                           stream: Stream.periodic(const Duration(seconds: 1)),
                           builder: (c, s) {
                             final d = _startTime != null ? DateTime.now().difference(_startTime!).inMinutes : 0;
-                            return Text('$d min', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold));
+                            return Text('$d min', style: const TextStyle(color: FitGenieTheme.success, fontWeight: FontWeight.bold));
                           },
                         ),
                       ],
@@ -1435,7 +1435,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                               ],
                             ),
                           ),
-                          const Icon(Icons.check_circle, color: Colors.green, size: 22),
+                          const Icon(Icons.check_circle, color: FitGenieTheme.success, size: 22),
                         ],
                       ),
                     ),
@@ -1462,10 +1462,10 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: _finishWorkout,
-                  icon: const Icon(Icons.check, color: Colors.green),
-                  label: const Text('Finish Workout', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16)),
+                  icon: const Icon(Icons.check, color: FitGenieTheme.success),
+                  label: const Text('Finish Workout', style: TextStyle(color: FitGenieTheme.success, fontWeight: FontWeight.bold, fontSize: 16)),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.green),
+                    side: const BorderSide(color: FitGenieTheme.success),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),

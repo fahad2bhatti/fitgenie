@@ -359,7 +359,7 @@ Please dobara try karo ya internet check karo.
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: _isLoading ? Colors.orange : Colors.green,
+                        color: _isLoading ? FitGenieTheme.warning : FitGenieTheme.success,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -368,7 +368,7 @@ Please dobara try karo ya internet check karo.
                       _isLoading ? 'Thinking...' : 'Online • Ready to help',
                       style: TextStyle(
                         fontSize: 11,
-                        color: _isLoading ? Colors.orange : Colors.green,
+                        color: _isLoading ? FitGenieTheme.warning : FitGenieTheme.success,
                       ),
                     ),
                   ],
@@ -915,7 +915,7 @@ Please dobara try karo ya internet check karo.
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(Icons.delete_outline, color: Colors.red),
+            Icon(Icons.delete_outline, color: FitGenieTheme.error),
             SizedBox(width: 8),
             Text('Clear Chat?'),
           ],
@@ -935,7 +935,7 @@ Please dobara try karo ya internet check karo.
               });
               HapticFeedback.lightImpact();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: const Text('Clear', style: TextStyle(color: Colors.white)),
           ),
         ],

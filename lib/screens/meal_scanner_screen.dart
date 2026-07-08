@@ -102,7 +102,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red.shade700 : Colors.green.shade700,
+        backgroundColor: isError ? FitGenieTheme.error : FitGenieTheme.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -185,7 +185,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                   child: _ActionButton(
                     icon: Icons.photo_library,
                     label: 'Gallery',
-                    color: Colors.orange,
+                    color: FitGenieTheme.warning,
                     onTap: () => _pickImage(ImageSource.gallery),
                   ),
                 ),
@@ -225,22 +225,22 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.1),
+                  color: FitGenieTheme.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+                  border: Border.all(color: FitGenieTheme.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red),
+                    const Icon(Icons.error_outline, color: FitGenieTheme.error),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         _error!,
-                        style: const TextStyle(color: Colors.red),
+                        style: const TextStyle(color: FitGenieTheme.error),
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.refresh, color: Colors.red),
+                      icon: const Icon(Icons.refresh, color: FitGenieTheme.error),
                       onPressed: _analyzeImage,
                     ),
                   ],
@@ -369,13 +369,13 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
         _NutritionTile(
           label: 'Protein',
           value: '${_analysis!.protein}g',
-          color: Colors.red,
+          color: FitGenieTheme.error,
           icon: '🥩',
         ),
         _NutritionTile(
           label: 'Carbs',
           value: '${_analysis!.carbs}g',
-          color: Colors.orange,
+          color: FitGenieTheme.warning,
           icon: '🍚',
         ),
         _NutritionTile(
@@ -387,7 +387,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
         _NutritionTile(
           label: 'Fiber',
           value: '${_analysis!.fiber}g',
-          color: Colors.green,
+          color: FitGenieTheme.success,
           icon: '🥬',
         ),
       ],
@@ -402,13 +402,13 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _analysis!.isHealthy
-            ? Colors.green.withValues(alpha: 0.1)
-            : Colors.orange.withValues(alpha: 0.1),
+            ? FitGenieTheme.success.withValues(alpha: 0.1)
+            : FitGenieTheme.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: _analysis!.isHealthy
-              ? Colors.green.withValues(alpha: 0.3)
-              : Colors.orange.withValues(alpha: 0.3),
+              ? FitGenieTheme.success.withValues(alpha: 0.3)
+              : FitGenieTheme.warning.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -422,7 +422,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
             child: Text(
               _analysis!.healthTip,
               style: TextStyle(
-                color: _analysis!.isHealthy ? Colors.green : Colors.orange,
+                color: _analysis!.isHealthy ? FitGenieTheme.success : FitGenieTheme.warning,
                 fontSize: 14,
               ),
             ),

@@ -274,7 +274,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             icon: Icons.repeat,
             value: '${widget.plan.totalSets}',
             label: 'Total Sets',
-            color: Colors.orange,
+            color: FitGenieTheme.warning,
           ),
         ),
         const SizedBox(width: 10),
@@ -570,14 +570,14 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: Colors.green.withValues(alpha: 0.15),
+                            color: FitGenieTheme.success.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             '💪 $muscle',
                             style: const TextStyle(
                               fontSize: 11,
-                              color: Colors.green,
+                              color: FitGenieTheme.success,
                             ),
                           ),
                         );
@@ -761,12 +761,12 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         _buildInfoChip(
                           Icons.repeat,
                           '${planExercise.sets} × ${planExercise.reps}',
-                          Colors.orange,
+                          FitGenieTheme.warning,
                         ),
                         _buildInfoChip(
                           Icons.timer_outlined,
                           '${planExercise.restSeconds}s rest',
-                          Colors.green,
+                          FitGenieTheme.success,
                         ),
                         _buildInfoChip(
                           Icons.local_fire_department,
@@ -798,17 +798,17 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.green.withValues(alpha: 0.15),
+                              color: FitGenieTheme.success.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: Colors.green.withValues(alpha: 0.3),
+                                color: FitGenieTheme.success.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Text(
                               '💪 $muscle',
                               style: const TextStyle(
                                 fontSize: 13,
-                                color: Colors.green,
+                                color: FitGenieTheme.success,
                               ),
                             ),
                           );
@@ -1089,15 +1089,15 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
     switch (difficulty.toLowerCase()) {
       case 'beginner':
-        color = Colors.green;
+        color = FitGenieTheme.success;
         icon = Icons.star_outline;
         break;
       case 'intermediate':
-        color = Colors.orange;
+        color = FitGenieTheme.warning;
         icon = Icons.star_half;
         break;
       case 'advanced':
-        color = Colors.red;
+        color = FitGenieTheme.error;
         icon = Icons.star;
         break;
       default:

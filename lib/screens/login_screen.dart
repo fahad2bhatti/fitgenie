@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen>
             Expanded(child: Text(message)),
           ],
         ),
-        backgroundColor: isError ? Colors.red.shade700 : Colors.green.shade700,
+        backgroundColor: isError ? FitGenieTheme.error : FitGenieTheme.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -583,7 +583,7 @@ class _GoogleSignInButton extends StatelessWidget {
                 width: 20,
                 errorBuilder: (context, error, stackTrace) {
                   return const Icon(Icons.g_mobiledata,
-                      color: Colors.red, size: 24);
+                      color: FitGenieTheme.error, size: 24);
                 },
               ),
               const SizedBox(width: 10),

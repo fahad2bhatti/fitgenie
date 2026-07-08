@@ -86,13 +86,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withValues(alpha: 0.15),
+                            color: FitGenieTheme.warning.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Text(
                             'Estimated',
                             style: TextStyle(
-                              color: Colors.orange,
+                              color: FitGenieTheme.warning,
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
@@ -227,13 +227,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             FitGenieTheme.teal),
                         const SizedBox(height: 10),
                         _macroRow(
-                            'Carbs', '${portion.carbs} g', Colors.orange),
+                            'Carbs', '${portion.carbs} g', FitGenieTheme.warning),
                         const SizedBox(height: 10),
                         _macroRow('Fats', '${portion.fats} g', Colors.purple),
                         if (portion.fiber > 0) ...[
                           const SizedBox(height: 10),
                           _macroRow('Fiber', '${portion.fiber} g',
-                              Colors.green),
+                              FitGenieTheme.success),
                         ],
                         const SizedBox(height: 12),
                         Text(
@@ -380,13 +380,13 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.15),
+                        color: FitGenieTheme.warning.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
                         'Est.',
                         style: TextStyle(
-                          color: Colors.orange,
+                          color: FitGenieTheme.warning,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                         ),

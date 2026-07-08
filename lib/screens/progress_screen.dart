@@ -536,7 +536,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                                 color: cals == 0
                                     ? FitGenieTheme.hot.withValues(alpha: 0.2)
                                     : percentage >= 1.0
-                                    ? Colors.green
+                                    ? FitGenieTheme.success
                                     : percentage >= 0.7
                                     ? FitGenieTheme.hot
                                     : FitGenieTheme.hot.withValues(alpha: 0.6),
@@ -884,7 +884,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               label: 'Streak',
               value: '$_currentStreak',
               sub: 'days',
-              color: Colors.orange,
+              color: FitGenieTheme.warning,
             ),
           ),
         ],
@@ -935,7 +935,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
           gradient: LinearGradient(
             colors: [
               Colors.amber.withValues(alpha: 0.1),
-              Colors.orange.withValues(alpha: 0.05),
+              FitGenieTheme.warning.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(12),
@@ -1213,7 +1213,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
           ),
         ],
       ),
-    );
+    ).whenComplete(() => controller.dispose());
   }
 
   Future<void> _saveWeight(double weight) async {

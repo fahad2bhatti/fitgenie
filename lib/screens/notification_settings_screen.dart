@@ -155,7 +155,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('✅ Notification settings saved!'),
-            backgroundColor: Colors.green,
+            backgroundColor: FitGenieTheme.success,
           ),
         );
         Navigator.pop(context);
@@ -166,7 +166,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('❌ Error saving settings: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: FitGenieTheme.error,
           ),
         );
       }
@@ -239,7 +239,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             // Workout Reminder
             _buildNotificationCard(
               icon: Icons.fitness_center,
-              iconColor: Colors.orange,
+              iconColor: FitGenieTheme.warning,
               title: 'Workout Reminder',
               subtitle: 'Daily morning workout reminder',
               enabled: _workoutEnabled,
@@ -256,7 +256,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             // Lunch Reminder
             _buildNotificationCard(
               icon: Icons.restaurant,
-              iconColor: Colors.green,
+              iconColor: FitGenieTheme.success,
               title: 'Lunch Reminder',
               subtitle: 'Remind to log lunch calories',
               enabled: _lunchEnabled,
@@ -269,7 +269,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             // Motivation
             _buildNotificationCard(
               icon: Icons.local_fire_department,
-              iconColor: Colors.red,
+              iconColor: FitGenieTheme.error,
               title: 'Daily Motivation',
               subtitle: 'Get inspired with motivational quotes',
               enabled: _motivationEnabled,

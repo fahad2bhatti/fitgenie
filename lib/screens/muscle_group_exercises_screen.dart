@@ -278,13 +278,13 @@ class _MuscleGroupExercisesScreenState
               Color diffColor;
               switch (diff) {
                 case 'Beginner':
-                  diffColor = Colors.green;
+                  diffColor = FitGenieTheme.success;
                   break;
                 case 'Intermediate':
-                  diffColor = Colors.orange;
+                  diffColor = FitGenieTheme.warning;
                   break;
                 case 'Advanced':
-                  diffColor = Colors.red;
+                  diffColor = FitGenieTheme.error;
                   break;
                 default:
                   diffColor = FitGenieTheme.muted;
@@ -548,13 +548,13 @@ class _MuscleGroupExercisesScreenState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: Colors.green.withValues(alpha: 0.15),
+                          color: FitGenieTheme.success.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text('💪 $muscle',
                             style: const TextStyle(
                                 fontSize: 11,
-                                color: Colors.green)),
+                                color: FitGenieTheme.success)),
                       ))
                           .toList(),
                     ),
@@ -771,17 +771,17 @@ class _MuscleGroupExercisesScreenState
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color:
-                            Colors.green.withValues(alpha: 0.15),
+                            FitGenieTheme.success.withValues(alpha: 0.15),
                             borderRadius:
                             BorderRadius.circular(20),
                             border: Border.all(
-                                color: Colors.green
+                                color: FitGenieTheme.success
                                     .withValues(alpha: 0.3)),
                           ),
                           child: Text('💪 $m',
                               style: const TextStyle(
                                   fontSize: 13,
-                                  color: Colors.green)),
+                                  color: FitGenieTheme.success)),
                         ))
                             .toList(),
                       ),
@@ -1013,15 +1013,15 @@ class _MuscleGroupExercisesScreenState
     IconData icon;
     switch (difficulty.toLowerCase()) {
       case 'beginner':
-        color = Colors.green;
+        color = FitGenieTheme.success;
         icon = Icons.star_outline;
         break;
       case 'intermediate':
-        color = Colors.orange;
+        color = FitGenieTheme.warning;
         icon = Icons.star_half;
         break;
       case 'advanced':
-        color = Colors.red;
+        color = FitGenieTheme.error;
         icon = Icons.star;
         break;
       default:
