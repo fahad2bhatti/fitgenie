@@ -58,7 +58,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -219,7 +219,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                           runSpacing: 8,
                           children: [
                             _infoTag('${meal.protein}g P', FitGenieTheme.teal),
-                            _infoTag('${meal.carbs}g C', Colors.orange),
+                            _infoTag('${meal.carbs}g C', FitGenieTheme.warning),
                             _infoTag('${meal.fats}g F', Colors.purple),
                             _infoTag(meal.mealType.toUpperCase(), FitGenieTheme.primary),
                           ],

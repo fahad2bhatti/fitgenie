@@ -62,12 +62,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadUserData() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
       _email = _auth.currentUser?.email ?? '';
 
       final userDoc = await _firestore.collection('users').doc(widget.userId).get();
+
+      if (!mounted) return;
 
       if (userDoc.exists && userDoc.data() != null) {
         final data = userDoc.data()!;
@@ -91,6 +94,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .doc('main')
             .get();
 
+        if (!mounted) return;
+
         if (goalsDoc.exists && goalsDoc.data() != null) {
           final goals = goalsDoc.data()!;
           setState(() {
@@ -106,6 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       debugPrint('Load error: $e');
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
   }
 
@@ -121,11 +127,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // 🔍 GOOGLE FIT STATUS CHECK
   // ═══════════════════════════════════════════
   Future<void> _checkGoogleFitStatus() async {
+    if (!mounted) return;
     setState(() => _isGoogleFitLoading = true);
 
     try {
       final status = await _stepService.checkGoogleFitStatus();
 
+      if (!mounted) return;
       setState(() {
         _googleFitStatus = status.overallStatus;
         _healthConnectAvailable = status.healthConnectAvailable;
@@ -139,6 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       debugPrint(status.toString());
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _googleFitError = e.toString();
         _isGoogleFitLoading = false;
@@ -147,20 +156,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _connectGoogleFit() async {
+    if (!mounted) return;
     setState(() => _isGoogleFitLoading = true);
 
     try {
       final connected = await _stepService.connectGoogleFit();
 
+      if (!mounted) return;
+
       if (connected) {
-        _showSnackbar('✅ Google Fit connected!', Colors.green);
+        _showSnackbar('✅ Google Fit connected!', FitGenieTheme.success);
       } else {
-        _showSnackbar('❌ Connection failed. Try again.', Colors.red);
+        _showSnackbar('❌ Connection failed. Try again.', FitGenieTheme.error);
       }
 
       await _checkGoogleFitStatus();
     } catch (e) {
-      _showSnackbar('⚠️ Error: $e', Colors.orange);
+      if (!mounted) return;
+      _showSnackbar('⚠️ Error: $e', FitGenieTheme.warning);
       setState(() => _isGoogleFitLoading = false);
     }
   }
@@ -185,11 +198,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               setState(() => _isGoogleFitLoading = true);
 
               await _stepService.disconnectGoogleFit();
-              _showSnackbar('🔌 Google Fit disconnected', Colors.orange);
+              _showSnackbar('🔌 Google Fit disconnected', FitGenieTheme.warning);
 
               await _checkGoogleFitStatus();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: const Text('Disconnect', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -271,12 +284,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.2),
+                      color: FitGenieTheme.error.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.delete, color: Colors.red),
+                    child: const Icon(Icons.delete, color: FitGenieTheme.error),
                   ),
-                  title: const Text('Remove Photo', style: TextStyle(color: Colors.red)),
+                  title: const Text('Remove Photo', style: TextStyle(color: FitGenieTheme.error)),
                   subtitle: const Text('Delete current photo', style: TextStyle(color: Colors.grey, fontSize: 12)),
                 ),
               ],
@@ -289,8 +302,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _pickAndUploadPhoto(ImageSource source) async {
     final image = await _imageService.pickImage(source: source);
+    if (!mounted) return;
     if (image == null) {
-      _showSnackbar('No image selected', Colors.orange);
+      _showSnackbar('No image selected', FitGenieTheme.warning);
       return;
     }
 
@@ -301,13 +315,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       imageFile: image,
     );
 
+    if (!mounted) return;
     setState(() {
       _isUploadingPhoto = false;
       if (result != null) {
         _photoBase64 = result;
-        _showSnackbar('Photo updated! 📷', Colors.green);
+        _showSnackbar('Photo updated! 📷', FitGenieTheme.success);
       } else {
-        _showSnackbar('Failed to upload', Colors.red);
+        _showSnackbar('Failed to upload', FitGenieTheme.error);
       }
     });
   }
@@ -317,11 +332,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final success = await _imageService.deleteProfilePhoto(widget.userId);
 
+    if (!mounted) return;
     setState(() {
       _isUploadingPhoto = false;
       if (success) {
         _photoBase64 = null;
-        _showSnackbar('Photo removed', Colors.orange);
+        _showSnackbar('Photo removed', FitGenieTheme.warning);
       }
     });
   }
@@ -494,11 +510,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Color _getLevelColor(String level) {
     switch (level.toLowerCase()) {
       case 'beginner':
-        return Colors.green;
+        return FitGenieTheme.success;
       case 'intermediate':
-        return Colors.orange;
+        return FitGenieTheme.warning;
       case 'advanced':
-        return Colors.red;
+        return FitGenieTheme.error;
       default:
         return FitGenieTheme.primary;
     }
@@ -711,15 +727,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
+                color: FitGenieTheme.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: Colors.orange, size: 16),
+                  const Icon(Icons.info_outline, color: FitGenieTheme.warning, size: 16),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(_googleFitError, style: const TextStyle(color: Colors.orange, fontSize: 12)),
+                    child: Text(_googleFitError, style: const TextStyle(color: FitGenieTheme.warning, fontSize: 12)),
                   ),
                 ],
               ),
@@ -739,7 +755,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isConnected ? Colors.red.withValues(alpha: 0.8) : Colors.greenAccent,
+                backgroundColor: isConnected ? FitGenieTheme.error.withValues(alpha: 0.8) : Colors.greenAccent,
                 foregroundColor: isConnected ? Colors.white : Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -833,10 +849,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
+                color: FitGenieTheme.warning.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.notifications, color: Colors.orange, size: 20),
+              child: const Icon(Icons.notifications, color: FitGenieTheme.warning, size: 20),
             ),
             title: const Text('Notification Settings'),
             subtitle: const Text('Customize your reminders', style: TextStyle(color: Colors.grey, fontSize: 12)),
@@ -874,12 +890,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.2),
+                color: FitGenieTheme.error.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.delete_forever, color: Colors.red, size: 20),
+              child: const Icon(Icons.delete_forever, color: FitGenieTheme.error, size: 20),
             ),
-            title: const Text('Delete Account', style: TextStyle(color: Colors.red)),
+            title: const Text('Delete Account', style: TextStyle(color: FitGenieTheme.error)),
             subtitle: const Text('Permanently delete your account & data', style: TextStyle(color: Colors.grey, fontSize: 12)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             onTap: _showDeleteAccountDialog,
@@ -898,7 +914,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         icon: const Icon(Icons.logout, color: Colors.white),
         label: const Text('Logout', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red.shade700,
+          backgroundColor: FitGenieTheme.error,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -912,10 +928,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       width: double.infinity,
       child: OutlinedButton.icon(
         onPressed: _showDeleteAccountDialog,
-        icon: const Icon(Icons.delete_forever, color: Colors.red),
-        label: const Text('Delete Account', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+        icon: const Icon(Icons.delete_forever, color: FitGenieTheme.error),
+        label: const Text('Delete Account', style: TextStyle(color: FitGenieTheme.error, fontWeight: FontWeight.bold)),
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: Colors.red),
+          side: const BorderSide(color: FitGenieTheme.error),
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -930,9 +946,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
         title: const Row(children: [
-          Icon(Icons.warning, color: Colors.red),
+          Icon(Icons.warning, color: FitGenieTheme.error),
           SizedBox(width: 8),
-          Text('Delete Account', style: TextStyle(color: Colors.red)),
+          Text('Delete Account', style: TextStyle(color: FitGenieTheme.error)),
         ]),
         content: const Text(
           'This will permanently delete your account and ALL data including:\n\n• Workouts & custom plans\n• Nutrition logs & saved meals\n• Profile & goals\n• AI chat history\n\nThis action CANNOT be undone.',
@@ -948,7 +964,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Navigator.pop(context);
               await _deleteAccount();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: const Text('Delete Forever', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -966,7 +982,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Color(0xFF1A1A1A),
         content: Row(
           children: [
-            CircularProgressIndicator(color: Colors.red),
+            CircularProgressIndicator(color: FitGenieTheme.error),
             SizedBox(width: 16),
             Text('Deleting account...'),
           ],
@@ -1019,10 +1035,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (e.toString().contains('requires-recent-login')) {
         _showSnackbar(
           'Please logout and login again, then try deleting.',
-          Colors.orange,
+          FitGenieTheme.warning,
         );
       } else {
-        _showSnackbar('Error deleting account. Please try again.', Colors.red);
+        _showSnackbar('Error deleting account. Please try again.', FitGenieTheme.error);
       }
     }
   }
@@ -1097,7 +1113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-    );
+    ).whenComplete(() => nameController.dispose());
   }
 
   Widget _buildDropdown(String value, List<String> items, Function(String?) onChanged) {
@@ -1181,7 +1197,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-    );
+    ).whenComplete(() {
+      wc.dispose();
+      hc.dispose();
+      ac.dispose();
+    });
   }
 
   void _showEditGoalsDialog() {
@@ -1247,7 +1267,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-    );
+    ).whenComplete(() {
+      cc.dispose();
+      pc.dispose();
+      wc.dispose();
+    });
   }
 
   InputDecoration _inputDecoration(String label, IconData icon) {
@@ -1272,14 +1296,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'goal': goal,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+      if (!mounted) return;
       setState(() {
         _name = name;
         _fitnessLevel = fitnessLevel;
         _goal = goal;
       });
-      _showSnackbar('Profile updated! 👍', Colors.green);
+      _showSnackbar('Profile updated! 👍', FitGenieTheme.success);
     } catch (e) {
-      _showSnackbar('Failed', Colors.red);
+      if (!mounted) return;
+      _showSnackbar('Failed', FitGenieTheme.error);
     }
   }
 
@@ -1292,14 +1318,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'age': age,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+      if (!mounted) return;
       setState(() {
         _weight = weight;
         _height = height;
         _age = age;
       });
-      _showSnackbar('Stats updated! 💪', Colors.green);
+      _showSnackbar('Stats updated! 💪', FitGenieTheme.success);
     } catch (e) {
-      _showSnackbar('Failed', Colors.red);
+      if (!mounted) return;
+      _showSnackbar('Failed', FitGenieTheme.error);
     }
   }
 
@@ -1321,9 +1349,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _proteinGoal = protein;
         _waterGoal = water;
       });
-      _showSnackbar('Goals updated! 🎯', Colors.green);
+      _showSnackbar('Goals updated! 🎯', FitGenieTheme.success);
     } catch (e) {
-      _showSnackbar('Failed', Colors.red);
+      _showSnackbar('Failed', FitGenieTheme.error);
     }
   }
 
@@ -1345,7 +1373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Navigator.pop(context);
               await _auth.signOut();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: const Text('Logout', style: TextStyle(color: Colors.white)),
           ),
         ],

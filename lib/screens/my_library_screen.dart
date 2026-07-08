@@ -76,7 +76,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -125,13 +125,13 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
   Color _bodyPartColor(String bodyPart) {
     switch (bodyPart.toLowerCase()) {
       case 'chest':
-        return Colors.red;
+        return FitGenieTheme.error;
       case 'back':
         return Colors.blue;
       case 'legs':
-        return Colors.green;
+        return FitGenieTheme.success;
       case 'arms':
-        return Colors.orange;
+        return FitGenieTheme.warning;
       case 'shoulders':
         return Colors.purple;
       case 'core':
@@ -393,7 +393,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                                 const SizedBox(width: 8),
                                 _circleActionButton(
                                   icon: Icons.delete_outline,
-                                  color: Colors.red,
+                                  color: FitGenieTheme.error,
                                   onTap: () => _deleteWorkout(doc.id),
                                 ),
                               ],
@@ -1032,7 +1032,7 @@ class _CustomWorkoutBuilderScreenState
                               });
                             },
                             child: const Icon(Icons.close,
-                                size: 18, color: Colors.red),
+                                size: 18, color: FitGenieTheme.error),
                           ),
                         ],
                       ),
@@ -1549,14 +1549,14 @@ class _CustomWorkoutSessionScreenState
               Navigator.pop(context);
             },
             child:
-            const Text('Discard', style: TextStyle(color: Colors.red)),
+            const Text('Discard', style: TextStyle(color: FitGenieTheme.error)),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _finishWorkout();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.success),
             child: const Text('Save & Exit',
                 style: TextStyle(color: Colors.white)),
           ),
@@ -1589,7 +1589,7 @@ class _CustomWorkoutSessionScreenState
               child: const Text(
                 'FINISH',
                 style: TextStyle(
-                    color: Colors.green, fontWeight: FontWeight.bold),
+                    color: FitGenieTheme.success, fontWeight: FontWeight.bold),
               ),
             ),
         ],
@@ -1652,13 +1652,13 @@ class _CustomWorkoutSessionScreenState
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.15),
+                      color: FitGenieTheme.success.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       children: [
                         const Icon(Icons.timer,
-                            size: 16, color: Colors.green),
+                            size: 16, color: FitGenieTheme.success),
                         const SizedBox(width: 4),
                         StreamBuilder(
                           stream: Stream.periodic(
@@ -1672,7 +1672,7 @@ class _CustomWorkoutSessionScreenState
                             return Text(
                               '$minutes min',
                               style: const TextStyle(
-                                color: Colors.green,
+                                color: FitGenieTheme.success,
                                 fontWeight: FontWeight.bold,
                               ),
                             );
@@ -1848,7 +1848,7 @@ class _CustomWorkoutSessionScreenState
                             ),
                           ),
                           const Icon(Icons.check_circle,
-                              color: Colors.green),
+                              color: FitGenieTheme.success),
                         ],
                       ),
                     ),
@@ -1881,16 +1881,16 @@ class _CustomWorkoutSessionScreenState
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: _finishWorkout,
-                  icon: const Icon(Icons.check, color: Colors.green),
+                  icon: const Icon(Icons.check, color: FitGenieTheme.success),
                   label: const Text(
                     'Finish Workout',
                     style: TextStyle(
-                      color: Colors.green,
+                      color: FitGenieTheme.success,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.green),
+                    side: const BorderSide(color: FitGenieTheme.success),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),

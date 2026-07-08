@@ -724,7 +724,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     value: completed / total,
                     backgroundColor: Colors.white.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      completed == total ? Colors.green : FitGenieTheme.primary,
+                      completed == total ? FitGenieTheme.success : FitGenieTheme.primary,
                     ),
                     minHeight: 10,
                   ),
@@ -740,7 +740,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                         Text(
                           'All challenges completed!',
                           style: TextStyle(
-                            color: Colors.green,
+                            color: FitGenieTheme.success,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -877,12 +877,12 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isCompleted
-            ? Colors.green.withValues(alpha: 0.1)
+            ? FitGenieTheme.success.withValues(alpha: 0.1)
             : FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isCompleted
-              ? Colors.green.withValues(alpha: 0.3)
+              ? FitGenieTheme.success.withValues(alpha: 0.3)
               : Colors.white.withValues(alpha: 0.06),
         ),
       ),
@@ -895,7 +895,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 height: 50,
                 decoration: BoxDecoration(
                   color: isCompleted
-                      ? Colors.green.withValues(alpha: 0.2)
+                      ? FitGenieTheme.success.withValues(alpha: 0.2)
                       : FitGenieTheme.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -919,7 +919,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: isCompleted ? Colors.green : Colors.white,
+                              color: isCompleted ? FitGenieTheme.success : Colors.white,
                             ),
                           ),
                         ),
@@ -930,14 +930,14 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                           ),
                           decoration: BoxDecoration(
                             color: isCompleted
-                                ? Colors.green.withValues(alpha: 0.2)
+                                ? FitGenieTheme.success.withValues(alpha: 0.2)
                                 : Colors.amber.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             '+${challenge.points} XP',
                             style: TextStyle(
-                              color: isCompleted ? Colors.green : Colors.amber,
+                              color: isCompleted ? FitGenieTheme.success : Colors.amber,
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
@@ -968,7 +968,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     value: progress,
                     backgroundColor: Colors.white.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isCompleted ? Colors.green : FitGenieTheme.primary,
+                      isCompleted ? FitGenieTheme.success : FitGenieTheme.primary,
                     ),
                     minHeight: 8,
                   ),
@@ -979,13 +979,13 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 '${challenge.currentValue}/${challenge.targetValue}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: isCompleted ? Colors.green : Colors.white,
+                  color: isCompleted ? FitGenieTheme.success : Colors.white,
                 ),
               ),
               if (isCompleted)
                 const Padding(
                   padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  child: Icon(Icons.check_circle, color: FitGenieTheme.success, size: 20),
                 ),
             ],
           ),
@@ -1199,14 +1199,14 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: isUnlocked
-                    ? Colors.green.withValues(alpha: 0.2)
+                    ? FitGenieTheme.success.withValues(alpha: 0.2)
                     : Colors.amber.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 isUnlocked ? '✅ Unlocked!' : '+${achievement.points} XP',
                 style: TextStyle(
-                  color: isUnlocked ? Colors.green : Colors.amber,
+                  color: isUnlocked ? FitGenieTheme.success : Colors.amber,
                   fontWeight: FontWeight.bold,
                 ),
               ),

@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
-//import '../services/ai_service.dart';
+import '../services/ai_service.dart';
 import '../services/nutrition_service.dart';
 import '../widgets/fg_card.dart';
 import '../widgets/fg_progress.dart';
-//import 'meal_scanner_screen.dart';
+import 'meal_scanner_screen.dart';
 import 'food_search_screen.dart';
 import 'saved_meals_screen.dart';
 
@@ -227,31 +227,47 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   // 📸 MEAL SCANNER
   // ============================================================
 
-  Future<void> _openMealScanner() async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: FitGenieTheme.cardDark,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.workspace_premium, color: Colors.amber),
-            SizedBox(width: 8),
-            Text('Coming Soon'),
-          ],
-        ),
-        content: const Text(
-          '📸 Meal Scanner ek Premium feature banega — jald hi available hoga!',
-          style: TextStyle(color: FitGenieTheme.muted),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+  Future<void> _openMealScanner({String? mealTypeOverride}) async {
+    final analysis = await Navigator.push<MealAnalysis>(
+      context,
+      MaterialPageRoute(builder: (_) => const MealScannerScreen()),
     );
+
+    if (analysis == null) return;
+
+    final mealType = mealTypeOverride ?? _defaultMealTypeForNow();
+
+    final entry = MealEntry(
+      name: analysis.foodName,
+      quantity: analysis.quantity,
+      mealType: mealType,
+      calories: analysis.calories,
+      protein: analysis.protein,
+      carbs: analysis.carbs,
+      fats: analysis.fat,
+      source: 'scanner',
+    );
+
+    await _service.addMealEntry(
+      uid: _uid,
+      entry: entry,
+      date: _selectedDate,
+    );
+
+    await _load();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${entry.name} scanned & added to $mealType ✅')),
+    );
+  }
+
+  String _defaultMealTypeForNow() {
+    final hour = DateTime.now().hour;
+    if (hour < 11) return 'breakfast';
+    if (hour < 16) return 'lunch';
+    if (hour < 20) return 'dinner';
+    return 'snacks';
   }
   // ============================================================
   // 📚 SAVED MEALS PICKER
@@ -364,6 +380,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         ),
       ),
     );
+
+    controller.dispose();
 
     if (mealName == null || mealName.trim().isEmpty) return;
 
@@ -483,6 +501,12 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         ),
       ),
     );
+
+    caloriesCtrl.dispose();
+    proteinCtrl.dispose();
+    carbsCtrl.dispose();
+    fatsCtrl.dispose();
+    waterCtrl.dispose();
   }
 
   // ============================================================
@@ -746,6 +770,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         },
       ),
     );
+
+    nameCtrl.dispose();
+    quantityCtrl.dispose();
+    caloriesCtrl.dispose();
+    proteinCtrl.dispose();
+    carbsCtrl.dispose();
+    fatsCtrl.dispose();
   }
 
   // ============================================================
@@ -826,7 +857,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
               _progress(protein, proteinGoal), FitGenieTheme.teal),
           const SizedBox(height: 14),
           _macroProgress('Carbs', '$carbs / $carbsGoal g',
-              _progress(carbs, carbsGoal), Colors.orange),
+              _progress(carbs, carbsGoal), FitGenieTheme.warning),
           const SizedBox(height: 14),
           _macroProgress('Fats', '$fats / $fatsGoal g',
               _progress(fats, fatsGoal), Colors.purple),
@@ -905,7 +936,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           child: _actionCard(
             icon: Icons.flag_outlined,
             label: 'Goals',
-            color: Colors.orange,
+            color: FitGenieTheme.warning,
             onTap: _openGoalsSheet,
           ),
         ),
@@ -968,11 +999,11 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             icon: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.15),
+                color: FitGenieTheme.error.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.remove,
-                  color: Colors.red, size: 18),
+                  color: FitGenieTheme.error, size: 18),
             ),
           ),
           Text('$water',
@@ -983,11 +1014,11 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             icon: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.15),
+                color: FitGenieTheme.success.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.add,
-                  color: Colors.green, size: 18),
+                  color: FitGenieTheme.success, size: 18),
             ),
           ),
         ],

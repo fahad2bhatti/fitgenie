@@ -129,6 +129,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   // ✅ NEW: Load all data in correct order
   Future<void> _loadAllData() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
@@ -147,6 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       debugPrint('Dashboard load error: $e');
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
   }
 
@@ -187,6 +189,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           }
         };
 
+        if (!mounted) return;
         setState(() {
           _stepCounterInitialized = true;
           _stepCounterHasPermission = true;
@@ -196,6 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         debugPrint('✅ Step counter initialized with $_todaySteps steps');
         debugPrint('   Source: ${_stepCounterService.isUsingHealthConnect ? "Google Fit" : "Pedometer"}');
       } else {
+        if (!mounted) return;
         setState(() {
           _stepCounterHasPermission = false;
         });
@@ -215,6 +219,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   Future<void> _requestStepPermission() async {
     final success = await _stepCounterService.initialize(widget.userId);
+    if (!mounted) return;
     if (success) {
       setState(() {
         _stepCounterHasPermission = true;
@@ -606,16 +611,16 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
   }
 
   Color _getStepStatusColor() {
-    if (!_stepCounterHasPermission) return Colors.orange;
+    if (!_stepCounterHasPermission) return FitGenieTheme.warning;
     if (!_stepCounterInitialized) return Colors.grey;
 
     if (_stepCounterService.isUsingHealthConnect) {
-      return Colors.green;
+      return FitGenieTheme.success;
     }
 
     switch (_pedestrianStatus) {
       case 'walking':
-        return Colors.green;
+        return FitGenieTheme.success;
       case 'stopped':
         return Colors.grey;
       default:
@@ -708,20 +713,20 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.green.withValues(alpha: 0.2),
+                              color: FitGenieTheme.success.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.cloud_done,
-                                    size: 10, color: Colors.green),
+                                    size: 10, color: FitGenieTheme.success),
                                 SizedBox(width: 3),
                                 Text(
                                   'SYNC',
                                   style: TextStyle(
                                     fontSize: 8,
-                                    color: Colors.green,
+                                    color: FitGenieTheme.success,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -751,7 +756,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               if (!_stepCounterHasPermission)
                 IconButton(
                   icon: const Icon(Icons.warning_amber,
-                      color: Colors.orange, size: 22),
+                      color: FitGenieTheme.warning, size: 22),
                   onPressed: _requestStepPermission,
                   tooltip: 'Enable Step Tracking',
                 )
@@ -802,7 +807,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                       runSpacing: 8,
                       children: [
                         _buildMiniStat(Icons.local_fire_department,
-                            '${_stepsCalories.round()}', 'kcal', Colors.orange),
+                            '${_stepsCalories.round()}', 'kcal', FitGenieTheme.warning),
                         _buildMiniStat(Icons.straighten,
                             _stepsDistance.toStringAsFixed(1), 'km', Colors.blue),
                         _buildMiniStat(Icons.timer, '$_stepsActiveMinutes',
@@ -862,7 +867,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: goalAchieved
-                  ? Colors.green.withValues(alpha: 0.15)
+                  ? FitGenieTheme.success.withValues(alpha: 0.15)
                   : Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -870,7 +875,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               children: [
                 Icon(
                   goalAchieved ? Icons.check_circle : Icons.flag,
-                  color: goalAchieved ? Colors.green : Colors.grey,
+                  color: goalAchieved ? FitGenieTheme.success : Colors.grey,
                   size: 16,
                 ),
                 const SizedBox(width: 8),
@@ -881,7 +886,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                         : '${_formatNumber(_stepsGoal - _todaySteps)} steps to go',
                     style: TextStyle(
                       fontSize: 12,
-                      color: goalAchieved ? Colors.green : Colors.grey,
+                      color: goalAchieved ? FitGenieTheme.success : Colors.grey,
                       fontWeight: goalAchieved ? FontWeight.w600 : FontWeight.normal,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -891,7 +896,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   decoration: BoxDecoration(
                     color: _stepCounterService.isUsingHealthConnect
-                        ? Colors.green.withValues(alpha: 0.1)
+                        ? FitGenieTheme.success.withValues(alpha: 0.1)
                         : Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
@@ -900,7 +905,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                     style: TextStyle(
                       fontSize: 8,
                       color: _stepCounterService.isUsingHealthConnect
-                          ? Colors.green
+                          ? FitGenieTheme.success
                           : Colors.blue,
                       fontWeight: FontWeight.w500,
                     ),
@@ -954,13 +959,13 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.15),
+                    color: FitGenieTheme.success.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '$_thisWeekWorkoutCount workouts',
                     style: const TextStyle(
-                        color: Colors.green,
+                        color: FitGenieTheme.success,
                         fontSize: 11,
                         fontWeight: FontWeight.w600),
                   ),
@@ -1029,7 +1034,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               _caloriesGoal > 0
                   ? (_todayCalories / _caloriesGoal).clamp(0.0, 1.0)
                   : 0.0,
-              Colors.orange),
+              FitGenieTheme.warning),
         ],
       ),
     );
@@ -1187,7 +1192,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               child: QuickActionTile(
                 icon: Icons.restaurant_menu,
                 title: 'Nutrition',
-                color: Colors.green,
+                color: FitGenieTheme.success,
                 onTap: () {},
               ),
             ),
@@ -1218,7 +1223,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               child: QuickActionTile(
                 icon: Icons.emoji_events,
                 title: 'Challenges',
-                color: Colors.orange,
+                color: FitGenieTheme.warning,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -1545,7 +1550,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: Colors.green,
+          backgroundColor: FitGenieTheme.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),

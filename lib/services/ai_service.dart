@@ -11,12 +11,20 @@ class AIService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // ═══════════════════════════════════════════
-  // 🔒 SECURE API KEY — loaded from .env file
+  // 🔒 SECURE API KEY
+  // Prefers --dart-define (never bundled into the app package).
+  // Falls back to .env only for local dev convenience —
+  // do NOT rely on .env for release builds (it ships inside the APK).
   // ═══════════════════════════════════════════
+  static const String _dartDefineKey =
+      String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
+
   static String get _apiKey {
+    if (_dartDefineKey.isNotEmpty) return _dartDefineKey;
+
     final key = dotenv.env['GEMINI_API_KEY'] ?? '';
     if (key.isEmpty) {
-      debugPrint('❌ GEMINI_API_KEY not found in .env file!');
+      debugPrint('❌ GEMINI_API_KEY not found (checked --dart-define and .env)!');
     }
     return key;
   }
