@@ -1482,4 +1482,3 @@ class _MealEntryTile extends StatelessWidget {
   }
 }
 
-

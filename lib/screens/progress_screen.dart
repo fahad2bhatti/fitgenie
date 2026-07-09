@@ -38,6 +38,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
   List<double> _weeklyProtein = [0, 0, 0, 0, 0, 0, 0];
   double _currentWeight = 75.0;
 
+  // ✅ NEW: Weight trend history (chronological, oldest → newest)
+  List<WeightEntry> _weightHistory = [];
+
   // ✅ NEW: Weekly Report Data
   List<DailyData> _weekData = [];
   int _caloriesGoal = 2400;
@@ -226,6 +229,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
     });
   }
 
+  // ✅ UPDATED: Weight history now also falls back to the profile's saved
+  // weight if no weightLogs exist yet, and builds chronological data for
+  // the trend chart.
   Future<void> _loadWeightHistory() async {
     try {
       final weightSnapshot = await _firestore
@@ -233,18 +239,37 @@ class _ProgressScreenState extends State<ProgressScreen> {
           .doc(widget.userId)
           .collection('weightLogs')
           .orderBy('date', descending: true)
-          .limit(10)
+          .limit(15)
           .get();
 
-      List<Map<String, dynamic>> history = [];
+      List<WeightEntry> history = [];
 
       for (var doc in weightSnapshot.docs) {
-        history.add(doc.data());
+        final data = doc.data();
+        final ts = data['date'] as Timestamp?;
+        final w = (data['weight'] as num?)?.toDouble();
+        if (w != null) {
+          history.add(WeightEntry(date: ts?.toDate() ?? DateTime.now(), weight: w));
+        }
       }
 
       if (history.isNotEmpty) {
         setState(() {
-          _currentWeight = (history.first['weight'] ?? 75.0).toDouble();
+          _currentWeight = history.first.weight; // most recent (list is descending)
+          _weightHistory = history.reversed.toList(); // oldest → newest for chart
+        });
+        return;
+      }
+
+      // Fallback: no weightLogs yet — read the weight saved directly on the
+      // user profile (e.g. via Profile screen / onboarding) so the Current
+      // Weight card is never stuck on the old default.
+      final userDoc = await _firestore.collection('users').doc(widget.userId).get();
+      final profileWeight = (userDoc.data()?['weight'] as num?)?.toDouble();
+      if (profileWeight != null) {
+        setState(() {
+          _currentWeight = profileWeight;
+          _weightHistory = [];
         });
       }
     } catch (e) {
@@ -677,7 +702,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
             if (_bestDay != null && (_bestDay!.calories > 0 || _bestDay!.protein > 0))
               const SizedBox(height: 16),
 
-            // Weight Card
+            // Weight Card (now includes trend chart)
             FGCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -690,7 +715,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           Icon(Icons.monitor_weight, color: FitGenieTheme.teal, size: 20),
                           const SizedBox(width: 8),
                           const Text(
-                            'Current Weight',
+                            'Weight Trend',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
@@ -714,12 +739,24 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           ),
                         ),
                         Text(
-                          'Tap + to log new weight',
-                          style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                          _weightHistory.length >= 2
+                              ? _weightTrendLabel()
+                              : 'Tap + to log new weight',
+                          style: TextStyle(
+                            color: _weightHistory.length >= 2
+                                ? _weightTrendColor()
+                                : FitGenieTheme.muted,
+                            fontSize: 12,
+                            fontWeight: _weightHistory.length >= 2 ? FontWeight.bold : FontWeight.normal,
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  if (_weightHistory.length >= 2) ...[
+                    const SizedBox(height: 20),
+                    _buildWeightTrendChart(),
+                  ],
                 ],
               ),
             ),
@@ -817,6 +854,105 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         ),
       ),
     );
+  }
+
+  // ✅ NEW: Weight Trend Chart
+  Widget _buildWeightTrendChart() {
+    final weights = _weightHistory.map((e) => e.weight).toList();
+    final minW = weights.reduce((a, b) => a < b ? a : b);
+    final maxW = weights.reduce((a, b) => a > b ? a : b);
+    final padding = (maxW - minW).abs() < 2 ? 2.0 : (maxW - minW) * 0.2;
+
+    return SizedBox(
+      height: 160,
+      child: LineChart(
+        LineChartData(
+          minY: minW - padding,
+          maxY: maxW + padding,
+          lineTouchData: LineTouchData(
+            enabled: true,
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipItems: (spots) => spots.map((s) {
+                return LineTooltipItem(
+                  '${s.y.toStringAsFixed(1)} kg',
+                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                );
+              }).toList(),
+            ),
+          ),
+          lineBarsData: [
+            LineChartBarData(
+              spots: List.generate(_weightHistory.length, (i) {
+                return FlSpot(i.toDouble(), _weightHistory[i].weight);
+              }),
+              isCurved: true,
+              color: FitGenieTheme.teal,
+              barWidth: 3,
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, barData, index) {
+                  return FlDotCirclePainter(
+                    radius: 4,
+                    color: FitGenieTheme.teal,
+                    strokeWidth: 2,
+                    strokeColor: Colors.white,
+                  );
+                },
+              ),
+              belowBarData: BarAreaData(
+                show: true,
+                color: FitGenieTheme.teal.withValues(alpha: 0.15),
+              ),
+            ),
+          ],
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 26,
+                interval: (_weightHistory.length / 4).clamp(1, double.infinity).roundToDouble(),
+                getTitlesWidget: (value, meta) {
+                  final i = value.toInt();
+                  if (i < 0 || i >= _weightHistory.length) return const SizedBox();
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      DateFormat('MMM d').format(_weightHistory[i].date),
+                      style: TextStyle(color: FitGenieTheme.muted, fontSize: 9),
+                    ),
+                  );
+                },
+              ),
+            ),
+            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            getDrawingHorizontalLine: (value) => FlLine(
+              color: Colors.white.withValues(alpha: 0.08),
+              strokeWidth: 1,
+            ),
+          ),
+          borderData: FlBorderData(show: false),
+        ),
+      ),
+    );
+  }
+
+  String _weightTrendLabel() {
+    final diff = _weightHistory.last.weight - _weightHistory.first.weight;
+    final arrow = diff > 0 ? '↑' : (diff < 0 ? '↓' : '→');
+    return '$arrow ${diff.abs().toStringAsFixed(1)} kg since ${DateFormat('MMM d').format(_weightHistory.first.date)}';
+  }
+
+  Color _weightTrendColor() {
+    final diff = _weightHistory.last.weight - _weightHistory.first.weight;
+    if (diff == 0) return FitGenieTheme.muted;
+    return diff < 0 ? FitGenieTheme.success : FitGenieTheme.warning;
   }
 
   // ✅ NEW: Date Range Widget
@@ -1229,7 +1365,14 @@ Short motivating feedback do (2-3 lines max) with tips.''',
           .set({
         'weight': weight,
         'date': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true));
+
+      // ✅ Keep the profile's weight field in sync too, so Profile screen
+      // and Onboarding-derived data reflect the latest logged weight.
+      await _firestore.collection('users').doc(widget.userId).set({
+        'weight': weight,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
 
       if (!mounted) return;
 
@@ -1239,6 +1382,10 @@ Short motivating feedback do (2-3 lines max) with tips.''',
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Weight logged! 💪')),
       );
+
+      // Refresh trend chart with the new entry
+      await _loadWeightHistory();
+      if (mounted) setState(() {});
     } catch (e) {
       debugPrint('Save weight error: $e');
     }
@@ -1260,4 +1407,14 @@ class DailyData {
     required this.protein,
     required this.workouts,
   });
+}
+
+// ==========================================
+// ⚖️ WEIGHT ENTRY MODEL (for trend chart)
+// ==========================================
+class WeightEntry {
+  final DateTime date;
+  final double weight;
+
+  WeightEntry({required this.date, required this.weight});
 }
