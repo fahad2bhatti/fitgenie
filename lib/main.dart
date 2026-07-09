@@ -18,6 +18,8 @@ import 'services/sync_service.dart';
 import 'services/step_counter_service.dart';
 import 'widgets/offline_indicator.dart';
 
+import 'screens/onboarding_screen.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -137,6 +139,15 @@ class _AppEntryState extends State<AppEntry> {
 }
 
 // ═══════════════════════════════════════════
+// 🧩 Helper class — carries name + onboarding status together
+// ═══════════════════════════════════════════
+class _UserGateInfo {
+  final String name;
+  final bool profileComplete;
+  const _UserGateInfo({required this.name, required this.profileComplete});
+}
+
+// ═══════════════════════════════════════════
 // 🔐 AuthGate with Offline Banner + Step Counter Init
 // ═══════════════════════════════════════════
 class AuthGate extends StatefulWidget {
@@ -148,10 +159,13 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   String? _cachedUid;
-  Future<String>? _cachedNameFuture;
+  Future<_UserGateInfo>? _cachedInfoFuture;
   String? _lastInitializedUid;
 
-  Future<String> _resolveUserName(User user) async {
+  Future<_UserGateInfo> _resolveUserInfo(User user) async {
+    String name = 'User';
+    bool profileComplete = false;
+
     try {
       final doc = await FirebaseFirestore.instance
           .collection('users')
@@ -159,27 +173,31 @@ class _AuthGateState extends State<AuthGate> {
           .get();
 
       final data = doc.data();
-      final name = data?['name'];
+      final rawName = data?['name'];
 
-      if (doc.exists && name is String && name.trim().isNotEmpty) {
-        return name.trim();
+      if (doc.exists && rawName is String && rawName.trim().isNotEmpty) {
+        name = rawName.trim();
       }
+      profileComplete = data?['profileComplete'] == true;
     } catch (_) {}
 
-    final email = user.email;
-    if (email != null && email.contains('@')) {
-      final derived = email.split('@').first.trim();
-      if (derived.isNotEmpty) return derived;
+    if (name == 'User') {
+      final email = user.email;
+      if (email != null && email.contains('@')) {
+        final derived = email.split('@').first.trim();
+        if (derived.isNotEmpty) name = derived;
+      }
     }
-    return 'User';
+
+    return _UserGateInfo(name: name, profileComplete: profileComplete);
   }
 
-  Future<String> _getNameFutureFor(User user) {
-    if (_cachedUid != user.uid || _cachedNameFuture == null) {
+  Future<_UserGateInfo> _getInfoFutureFor(User user) {
+    if (_cachedUid != user.uid || _cachedInfoFuture == null) {
       _cachedUid = user.uid;
-      _cachedNameFuture = _resolveUserName(user);
+      _cachedInfoFuture = _resolveUserInfo(user);
     }
-    return _cachedNameFuture!;
+    return _cachedInfoFuture!;
   }
 
   void _initializeStepCounter(String userId) {
@@ -266,19 +284,28 @@ class _AuthGateState extends State<AuthGate> {
           // ✅ User logged in — initialize step counter
           _initializeStepCounter(user.uid);
 
-          return FutureBuilder<String>(
-            future: _getNameFutureFor(user),
-            builder: (context, nameSnapshot) {
-              if (nameSnapshot.connectionState == ConnectionState.waiting) {
+          return FutureBuilder<_UserGateInfo>(
+            future: _getInfoFutureFor(user),
+            builder: (context, infoSnapshot) {
+              if (infoSnapshot.connectionState == ConnectionState.waiting) {
                 return const Scaffold(
                   body: Center(child: CircularProgressIndicator()),
                 );
               }
 
-              final userName = nameSnapshot.data ?? 'User';
+              final info = infoSnapshot.data ??
+                  const _UserGateInfo(name: 'User', profileComplete: false);
+
+              if (!info.profileComplete) {
+                return OnboardingScreen(
+                  userId: user.uid,
+                  userName: info.name,
+                );
+              }
+
               return ShellScreen(
                 userId: user.uid,
-                userName: userName,
+                userName: info.name,
               );
             },
           );

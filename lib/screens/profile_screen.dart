@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import '../app/fitgenie_theme.dart';
 import '../widgets/fg_card.dart';
 import '../services/image_service.dart';
@@ -30,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _name = 'User';
   String _email = '';
   String? _photoBase64;
+  String _gender = 'Other';
   int _age = 25;
   double _weight = 70.0;
   double _height = 170.0;
@@ -78,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _name = (data['name'] as String?) ?? 'User';
           if (data['email'] != null) _email = data['email'] as String;
           _photoBase64 = data['photoBase64'] as String?;
+          _gender = (data['gender'] as String?) ?? 'Other';
           _age = (data['age'] as int?) ?? 25;
           _weight = _toDouble(data['weight']) ?? 70.0;
           _height = _toDouble(data['height']) ?? 170.0;
@@ -1138,63 +1141,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final wc = TextEditingController(text: _weight.toString());
     final hc = TextEditingController(text: _height.toString());
     final ac = TextEditingController(text: _age.toString());
+    String selectedGender = _gender;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: const Color(0xFF1A1A1A),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-            left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Edit Body Stats', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
-              ],
-            ),
-            const SizedBox(height: 20),
-            TextField(
-                controller: wc,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Weight (kg)', Icons.monitor_weight)),
-            const SizedBox(height: 12),
-            TextField(
-                controller: hc,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Height (cm)', Icons.height)),
-            const SizedBox(height: 12),
-            TextField(
-                controller: ac,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Age', Icons.cake)),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  await _updateBodyStats(
-                    weight: double.tryParse(wc.text) ?? _weight,
-                    height: double.tryParse(hc.text) ?? _height,
-                    age: int.tryParse(ac.text) ?? _age,
-                  );
-                  if (context.mounted) Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: FitGenieTheme.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16)),
-                child: const Text('Save',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: EdgeInsets.only(
+              left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Edit Body Stats', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+                ],
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Gender', style: TextStyle(color: Colors.grey)),
+              ),
+              const SizedBox(height: 8),
+              _buildDropdown(selectedGender, ['Male', 'Female', 'Other'], (val) {
+                if (val != null) setSheetState(() => selectedGender = val);
+              }),
+              const SizedBox(height: 12),
+              TextField(
+                  controller: wc,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: _inputDecoration('Weight (kg)', Icons.monitor_weight)),
+              const SizedBox(height: 12),
+              TextField(
+                  controller: hc,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: _inputDecoration('Height (cm)', Icons.height)),
+              const SizedBox(height: 12),
+              TextField(
+                  controller: ac,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: _inputDecoration('Age', Icons.cake)),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await _updateBodyStats(
+                      gender: selectedGender,
+                      weight: double.tryParse(wc.text) ?? _weight,
+                      height: double.tryParse(hc.text) ?? _height,
+                      age: int.tryParse(ac.text) ?? _age,
+                    );
+                    if (context.mounted) Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: FitGenieTheme.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 16)),
+                  child: const Text('Save',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ).whenComplete(() {
@@ -1310,16 +1326,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _updateBodyStats(
-      {required double weight, required double height, required int age}) async {
+      {required String gender, required double weight, required double height, required int age}) async {
     try {
       await _firestore.collection('users').doc(widget.userId).set({
+        'gender': gender,
         'weight': weight,
         'height': height,
         'age': age,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+
+      // ✅ Keep weightLogs in sync so Progress screen shows the latest weight
+      final dateStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('weightLogs')
+          .doc(dateStr)
+          .set({
+        'weight': weight,
+        'date': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
       if (!mounted) return;
       setState(() {
+        _gender = gender;
         _weight = weight;
         _height = height;
         _age = age;
@@ -1407,5 +1438,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 }
-
-
