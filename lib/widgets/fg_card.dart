@@ -1,8 +1,6 @@
 // lib/widgets/fg_card.dart
-
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
-
 class FGCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -11,7 +9,6 @@ class FGCard extends StatelessWidget {
   final Border? border;
   final VoidCallback? onTap;
   final List<BoxShadow>? boxShadow;
-
   const FGCard({
     super.key,
     required this.child,
@@ -22,7 +19,6 @@ class FGCard extends StatelessWidget {
     this.onTap,
     this.boxShadow,
   });
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -38,7 +34,13 @@ class FGCard extends StatelessWidget {
           ),
           boxShadow: boxShadow,
         ),
-        child: child,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
+          child: Material(
+            color: Colors.transparent,
+            child: child,
+          ),
+        ),
       ),
     );
   }
