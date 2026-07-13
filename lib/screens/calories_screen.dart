@@ -6,6 +6,8 @@ import '../services/ai_service.dart';
 import '../services/nutrition_service.dart';
 import '../widgets/fg_card.dart';
 import '../widgets/fg_progress.dart';
+import '../widgets/app_snackbar.dart';
+import '../core/app_strings.dart';
 import 'meal_scanner_screen.dart';
 import 'food_search_screen.dart';
 import 'saved_meals_screen.dart';
@@ -56,7 +58,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? LIFECYCLE
+  // 🌀 LIFECYCLE
   // ============================================================
 
   @override
@@ -66,7 +68,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? DATA LOADING
+  // 📊 DATA LOADING
   // ============================================================
 
   Future<void> _load() async {
@@ -100,14 +102,15 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Load failed: $e')),
+      AppSnackbar.showError(
+        context,
+        AppStrings.get('calories_load_failed', params: {'error': e.toString()}),
       );
     }
   }
 
   // ============================================================
-  // ? DATE NAVIGATION
+  // 📅 DATE NAVIGATION
   // ============================================================
 
   String _dateLabel() {
@@ -140,7 +143,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? MEAL HELPERS
+  // 🍽️ MEAL HELPERS
   // ============================================================
 
   List<MealEntry> _mealEntries(String mealType) {
@@ -161,7 +164,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? FOOD SEARCH (General)
+  // 🔍 FOOD SEARCH (General)
   // ============================================================
 
   Future<void> _openFoodSearch() async {
@@ -181,13 +184,14 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     await _load();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${result.name} added to ${result.mealType} ?')),
+    AppSnackbar.showSuccess(
+      context,
+      AppStrings.get('calories_added_success', params: {'name': result.name}),
     );
   }
 
   // ============================================================
-  // ? FOOD SEARCH (Meal-Specific)
+  // 🔍 FOOD SEARCH (Meal-Specific)
   // ============================================================
 
   Future<void> _openFoodSearchForMeal(String mealType) async {
@@ -218,13 +222,14 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     await _load();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${forcedEntry.name} added to $mealType ?')),
+    AppSnackbar.showSuccess(
+      context,
+      AppStrings.get('calories_added_success', params: {'name': forcedEntry.name}),
     );
   }
 
   // ============================================================
-  // ? MEAL SCANNER
+  // 📸 MEAL SCANNER
   // ============================================================
 
   Future<void> _openMealScanner({String? mealTypeOverride}) async {
@@ -257,8 +262,9 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     await _load();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${entry.name} scanned & added to $mealType ?')),
+    AppSnackbar.showSuccess(
+      context,
+      AppStrings.get('calories_scanned_success', params: {'name': entry.name}),
     );
   }
 
@@ -271,7 +277,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? SCAN MEAL - COMING SOON DIALOG
+  // 🔜 SCAN MEAL - COMING SOON DIALOG
   // ============================================================
 
   Future<void> _showScanComingSoonDialog() async {
@@ -302,7 +308,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? SAVED MEALS PICKER
+  // 📚 SAVED MEALS PICKER
   // ============================================================
 
   Future<void> _openSavedMealsPicker({String? mealTypeOverride}) async {
@@ -328,22 +334,21 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     await _load();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${selectedMeal.name} added successfully ?')),
+    AppSnackbar.showSuccess(
+      context,
+      AppStrings.get('calories_added_success', params: {'name': selectedMeal.name}),
     );
   }
 
   // ============================================================
-  // ? SAVE MEAL AS TEMPLATE
+  // 💾 SAVE MEAL AS TEMPLATE
   // ============================================================
 
   Future<void> _saveMealAsTemplate(String mealType) async {
     final items = _mealEntries(mealType);
 
     if (items.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Is meal me abhi koi item nahi hai')),
-      );
+      AppSnackbar.showWarning(context, AppStrings.get('calories_meal_empty_error'));
       return;
     }
 
@@ -368,7 +373,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Save Meal Template ?',
+              'Save Meal Template 📝',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             const SizedBox(height: 8),
@@ -425,13 +430,14 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     );
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$mealName saved to library ?')),
+    AppSnackbar.showSuccess(
+      context,
+      AppStrings.get('calories_template_saved', params: {'name': mealName}),
     );
   }
 
   // ============================================================
-  // ? WATER
+  // 💧 WATER
   // ============================================================
 
   Future<void> _quickAddWater() async {
@@ -445,20 +451,15 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? GOALS SHEET
+  // 🎯 GOALS SHEET
   // ============================================================
 
   Future<void> _openGoalsSheet() async {
-    final caloriesCtrl =
-    TextEditingController(text: caloriesGoal.toString());
-    final proteinCtrl =
-    TextEditingController(text: proteinGoal.toString());
-    final carbsCtrl =
-    TextEditingController(text: carbsGoal.toString());
-    final fatsCtrl =
-    TextEditingController(text: fatsGoal.toString());
-    final waterCtrl =
-    TextEditingController(text: waterGoal.toString());
+    final caloriesCtrl = TextEditingController(text: caloriesGoal.toString());
+    final proteinCtrl = TextEditingController(text: proteinGoal.toString());
+    final carbsCtrl = TextEditingController(text: carbsGoal.toString());
+    final fatsCtrl = TextEditingController(text: fatsGoal.toString());
+    final waterCtrl = TextEditingController(text: waterGoal.toString());
 
     await showModalBottomSheet(
       context: context,
@@ -479,9 +480,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Nutrition Goals ?',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 20),
+                'Nutrition Goals 🎯',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const SizedBox(height: 16),
               _goalField(caloriesCtrl, 'Calories Goal', 'kcal'),
@@ -500,18 +500,11 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   onPressed: () async {
                     await _service.setGoals(
                       uid: _uid,
-                      caloriesGoal:
-                      int.tryParse(caloriesCtrl.text.trim()) ??
-                          2400,
-                      proteinGoal:
-                      int.tryParse(proteinCtrl.text.trim()) ??
-                          180,
-                      carbsGoal:
-                      int.tryParse(carbsCtrl.text.trim()) ?? 250,
-                      fatsGoal:
-                      int.tryParse(fatsCtrl.text.trim()) ?? 70,
-                      waterGoal:
-                      int.tryParse(waterCtrl.text.trim()) ?? 8,
+                      caloriesGoal: int.tryParse(caloriesCtrl.text.trim()) ?? 2400,
+                      proteinGoal: int.tryParse(proteinCtrl.text.trim()) ?? 180,
+                      carbsGoal: int.tryParse(carbsCtrl.text.trim()) ?? 250,
+                      fatsGoal: int.tryParse(fatsCtrl.text.trim()) ?? 70,
+                      waterGoal: int.tryParse(waterCtrl.text.trim()) ?? 8,
                     );
                     if (context.mounted) Navigator.pop(context);
                     await _load();
@@ -519,8 +512,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
                   ),
-                  child: const Text('Save Goals',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text('Save Goals', style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],
@@ -537,34 +529,26 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ?? CUSTOM FOOD ENTRY SHEET
+  // ✏️ CUSTOM FOOD ENTRY SHEET
   // ============================================================
 
   Future<void> _openAddFoodSheet({
     MealEntry? initialEntry,
     String? entryId,
   }) async {
-    final nameCtrl =
-    TextEditingController(text: initialEntry?.name ?? '');
-    final quantityCtrl =
-    TextEditingController(text: initialEntry?.quantity ?? '');
+    final nameCtrl = TextEditingController(text: initialEntry?.name ?? '');
+    final quantityCtrl = TextEditingController(text: initialEntry?.quantity ?? '');
     final caloriesCtrl = TextEditingController(
-      text: initialEntry != null
-          ? initialEntry.calories.toString()
-          : '',
+      text: initialEntry != null ? initialEntry.calories.toString() : '',
     );
     final proteinCtrl = TextEditingController(
-      text: initialEntry != null
-          ? initialEntry.protein.toString()
-          : '',
+      text: initialEntry != null ? initialEntry.protein.toString() : '',
     );
     final carbsCtrl = TextEditingController(
-      text:
-      initialEntry != null ? initialEntry.carbs.toString() : '',
+      text: initialEntry != null ? initialEntry.carbs.toString() : '',
     );
     final fatsCtrl = TextEditingController(
-      text:
-      initialEntry != null ? initialEntry.fats.toString() : '',
+      text: initialEntry != null ? initialEntry.fats.toString() : '',
     );
     String selectedMeal = initialEntry?.mealType ?? 'breakfast';
 
@@ -573,8 +557,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       isScrollControlled: true,
       backgroundColor: FitGenieTheme.cardDark,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-        BorderRadius.vertical(top: Radius.circular(22)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) {
@@ -583,8 +566,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
               left: 20,
               right: 20,
               top: 20,
-              bottom:
-              MediaQuery.of(context).viewInsets.bottom + 20,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
             ),
             child: SingleChildScrollView(
               child: Column(
@@ -592,8 +574,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 children: [
                   Text(
                     entryId == null
-                        ? 'Custom Food Entry ??'
-                        : 'Edit Food ??',
+                        ? 'Custom Food Entry ✏️'
+                        : 'Edit Food ✏️',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -617,54 +599,40 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   TextField(
                     controller: quantityCtrl,
                     style: const TextStyle(color: Colors.white),
-                    decoration:
-                    _inputDecoration('Quantity / Serving'),
+                    decoration: _inputDecoration('Quantity / Serving'),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Meal Type',
-                      style:
-                      TextStyle(fontWeight: FontWeight.w600)),
+                  const Text('Meal Type', style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: {
-                      'breakfast': '? Breakfast',
-                      'lunch': '? Lunch',
-                      'dinner': '? Dinner',
-                      'snacks': '? Snacks',
+                      'breakfast': '🍳 Breakfast',
+                      'lunch': '🍛 Lunch',
+                      'dinner': '🍽 Dinner',
+                      'snacks': '🍿 Snacks',
                     }.entries.map((entry) {
-                      final selected =
-                          selectedMeal == entry.key;
+                      final selected = selectedMeal == entry.key;
                       return GestureDetector(
-                        onTap: () => setModalState(
-                                () => selectedMeal = entry.key),
+                        onTap: () => setModalState(() => selectedMeal = entry.key),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: selected
-                                ? FitGenieTheme.primary
-                                .withValues(alpha: 0.2)
+                                ? FitGenieTheme.primary.withValues(alpha: 0.2)
                                 : FitGenieTheme.background,
-                            borderRadius:
-                            BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: selected
-                                  ? FitGenieTheme.primary
-                                  : Colors.transparent,
+                              color: selected ? FitGenieTheme.primary : Colors.transparent,
                             ),
                           ),
                           child: Text(
                             entry.value,
                             style: TextStyle(
-                              color: selected
-                                  ? FitGenieTheme.primary
-                                  : FitGenieTheme.muted,
+                              color: selected ? FitGenieTheme.primary : FitGenieTheme.muted,
                               fontSize: 12,
-                              fontWeight: selected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -678,10 +646,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                         child: TextField(
                           controller: caloriesCtrl,
                           keyboardType: TextInputType.number,
-                          style: const TextStyle(
-                              color: Colors.white),
-                          decoration:
-                          _inputDecoration('Calories'),
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration('Calories'),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -689,10 +655,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                         child: TextField(
                           controller: proteinCtrl,
                           keyboardType: TextInputType.number,
-                          style: const TextStyle(
-                              color: Colors.white),
-                          decoration:
-                          _inputDecoration('Protein'),
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration('Protein'),
                         ),
                       ),
                     ],
@@ -704,10 +668,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                         child: TextField(
                           controller: carbsCtrl,
                           keyboardType: TextInputType.number,
-                          style: const TextStyle(
-                              color: Colors.white),
-                          decoration:
-                          _inputDecoration('Carbs'),
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration('Carbs'),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -715,10 +677,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                         child: TextField(
                           controller: fatsCtrl,
                           keyboardType: TextInputType.number,
-                          style: const TextStyle(
-                              color: Colors.white),
-                          decoration:
-                          _inputDecoration('Fats'),
+                          style: const TextStyle(color: Colors.white),
+                          decoration: _inputDecoration('Fats'),
                         ),
                       ),
                     ],
@@ -730,32 +690,21 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                       onPressed: () async {
                         final entry = MealEntry(
                           name: nameCtrl.text.trim(),
-                          quantity:
-                          quantityCtrl.text.trim().isEmpty
+                          quantity: quantityCtrl.text.trim().isEmpty
                               ? '1 serving'
                               : quantityCtrl.text.trim(),
                           mealType: selectedMeal,
-                          calories: int.tryParse(
-                              caloriesCtrl.text.trim()) ??
-                              0,
-                          protein: int.tryParse(
-                              proteinCtrl.text.trim()) ??
-                              0,
-                          carbs: int.tryParse(
-                              carbsCtrl.text.trim()) ??
-                              0,
-                          fats: int.tryParse(
-                              fatsCtrl.text.trim()) ??
-                              0,
+                          calories: int.tryParse(caloriesCtrl.text.trim()) ?? 0,
+                          protein: int.tryParse(proteinCtrl.text.trim()) ?? 0,
+                          carbs: int.tryParse(carbsCtrl.text.trim()) ?? 0,
+                          fats: int.tryParse(fatsCtrl.text.trim()) ?? 0,
                           source: 'manual',
                         );
 
                         if (entry.name.isEmpty) {
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(
-                            const SnackBar(
-                                content:
-                                Text('Food name required')),
+                          AppSnackbar.showWarning(
+                            context,
+                            AppStrings.get('calories_food_name_required'),
                           );
                           return;
                         }
@@ -782,11 +731,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                         backgroundColor: FitGenieTheme.primary,
                       ),
                       child: Text(
-                        entryId == null
-                            ? 'Add Food'
-                            : 'Update Food',
-                        style: const TextStyle(
-                            color: Colors.white),
+                        entryId == null ? 'Add Food' : 'Update Food',
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
@@ -807,7 +753,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? DELETE ENTRY
+  // ❌ DELETE ENTRY
   // ============================================================
 
   Future<void> _deleteEntry(MealEntry entry) async {
@@ -822,14 +768,10 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? HELPER WIDGETS
+  // 🛠️ HELPER WIDGETS
   // ============================================================
 
-  Widget _goalField(
-      TextEditingController controller,
-      String label,
-      String suffix,
-      ) {
+  Widget _goalField(TextEditingController controller, String label, String suffix) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
@@ -861,7 +803,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? SUMMARY CARD
+  // 📊 SUMMARY CARD
   // ============================================================
 
   Widget _buildSummaryCard() {
@@ -869,54 +811,69 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Today's Summary",
-            style: TextStyle(
-                fontWeight: FontWeight.w900, fontSize: 16),
+          Text(
+            AppStrings.get('calories_summary'),
+            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
           ),
           const SizedBox(height: 14),
-          _macroProgress('Calories',
-              '$calories / $caloriesGoal kcal',
-              _progress(calories, caloriesGoal), FitGenieTheme.hot),
+          _macroProgress(
+            'Calories',
+            '$calories / $caloriesGoal kcal',
+            _progress(calories, caloriesGoal),
+            FitGenieTheme.hot,
+          ),
           const SizedBox(height: 14),
-          _macroProgress('Protein',
-              '$protein / $proteinGoal g',
-              _progress(protein, proteinGoal), FitGenieTheme.teal),
+          _macroProgress(
+            'Protein',
+            '$protein / $proteinGoal g',
+            _progress(protein, proteinGoal),
+            FitGenieTheme.teal,
+          ),
           const SizedBox(height: 14),
-          _macroProgress('Carbs', '$carbs / $carbsGoal g',
-              _progress(carbs, carbsGoal), FitGenieTheme.warning),
+          _macroProgress(
+            'Carbs',
+            '$carbs / $carbsGoal g',
+            _progress(carbs, carbsGoal),
+            FitGenieTheme.warning,
+          ),
           const SizedBox(height: 14),
-          _macroProgress('Fats', '$fats / $fatsGoal g',
-              _progress(fats, fatsGoal), Colors.purple),
+          _macroProgress(
+            'Fats',
+            '$fats / $fatsGoal g',
+            _progress(fats, fatsGoal),
+            Colors.purple,
+          ),
           const SizedBox(height: 14),
-          _macroProgress('Water',
-              '$water / $waterGoal glasses',
-              _progress(water, waterGoal), Colors.blue),
+          _macroProgress(
+            'Water',
+            '$water / $waterGoal glasses',
+            _progress(water, waterGoal),
+            Colors.blue,
+          ),
         ],
       ),
     );
   }
 
-  Widget _macroProgress(
-      String title,
-      String value,
-      double progress,
-      Color color,
-      ) {
+  Widget _macroProgress(String title, String value, double progress, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Text(title,
-                style: const TextStyle(
-                    fontWeight: FontWeight.w700, fontSize: 13)),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+            ),
             const Spacer(),
-            Text(value,
-                style: TextStyle(
-                    color: FitGenieTheme.muted,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600)),
+            Text(
+              value,
+              style: TextStyle(
+                color: FitGenieTheme.muted,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -926,7 +883,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? QUICK ACTIONS
+  // ⚡ QUICK ACTIONS
   // ============================================================
 
   Widget _buildQuickActions() {
@@ -935,7 +892,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         Expanded(
           child: _actionCard(
             icon: Icons.search,
-            label: 'Search Food',
+            label: AppStrings.get('calories_search'),
             color: FitGenieTheme.primary,
             onTap: _openFoodSearch,
           ),
@@ -944,7 +901,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         Expanded(
           child: _actionCard(
             icon: Icons.bookmark_border,
-            label: 'Saved Meals',
+            label: AppStrings.get('calories_saved'),
             color: Colors.amber,
             onTap: () => _openSavedMealsPicker(),
           ),
@@ -955,7 +912,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             children: [
               _actionCard(
                 icon: Icons.camera_alt,
-                label: 'Scan Meal',
+                label: AppStrings.get('calories_scan'),
                 color: FitGenieTheme.teal,
                 onTap: _showScanComingSoonDialog,
               ),
@@ -963,8 +920,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 top: 6,
                 right: 6,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.amber,
                     borderRadius: BorderRadius.circular(6),
@@ -986,7 +942,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         Expanded(
           child: _actionCard(
             icon: Icons.flag_outlined,
-            label: 'Goals',
+            label: AppStrings.get('calories_goals'),
             color: FitGenieTheme.warning,
             onTap: _openGoalsSheet,
           ),
@@ -1032,7 +988,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? WATER CONTROLS
+  // 💧 WATER CONTROLS
   // ============================================================
 
   Widget _buildWaterControls() {
@@ -1041,9 +997,11 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         children: [
           const Icon(Icons.water_drop, color: Colors.blue),
           const SizedBox(width: 10),
-          const Expanded(
-            child: Text('Water Tracker',
-                style: TextStyle(fontWeight: FontWeight.w900)),
+          Expanded(
+            child: Text(
+              AppStrings.get('calories_water'),
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
           ),
           IconButton(
             onPressed: _removeWater,
@@ -1053,13 +1011,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 color: FitGenieTheme.error.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.remove,
-                  color: FitGenieTheme.error, size: 18),
+              child: const Icon(Icons.remove, color: FitGenieTheme.error, size: 18),
             ),
           ),
-          Text('$water',
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 18)),
+          Text(
+            '$water',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
           IconButton(
             onPressed: _quickAddWater,
             icon: Container(
@@ -1068,8 +1026,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 color: FitGenieTheme.success.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.add,
-                  color: FitGenieTheme.success, size: 18),
+              child: const Icon(Icons.add, color: FitGenieTheme.success, size: 18),
             ),
           ),
         ],
@@ -1078,11 +1035,10 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? MEAL SECTION
+  // 🍽️ MEAL SECTION
   // ============================================================
 
-  Widget _buildMealSection(
-      String mealType, String title, String emoji) {
+  Widget _buildMealSection(String mealType, String title, String emoji) {
     final items = _mealEntries(mealType);
 
     return FGCard(
@@ -1094,16 +1050,14 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             children: [
               Text(
                 '$emoji $title',
-                style: const TextStyle(
-                    fontWeight: FontWeight.w900, fontSize: 15),
+                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
               ),
               const Spacer(),
               if (items.isNotEmpty)
                 GestureDetector(
                   onTap: () => _saveMealAsTemplate(mealType),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.amber.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
@@ -1111,8 +1065,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.bookmark_add_outlined,
-                            size: 14, color: Colors.amber),
+                        Icon(Icons.bookmark_add_outlined, size: 14, color: Colors.amber),
                         SizedBox(width: 4),
                         Text(
                           'Save',
@@ -1128,9 +1081,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 ),
               const SizedBox(width: 8),
               Text(
-                '${_mealCalories(mealType)} cal ? ${_mealProtein(mealType)}g protein',
-                style: const TextStyle(
-                    color: FitGenieTheme.muted, fontSize: 11),
+                '${_mealCalories(mealType)} cal • ${_mealProtein(mealType)}g protein',
+                style: const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
               ),
             ],
           ),
@@ -1145,9 +1097,10 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 color: FitGenieTheme.card2,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text('No items added yet',
-                  style: TextStyle(
-                      color: FitGenieTheme.muted, fontSize: 12)),
+              child: Text(
+                AppStrings.get('calories_empty'),
+                style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+              ),
             )
           else
             ...items.map(
@@ -1170,28 +1123,26 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 child: GestureDetector(
                   onTap: () => _openFoodSearchForMeal(mealType),
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: FitGenieTheme.primary
-                          .withValues(alpha: 0.12),
+                      color: FitGenieTheme.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: FitGenieTheme.primary
-                              .withValues(alpha: 0.2)),
+                        color: FitGenieTheme.primary.withValues(alpha: 0.2),
+                      ),
                     ),
-                    child: const Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search,
+                        Icon(Icons.search, color: FitGenieTheme.primary, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          AppStrings.get('calories_search'),
+                          style: TextStyle(
                             color: FitGenieTheme.primary,
-                            size: 18),
-                        SizedBox(width: 6),
-                        Text('Search Food',
-                            style: TextStyle(
-                                color: FitGenieTheme.primary,
-                                fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1200,28 +1151,28 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => _openSavedMealsPicker(
-                      mealTypeOverride: mealType),
+                  onTap: () => _openSavedMealsPicker(mealTypeOverride: mealType),
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: Colors.amber.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: Colors.amber.withValues(alpha: 0.2)),
+                        color: Colors.amber.withValues(alpha: 0.2),
+                      ),
                     ),
-                    child: const Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.bookmark_border,
-                            color: Colors.amber, size: 18),
-                        SizedBox(width: 6),
-                        Text('Saved Meal',
-                            style: TextStyle(
-                                color: Colors.amber,
-                                fontWeight: FontWeight.bold)),
+                        Icon(Icons.bookmark_border, color: Colors.amber, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          AppStrings.get('calories_saved'),
+                          style: TextStyle(
+                            color: Colors.amber,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1248,7 +1199,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'Custom manual entry',
+                AppStrings.get('calories_custom'),
                 style: TextStyle(
                   color: FitGenieTheme.muted,
                   fontSize: 11,
@@ -1263,7 +1214,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? RECENT FOODS
+  // 🕘 RECENT FOODS
   // ============================================================
 
   Widget _buildRecentFoods() {
@@ -1273,9 +1224,10 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Recent Foods',
-              style: TextStyle(
-                  fontWeight: FontWeight.w900, fontSize: 15)),
+          Text(
+            AppStrings.get('calories_recent'),
+            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
+          ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -1286,9 +1238,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   _openAddFoodSheet(
                     initialEntry: MealEntry(
                       name: (food['name'] ?? '').toString(),
-                      quantity:
-                      (food['quantity'] ?? '1 serving')
-                          .toString(),
+                      quantity: (food['quantity'] ?? '1 serving').toString(),
                       mealType: 'breakfast',
                       calories: (food['calories'] is num)
                           ? (food['calories'] as num).toInt()
@@ -1307,29 +1257,23 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
                     color: FitGenieTheme.card2,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.05)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         (food['name'] ?? 'Food').toString(),
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${food['calories'] ?? 0} cal ? ${food['protein'] ?? 0}g P',
-                        style: const TextStyle(
-                            color: FitGenieTheme.muted,
-                            fontSize: 10),
+                        '${food['calories'] ?? 0} cal • ${food['protein'] ?? 0}g P',
+                        style: const TextStyle(color: FitGenieTheme.muted, fontSize: 10),
                       ),
                     ],
                   ),
@@ -1343,7 +1287,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ? MAIN BUILD
+  // 🏗️ MAIN BUILD
   // ============================================================
 
   @override
@@ -1353,18 +1297,17 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         : RefreshIndicator(
       onRefresh: _load,
       child: ListView(
-        padding:
-        const EdgeInsets.fromLTRB(18, 12, 18, 24),
+        padding: const EdgeInsets.fromLTRB(18, 12, 18, 24),
         children: [
-          const Text('Nutrition ??',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900)),
+          Text(
+            AppStrings.get('calories_title'),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+          ),
           const SizedBox(height: 4),
-          Text('Track meals, macros & water',
-              style: TextStyle(
-                  color: FitGenieTheme.muted,
-                  fontSize: 12)),
+          Text(
+            AppStrings.get('calories_sub'),
+            style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+          ),
           const SizedBox(height: 14),
 
           // Date Switcher
@@ -1380,20 +1323,17 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     child: Text(
                       _dateLabel(),
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
-                  onPressed: _isToday
-                      ? null
-                      : () => _changeDate(1),
+                  onPressed: _isToday ? null : () => _changeDate(1),
                   icon: Icon(
                     Icons.chevron_right,
-                    color: _isToday
-                        ? Colors.white24
-                        : Colors.white,
+                    color: _isToday ? Colors.white24 : Colors.white,
                   ),
                 ),
               ],
@@ -1410,14 +1350,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           _buildWaterControls(),
           const SizedBox(height: 14),
 
-          _buildMealSection(
-              'breakfast', 'Breakfast', '?'),
+          _buildMealSection('breakfast', 'Breakfast', '🍳'),
           const SizedBox(height: 12),
-          _buildMealSection('lunch', 'Lunch', '?'),
+          _buildMealSection('lunch', 'Lunch', '🍛'),
           const SizedBox(height: 12),
-          _buildMealSection('dinner', 'Dinner', '?'),
+          _buildMealSection('dinner', 'Dinner', '🍽️'),
           const SizedBox(height: 12),
-          _buildMealSection('snacks', 'Snacks', '?'),
+          _buildMealSection('snacks', 'Snacks', '🍿'),
           const SizedBox(height: 12),
 
           _buildRecentFoods(),
@@ -1428,7 +1367,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
 }
 
 // ============================================================
-// ? MEAL ENTRY TILE WIDGET
+// 🧩 MEAL ENTRY TILE WIDGET
 // ============================================================
 
 class _MealEntryTile extends StatelessWidget {
@@ -1444,10 +1383,7 @@ class _MealEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sourceIcon =
-    entry.source == 'scanner'
-        ? Icons.camera_alt
-        : Icons.edit_note;
+    final sourceIcon = entry.source == 'scanner' ? Icons.camera_alt : Icons.edit_note;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -1455,8 +1391,7 @@ class _MealEntryTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: FitGenieTheme.card2,
         borderRadius: BorderRadius.circular(12),
-        border:
-        Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -1471,9 +1406,7 @@ class _MealEntryTile extends StatelessWidget {
             ),
             child: Icon(
               sourceIcon,
-              color: entry.source == 'scanner'
-                  ? FitGenieTheme.primary
-                  : FitGenieTheme.teal,
+              color: entry.source == 'scanner' ? FitGenieTheme.primary : FitGenieTheme.teal,
               size: 18,
             ),
           ),
@@ -1482,21 +1415,19 @@ class _MealEntryTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(entry.name,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13)),
-                const SizedBox(height: 4),
-                Text(entry.quantity,
-                    style: const TextStyle(
-                        color: FitGenieTheme.muted,
-                        fontSize: 11)),
+                Text(
+                  entry.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
                 const SizedBox(height: 4),
                 Text(
-                  '${entry.protein}g P ? ${entry.carbs}g C ? ${entry.fats}g F',
-                  style: const TextStyle(
-                      color: FitGenieTheme.muted,
-                      fontSize: 11),
+                  entry.quantity,
+                  style: const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${entry.protein}g P • ${entry.carbs}g C • ${entry.fats}g F',
+                  style: const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
                 ),
               ],
             ),
@@ -1504,10 +1435,10 @@ class _MealEntryTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('${entry.calories} cal',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: FitGenieTheme.hot)),
+              Text(
+                '${entry.calories} cal',
+                style: const TextStyle(fontWeight: FontWeight.bold, color: FitGenieTheme.hot),
+              ),
               const SizedBox(height: 4),
               PopupMenuButton<String>(
                 color: FitGenieTheme.cardDark,
@@ -1516,14 +1447,10 @@ class _MealEntryTile extends StatelessWidget {
                   if (value == 'delete') onDelete();
                 },
                 itemBuilder: (context) => const [
-                  PopupMenuItem(
-                      value: 'edit', child: Text('Edit')),
-                  PopupMenuItem(
-                      value: 'delete',
-                      child: Text('Delete')),
+                  PopupMenuItem(value: 'edit', child: Text('Edit')),
+                  PopupMenuItem(value: 'delete', child: Text('Delete')),
                 ],
-                child: const Icon(Icons.more_vert,
-                    size: 18, color: FitGenieTheme.muted),
+                child: const Icon(Icons.more_vert, size: 18, color: FitGenieTheme.muted),
               ),
             ],
           ),

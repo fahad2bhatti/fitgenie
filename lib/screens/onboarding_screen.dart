@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
+import '../core/language_provider.dart';
+import '../widgets/app_snackbar.dart';
 import 'shell_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -20,14 +23,17 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
   final _pageController = PageController();
   final _firestore = FirebaseFirestore.instance;
+  final _languageProvider = LanguageProvider();
 
   int _pageIndex = 0;
   bool _isSaving = false;
 
   // Collected data
+  bool _selectedEnglish = true; // Page 0 — language
   String? _gender;
   int? _age;
   double? _height; // cm
@@ -35,7 +41,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String? _fitnessLevel;
   String? _goal;
 
-  static const _totalPages = 5;
+  static const _totalPages = 6;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedEnglish = _languageProvider.isEnglish;
+  }
 
   @override
   void dispose() {
@@ -46,14 +58,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool get _canContinue {
     switch (_pageIndex) {
       case 0:
-        return _gender != null;
+        return true;
       case 1:
-        return _age != null;
+        return _gender != null;
       case 2:
-        return _height != null && _weight != null;
+        return _age != null;
       case 3:
-        return _fitnessLevel != null;
+        return _height != null && _weight != null;
       case 4:
+        return _fitnessLevel != null;
+      case 5:
         return _goal != null;
       default:
         return false;
@@ -62,25 +76,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _next() {
     if (!_canContinue) return;
+
+    if (_pageIndex == 0) {
+      _languageProvider.setLanguage(_selectedEnglish);
+    }
+
     if (_pageIndex == _totalPages - 1) {
       _finish();
       return;
     }
     _pageController.nextPage(
-      duration: FitGenieTheme.animNormal,
-      curve: Curves.easeOutCubic,
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeInOutCubic,
     );
   }
 
   void _back() {
     if (_pageIndex == 0) return;
     _pageController.previousPage(
-      duration: FitGenieTheme.animNormal,
-      curve: Curves.easeOutCubic,
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeInOutCubic,
     );
   }
 
-  // Mifflin-St Jeor BMR, moderate activity (x1.55), then adjusted for goal.
   Map<String, int> _calculateGoals() {
     final w = _weight!;
     final h = _height!;
@@ -92,7 +110,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } else if (_gender == 'Female') {
       bmr = 10 * w + 6.25 * h - 5 * a - 161;
     } else {
-      bmr = 10 * w + 6.25 * h - 5 * a - 78; // neutral midpoint
+      bmr = 10 * w + 6.25 * h - 5 * a - 78;
     }
 
     double tdee = bmr * 1.55;
@@ -109,7 +127,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         calories = (tdee + 300).round();
         proteinPerKg = 2.0;
         break;
-      default: // Stay Fit
+      default:
         calories = tdee.round();
         proteinPerKg = 1.6;
     }
@@ -167,11 +185,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Kuch masla ho gaya: $e'),
-          backgroundColor: FitGenieTheme.error,
-        ),
+      AppSnackbar.showError(
+        context,
+        'Kuch masla ho gaya: $e',
       );
     }
   }
@@ -190,11 +206,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 onPageChanged: (i) => setState(() => _pageIndex = i),
                 children: [
-                  _genderPage(),
-                  _agePage(),
-                  _bodyStatsPage(),
-                  _fitnessLevelPage(),
-                  _goalPage(),
+                  _AnimatedPage(child: _languagePage()),
+                  _AnimatedPage(child: _genderPage()),
+                  _AnimatedPage(child: _agePage()),
+                  _AnimatedPage(child: _bodyStatsPage()),
+                  _AnimatedPage(child: _fitnessLevelPage()),
+                  _AnimatedPage(child: _goalPage()),
                 ],
               ),
             ),
@@ -218,30 +235,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Hi ${widget.userName} 👋',
+                AppStrings.get('onboarding_welcome',
+                    params: {'name': widget.userName}),
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: FitGenieTheme.text,
                 ),
               ),
-              Text(
-                '${_pageIndex + 1}/$_totalPages',
-                style: const TextStyle(color: FitGenieTheme.muted),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                child: Text(
+                  '${_pageIndex + 1}/$_totalPages',
+                  key: ValueKey(_pageIndex),
+                  style: const TextStyle(color: FitGenieTheme.muted),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 4),
-          const Text(
-            'Chalo tumhara FitGenie personalize karte hain',
-            style: TextStyle(color: FitGenieTheme.muted, fontSize: 14),
+          Text(
+            AppStrings.onboardingSubtitle,
+            style: const TextStyle(color: FitGenieTheme.muted, fontSize: 14),
           ),
           const SizedBox(height: 16),
           Row(
             children: List.generate(_totalPages, (i) {
               final active = i <= _pageIndex;
               return Expanded(
-                child: Container(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 350),
+                  curve: Curves.easeOut,
                   margin: EdgeInsets.only(right: i == _totalPages - 1 ? 0 : 6),
                   height: 6,
                   decoration: BoxDecoration(
@@ -260,6 +284,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // ==========================================
+  // PAGE 0 — Language Selection
+  // ==========================================
+  Widget _languagePage() {
+    return _pageWrapper(
+      title: AppStrings.get('language_select_title'),
+      subtitle: 'You can change this later in Settings',
+      child: Column(
+        children: [
+          _selectableCard(
+            label: AppStrings.get('language_english'),
+            description: 'Everything in English',
+            icon: Icons.language,
+            selected: _selectedEnglish,
+            onTap: () => setState(() => _selectedEnglish = true),
+          ),
+          const SizedBox(height: 12),
+          _selectableCard(
+            label: AppStrings.get('language_urdu'),
+            description: 'Roman Urdu mein',
+            icon: Icons.language,
+            selected: !_selectedEnglish,
+            onTap: () => setState(() => _selectedEnglish = false),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================
   // PAGE 1 — Gender
   // ==========================================
   Widget _genderPage() {
@@ -270,8 +323,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ];
 
     return _pageWrapper(
-      title: 'Tumhara gender kya hai?',
-      subtitle: 'Isse hum tumhare calorie aur nutrition goals sahi calculate karte hain.',
+      title: AppStrings.onboardingGender,
+      subtitle: AppStrings.onboardingGenderSub,
       child: Column(
         children: options.map((o) {
           final selected = _gender == o['label'];
@@ -295,17 +348,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget _agePage() {
     final age = _age ?? 25;
     return _pageWrapper(
-      title: 'Tumhari age kitni hai?',
-      subtitle: 'Slider ghuma ke apni age set karo.',
+      title: AppStrings.onboardingAge,
+      subtitle: AppStrings.onboardingAgeSub,
       child: Column(
         children: [
           const SizedBox(height: 24),
-          Text(
-            '$age',
-            style: const TextStyle(
-              fontSize: 64,
-              fontWeight: FontWeight.bold,
-              color: FitGenieTheme.primary,
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, anim) => ScaleTransition(
+              scale: anim,
+              child: child,
+            ),
+            child: Text(
+              '$age',
+              key: ValueKey(age),
+              style: const TextStyle(
+                fontSize: 64,
+                fontWeight: FontWeight.bold,
+                color: FitGenieTheme.primary,
+              ),
             ),
           ),
           const Text('saal', style: TextStyle(color: FitGenieTheme.muted)),
@@ -338,8 +399,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final weight = _weight ?? 65.0;
 
     return _pageWrapper(
-      title: 'Height aur weight batao',
-      subtitle: 'Yeh tumhare daily targets ki bunyad hai.',
+      title: AppStrings.onboardingHeight,
+      subtitle: AppStrings.onboardingHeightSub,
       child: Column(
         children: [
           _statSliderCard(
@@ -385,12 +446,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(label, style: const TextStyle(color: FitGenieTheme.muted)),
-              Text(
-                '${value.toStringAsFixed(0)} $unit',
-                style: const TextStyle(
-                  color: FitGenieTheme.text,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  '${value.toStringAsFixed(0)} $unit',
+                  key: ValueKey(value),
+                  style: const TextStyle(
+                    color: FitGenieTheme.text,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ],
@@ -425,8 +490,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ];
 
     return _pageWrapper(
-      title: 'Fitness level kya hai?',
-      subtitle: 'Isse workouts tumhari level ke hisab se milenge.',
+      title: AppStrings.onboardingLevel,
+      subtitle: AppStrings.onboardingLevelSub,
       child: Column(
         children: levels.map((l) {
           final selected = _fitnessLevel == l['label'];
@@ -458,8 +523,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ];
 
     return _pageWrapper(
-      title: 'Tumhara main goal kya hai?',
-      subtitle: 'Hum isi ke hisab se calorie aur macro targets set karenge.',
+      title: AppStrings.onboardingGoal,
+      subtitle: AppStrings.onboardingGoalSub,
       child: Column(
         children: goals.map((g) {
           final selected = _goal == g['label'];
@@ -510,6 +575,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
+  // ✨ Selectable card with smooth scale-on-tap feedback
   Widget _selectableCard({
     required String label,
     required IconData icon,
@@ -517,11 +583,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     required VoidCallback onTap,
     String? description,
   }) {
-    return InkWell(
+    return _TapScale(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
       child: AnimatedContainer(
-        duration: FitGenieTheme.animFast,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: selected
@@ -535,9 +601,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: selected ? FitGenieTheme.primary : FitGenieTheme.muted,
+            AnimatedRotation(
+              duration: const Duration(milliseconds: 220),
+              turns: selected ? 0.02 : 0,
+              child: Icon(
+                icon,
+                color: selected ? FitGenieTheme.primary : FitGenieTheme.muted,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -568,8 +638,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ],
               ),
             ),
-            if (selected)
-              const Icon(Icons.check_circle, color: FitGenieTheme.primary),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, anim) => ScaleTransition(
+                scale: anim,
+                child: child,
+              ),
+              child: selected
+                  ? const Icon(
+                Icons.check_circle,
+                key: ValueKey('checked'),
+                color: FitGenieTheme.primary,
+              )
+                  : const SizedBox.shrink(key: ValueKey('unchecked')),
+            ),
           ],
         ),
       ),
@@ -585,7 +667,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Expanded(
               child: OutlinedButton(
                 onPressed: _isSaving ? null : _back,
-                child: const Text('Peeche'),
+                child: Text(AppStrings.onboardingBack),
               ),
             ),
           if (_pageIndex > 0) const SizedBox(width: 12),
@@ -603,11 +685,98 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               )
                   : Text(
-                _pageIndex == _totalPages - 1 ? 'Shuru Karo 🚀' : 'Agla',
+                _pageIndex == _totalPages - 1
+                    ? AppStrings.onboardingStart
+                    : AppStrings.onboardingNext,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// ✨ NEW — Entrance animation wrapper for each page
+// Fade + slight upward slide when a page appears
+// ==========================================
+class _AnimatedPage extends StatefulWidget {
+  final Widget child;
+  const _AnimatedPage({required this.child});
+
+  @override
+  State<_AnimatedPage> createState() => _AnimatedPageState();
+}
+
+class _AnimatedPageState extends State<_AnimatedPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
+    _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.04),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(
+        position: _slide,
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+// ==========================================
+// ✨ NEW — Tap scale-down feedback for selectable cards
+// ==========================================
+class _TapScale extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  const _TapScale({required this.child, required this.onTap});
+
+  @override
+  State<_TapScale> createState() => _TapScaleState();
+}
+
+class _TapScaleState extends State<_TapScale> {
+  double _scale = 1.0;
+
+  void _setScale(double value) => setState(() => _scale = value);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) => _setScale(0.97),
+      onTapUp: (_) => _setScale(1.0),
+      onTapCancel: () => _setScale(1.0),
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        child: widget.child,
       ),
     );
   }

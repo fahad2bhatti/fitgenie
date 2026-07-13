@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../services/ai_service.dart';
 import 'dashboard_screen.dart';
 import 'calories_screen.dart';
@@ -170,31 +171,7 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
   void _addWelcomeMessage() {
     final name = widget.userName.isNotEmpty ? widget.userName : 'Champ';
     _messages.add(_ChatMessage(
-      text: '''👋 Hey $name!
-
-🤖 Main hoon **FitGenie** — tera personal AI Fitness Coach!
-
-━━━━━━━━━━━━━━━━━━━━━━━━
-
-🎯 **Main help kar sakta hun:**
-
-💪 **Workouts**
-   Muscle-specific exercises & plans
-
-🍽️ **Nutrition**  
-   Diet plans & calorie guidance
-
-🔥 **Motivation**
-   Daily inspiration & tips
-
-📊 **Progress**
-   Track & improve karne mein
-
-━━━━━━━━━━━━━━━━━━━━━━━━
-
-Neeche quick buttons use karo ya type karo!
-
-**Let's get started! 🚀**''',
+      text: AppStrings.get('chat_welcome', params: {'name': name}),
       isUser: false,
       timestamp: DateTime.now(),
     ));
@@ -250,11 +227,7 @@ Neeche quick buttons use karo ya type karo!
       if (mounted) {
         setState(() {
           _messages.add(_ChatMessage(
-            text: '''❌ **Oops! Kuch gadbad ho gayi.**
-
-Please dobara try karo ya internet check karo.
-
-💡 Tip: Neeche quick buttons bhi try kar sakte ho!''',
+            text: AppStrings.get('chat_error'),
             isUser: false,
             timestamp: DateTime.now(),
           ));
@@ -365,7 +338,9 @@ Please dobara try karo ya internet check karo.
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      _isLoading ? 'Thinking...' : 'Online • Ready to help',
+                      _isLoading
+                          ? AppStrings.get('chat_thinking')
+                          : AppStrings.get('chat_online'),
                       style: TextStyle(
                         fontSize: 11,
                         color: _isLoading ? FitGenieTheme.warning : FitGenieTheme.success,
@@ -408,13 +383,13 @@ Please dobara try karo ya internet check karo.
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         children: [
-          _buildQuickChip('💪', 'Workout', 'Aaj ke liye best workout plan batao'),
-          _buildQuickChip('🍽️', 'Diet Plan', 'Mera diet plan bana do'),
-          _buildQuickChip('🔥', 'Motivate', 'Mujhe motivate karo!'),
-          _buildQuickChip('📉', 'Weight Loss', 'Weight loss tips do'),
-          _buildQuickChip('💪', 'Muscle Gain', 'Muscle kaise banaye?'),
-          _buildQuickChip('💧', 'Hydration', 'Pani kitna peena chahiye?'),
-          _buildQuickChip('😴', 'Recovery', 'Recovery tips batao'),
+          _buildQuickChip('💪', AppStrings.get('chat_workout'), 'Aaj ke liye best workout plan batao'),
+          _buildQuickChip('🍽️', AppStrings.get('chat_diet'), 'Mera diet plan bana do'),
+          _buildQuickChip('🔥', AppStrings.get('chat_motivate'), 'Mujhe motivate karo!'),
+          _buildQuickChip('📉', AppStrings.get('chat_weight_loss'), 'Weight loss tips do'),
+          _buildQuickChip('💪', AppStrings.get('chat_muscle_gain'), 'Muscle kaise banaye?'),
+          _buildQuickChip('💧', AppStrings.get('chat_hydration'), 'Pani kitna peena chahiye?'),
+          _buildQuickChip('😴', AppStrings.get('chat_recovery'), 'Recovery tips batao'),
         ],
       ),
     );
@@ -498,7 +473,7 @@ Please dobara try karo ya internet check karo.
                 minLines: 1,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  hintText: 'Ask me anything about fitness...',
+                  hintText: AppStrings.get('chat_placeholder'),
                   hintStyle: TextStyle(
                     color: Colors.grey[600],
                     fontSize: isSmallScreen ? 13 : 14,
@@ -810,7 +785,7 @@ Please dobara try karo ya internet check karo.
                 _buildTypingDot(2),
                 const SizedBox(width: 12),
                 Text(
-                  'FitGenie is thinking...',
+                  AppStrings.get('chat_typing'),
                   style: TextStyle(
                     color: Colors.grey[500],
                     fontSize: 12,
@@ -869,38 +844,38 @@ Please dobara try karo ya internet check karo.
               child: const Icon(Icons.psychology, color: FitGenieTheme.primary, size: 24),
             ),
             const SizedBox(width: 12),
-            const Text('FitGenie AI Coach'),
+            Text(AppStrings.get('chat_about_title')),
           ],
         ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Powered by Google Gemini AI',
-              style: TextStyle(color: Colors.grey),
+              AppStrings.get('chat_about_powered'),
+              style: const TextStyle(color: Colors.grey),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              '🎯 Features:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              AppStrings.get('chat_about_features'),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
-            Text('• Personalized workout plans'),
-            Text('• Diet & nutrition advice'),
-            Text('• Motivation & tips'),
-            Text('• Progress tracking help'),
-            SizedBox(height: 16),
+            const SizedBox(height: 8),
+            Text(AppStrings.get('chat_about_workouts')),
+            Text(AppStrings.get('chat_about_nutrition')),
+            Text(AppStrings.get('chat_about_motivation')),
+            Text(AppStrings.get('chat_about_progress')),
+            const SizedBox(height: 16),
             Text(
-              '💡 Your data is used to personalize responses.',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
+              AppStrings.get('chat_about_data'),
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Got it!'),
+            child: Text(AppStrings.get('chat_got_it')),
           ),
         ],
       ),
@@ -913,18 +888,18 @@ Please dobara try karo ya internet check karo.
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.delete_outline, color: FitGenieTheme.error),
-            SizedBox(width: 8),
-            Text('Clear Chat?'),
+            const Icon(Icons.delete_outline, color: FitGenieTheme.error),
+            const SizedBox(width: 8),
+            Text(AppStrings.get('chat_clear_title')),
           ],
         ),
-        content: const Text('Saari messages delete ho jayengi. Ye action undo nahi hoga.'),
+        content: Text(AppStrings.get('chat_clear_sub')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.get('chat_cancel')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -936,7 +911,10 @@ Please dobara try karo ya internet check karo.
               HapticFeedback.lightImpact();
             },
             style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
-            child: const Text('Clear', style: TextStyle(color: Colors.white)),
+            child: Text(
+              AppStrings.get('chat_clear'),
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -965,4 +943,3 @@ class _ChatMessage {
     required this.timestamp,
   });
 }
-

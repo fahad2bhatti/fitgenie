@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
 import '../data/food_item.dart';
 import '../data/food_database.dart';
@@ -50,10 +51,10 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
           final portion = food.calculatePortion(selectedQty);
 
           final mealTypes = {
-            'breakfast': '🍳 Breakfast',
-            'lunch': '🍛 Lunch',
-            'dinner': '🍽 Dinner',
-            'snacks': '🍿 Snacks',
+            'breakfast': AppStrings.get('food_search_breakfast'),
+            'lunch': AppStrings.get('food_search_lunch'),
+            'dinner': AppStrings.get('food_search_dinner'),
+            'snacks': AppStrings.get('food_search_snacks'),
           };
 
           return Padding(
@@ -89,8 +90,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             color: FitGenieTheme.warning.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Text(
-                            'Estimated',
+                          child: Text(
+                            AppStrings.get('food_search_estimated'),
                             style: TextStyle(
                               color: FitGenieTheme.warning,
                               fontSize: 11,
@@ -110,9 +111,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   ),
                   const SizedBox(height: 18),
 
-                  const Text(
-                    'Quantity',
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                  Text(
+                    AppStrings.get('food_search_quantity'),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 10),
 
@@ -159,9 +160,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
 
                   const SizedBox(height: 18),
 
-                  const Text(
-                    'Meal Type',
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                  Text(
+                    AppStrings.get('food_search_meal_type'),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 10),
 
@@ -212,9 +213,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Calculated Nutrition',
-                          style: TextStyle(
+                        Text(
+                          AppStrings.get('food_search_calculated'),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
                           ),
@@ -267,9 +268,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         Navigator.pop(context, entry);
                       },
                       icon: const Icon(Icons.add, color: Colors.white),
-                      label: const Text(
-                        'Add to Meal',
-                        style: TextStyle(
+                      label: Text(
+                        AppStrings.get('food_search_add'),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -383,8 +384,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         color: FitGenieTheme.warning.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
-                        'Est.',
+                      child: Text(
+                        AppStrings.get('food_search_estimated'),
                         style: TextStyle(
                           color: FitGenieTheme.warning,
                           fontSize: 10,
@@ -415,7 +416,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: FitGenieTheme.cardDark,
-        title: const Text('Search Food 🔎'),
+        title: Text(AppStrings.get('food_search_title')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.pop(context),
@@ -430,7 +431,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               onChanged: (value) => setState(() => _query = value),
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Search e.g. anda, roti, daal, biryani...',
+                hintText: AppStrings.get('food_search_hint'),
                 hintStyle: const TextStyle(color: FitGenieTheme.muted),
                 prefixIcon:
                 const Icon(Icons.search, color: FitGenieTheme.muted),
@@ -461,6 +462,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 18),
               children: categories.map((category) {
                 final selected = _selectedCategory == category;
+                final displayName = category == 'All'
+                    ? AppStrings.get('food_search_all')
+                    : category;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: GestureDetector(
@@ -481,7 +485,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                         ),
                       ),
                       child: Text(
-                        category,
+                        displayName,
                         style: TextStyle(
                           fontSize: 12,
                           color: selected
@@ -506,7 +510,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
             child: Row(
               children: [
                 Text(
-                  '${_results.length} foods found',
+                  AppStrings.get('food_search_results',
+                      params: {'count': '${_results.length}'}),
                   style: const TextStyle(
                     color: FitGenieTheme.muted,
                     fontSize: 12,
@@ -530,15 +535,15 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     color: FitGenieTheme.muted,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'No food found',
-                    style: TextStyle(
+                  Text(
+                    AppStrings.get('food_search_empty'),
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Try another keyword like anda, roti, daal',
+                    AppStrings.get('food_search_empty_sub'),
                     style: TextStyle(
                       color: FitGenieTheme.muted,
                       fontSize: 12,

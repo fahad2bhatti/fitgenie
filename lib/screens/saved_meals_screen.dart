@@ -1,6 +1,10 @@
+// lib/screens/saved_meals_screen.dart
+
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
 import '../widgets/fg_card.dart';
+import '../widgets/app_snackbar.dart';
+import '../core/app_strings.dart';
 import '../services/nutrition_service.dart';
 
 class SavedMealsScreen extends StatefulWidget {
@@ -38,8 +42,9 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
     _reload();
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved meal deleted')),
+      AppSnackbar.showSuccess(
+        context,
+        AppStrings.get('saved_delete_success'),
       );
     }
   }
@@ -49,17 +54,22 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: FitGenieTheme.cardDark,
-        title: const Text('Delete Saved Meal?'),
-        content: Text('"${meal.name}" delete ho jayega.'),
+        title: Text(AppStrings.get('saved_delete_confirm')),
+        content: Text(
+          AppStrings.get('saved_delete_sub', params: {'name': meal.name}),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            child: Text(
+              AppStrings.get('delete'),
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -77,7 +87,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
       case 'lunch':
         return '🍛';
       case 'dinner':
-        return '🍽';
+        return '🍽️';
       case 'snacks':
         return '🍿';
       default:
@@ -91,7 +101,11 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: FitGenieTheme.cardDark,
-        title: Text(widget.pickerMode ? 'Choose Saved Meal 📚' : 'Saved Meals 📚'),
+        title: Text(
+          widget.pickerMode
+              ? AppStrings.get('saved_picker')
+              : AppStrings.get('saved_title'),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.pop(context),
@@ -116,16 +130,16 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                     Icon(Icons.bookmark_border,
                         size: 52, color: FitGenieTheme.muted),
                     const SizedBox(height: 12),
-                    const Text(
-                      'No saved meals yet',
-                      style: TextStyle(
+                    Text(
+                      AppStrings.get('saved_empty'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Breakfast ya lunch ko save karo taake next time 1 tap me add ho.',
+                      AppStrings.get('saved_empty_sub'),
                       style: TextStyle(
                         color: FitGenieTheme.muted,
                         fontSize: 13,
@@ -270,9 +284,9 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                               color: FitGenieTheme.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                'Tap to add this meal',
+                                AppStrings.get('saved_choose'),
                                 style: TextStyle(
                                   color: FitGenieTheme.primary,
                                   fontWeight: FontWeight.bold,

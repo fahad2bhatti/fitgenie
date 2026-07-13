@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
 import '../data/exercise_data.dart';
 import 'workout_screen.dart' show ActiveWorkoutScreen;
@@ -162,7 +163,7 @@ class WorkoutDetailScreen extends StatelessWidget {
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: FitGenieTheme.cardDark,
-        title: const Text('Workout Details 🕐'),
+        title: Text(AppStrings.get('workout_detail_title')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.pop(context),
@@ -180,18 +181,18 @@ class WorkoutDetailScreen extends StatelessWidget {
             const SizedBox(height: 18),
 
             if (plannedExercises.isNotEmpty) ...[
-              _buildSectionTitle('📋 Planned Exercises', color),
+              _buildSectionTitle(AppStrings.get('workout_detail_planned'), color),
               const SizedBox(height: 10),
               _buildPlannedExercises(color),
               const SizedBox(height: 18),
             ],
 
-            _buildSectionTitle('💪 Performed Exercises', color),
+            _buildSectionTitle(AppStrings.get('workout_detail_performed'), color),
             const SizedBox(height: 10),
             _buildPerformedExercises(color),
             const SizedBox(height: 18),
 
-            _buildSectionTitle('🧾 All Logged Sets', color),
+            _buildSectionTitle(AppStrings.get('workout_detail_all_sets'), color),
             const SizedBox(height: 10),
             _buildAllLoggedSets(),
             const SizedBox(height: 30),
@@ -270,11 +271,20 @@ class WorkoutDetailScreen extends StatelessWidget {
 
           Row(
             children: [
-              _infoPill(Icons.schedule, '${duration > 0 ? duration : '--'} min'),
+              _infoPill(
+                Icons.schedule,
+                '${duration > 0 ? duration : '--'} ${AppStrings.get('workout_detail_minutes')}',
+              ),
               const SizedBox(width: 8),
-              _infoPill(Icons.repeat, '$totalSets sets'),
+              _infoPill(
+                Icons.repeat,
+                '$totalSets ${AppStrings.get('workout_detail_sets')}',
+              ),
               const SizedBox(width: 8),
-              _infoPill(Icons.fitness_center, '$uniqueExercises exercises'),
+              _infoPill(
+                Icons.fitness_center,
+                '$uniqueExercises exercises',
+              ),
             ],
           ),
           const SizedBox(height: 14),
@@ -296,9 +306,9 @@ class WorkoutDetailScreen extends StatelessWidget {
                     );
                   },
                   icon: const Icon(Icons.refresh, color: Colors.white),
-                  label: const Text(
-                    'Repeat Workout',
-                    style: TextStyle(color: Colors.white),
+                  label: Text(
+                    AppStrings.get('workout_detail_repeat'),
+                    style: const TextStyle(color: Colors.white),
                   ),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.white24),
@@ -334,7 +344,9 @@ class WorkoutDetailScreen extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            completed ? 'Completed' : 'Active',
+            completed
+                ? AppStrings.get('workout_detail_completed')
+                : AppStrings.get('workout_detail_active'),
             style: TextStyle(
               color: color,
               fontSize: 11,
@@ -382,7 +394,7 @@ class WorkoutDetailScreen extends StatelessWidget {
           child: _statCard(
             icon: Icons.repeat,
             value: '$totalSets',
-            label: 'Sets',
+            label: AppStrings.get('workout_detail_sets'),
             color: color,
           ),
         ),
@@ -400,7 +412,7 @@ class WorkoutDetailScreen extends StatelessWidget {
           child: _statCard(
             icon: Icons.scale,
             value: totalVolume.toStringAsFixed(0),
-            label: 'Volume',
+            label: AppStrings.get('workout_detail_volume'),
             color: FitGenieTheme.warning,
           ),
         ),
@@ -409,7 +421,7 @@ class WorkoutDetailScreen extends StatelessWidget {
           child: _statCard(
             icon: Icons.local_fire_department,
             value: '$estimatedCalories',
-            label: 'Calories',
+            label: AppStrings.get('workout_detail_calories'),
             color: FitGenieTheme.hot,
           ),
         ),
@@ -552,7 +564,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                   size: 36, color: FitGenieTheme.muted),
               const SizedBox(height: 8),
               Text(
-                'No set logs found',
+                AppStrings.get('workout_detail_no_logs'),
                 style: TextStyle(color: FitGenieTheme.muted),
               ),
             ],
@@ -720,7 +732,7 @@ class WorkoutDetailScreen extends StatelessWidget {
       return FGCard(
         child: Center(
           child: Text(
-            'No set data available',
+            AppStrings.get('workout_detail_no_sets'),
             style: TextStyle(color: FitGenieTheme.muted),
           ),
         ),
@@ -846,7 +858,3 @@ class WorkoutDetailScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-

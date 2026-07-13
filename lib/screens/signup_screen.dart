@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
+import '../widgets/app_snackbar.dart';
 import '../services/auth_service.dart';
-
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -58,12 +59,24 @@ class _SignupScreenState extends State<SignupScreen>
   }
 
   String? _validateInputsQuick() {
-    if (_nameController.text.trim().isEmpty) return 'Please enter your name.';
-    if (_emailController.text.trim().isEmpty) return 'Please enter your email.';
-    if (_passwordController.text.isEmpty) return 'Please enter a password.';
-    if (_confirmPasswordController.text.isEmpty) return 'Please confirm your password.';
-    if (_passwordController.text != _confirmPasswordController.text) return 'Passwords do not match.';
-    if (!_agreeToTerms) return 'Please accept the Terms & Conditions.';
+    if (_nameController.text.trim().isEmpty) {
+      return AppStrings.get('error_empty');
+    }
+    if (_emailController.text.trim().isEmpty) {
+      return AppStrings.get('error_invalid_email');
+    }
+    if (_passwordController.text.isEmpty) {
+      return AppStrings.get('error_invalid_password');
+    }
+    if (_confirmPasswordController.text.isEmpty) {
+      return 'Please confirm your password.';
+    }
+    if (_passwordController.text != _confirmPasswordController.text) {
+      return 'Passwords do not match.';
+    }
+    if (!_agreeToTerms) {
+      return 'Please accept the Terms & Conditions.';
+    }
     return null;
   }
 
@@ -72,7 +85,7 @@ class _SignupScreenState extends State<SignupScreen>
 
     final quickError = _validateInputsQuick();
     if (quickError != null) {
-      _showSnackBar(quickError, isError: true);
+      AppSnackbar.showError(context, quickError);
       return;
     }
 
@@ -89,43 +102,24 @@ class _SignupScreenState extends State<SignupScreen>
       if (!mounted) return;
 
       if (result.success) {
-        _showSnackBar(result.message, isError: false);
+        AppSnackbar.showSuccess(context, result.message);
         // AuthGate handles navigation automatically
       } else {
-        _showSnackBar(result.message, isError: true);
+        AppSnackbar.showError(context, result.message);
       }
     } catch (e) {
       if (mounted) {
-        _showSnackBar('Something went wrong. Please try again.', isError: true);
+        AppSnackbar.showError(
+          context,
+          AppStrings.get('error_unknown'),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  void _showSnackBar(String message, {required bool isError}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              isError ? Icons.error_outline : Icons.check_circle_outline,
-              color: Colors.white,
-              size: 20,
-            ),
-            const SizedBox(width: 10),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: isError ? FitGenieTheme.error : FitGenieTheme.success,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-  }
-
-// ✅ NAYA:
+  // ✅ NAYA:
   void _goToLogin() {
     Navigator.pop(context);
   }
@@ -215,7 +209,7 @@ class _SignupScreenState extends State<SignupScreen>
                             _buildTextField(
                               controller: _passwordController,
                               icon: Icons.lock_outline,
-                              hint: 'Password (8+ chars, A-Z, 0-9, @#\$)',
+                              hint: 'Password (8+ chars, A-Z, 0-9, @#)',
                               obscure: !_showPassword,
                               suffixIcon: IconButton(
                                 icon: Icon(

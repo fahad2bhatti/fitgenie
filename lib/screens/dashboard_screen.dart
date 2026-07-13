@@ -8,8 +8,9 @@ import '../widgets/fg_card.dart';
 import '../widgets/fg_progress.dart';
 import '../widgets/quick_action_tile.dart';
 import '../services/step_counter_service.dart';
+import '../widgets/app_snackbar.dart';
+import '../core/app_strings.dart';
 import 'challenges_screen.dart';
-
 
 class DashboardScreen extends StatefulWidget {
   final String userId;
@@ -29,7 +30,8 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingObserver {
+class _DashboardScreenState extends State<DashboardScreen>
+    with WidgetsBindingObserver {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final StepCounterService _stepCounterService = StepCounterService();
 
@@ -70,31 +72,25 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
   void initState() {
     super.initState();
     _userId = widget.userId;
-    // ✅ NEW: Add lifecycle observer
     WidgetsBinding.instance.addObserver(this);
     _loadAllData();
   }
 
   @override
   void dispose() {
-    // ✅ NEW: Remove lifecycle observer
     WidgetsBinding.instance.removeObserver(this);
-    // ✅ NEW: Save steps before disposing
     _stepCounterService.forceSave();
     super.dispose();
   }
 
-  // ✅ NEW: Handle app lifecycle changes
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-      // App foreground mein aaya — steps refresh karo
         debugPrint('🔄 App resumed — refreshing steps...');
         _refreshStepsOnResume();
         break;
       case AppLifecycleState.paused:
-      // App background mein gaya — steps save karo
         debugPrint('💾 App paused — saving steps...');
         _stepCounterService.forceSave();
         break;
@@ -105,10 +101,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     }
   }
 
-  // ✅ NEW: Refresh steps when app comes back to foreground
   Future<void> _refreshStepsOnResume() async {
     try {
-      // Refresh from Google Fit / Firestore
       await _stepCounterService.refreshSteps();
 
       if (mounted) {
@@ -118,7 +112,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         });
       }
 
-      // Also reload today's progress from Firestore
       await _loadTodayProgress();
 
       debugPrint('✅ Steps refreshed on resume: $_todaySteps');
@@ -127,22 +120,14 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     }
   }
 
-  // ✅ NEW: Load all data in correct order
   Future<void> _loadAllData() async {
     if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
-      // Step 1: Load saved data from Firestore FIRST
       await _loadTodayProgress();
-
-      // Step 2: Load goals
       await _loadGoals();
-
-      // Step 3: Load weekly activity
       await _loadWeeklyActivity();
-
-      // Step 4: Initialize step counter WITH saved steps
       await _initStepCounter();
     } catch (e) {
       debugPrint('Dashboard load error: $e');
@@ -157,11 +142,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
   // ═══════════════════════════════════════════
   Future<void> _initStepCounter() async {
     try {
-      // ✅ FIX: Step counter is singleton, so saved steps persist
       final success = await _stepCounterService.initialize(widget.userId);
 
       if (success) {
-        // ✅ FIX: After init, check if service has more steps than Firestore
         final serviceSteps = _stepCounterService.todaySteps;
         if (serviceSteps > _todaySteps) {
           _todaySteps = serviceSteps;
@@ -182,7 +165,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           }
         };
 
-        // ✅ NEW: Listen for Google Fit status changes
         _stepCounterService.onGoogleFitStatusChanged = (status) {
           if (mounted) {
             debugPrint('📊 Google Fit status: $status');
@@ -197,7 +179,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         });
 
         debugPrint('✅ Step counter initialized with $_todaySteps steps');
-        debugPrint('   Source: ${_stepCounterService.isUsingHealthConnect ? "Google Fit" : "Pedometer"}');
+        debugPrint(
+            '   Source: ${_stepCounterService.isUsingHealthConnect ? "Google Fit" : "Pedometer"}');
       } else {
         if (!mounted) return;
         setState(() {
@@ -247,7 +230,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         _loadWeeklyActivity(),
       ]);
 
-      // ✅ NEW: Also refresh steps after loading
       await _stepCounterService.refreshSteps();
       if (mounted) {
         setState(() {
@@ -287,7 +269,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             _proteinGoal = (data['proteinGoal'] as num?)?.toInt() ?? 100;
             _waterGoal = (data['waterGoal'] as num?)?.toInt() ?? 8;
             _stepsGoal = (data['stepsGoal'] as num?)?.toInt() ?? 10000;
-            _activeMinutesGoal = (data['activeMinutesGoal'] as num?)?.toInt() ?? 60;
+            _activeMinutesGoal =
+                (data['activeMinutesGoal'] as num?)?.toInt() ?? 60;
           });
         }
       }
@@ -317,7 +300,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       if (logDoc.exists && logDoc.data() != null) {
         final data = logDoc.data()!;
 
-        // ✅ FIX: Load saved steps and use maximum
         final savedSteps = (data['steps'] as num?)?.toInt() ?? 0;
 
         if (mounted) {
@@ -325,17 +307,17 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             _todayCalories = (data['calories'] as num?)?.toInt() ?? 0;
             _todayProtein = (data['protein'] as num?)?.toInt() ?? 0;
             _todayWater = (data['water'] as num?)?.toInt() ?? 0;
-            // ✅ FIX: Use max of saved steps and current steps
             _todaySteps = math.max(savedSteps, _todaySteps);
             _todayActiveMinutes = (data['activeMinutes'] as num?)?.toInt() ?? 0;
-            _todayCaloriesBurned = (data['caloriesBurned'] as num?)?.toInt() ?? 0;
+            _todayCaloriesBurned =
+                (data['caloriesBurned'] as num?)?.toInt() ?? 0;
           });
         }
 
-        debugPrint('📊 Loaded from Firestore — Steps: $savedSteps, Using: $_todaySteps');
+        debugPrint(
+            '📊 Loaded from Firestore — Steps: $savedSteps, Using: $_todaySteps');
       }
 
-      // Load today's workout calories
       final todayStart = DateTime(today.year, today.month, today.day);
       final todayEnd = todayStart.add(const Duration(days: 1));
 
@@ -483,8 +465,11 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 const SizedBox(height: 14),
                 _buildWeeklyActivityCard(),
                 const SizedBox(height: 16),
-                const Text('Quick Actions',
-                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                Text(
+                  AppStrings.get('dashboard_quick_actions'),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800, fontSize: 16),
+                ),
                 const SizedBox(height: 12),
                 _buildQuickActions(),
                 const SizedBox(height: 16),
@@ -507,16 +492,16 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     String emoji;
 
     if (hour >= 5 && hour < 12) {
-      greeting = 'Good Morning';
+      greeting = AppStrings.get('dashboard_greeting_morning');
       emoji = '☀️';
     } else if (hour >= 12 && hour < 17) {
-      greeting = 'Good Afternoon';
+      greeting = AppStrings.get('dashboard_greeting_afternoon');
       emoji = '🌤️';
     } else if (hour >= 17 && hour < 21) {
-      greeting = 'Good Evening';
-      emoji = '🌅';
+      greeting = AppStrings.get('dashboard_greeting_evening');
+      emoji = '🌆';
     } else {
-      greeting = 'Good Night';
+      greeting = AppStrings.get('dashboard_greeting_night');
       emoji = '🌙';
     }
 
@@ -552,7 +537,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             decoration: BoxDecoration(
               color: const Color(0xFF1A1A1A),
               shape: BoxShape.circle,
-              border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3)),
+              border: Border.all(
+                  color: FitGenieTheme.primary.withValues(alpha: 0.3)),
             ),
             child: const Icon(Icons.notifications_outlined,
                 color: FitGenieTheme.primary, size: 22),
@@ -591,7 +577,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       return 'Sensor unavailable';
     }
 
-    // ✅ NEW: Show Google Fit status
     if (_stepCounterService.isUsingHealthConnect) {
       return 'Google Fit • Live';
     }
@@ -650,7 +635,6 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
     _stepsGoal > 0 ? (_todaySteps / _stepsGoal).clamp(0.0, 1.0) : 0.0;
     final goalAchieved = progress >= 1.0;
 
-    // ✅ NEW: Show data source
     final dataSource = _stepCounterService.isUsingHealthConnect
         ? 'Google Fit'
         : 'Pedometer';
@@ -699,10 +683,10 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                   children: [
                     Row(
                       children: [
-                        const Flexible(
+                        Flexible(
                           child: Text(
-                            'Step Counter',
-                            style: TextStyle(
+                            AppStrings.get('dashboard_step_counter'),
+                            style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -862,7 +846,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           ),
           const SizedBox(height: 16),
 
-          // Goal Progress — ✅ FIXED: Show data source
+          // Goal Progress
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
@@ -882,8 +866,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 Expanded(
                   child: Text(
                     goalAchieved
-                        ? '🎉 Goal achieved!'
-                        : '${_formatNumber(_stepsGoal - _todaySteps)} steps to go',
+                        ? '✅ ${AppStrings.get('dashboard_goal_achieved')}'
+                        : AppStrings.get('dashboard_steps_to_go',
+                        params: {'count': _formatNumber(_stepsGoal - _todaySteps)}),
                     style: TextStyle(
                       fontSize: 12,
                       color: goalAchieved ? FitGenieTheme.success : Colors.grey,
@@ -937,8 +922,10 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               const Icon(Icons.local_fire_department,
                   color: FitGenieTheme.hot, size: 20),
               const SizedBox(width: 8),
-              const Text('Calories Burned',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+              Text(
+                AppStrings.get('dashboard_calories_burned'),
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+              ),
               const Spacer(),
               Text('Goal: $caloriesGoal',
                   style: TextStyle(color: Colors.grey[400], fontSize: 12)),
@@ -992,8 +979,10 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               const Icon(Icons.track_changes,
                   color: FitGenieTheme.primary, size: 20),
               const SizedBox(width: 8),
-              const Text('Daily Goals',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+              Text(
+                AppStrings.get('dashboard_daily_goals'),
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+              ),
               const Spacer(),
               if (_isLoading)
                 const SizedBox(
@@ -1004,7 +993,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           ),
           const SizedBox(height: 16),
           _buildGoalRow(
-              'Protein Intake',
+              AppStrings.get('dashboard_protein_intake'),
               '$_todayProtein/$_proteinGoal g',
               _proteinGoal > 0
                   ? (_todayProtein / _proteinGoal).clamp(0.0, 1.0)
@@ -1012,7 +1001,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               FitGenieTheme.teal),
           const SizedBox(height: 14),
           _buildGoalRow(
-              'Water (glasses)',
+              AppStrings.get('dashboard_water_glasses'),
               '$_todayWater/$_waterGoal',
               _waterGoal > 0
                   ? (_todayWater / _waterGoal).clamp(0.0, 1.0)
@@ -1021,7 +1010,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               onTap: _showAddWaterDialog),
           const SizedBox(height: 14),
           _buildGoalRow(
-              'Active Minutes',
+              AppStrings.get('dashboard_active_minutes'),
               '$_todayActiveMinutes/$_activeMinutesGoal',
               _activeMinutesGoal > 0
                   ? (_todayActiveMinutes / _activeMinutesGoal).clamp(0.0, 1.0)
@@ -1029,7 +1018,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               FitGenieTheme.hot),
           const SizedBox(height: 14),
           _buildGoalRow(
-              'Calories Intake',
+              AppStrings.get('dashboard_calories_intake'),
               '$_todayCalories/$_caloriesGoal kcal',
               _caloriesGoal > 0
                   ? (_todayCalories / _caloriesGoal).clamp(0.0, 1.0)
@@ -1084,8 +1073,10 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
               const Icon(Icons.calendar_today,
                   color: FitGenieTheme.primary, size: 18),
               const SizedBox(width: 8),
-              const Text('Weekly Activity',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+              Text(
+                AppStrings.get('dashboard_weekly_activity'),
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+              ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -1183,7 +1174,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             Expanded(
               child: QuickActionTile(
                 icon: Icons.fitness_center,
-                title: 'Workouts',
+                title: AppStrings.get('dashboard_workouts'),
                 onTap: widget.onTapWorkout ?? () {},
               ),
             ),
@@ -1191,7 +1182,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             Expanded(
               child: QuickActionTile(
                 icon: Icons.restaurant_menu,
-                title: 'Nutrition',
+                title: AppStrings.get('dashboard_nutrition'),
                 color: FitGenieTheme.success,
                 onTap: () {},
               ),
@@ -1200,7 +1191,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             Expanded(
               child: QuickActionTile(
                 icon: Icons.smart_toy,
-                title: 'AI Coach',
+                title: AppStrings.get('dashboard_ai_coach'),
                 color: Colors.purple,
                 onTap: widget.onTapAICoach ?? () {},
               ),
@@ -1213,7 +1204,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             Expanded(
               child: QuickActionTile(
                 icon: Icons.bar_chart,
-                title: 'Progress',
+                title: AppStrings.get('dashboard_progress'),
                 color: Colors.blue,
                 onTap: () {},
               ),
@@ -1222,7 +1213,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
             Expanded(
               child: QuickActionTile(
                 icon: Icons.emoji_events,
-                title: 'Challenges',
+                title: AppStrings.get('dashboard_challenges'),
                 color: FitGenieTheme.warning,
                 onTap: () {
                   Navigator.push(
@@ -1239,7 +1230,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 children: [
                   QuickActionTile(
                     icon: Icons.camera_alt,
-                    title: 'Scan Meal',
+                    title: AppStrings.get('dashboard_scan_meal'),
                     color: Colors.teal,
                     onTap: _showComingSoonDialog,
                   ),
@@ -1279,12 +1270,14 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.bolt, color: Colors.amber, size: 20),
-              SizedBox(width: 8),
-              Text('Quick Log',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+              const Icon(Icons.bolt, color: Colors.amber, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                AppStrings.get('dashboard_quick_log'),
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+              ),
             ],
           ),
           const SizedBox(height: 14),
@@ -1353,21 +1346,21 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.workspace_premium, color: Colors.amber),
-            SizedBox(width: 8),
-            Text('Coming Soon'),
+            const Icon(Icons.workspace_premium, color: Colors.amber),
+            const SizedBox(width: 8),
+            Text(AppStrings.get('dashboard_coming_soon')),
           ],
         ),
-        content: const Text(
-          '📸 Meal Scanner ek Premium feature banega — jald hi available hoga!',
-          style: TextStyle(color: Colors.grey),
+        content: Text(
+          AppStrings.get('dashboard_scanner_soon'),
+          style: const TextStyle(color: Colors.grey),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(AppStrings.get('ok')),
           ),
         ],
       ),
@@ -1384,11 +1377,11 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.directions_walk, color: FitGenieTheme.primary),
-            SizedBox(width: 8),
-            Text('Add Steps'),
+            const Icon(Icons.directions_walk, color: FitGenieTheme.primary),
+            const SizedBox(width: 8),
+            Text(AppStrings.get('dashboard_add_steps')),
           ],
         ),
         content: TextField(
@@ -1397,7 +1390,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           style: const TextStyle(color: Colors.white),
           autofocus: true,
           decoration: InputDecoration(
-            hintText: 'Enter steps',
+            hintText: AppStrings.get('dashboard_enter_steps'),
             hintStyle: const TextStyle(color: Colors.grey),
             filled: true,
             fillColor: const Color(0xFF0D0D0D),
@@ -1409,21 +1402,24 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel')),
+              child: Text(AppStrings.get('cancel'))),
           ElevatedButton(
             onPressed: () async {
               final steps = int.tryParse(controller.text);
               if (steps != null && steps > 0) {
                 Navigator.pop(context);
-                // ✅ FIX: Add steps through service so it persists
                 await _stepCounterService.addSteps(steps);
                 await _updateDailyLog(steps: _stepCounterService.todaySteps);
-                _showSnackbar('Added $steps steps! 🚶');
+                _showSnackbar(
+                  AppStrings.get('dashboard_steps_added',
+                      params: {'count': '$steps'}),
+                );
               }
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: FitGenieTheme.primary),
-            child: const Text('Add', style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get('save'),
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1436,18 +1432,21 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.water_drop, color: Colors.blue),
-            SizedBox(width: 8),
-            Text('Add Water'),
+            const Icon(Icons.water_drop, color: Colors.blue),
+            const SizedBox(width: 8),
+            Text(AppStrings.get('dashboard_add_water')),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Current: $_todayWater / $_waterGoal glasses',
-                style: const TextStyle(color: Colors.grey)),
+            Text(
+              AppStrings.get('dashboard_current_water',
+                  params: {'current': '$_todayWater', 'goal': '$_waterGoal'}),
+              style: const TextStyle(color: Colors.grey),
+            ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1458,7 +1457,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close')),
+              child: Text(AppStrings.get('close'))),
         ],
       ),
     );
@@ -1470,7 +1469,9 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         Navigator.pop(context);
         await _updateDailyLog(water: _todayWater + glasses);
         _showSnackbar(
-            'Added $glasses glass${glasses > 1 ? 'es' : ''} of water! 💧');
+          AppStrings.get('dashboard_water_added',
+              params: {'count': '$glasses'}),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -1500,11 +1501,11 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.timer, color: FitGenieTheme.hot),
-            SizedBox(width: 8),
-            Text('Add Active Minutes'),
+            const Icon(Icons.timer, color: FitGenieTheme.hot),
+            const SizedBox(width: 8),
+            Text(AppStrings.get('dashboard_add_active_minutes')),
           ],
         ),
         content: TextField(
@@ -1513,7 +1514,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           style: const TextStyle(color: Colors.white),
           autofocus: true,
           decoration: InputDecoration(
-            hintText: 'Enter minutes',
+            hintText: AppStrings.get('dashboard_enter_minutes'),
             hintStyle: const TextStyle(color: Colors.grey),
             filled: true,
             fillColor: const Color(0xFF0D0D0D),
@@ -1525,7 +1526,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel')),
+              child: Text(AppStrings.get('cancel'))),
           ElevatedButton(
             onPressed: () async {
               final minutes = int.tryParse(controller.text);
@@ -1533,12 +1534,16 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 Navigator.pop(context);
                 await _updateDailyLog(
                     activeMinutes: _todayActiveMinutes + minutes);
-                _showSnackbar('Added $minutes active minutes! 🔥');
+                _showSnackbar(
+                  AppStrings.get('dashboard_minutes_added',
+                      params: {'count': '$minutes'}),
+                );
               }
             },
             style:
             ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.hot),
-            child: const Text('Add', style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get('save'),
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1547,14 +1552,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   void _showSnackbar(String message) {
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: FitGenieTheme.success,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      );
+      AppSnackbar.showSuccess(context, message);
     }
   }
 
