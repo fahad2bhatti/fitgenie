@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
 
 class ChallengesScreen extends StatefulWidget {
@@ -87,7 +88,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
 
   Future<void> _loadUserStats() async {
     try {
-      // Load user document
       final userDoc = await _db.collection('users').doc(_uid).get();
       if (userDoc.exists) {
         final data = userDoc.data()!;
@@ -95,7 +95,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         _longestStreak = (data['longestStreak'] as num?)?.toInt() ?? 0;
       }
 
-      // Count total workouts
       final workoutsSnap = await _db
           .collection('users')
           .doc(_uid)
@@ -103,10 +102,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           .get();
       _totalWorkouts = workoutsSnap.docs.length;
 
-      // Calculate streak
       _currentStreak = await _calculateStreak();
 
-      // Update longest streak
       if (_currentStreak > _longestStreak) {
         _longestStreak = _currentStreak;
         await _db.collection('users').doc(_uid).update({
@@ -114,7 +111,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         });
       }
 
-      // Calculate total calories and protein logged
       final logsSnap = await _db
           .collection('users')
           .doc(_uid)
@@ -159,7 +155,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           break;
         }
       } else {
-        if (i > 0) break; // Allow today to be empty
+        if (i > 0) break;
       }
     }
 
@@ -184,7 +180,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         _todayWater = (data['water'] as num?)?.toInt() ?? 0;
       }
 
-      // Count today's workouts
       final startOfDay = DateTime.now();
       final start = DateTime(startOfDay.year, startOfDay.month, startOfDay.day);
       final end = start.add(const Duration(days: 1));
@@ -224,7 +219,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
   }
 
   void _generateChallenges() {
-    // Daily Challenges
     _dailyChallenges = [
       Challenge(
         id: 'daily_calories',
@@ -280,7 +274,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
     ];
 
-    // Weekly Challenges
     _weeklyChallenges = [
       Challenge(
         id: 'weekly_workouts',
@@ -308,7 +301,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         description: 'Hit protein goal 5 days',
         icon: '🥩',
         targetValue: 5,
-        currentValue: 3, // TODO: Calculate from logs
+        currentValue: 3,
         points: 250,
         type: ChallengeType.weekly,
       ),
@@ -317,7 +310,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
 
   void _checkAchievements() {
     final allAchievements = [
-      // Workout Achievements
       Achievement(
         id: 'first_workout',
         title: 'First Step',
@@ -358,8 +350,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         category: AchievementCategory.workout,
         points: 500,
       ),
-
-      // Streak Achievements
       Achievement(
         id: 'streak_3',
         title: 'On Fire',
@@ -400,8 +390,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         category: AchievementCategory.streak,
         points: 1000,
       ),
-
-      // Nutrition Achievements
       Achievement(
         id: 'calories_10000',
         title: 'Fuel Master',
@@ -442,15 +430,13 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         category: AchievementCategory.nutrition,
         points: 500,
       ),
-
-      // Special Achievements
       Achievement(
         id: 'early_bird',
         title: 'Early Bird',
         description: 'Log breakfast before 8 AM',
         icon: '🌅',
         requirement: 1,
-        currentProgress: 0, // TODO: Track this
+        currentProgress: 0,
         category: AchievementCategory.special,
         points: 50,
       ),
@@ -478,7 +464,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         .where((a) => a.currentProgress < a.requirement)
         .toList();
 
-    // Sort by progress percentage
     _lockedAchievements.sort((a, b) {
       final aProgress = a.currentProgress / a.requirement;
       final bProgress = b.currentProgress / b.requirement;
@@ -487,14 +472,11 @@ class _ChallengesScreenState extends State<ChallengesScreen>
   }
 
   void _calculateLevel() {
-    // Calculate total points from achievements
     int points = 0;
     for (var achievement in _unlockedAchievements) {
       points += achievement.points;
     }
     _totalPoints = points;
-
-    // Calculate level (every 500 points = 1 level)
     _level = (_totalPoints / 500).floor() + 1;
   }
 
@@ -505,7 +487,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('🎯 Challenges'),
+        title: Text(AppStrings.get('challenges_title')),
         centerTitle: true,
         actions: [
           IconButton(
@@ -518,10 +500,10 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           indicatorColor: FitGenieTheme.primary,
           labelColor: FitGenieTheme.primary,
           unselectedLabelColor: FitGenieTheme.muted,
-          tabs: const [
-            Tab(text: '🎯 Daily'),
-            Tab(text: '📅 Weekly'),
-            Tab(text: '🏆 Badges'),
+          tabs: [
+            Tab(text: AppStrings.get('challenges_daily')),
+            Tab(text: AppStrings.get('challenges_weekly')),
+            Tab(text: AppStrings.get('challenges_badges')),
           ],
         ),
       ),
@@ -529,10 +511,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           ? const Center(child: CircularProgressIndicator())
           : Column(
         children: [
-          // User Stats Header
           _buildStatsHeader(),
-
-          // Tab Content
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -571,7 +550,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         children: [
           Row(
             children: [
-              // Level Badge
               Container(
                 width: 60,
                 height: 60,
@@ -604,7 +582,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Level $_level',
+                      AppStrings.get('challenges_level', params: {'level': '$_level'}),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -612,7 +590,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '$_totalPoints XP',
+                      AppStrings.get('challenges_xp', params: {'xp': '$_totalPoints'}),
                       style: TextStyle(
                         color: FitGenieTheme.muted,
                         fontSize: 14,
@@ -632,7 +610,10 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${500 - (_totalPoints % 500)} XP to Level ${_level + 1}',
+                      AppStrings.get('challenges_next_level', params: {
+                        'xp': '${500 - (_totalPoints % 500)}',
+                        'level': '${_level + 1}',
+                      }),
                       style: TextStyle(
                         color: FitGenieTheme.muted,
                         fontSize: 10,
@@ -647,9 +628,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildMiniStat('🔥', '$_currentStreak', 'Streak'),
-              _buildMiniStat('🏋️', '$_totalWorkouts', 'Workouts'),
-              _buildMiniStat('🏆', '${_unlockedAchievements.length}', 'Badges'),
+              _buildMiniStat('🔥', '$_currentStreak', AppStrings.get('challenges_streak')),
+              _buildMiniStat('🏋️', '$_totalWorkouts', AppStrings.get('challenges_workouts')),
+              _buildMiniStat('🏆', '${_unlockedAchievements.length}', AppStrings.get('challenges_badges_count')),
             ],
           ),
         ],
@@ -693,7 +674,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Progress Header
           FGCard(
             child: Column(
               children: [
@@ -708,9 +688,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Completed',
-                      style: TextStyle(
+                    Text(
+                      AppStrings.get('challenges_completed'),
+                      style: const TextStyle(
                         fontSize: 16,
                         color: FitGenieTheme.muted,
                       ),
@@ -734,11 +714,11 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     padding: const EdgeInsets.only(top: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text('🎉', style: TextStyle(fontSize: 24)),
-                        SizedBox(width: 8),
+                      children: [
+                        const Text('🎉', style: TextStyle(fontSize: 24)),
+                        const SizedBox(width: 8),
                         Text(
-                          'All challenges completed!',
+                          AppStrings.get('challenges_all'),
                           style: TextStyle(
                             color: FitGenieTheme.success,
                             fontWeight: FontWeight.bold,
@@ -751,8 +731,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             ),
           ),
           const SizedBox(height: 16),
-
-          // Challenge Cards
           ..._dailyChallenges.map((challenge) => _buildChallengeCard(challenge)),
         ],
       ),
@@ -768,7 +746,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Week info
           FGCard(
             child: Row(
               children: [
@@ -777,15 +754,15 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'This Week\'s Challenges',
-                      style: TextStyle(
+                    Text(
+                      AppStrings.get('challenges_weekly_info'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      'Resets every Monday',
+                      AppStrings.get('challenges_weekly_reset'),
                       style: TextStyle(
                         color: FitGenieTheme.muted,
                         fontSize: 12,
@@ -797,8 +774,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             ),
           ),
           const SizedBox(height: 16),
-
-          // Challenge Cards
           ..._weeklyChallenges.map((challenge) => _buildChallengeCard(challenge)),
         ],
       ),
@@ -814,14 +789,14 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Unlocked Section
           if (_unlockedAchievements.isNotEmpty) ...[
             Row(
               children: [
                 const Text('🏆', style: TextStyle(fontSize: 20)),
                 const SizedBox(width: 8),
                 Text(
-                  'Unlocked (${_unlockedAchievements.length})',
+                  AppStrings.get('challenges_unlocked',
+                      params: {'count': '${_unlockedAchievements.length}'}),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -840,14 +815,14 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             const SizedBox(height: 24),
           ],
 
-          // Locked Section
           if (_lockedAchievements.isNotEmpty) ...[
             Row(
               children: [
                 const Text('🔒', style: TextStyle(fontSize: 20)),
                 const SizedBox(width: 8),
                 Text(
-                  'Locked (${_lockedAchievements.length})',
+                  AppStrings.get('challenges_locked',
+                      params: {'count': '${_lockedAchievements.length}'}),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -857,7 +832,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             ),
             const SizedBox(height: 12),
             ..._lockedAchievements
-                .take(6) // Show only first 6
+                .take(6)
                 .map((a) => _buildLockedAchievementCard(a)),
           ],
         ],
@@ -1223,7 +1198,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppStrings.get('close')),
           ),
         ],
       ),

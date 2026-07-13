@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
 import '../data/workout_plans_data.dart';
 import '../data/exercise_data.dart';
@@ -203,9 +204,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Plan Overview',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          Text(
+            AppStrings.get('workout_plan_overview'),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 10),
           Text(
@@ -225,9 +226,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Target Muscles',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        Text(
+          AppStrings.get('workout_plan_target'),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
         const SizedBox(height: 10),
         Wrap(
@@ -273,7 +274,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           child: _buildStatCard(
             icon: Icons.repeat,
             value: '${widget.plan.totalSets}',
-            label: 'Total Sets',
+            label: AppStrings.get('workout_plan_total_sets'),
             color: FitGenieTheme.warning,
           ),
         ),
@@ -282,7 +283,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           child: _buildStatCard(
             icon: Icons.timer_outlined,
             value: '${widget.plan.estimatedMinutes}',
-            label: 'Minutes',
+            label: AppStrings.get('workout_plan_minutes'),
             color: FitGenieTheme.teal,
           ),
         ),
@@ -338,9 +339,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           );
         },
         icon: const Icon(Icons.play_arrow, color: Colors.white),
-        label: const Text(
-          'Start This Workout',
-          style: TextStyle(
+        label: Text(
+          AppStrings.get('workout_plan_start'),
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -360,13 +361,15 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   Widget _buildExerciseHeader() {
     return Row(
       children: [
-        const Text(
-          'Exercises in this Plan',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+        Text(
+          AppStrings.get('workout_plan_exercises'),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
         ),
         const Spacer(),
         Text(
-          _showGifs ? 'GIFs ON' : 'GIFs OFF',
+          _showGifs
+              ? AppStrings.get('workout_plan_gifs_on')
+              : AppStrings.get('workout_plan_gifs_off'),
           style: TextStyle(
             color: FitGenieTheme.muted,
             fontSize: 12,
@@ -587,11 +590,17 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
                     Row(
                       children: [
-                        _miniChip(Icons.timer_outlined,
-                            '${planExercise.restSeconds}s rest'),
+                        _miniChip(
+                          Icons.timer_outlined,
+                          AppStrings.get('workout_plan_rest',
+                              params: {'sec': planExercise.restSeconds.toString()}),
+                        ),
                         const SizedBox(width: 8),
-                        _miniChip(Icons.local_fire_department,
-                            '${exercise.caloriesPerMin} cal/min'),
+                        _miniChip(
+                          Icons.local_fire_department,
+                          AppStrings.get('workout_plan_cal_min',
+                              params: {'cal': exercise.caloriesPerMin.toString()}),
+                        ),
                       ],
                     ),
 
@@ -628,7 +637,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
                     const SizedBox(height: 10),
                     Text(
-                      'Tap for full form guide →',
+                      AppStrings.get('workout_plan_tap_guide'),
                       style: TextStyle(
                         color: color,
                         fontSize: 12,
@@ -765,12 +774,14 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         ),
                         _buildInfoChip(
                           Icons.timer_outlined,
-                          '${planExercise.restSeconds}s rest',
+                          AppStrings.get('workout_plan_rest',
+                              params: {'sec': planExercise.restSeconds.toString()}),
                           FitGenieTheme.success,
                         ),
                         _buildInfoChip(
                           Icons.local_fire_department,
-                          '${exercise.caloriesPerMin} cal/min',
+                          AppStrings.get('workout_plan_cal_min',
+                              params: {'cal': exercise.caloriesPerMin.toString()}),
                           FitGenieTheme.hot,
                         ),
                       ],
@@ -780,8 +791,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     const SizedBox(height: 16),
 
                     if (exercise.musclesWorked.isNotEmpty) ...[
-                      const Text(
-                        'Target Muscles',
+                      Text(
+                        AppStrings.get('muscle_exercises_target'),
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -880,7 +891,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     const SizedBox(height: 24),
 
                     if (steps.isNotEmpty) ...[
-                      _buildSectionTitle('📝 How to Perform', color),
+                      _buildSectionTitle(
+                        AppStrings.get('muscle_exercises_how_to'),
+                        color,
+                      ),
                       const SizedBox(height: 14),
                       for (int i = 0; i < steps.length; i++)
                         _buildStepItem(i + 1, steps[i], color),
@@ -888,7 +902,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     ],
 
                     if (tips.isNotEmpty) ...[
-                      _buildSectionTitle('💡 Pro Tips', Colors.amber),
+                      _buildSectionTitle(
+                        AppStrings.get('muscle_exercises_tips'),
+                        Colors.amber,
+                      ),
                       const SizedBox(height: 14),
                       for (final tip in tips)
                         _buildBulletItem(
@@ -901,7 +918,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
 
                     if (mistakes.isNotEmpty) ...[
                       _buildSectionTitle(
-                          '⚠️ Common Mistakes', FitGenieTheme.hot),
+                        AppStrings.get('muscle_exercises_mistakes'),
+                        FitGenieTheme.hot,
+                      ),
                       const SizedBox(height: 14),
                       for (final mistake in mistakes)
                         _buildBulletItem(

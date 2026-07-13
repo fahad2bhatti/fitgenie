@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
 import '../data/exercise_data.dart';
 
@@ -81,7 +82,8 @@ class _MuscleGroupExercisesScreenState
               child: Row(
                 children: [
                   Text(
-                    '${_filteredExercises.length} exercises',
+                    AppStrings.get('muscle_exercises_count',
+                        params: {'count': '${_filteredExercises.length}'}),
                     style: TextStyle(color: FitGenieTheme.muted, fontSize: 14),
                   ),
                   const Spacer(),
@@ -110,7 +112,9 @@ class _MuscleGroupExercisesScreenState
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            _showGifs ? 'GIFs ON' : 'GIFs OFF',
+                            _showGifs
+                                ? AppStrings.get('muscle_exercises_gifs_on')
+                                : AppStrings.get('muscle_exercises_gifs_off'),
                             style: TextStyle(
                               fontSize: 11,
                               color: _showGifs
@@ -171,7 +175,8 @@ class _MuscleGroupExercisesScreenState
       ),
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
-          '${widget.emoji} ${widget.bodyPart}',
+          AppStrings.get('muscle_exercises_title',
+              params: {'emoji': widget.emoji, 'name': widget.bodyPart}),
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -196,14 +201,15 @@ class _MuscleGroupExercisesScreenState
                 Text(widget.emoji, style: const TextStyle(fontSize: 50)),
                 const SizedBox(height: 8),
                 Text(
-                  '${_allExercises.length} Exercises',
+                  AppStrings.get('muscle_exercises_count',
+                      params: {'count': '${_allExercises.length}'}),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                   ),
                 ),
                 Text(
-                  'with animated demos 🎬',
+                  AppStrings.get('muscle_exercises_sub'),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
@@ -374,7 +380,7 @@ class _MuscleGroupExercisesScreenState
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Loading...',
+                                  AppStrings.get('muscle_exercises_loading'),
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: FitGenieTheme.muted),
@@ -422,7 +428,8 @@ class _MuscleGroupExercisesScreenState
                                   size: 14, color: FitGenieTheme.hot),
                               const SizedBox(width: 2),
                               Text(
-                                '${exercise.caloriesPerMin} cal/min',
+                                AppStrings.get('muscle_exercises_cal_per_min',
+                                    params: {'cal': exercise.caloriesPerMin.toString()}),
                                 style: const TextStyle(
                                     fontSize: 11,
                                     color: Colors.white,
@@ -526,7 +533,8 @@ class _MuscleGroupExercisesScreenState
                                   const SizedBox(width: 6),
                                   if (exercise.tempo.isNotEmpty)
                                     _buildTag(
-                                        'Tempo: ${exercise.tempo}',
+                                        AppStrings.get('muscle_exercises_tempo',
+                                            params: {'tempo': exercise.tempo}),
                                         FitGenieTheme.primary),
                                 ],
                               ),
@@ -583,7 +591,7 @@ class _MuscleGroupExercisesScreenState
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'Full Guide →',
+                            AppStrings.get('muscle_exercises_full_guide'),
                             style: TextStyle(
                                 color: widget.color,
                                 fontSize: 11,
@@ -742,10 +750,14 @@ class _MuscleGroupExercisesScreenState
                         _buildInfoChip(
                             Icons.build, equipment, FitGenieTheme.teal),
                         _buildInfoChip(Icons.local_fire_department,
-                            '$calories cal/min', FitGenieTheme.hot),
+                            AppStrings.get('muscle_exercises_cal_per_min',
+                                params: {'cal': calories.toString()}),
+                            FitGenieTheme.hot),
                         if (tempo.isNotEmpty)
                           _buildInfoChip(Icons.speed,
-                              'Tempo: $tempo', FitGenieTheme.primary),
+                              AppStrings.get('muscle_exercises_tempo',
+                                  params: {'tempo': tempo}),
+                              FitGenieTheme.primary),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -756,8 +768,9 @@ class _MuscleGroupExercisesScreenState
 
                     // Muscles
                     if (muscles.isNotEmpty) ...[
-                      const Text('Target Muscles',
-                          style: TextStyle(
+                      Text(
+                          AppStrings.get('muscle_exercises_target'),
+                          style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                               color: Colors.white70)),
@@ -817,7 +830,8 @@ class _MuscleGroupExercisesScreenState
                     // ── Steps ──
                     if (steps.isNotEmpty) ...[
                       _buildSectionTitle(
-                          '📝 How to Perform', widget.color),
+                          AppStrings.get('muscle_exercises_how_to'),
+                          widget.color),
                       const SizedBox(height: 14),
                       for (int i = 0; i < steps.length; i++)
                         _buildStepItem(i + 1, steps[i]),
@@ -827,7 +841,8 @@ class _MuscleGroupExercisesScreenState
                     // ── Tips ──
                     if (tips.isNotEmpty) ...[
                       _buildSectionTitle(
-                          '💡 Pro Tips', Colors.amber),
+                          AppStrings.get('muscle_exercises_tips'),
+                          Colors.amber),
                       const SizedBox(height: 14),
                       for (int i = 0; i < tips.length; i++)
                         _buildBulletItem(tips[i], Colors.amber,
@@ -838,7 +853,8 @@ class _MuscleGroupExercisesScreenState
                     // ── Mistakes ──
                     if (mistakes.isNotEmpty) ...[
                       _buildSectionTitle(
-                          '⚠️ Common Mistakes', FitGenieTheme.hot),
+                          AppStrings.get('muscle_exercises_mistakes'),
+                          FitGenieTheme.hot),
                       const SizedBox(height: 14),
                       for (int i = 0; i < mistakes.length; i++)
                         _buildBulletItem(mistakes[i],
@@ -864,7 +880,8 @@ class _MuscleGroupExercisesScreenState
                                   size: 40,
                                   color: FitGenieTheme.muted),
                               const SizedBox(height: 8),
-                              Text('Detailed guide coming soon!',
+                              Text(
+                                  AppStrings.get('muscle_exercises_coming_soon'),
                                   style: TextStyle(
                                       color: FitGenieTheme.muted)),
                             ],
@@ -1041,7 +1058,8 @@ class _MuscleGroupExercisesScreenState
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 4),
-          Text(difficulty,
+          Text(
+              AppStrings.get('muscle_exercises_difficulty'),
               style: TextStyle(
                   color: color,
                   fontSize: 11,

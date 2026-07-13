@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../app/fitgenie_theme.dart';
+import '../widgets/app_snackbar.dart';
+import '../core/app_strings.dart';
 import '../services/notification_service.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
@@ -152,22 +154,15 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Notification settings saved!'),
-            backgroundColor: FitGenieTheme.success,
-          ),
-        );
+        AppSnackbar.showSuccess(context, AppStrings.get('notifications_saved'));
         Navigator.pop(context);
       }
     } catch (e) {
       debugPrint('Error saving notification settings: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Error saving settings: $e'),
-            backgroundColor: FitGenieTheme.error,
-          ),
+        AppSnackbar.showError(
+          context,
+          AppStrings.get('notifications_error', params: {'error': e.toString()}),
         );
       }
     }
@@ -205,7 +200,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1A1A),
-        title: const Text('Notification Settings'),
+        title: Text(AppStrings.get('notifications_title')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -215,11 +210,11 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             icon: const Icon(Icons.notifications_active, color: FitGenieTheme.primary),
             onPressed: () async {
               await _notificationService.showInstantNotification(
-                title: '🔔 Test Notification',
-                body: 'Notifications are working perfectly!',
+                title: AppStrings.get('notifications_test'),
+                body: AppStrings.get('notifications_test_body'),
               );
             },
-            tooltip: 'Test Notification',
+            tooltip: AppStrings.get('notifications_test_tooltip'),
           ),
         ],
       ),
@@ -230,9 +225,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Customize your reminders',
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+            Text(
+              AppStrings.get('notifications_sub'),
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
             ),
             const SizedBox(height: 20),
 
@@ -240,8 +235,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             _buildNotificationCard(
               icon: Icons.fitness_center,
               iconColor: FitGenieTheme.warning,
-              title: 'Workout Reminder',
-              subtitle: 'Daily morning workout reminder',
+              title: AppStrings.get('notifications_workout'),
+              subtitle: AppStrings.get('notifications_workout_sub'),
               enabled: _workoutEnabled,
               onToggle: (val) => setState(() => _workoutEnabled = val),
               time: _workoutTime,
@@ -257,8 +252,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             _buildNotificationCard(
               icon: Icons.restaurant,
               iconColor: FitGenieTheme.success,
-              title: 'Lunch Reminder',
-              subtitle: 'Remind to log lunch calories',
+              title: AppStrings.get('notifications_lunch'),
+              subtitle: AppStrings.get('notifications_lunch_sub'),
               enabled: _lunchEnabled,
               onToggle: (val) => setState(() => _lunchEnabled = val),
               time: _lunchTime,
@@ -270,8 +265,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             _buildNotificationCard(
               icon: Icons.local_fire_department,
               iconColor: FitGenieTheme.error,
-              title: 'Daily Motivation',
-              subtitle: 'Get inspired with motivational quotes',
+              title: AppStrings.get('notifications_motivation'),
+              subtitle: AppStrings.get('notifications_motivation_sub'),
               enabled: _motivationEnabled,
               onToggle: (val) => setState(() => _motivationEnabled = val),
               time: _motivationTime,
@@ -283,8 +278,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             _buildNotificationCard(
               icon: Icons.nightlight_round,
               iconColor: Colors.purple,
-              title: 'Evening Reminder',
-              subtitle: 'Remind to complete daily tracking',
+              title: AppStrings.get('notifications_evening'),
+              subtitle: AppStrings.get('notifications_evening_sub'),
               enabled: _eveningEnabled,
               onToggle: (val) => setState(() => _eveningEnabled = val),
               time: _eveningTime,
@@ -313,9 +308,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     strokeWidth: 2,
                   ),
                 )
-                    : const Text(
-                  '💾 Save Settings',
-                  style: TextStyle(
+                    : Text(
+                  AppStrings.get('notifications_save'),
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -405,9 +400,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      '⏰ Time',
-                      style: TextStyle(color: Colors.grey),
+                    Text(
+                      AppStrings.get('notifications_time'),
+                      style: const TextStyle(color: Colors.grey),
                     ),
                     Text(
                       _formatTimeDisplay(time),
@@ -453,18 +448,18 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text(
-                      'Water Reminders',
-                      style: TextStyle(
+                      AppStrings.get('notifications_water'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
-                      'Stay hydrated throughout the day',
-                      style: TextStyle(
+                      AppStrings.get('notifications_water_sub'),
+                      style: const TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
                       ),
@@ -490,9 +485,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    '🔄 Remind every',
-                    style: TextStyle(color: Colors.grey),
+                  Text(
+                    AppStrings.get('notifications_remind_every'),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   DropdownButton<int>(
                     value: _waterIntervalHours,
@@ -502,11 +497,11 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       color: FitGenieTheme.primary,
                     ),
                     underline: const SizedBox(),
-                    items: const [
-                      DropdownMenuItem(value: 1, child: Text('1 hour')),
-                      DropdownMenuItem(value: 2, child: Text('2 hours')),
-                      DropdownMenuItem(value: 3, child: Text('3 hours')),
-                      DropdownMenuItem(value: 4, child: Text('4 hours')),
+                    items: [
+                      DropdownMenuItem(value: 1, child: Text(AppStrings.get('notifications_hour'))),
+                      DropdownMenuItem(value: 2, child: Text(AppStrings.get('notifications_hours', params: {'count': '2'}))),
+                      DropdownMenuItem(value: 3, child: Text(AppStrings.get('notifications_hours', params: {'count': '3'}))),
+                      DropdownMenuItem(value: 4, child: Text(AppStrings.get('notifications_hours', params: {'count': '4'}))),
                     ],
                     onChanged: (val) {
                       if (val != null) {
@@ -523,4 +518,3 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     );
   }
 }
-

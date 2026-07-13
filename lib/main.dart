@@ -20,12 +20,17 @@ import 'widgets/offline_indicator.dart';
 
 import 'screens/onboarding_screen.dart';
 
+// ✅ NEW IMPORTS — Phase 1 language system
+import 'core/hive_boxes.dart';
+import 'core/language_provider.dart';
+import 'screens/language_selection_screen.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ═══════════════════════════════════════════
-  // 🔒 STEP 1: Load Environment Variables FIRST
-  // ═══════════════════════════════════════════
+  // ─────────────────────────────────────────────
+  // STEP 1: Load Environment Variables FIRST
+  // ─────────────────────────────────────────────
   try {
     await dotenv.load(fileName: ".env");
     debugPrint('✅ Environment loaded');
@@ -36,9 +41,9 @@ Future<void> main() async {
     debugPrint('⚠️ .env load error: $e');
   }
 
-  // ═══════════════════════════════════════════
-  // 🔥 STEP 2: Firebase Init
-  // ═══════════════════════════════════════════
+  // ─────────────────────────────────────────────
+  // STEP 2: Firebase Init
+  // ─────────────────────────────────────────────
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -48,9 +53,20 @@ Future<void> main() async {
     debugPrint('⚠️ Firebase error: $e');
   }
 
-  // ═══════════════════════════════════════════
-  // 🗃️ STEP 3: Local Storage Init
-  // ═══════════════════════════════════════════
+  // ─────────────────────────────────────────────
+  // STEP 3: Hive + LanguageProvider Init  (✅ NEW — Phase 1.7)
+  // ─────────────────────────────────────────────
+  try {
+    await HiveBoxes.init();
+    LanguageProvider().init();
+    debugPrint('✅ Hive + LanguageProvider initialized');
+  } catch (e) {
+    debugPrint('⚠️ Hive/LanguageProvider error: $e');
+  }
+
+  // ─────────────────────────────────────────────
+  // STEP 4: Local Storage Init
+  // ─────────────────────────────────────────────
   try {
     final localStorage = LocalStorageService();
     await localStorage.initialize();
@@ -59,9 +75,9 @@ Future<void> main() async {
     debugPrint('⚠️ LocalStorage error: $e');
   }
 
-  // ═══════════════════════════════════════════
-  // 🌐 STEP 4: Connectivity Init
-  // ═══════════════════════════════════════════
+  // ─────────────────────────────────────────────
+  // STEP 5: Connectivity Init
+  // ─────────────────────────────────────────────
   try {
     await ConnectivityService().initialize();
     debugPrint('✅ Connectivity initialized');
@@ -69,9 +85,9 @@ Future<void> main() async {
     debugPrint('⚠️ Connectivity error: $e');
   }
 
-  // ═══════════════════════════════════════════
-  // 🔄 STEP 5: Sync Service Start
-  // ═══════════════════════════════════════════
+  // ─────────────────────────────────────────────
+  // STEP 6: Sync Service Start
+  // ─────────────────────────────────────────────
   try {
     SyncService().startAutoSync();
     debugPrint('✅ SyncService started');
@@ -79,9 +95,9 @@ Future<void> main() async {
     debugPrint('⚠️ SyncService error: $e');
   }
 
-  // ═══════════════════════════════════════════
-  // 🔔 STEP 6: Notifications Init
-  // ═══════════════════════════════════════════
+  // ─────────────────────────────────────────────
+  // STEP 7: Notifications Init
+  // ─────────────────────────────────────────────
   try {
     await NotificationService().initialize();
     await NotificationService().scheduleAllDailyNotifications();
@@ -90,9 +106,9 @@ Future<void> main() async {
     debugPrint('⚠️ Notification error: $e');
   }
 
-  // ═══════════════════════════════════════════
-  // 🚀 STEP 7: Run App
-  // ═══════════════════════════════════════════
+  // ─────────────────────────────────────────────
+  // STEP 8: Run App
+  // ─────────────────────────────────────────────
   runApp(const FitGenieApp());
 }
 
@@ -110,9 +126,9 @@ class FitGenieApp extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════
-// 🎬 App Entry with Splash Screen
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────
+// App Entry with Splash Screen
+// ─────────────────────────────────────────────
 class AppEntry extends StatefulWidget {
   const AppEntry({super.key});
 
@@ -134,22 +150,63 @@ class _AppEntryState extends State<AppEntry> {
     if (_showSplash) {
       return SplashScreen(onComplete: _onSplashComplete);
     }
+    // ✅ NEW — language gate sits between splash and auth
+    return const LanguageGate();
+  }
+}
+
+// ─────────────────────────────────────────────
+// ✅ NEW — LanguageGate
+// Shows LanguageSelectionScreen once (first launch only),
+// then listens to LanguageProvider and moves into AuthGate.
+// ─────────────────────────────────────────────
+class LanguageGate extends StatefulWidget {
+  const LanguageGate({super.key});
+
+  @override
+  State<LanguageGate> createState() => _LanguageGateState();
+}
+
+class _LanguageGateState extends State<LanguageGate> {
+  final LanguageProvider _provider = LanguageProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    _provider.addListener(_onLanguageChanged);
+  }
+
+  @override
+  void dispose() {
+    _provider.removeListener(_onLanguageChanged);
+    super.dispose();
+  }
+
+  void _onLanguageChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_provider.isLanguageSelected) {
+      return const LanguageSelectionScreen();
+    }
     return const AuthGate();
   }
 }
 
-// ═══════════════════════════════════════════
-// 🧩 Helper class — carries name + onboarding status together
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────
+// Helper class — carries name + onboarding status together
+// ─────────────────────────────────────────────
 class _UserGateInfo {
   final String name;
   final bool profileComplete;
   const _UserGateInfo({required this.name, required this.profileComplete});
 }
 
-// ═══════════════════════════════════════════
-// 🔐 AuthGate with Offline Banner + Step Counter Init
-// ═══════════════════════════════════════════
+// ─────────────────────────────────────────────
+// AuthGate with Offline Banner + Step Counter Init
+// ─────────────────────────────────────────────
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
 
@@ -232,7 +289,7 @@ class _AuthGateState extends State<AuthGate> {
             return const login_screen.LoginScreen();
           }
 
-          // ✅ Email verification check (only for email/password users)
+          // Email verification check (only for email/password users)
           final isEmailUser = user.providerData
               .any((p) => p.providerId == 'password') &&
               !user.providerData.any((p) => p.providerId == 'google.com');
@@ -281,7 +338,7 @@ class _AuthGateState extends State<AuthGate> {
             );
           }
 
-          // ✅ User logged in — initialize step counter
+          // User logged in → initialize step counter
           _initializeStepCounter(user.uid);
 
           return FutureBuilder<_UserGateInfo>(

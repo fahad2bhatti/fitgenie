@@ -3,6 +3,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onComplete;
@@ -541,7 +542,7 @@ class _AnimatedLoadingTextState extends State<_AnimatedLoadingText> {
     final spaces = ' ' * (3 - _dotCount);
 
     return Text(
-      'Initializing$dots$spaces',
+      '${AppStrings.get('splash_initializing')}$dots$spaces',
       style: TextStyle(
         fontSize: 14,
         color: Colors.grey[500],

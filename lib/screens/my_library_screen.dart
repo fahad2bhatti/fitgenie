@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
 import '../widgets/fg_card.dart';
+import '../widgets/app_snackbar.dart';
+import '../core/app_strings.dart';
 import '../data/exercise_data.dart';
 
 // ============================================================
@@ -67,17 +69,20 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: FitGenieTheme.cardDark,
-        title: const Text('Delete Workout?'),
-        content: const Text('Yeh custom workout permanently delete ho jayega.'),
+        title: Text(AppStrings.get('library_delete_confirm')),
+        content: Text(AppStrings.get('library_delete_sub')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            child: Text(
+              AppStrings.get('delete'),
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -92,8 +97,9 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
           .delete();
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Workout deleted')),
+        AppSnackbar.showSuccess(
+          context,
+          AppStrings.get('library_delete_success'),
         );
       }
     }
@@ -149,7 +155,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: FitGenieTheme.cardDark,
-        title: const Text('My Library 📚'),
+        title: Text(AppStrings.get('library_title')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.pop(context),
@@ -159,9 +165,9 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
         onPressed: _openCreateWorkout,
         backgroundColor: FitGenieTheme.primary,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          'Create Workout',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        label: Text(
+          AppStrings.get('library_create'),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -199,16 +205,16 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Custom Workout Library',
-                          style: TextStyle(
+                        Text(
+                          AppStrings.get('library_title'),
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Apni marzi se exercises select karo, save karo aur kabhi bhi start karo.',
+                          AppStrings.get('library_sub'),
                           style: TextStyle(
                             color: FitGenieTheme.muted,
                             fontSize: 12,
@@ -370,9 +376,9 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                                     },
                                     icon: const Icon(Icons.play_arrow,
                                         color: Colors.white, size: 18),
-                                    label: const Text(
-                                      'Start',
-                                      style: TextStyle(
+                                    label: Text(
+                                      AppStrings.get('library_start'),
+                                      style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -432,16 +438,16 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
               ),
             ),
             const SizedBox(height: 18),
-            const Text(
-              'No custom workouts yet',
-              style: TextStyle(
+            Text(
+              AppStrings.get('library_empty'),
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Apna khud ka workout banao.\nChest routine, arm blaster, fat loss circuit — jo marzi.',
+              AppStrings.get('library_empty_sub'),
               style: TextStyle(
                 color: FitGenieTheme.muted,
                 fontSize: 13,
@@ -453,9 +459,9 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
             ElevatedButton.icon(
               onPressed: _openCreateWorkout,
               icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text(
-                'Create First Workout',
-                style: TextStyle(color: Colors.white),
+              label: Text(
+                AppStrings.get('library_create_first'),
+                style: const TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: FitGenieTheme.primary,
@@ -610,15 +616,14 @@ class _CustomWorkoutBuilderScreenState
     final name = _nameController.text.trim();
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Workout name likho')),
-      );
+      AppSnackbar.showWarning(context, AppStrings.get('library_name_hint'));
       return;
     }
 
     if (_selectedExercises.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('At least 1 exercise select karo')),
+      AppSnackbar.showWarning(
+        context,
+        'At least 1 exercise select karo',
       );
       return;
     }
@@ -646,14 +651,11 @@ class _CustomWorkoutBuilderScreenState
 
     if (mounted) {
       setState(() => _saving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _isEditing
-                ? 'Workout updated successfully ✅'
-                : 'Workout saved successfully ✅',
-          ),
-        ),
+      AppSnackbar.showSuccess(
+        context,
+        _isEditing
+            ? 'Workout updated successfully ✅'
+            : 'Workout saved successfully ✅',
       );
       Navigator.pop(context);
     }
@@ -788,9 +790,9 @@ class _CustomWorkoutBuilderScreenState
                     style: ElevatedButton.styleFrom(
                       backgroundColor: FitGenieTheme.primary,
                     ),
-                    child: const Text(
-                      'Save Config',
-                      style: TextStyle(color: Colors.white),
+                    child: Text(
+                      AppStrings.get('library_save_config'),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -832,7 +834,11 @@ class _CustomWorkoutBuilderScreenState
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: FitGenieTheme.cardDark,
-        title: Text(_isEditing ? 'Edit Workout ✏️' : 'Create Workout ➕'),
+        title: Text(
+          _isEditing
+              ? AppStrings.get('library_edit')
+              : AppStrings.get('library_create'),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.pop(context),
@@ -846,9 +852,9 @@ class _CustomWorkoutBuilderScreenState
               height: 18,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-                : const Text(
-              'SAVE',
-              style: TextStyle(
+                : Text(
+              AppStrings.get('library_save'),
+              style: const TextStyle(
                 color: FitGenieTheme.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -867,7 +873,7 @@ class _CustomWorkoutBuilderScreenState
                   controller: _nameController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Workout name e.g. My Chest Routine',
+                    hintText: AppStrings.get('library_name_hint'),
                     hintStyle: TextStyle(color: FitGenieTheme.muted),
                     prefixIcon: Icon(Icons.drive_file_rename_outline,
                         color: FitGenieTheme.muted),
@@ -885,7 +891,7 @@ class _CustomWorkoutBuilderScreenState
                   onChanged: (v) => setState(() => _searchQuery = v),
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Search exercises...',
+                    hintText: AppStrings.get('library_search_hint'),
                     hintStyle: TextStyle(color: FitGenieTheme.muted),
                     prefixIcon:
                     Icon(Icons.search, color: FitGenieTheme.muted),
@@ -967,9 +973,9 @@ class _CustomWorkoutBuilderScreenState
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        'Selected Exercises',
-                        style: TextStyle(
+                      Text(
+                        AppStrings.get('library_selected'),
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 15),
                       ),
                       const Spacer(),
@@ -1232,8 +1238,9 @@ class _CustomWorkoutSessionScreenState
     });
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Custom workout started! 🔥')),
+      AppSnackbar.showSuccess(
+        context,
+        AppStrings.get('library_workout_started'),
       );
     }
   }
@@ -1299,9 +1306,9 @@ class _CustomWorkoutSessionScreenState
                     mainAxisAlignment:
                     MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        '🏋️ Log Set',
-                        style: TextStyle(
+                      Text(
+                        AppStrings.get('library_log_set'),
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       IconButton(
@@ -1312,8 +1319,10 @@ class _CustomWorkoutSessionScreenState
                   ),
                   const SizedBox(height: 16),
 
-                  const Text('Select Exercise',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text(
+                    AppStrings.get('library_select_exercise'),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -1469,9 +1478,9 @@ class _CustomWorkoutSessionScreenState
                       style: ElevatedButton.styleFrom(
                         backgroundColor: FitGenieTheme.primary,
                       ),
-                      child: const Text(
-                        'Save Sets',
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        AppStrings.get('library_save_sets'),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
@@ -1508,11 +1517,11 @@ class _CustomWorkoutSessionScreenState
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: FitGenieTheme.cardDark,
-          title: const Text('🎉 Workout Complete!'),
+          title: Text(AppStrings.get('library_workout_complete')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Custom workout done! 💪'),
+              Text(AppStrings.get('library_workout_done')),
               const SizedBox(height: 16),
               Text('Sets logged: ${_loggedSets.length}'),
               Text('Duration: $duration min'),
@@ -1526,8 +1535,10 @@ class _CustomWorkoutSessionScreenState
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: FitGenieTheme.primary),
-              child: const Text('Done',
-                  style: TextStyle(color: Colors.white)),
+              child: Text(
+                AppStrings.get('done'),
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
@@ -1540,16 +1551,18 @@ class _CustomWorkoutSessionScreenState
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: FitGenieTheme.cardDark,
-        title: const Text('Exit Workout?'),
-        content: const Text('Save or discard your workout progress?'),
+        title: Text(AppStrings.get('library_exit_workout')),
+        content: Text(AppStrings.get('library_exit_sub')),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child:
-            const Text('Discard', style: TextStyle(color: FitGenieTheme.error)),
+            child: Text(
+              AppStrings.get('library_discard'),
+              style: const TextStyle(color: FitGenieTheme.error),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -1557,8 +1570,10 @@ class _CustomWorkoutSessionScreenState
               _finishWorkout();
             },
             style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.success),
-            child: const Text('Save & Exit',
-                style: TextStyle(color: Colors.white)),
+            child: Text(
+              AppStrings.get('library_save_exit'),
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -1586,9 +1601,9 @@ class _CustomWorkoutSessionScreenState
           if (_started)
             TextButton(
               onPressed: _finishWorkout,
-              child: const Text(
-                'FINISH',
-                style: TextStyle(
+              child: Text(
+                AppStrings.get('library_finish'),
+                style: const TextStyle(
                     color: FitGenieTheme.success, fontWeight: FontWeight.bold),
               ),
             ),
@@ -1625,9 +1640,9 @@ class _CustomWorkoutSessionScreenState
                   onPressed: _startWorkout,
                   icon:
                   const Icon(Icons.play_arrow, color: Colors.white),
-                  label: const Text(
-                    'Start Custom Workout',
-                    style: TextStyle(
+                  label: Text(
+                    AppStrings.get('library_start_workout'),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1686,9 +1701,9 @@ class _CustomWorkoutSessionScreenState
               const SizedBox(height: 10),
             ],
 
-            const Text(
-              'Planned Exercises',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            Text(
+              AppStrings.get('library_planned'),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 10),
 
@@ -1781,9 +1796,9 @@ class _CustomWorkoutSessionScreenState
 
             if (_started) ...[
               const SizedBox(height: 18),
-              const Text(
-                'Logged Sets',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              Text(
+                AppStrings.get('library_logged'),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 10),
               if (_loggedSets.isEmpty)
@@ -1794,9 +1809,11 @@ class _CustomWorkoutSessionScreenState
                         Icon(Icons.add_circle_outline,
                             size: 38, color: FitGenieTheme.muted),
                         const SizedBox(height: 8),
-                        Text('No sets logged yet',
-                            style:
-                            TextStyle(color: FitGenieTheme.muted)),
+                        Text(
+                          AppStrings.get('library_no_sets'),
+                          style:
+                          TextStyle(color: FitGenieTheme.muted),
+                        ),
                       ],
                     ),
                   ),
@@ -1862,9 +1879,9 @@ class _CustomWorkoutSessionScreenState
                 child: ElevatedButton.icon(
                   onPressed: _showLogSetDialog,
                   icon: const Icon(Icons.add, color: Colors.white),
-                  label: const Text(
-                    'Log Set',
-                    style: TextStyle(
+                  label: Text(
+                    AppStrings.get('library_log_set'),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1882,8 +1899,8 @@ class _CustomWorkoutSessionScreenState
                 child: OutlinedButton.icon(
                   onPressed: _finishWorkout,
                   icon: const Icon(Icons.check, color: FitGenieTheme.success),
-                  label: const Text(
-                    'Finish Workout',
+                  label: Text(
+                    AppStrings.get('library_finish'),
                     style: TextStyle(
                       color: FitGenieTheme.success,
                       fontWeight: FontWeight.bold,
@@ -1904,5 +1921,3 @@ class _CustomWorkoutSessionScreenState
     );
   }
 }
-
-
