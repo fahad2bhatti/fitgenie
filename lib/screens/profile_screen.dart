@@ -129,9 +129,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return null;
   }
 
-  // ═══════════════════════════════════════════
-  // 🔍 GOOGLE FIT STATUS CHECK
-  // ═══════════════════════════════════════════
+  // ???????????????????????????????????????????
+  // ? GOOGLE FIT STATUS CHECK
+  // ???????????????????????????????????????????
   Future<void> _checkGoogleFitStatus() async {
     if (!mounted) return;
     setState(() => _isGoogleFitLoading = true);
@@ -187,29 +187,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _disconnectGoogleFit() async {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
-        title: const Text('Disconnect Google Fit?'),
-        content: const Text(
-          'Steps will be tracked using phone sensor only. Background step counting will stop.',
+        title: Text(AppStrings.get('profile_gfit_disconnect_title')),
+        content: Text(
+          AppStrings.get('profile_gfit_disconnect_body'),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(AppStrings.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
+              if (!mounted) return;
               setState(() => _isGoogleFitLoading = true);
 
               await _stepService.disconnectGoogleFit();
-              AppSnackbar.showWarning(context, 'Google Fit disconnected');
+              if (!mounted) return;
+              AppSnackbar.showWarning(context, AppStrings.get('profile_gfit_disconnected'));
 
               await _checkGoogleFitStatus();
             },
             style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
-            child: const Text('Disconnect', style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get('profile_gfit_disconnect_action'), style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -259,7 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: const Icon(Icons.camera_alt, color: FitGenieTheme.primary),
                 ),
                 title: Text(AppStrings.get('profile_take')),
-                subtitle: const Text('Use camera', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                subtitle: Text(AppStrings.get('profile_take_sub'), style: const TextStyle(color: Colors.grey, fontSize: 12)),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
               ),
               const SizedBox(height: 8),
@@ -277,7 +279,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: const Icon(Icons.photo_library, color: Colors.purple),
                 ),
                 title: Text(AppStrings.get('profile_gallery')),
-                subtitle: const Text('Select from photos', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                subtitle: Text(AppStrings.get('profile_gallery_sub'), style: const TextStyle(color: Colors.grey, fontSize: 12)),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
               ),
               if (_photoBase64 != null) ...[
@@ -296,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: const Icon(Icons.delete, color: FitGenieTheme.error),
                   ),
                   title: Text(AppStrings.get('profile_remove'), style: TextStyle(color: FitGenieTheme.error)),
-                  subtitle: const Text('Delete current photo', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  subtitle: Text(AppStrings.get('profile_remove_sub'), style: const TextStyle(color: Colors.grey, fontSize: 12)),
                 ),
               ],
             ],
@@ -375,7 +377,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 12),
           _buildDeleteAccountButton(),
           const SizedBox(height: 20),
-          const Text('FitGenie v2.0.0', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(AppStrings.get('profile_version'), style: TextStyle(color: Colors.grey, fontSize: 12)),
           const SizedBox(height: 30),
         ],
       ),
@@ -624,9 +626,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ═══════════════════════════════════════════
-  // 🏋️ GOOGLE FIT STATUS CARD
-  // ═══════════════════════════════════════════
+  // ???????????????????????????????????????????
+  // ?? GOOGLE FIT STATUS CARD
+  // ???????????????????????????????????????????
   Widget _buildGoogleFitStatusCard() {
     final bool isConnected = _googleFitStatus == GoogleFitConnectionStatus.connected ||
         _googleFitStatus == GoogleFitConnectionStatus.connectedNoData;
@@ -712,7 +714,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Today's Steps", style: TextStyle(color: Colors.white70, fontSize: 12)),
+                      Text(AppStrings.get('profile_today_steps'), style: TextStyle(color: Colors.white70, fontSize: 12)),
                       Text(
                         '$_googleFitSteps',
                         style: const TextStyle(color: Colors.greenAccent, fontSize: 24, fontWeight: FontWeight.bold),
@@ -825,21 +827,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _getStatusText(GoogleFitConnectionStatus status) {
     switch (status) {
       case GoogleFitConnectionStatus.connected:
-        return '✅ Connected & Syncing';
+        return '? Connected & Syncing';
       case GoogleFitConnectionStatus.connectedNoData:
-        return '🟡 Connected — Walk to see data';
+        return '? Connected ? Walk to see data';
       case GoogleFitConnectionStatus.connecting:
-        return '🔄 Connecting...';
+        return '? Connecting...';
       case GoogleFitConnectionStatus.notAuthorized:
-        return '🔐 Authorization Required';
+        return '? Authorization Required';
       case GoogleFitConnectionStatus.permissionDenied:
-        return '❌ Permission Denied';
+        return '? Permission Denied';
       case GoogleFitConnectionStatus.unavailable:
-        return '📱 Health Connect Not Installed';
+        return '? Health Connect Not Installed';
       case GoogleFitConnectionStatus.disconnected:
-        return '🔌 Not Connected';
+        return '? Not Connected';
       case GoogleFitConnectionStatus.error:
-        return '⚠️ Error Occurred';
+        return '?? Error Occurred';
     }
   }
 
@@ -870,7 +872,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Icon(Icons.notifications, color: FitGenieTheme.warning, size: 20),
             ),
             title: Text(AppStrings.get('profile_notifications')),
-            subtitle: const Text('Customize your reminders', style: TextStyle(color: Colors.grey, fontSize: 12)),
+            subtitle: Text(AppStrings.get('profile_customize_reminders'), style: TextStyle(color: Colors.grey, fontSize: 12)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             onTap: () {
               Navigator.push(
@@ -882,7 +884,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
 
-          // Language Option — NEW
+          // Language Option ? NEW
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Container(
@@ -914,12 +916,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Icon(Icons.info_outline, color: Colors.blue, size: 20),
             ),
             title: Text(AppStrings.get('profile_about')),
-            subtitle: const Text('App info & version', style: TextStyle(color: Colors.grey, fontSize: 12)),
+            subtitle: Text(AppStrings.get('profile_app_info'), style: TextStyle(color: Colors.grey, fontSize: 12)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             onTap: _showAboutDialog,
           ),
 
-          // ── DELETE ACCOUNT ──
+          // ?? DELETE ACCOUNT ??
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Container(
@@ -934,7 +936,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               AppStrings.get('profile_delete'),
               style: const TextStyle(color: FitGenieTheme.error),
             ),
-            subtitle: const Text('Permanently delete your account & data', style: TextStyle(color: Colors.grey, fontSize: 12)),
+            subtitle: Text(AppStrings.get('profile_delete_sub'), style: TextStyle(color: Colors.grey, fontSize: 12)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             onTap: _showDeleteAccountDialog,
           ),
@@ -989,19 +991,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
-        title: const Row(children: [
-          Icon(Icons.warning, color: FitGenieTheme.error),
-          SizedBox(width: 8),
-          Text('Delete Account', style: TextStyle(color: FitGenieTheme.error)),
+        title: Row(children: [
+          const Icon(Icons.warning, color: FitGenieTheme.error),
+          const SizedBox(width: 8),
+          Text(AppStrings.get('profile_delete_confirm_title'), style: const TextStyle(color: FitGenieTheme.error)),
         ]),
         content: const Text(
-          'This will permanently delete your account and ALL data including:\n\n• Workouts & custom plans\n• Nutrition logs & saved meals\n• Profile & goals\n• AI chat history\n\nThis action CANNOT be undone.',
+          'This will permanently delete your account and ALL data including:\n\n? Workouts & custom plans\n? Nutrition logs & saved meals\n? Profile & goals\n? AI chat history\n\nThis action CANNOT be undone.',
           style: TextStyle(color: Colors.white70, height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1009,7 +1011,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               await _deleteAccount();
             },
             style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
-            child: const Text('Delete Forever', style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get('profile_delete_forever'), style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1022,13 +1024,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AlertDialog(
-        backgroundColor: Color(0xFF1A1A1A),
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
         content: Row(
           children: [
-            CircularProgressIndicator(color: FitGenieTheme.error),
-            SizedBox(width: 16),
-            Text('Deleting account...'),
+            const CircularProgressIndicator(color: FitGenieTheme.error),
+            const SizedBox(width: 16),
+            Text(AppStrings.get('profile_deleting')),
           ],
         ),
       ),
@@ -1129,13 +1131,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: _inputDecoration('Full Name', Icons.person),
                 ),
                 const SizedBox(height: 16),
-                const Text('Fitness Level', style: TextStyle(color: Colors.grey)),
+                Text(AppStrings.get('profile_fitness_level'), style: TextStyle(color: Colors.grey)),
                 const SizedBox(height: 8),
                 _buildDropdown(selectedLevel, ['Beginner', 'Intermediate', 'Advanced'], (val) {
                   if (val != null) setModalState(() => selectedLevel = val);
                 }),
                 const SizedBox(height: 16),
-                const Text('Goal', style: TextStyle(color: Colors.grey)),
+                Text(AppStrings.get('profile_goal'), style: TextStyle(color: Colors.grey)),
                 const SizedBox(height: 8),
                 _buildDropdown(selectedGoal, ['Lose Weight', 'Build Muscle', 'Stay Fit', 'Gain Strength'],
                         (val) {
@@ -1155,7 +1157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: FitGenieTheme.primary,
                         padding: const EdgeInsets.symmetric(vertical: 16)),
-                    child: const Text('Save',
+                    child: Text(AppStrings.get('save'),
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
@@ -1206,14 +1208,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Edit Body Stats', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(AppStrings.get('profile_edit_body_stats'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
                 ],
               ),
               const SizedBox(height: 20),
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Gender', style: TextStyle(color: Colors.grey)),
+                child: Text(AppStrings.get('profile_gender'), style: const TextStyle(color: Colors.grey)),
               ),
               const SizedBox(height: 8),
               _buildDropdown(selectedGender, ['Male', 'Female', 'Other'], (val) {
@@ -1253,7 +1255,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: FitGenieTheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16)),
-                  child: const Text('Save',
+                  child: Text(AppStrings.get('save'),
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
@@ -1287,7 +1289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Edit Goals', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(AppStrings.get('profile_edit_goals'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
               ],
             ),
@@ -1324,7 +1326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16)),
-                child: const Text('Save',
+                child: Text(AppStrings.get('save'),
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ),
@@ -1384,7 +1386,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
 
-      // ✅ Keep weightLogs in sync so Progress screen shows the latest weight
+      // ? Keep weightLogs in sync so Progress screen shows the latest weight
       final dateStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
       await _firestore
           .collection('users')
@@ -1423,6 +1425,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'proteinGoal': protein,
         'waterGoal': water,
       }, SetOptions(merge: true));
+      if (!mounted) return;
       setState(() {
         _caloriesGoal = calories;
         _proteinGoal = protein;
@@ -1430,6 +1433,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
       AppSnackbar.showSuccess(context, 'Goals updated!');
     } catch (e) {
+      if (!mounted) return;
       AppSnackbar.showError(context, 'Failed to update goals');
     }
   }
@@ -1440,12 +1444,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1A1A1A),
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(AppStrings.get('profile_logout_confirm_title')),
+        content: Text(AppStrings.get('profile_logout_confirm_body')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1453,7 +1457,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               await _auth.signOut();
             },
             style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
-            child: const Text('Logout', style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get('profile_logout_confirm_title'), style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1470,7 +1474,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(width: 8),
           Text('FitGenie'),
         ]),
-        content: const Text('Version 2.0.7\n\nYour AI Fitness Coach! 💪'),
+        content: Text(AppStrings.get('profile_about_version')),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
         ],
