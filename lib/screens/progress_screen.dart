@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
 import '../services/ai_service.dart';
 
@@ -1316,7 +1317,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
       builder: (context) => AlertDialog(
         backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Log Weight'),
+        title: Text(AppStrings.get('progress_log_weight')),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
@@ -1332,7 +1333,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppStrings.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1345,7 +1346,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
             style: ElevatedButton.styleFrom(
               backgroundColor: FitGenieTheme.primary,
             ),
-            child: const Text('Save', style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get('save'), style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1380,7 +1381,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         _currentWeight = weight;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Weight logged! 💪')),
+        SnackBar(content: Text(AppStrings.get('progress_weight_logged'))),
       );
 
       // Refresh trend chart with the new entry

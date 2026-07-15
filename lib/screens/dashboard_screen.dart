@@ -776,14 +776,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                         const SizedBox(width: 8),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 6),
-                          child: Text('steps',
+                          child: Text(AppStrings.get('dashboard_steps_label'),
                               style: TextStyle(
                                   fontSize: 14, color: Colors.grey[400])),
                         ),
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text('Goal: ${_formatNumber(_stepsGoal)}',
+                    Text(AppStrings.get('dashboard_goal_steps', params: {'value': _formatNumber(_stepsGoal)}),
                         style: TextStyle(color: Colors.grey[500], fontSize: 12)),
                     const SizedBox(height: 16),
                     Wrap(
@@ -927,7 +927,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
               ),
               const Spacer(),
-              Text('Goal: $caloriesGoal',
+              Text(AppStrings.get('dashboard_goal_calories', params: {'value': '$caloriesGoal'}),
                   style: TextStyle(color: Colors.grey[400], fontSize: 12)),
             ],
           ),
@@ -939,7 +939,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
               ),
               const SizedBox(width: 6),
-              Text('kcal',
+              Text(AppStrings.get('dashboard_kcal'),
                   style: TextStyle(color: Colors.grey[400], fontSize: 14)),
               const Spacer(),
               if (_thisWeekWorkoutCount > 0)

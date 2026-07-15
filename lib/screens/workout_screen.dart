@@ -1023,7 +1023,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     child: DropdownButton<Exercise>(
                       isExpanded: true,
                       value: selectedExercise,
-                      hint: Text('Choose exercise...', style: TextStyle(color: FitGenieTheme.muted)),
+                      hint: Text(AppStrings.get('workout_choose_exercise'), style: TextStyle(color: FitGenieTheme.muted)),
                       dropdownColor: FitGenieTheme.cardDark,
                       items: _availableExercises.map((exercise) {
                         return DropdownMenuItem(value: exercise, child: Text(exercise.name, style: const TextStyle(fontSize: 14)));
@@ -1076,7 +1076,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                 const SizedBox(height: 20),
 
                 // Sets
-                const Text('Sets', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(AppStrings.get('label_sets'), style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 Row(
                   children: ExerciseData.setsOptions.map((s) {
@@ -1102,7 +1102,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                 const SizedBox(height: 20),
 
                 // Reps
-                const Text('Reps', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(AppStrings.get('label_reps'), style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -1128,7 +1128,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                 const SizedBox(height: 20),
 
                 // Weight
-                const Text('Weight (kg)', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(AppStrings.get('label_weight_kg'), style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -1241,7 +1241,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Great job bhai!', style: TextStyle(fontSize: 18)),
+              Text(AppStrings.get('workout_great_job'), style: TextStyle(fontSize: 18)),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -1416,7 +1416,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Logged Sets', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(AppStrings.get('library_logged'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(color: FitGenieTheme.success.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),

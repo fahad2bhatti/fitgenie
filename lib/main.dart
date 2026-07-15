@@ -191,7 +191,7 @@ class _LanguageGateState extends State<LanguageGate> {
     if (!_provider.isLanguageSelected) {
       return const LanguageSelectionScreen();
     }
-    return const AuthGate();
+    return AuthGate();
   }
 }
 

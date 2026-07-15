@@ -2,13 +2,11 @@
 
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
-import '../services/ai_service.dart';
 import '../services/nutrition_service.dart';
 import '../widgets/fg_card.dart';
 import '../widgets/fg_progress.dart';
 import '../widgets/app_snackbar.dart';
 import '../core/app_strings.dart';
-import 'meal_scanner_screen.dart';
 import 'food_search_screen.dart';
 import 'saved_meals_screen.dart';
 
@@ -58,7 +56,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🌀 LIFECYCLE
+  // ? LIFECYCLE
   // ============================================================
 
   @override
@@ -68,7 +66,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 📊 DATA LOADING
+  // ? DATA LOADING
   // ============================================================
 
   Future<void> _load() async {
@@ -110,7 +108,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 📅 DATE NAVIGATION
+  // ? DATE NAVIGATION
   // ============================================================
 
   String _dateLabel() {
@@ -143,7 +141,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🍽️ MEAL HELPERS
+  // ?? MEAL HELPERS
   // ============================================================
 
   List<MealEntry> _mealEntries(String mealType) {
@@ -164,7 +162,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🔍 FOOD SEARCH (General)
+  // ? FOOD SEARCH (General)
   // ============================================================
 
   Future<void> _openFoodSearch() async {
@@ -191,7 +189,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🔍 FOOD SEARCH (Meal-Specific)
+  // ? FOOD SEARCH (Meal-Specific)
   // ============================================================
 
   Future<void> _openFoodSearchForMeal(String mealType) async {
@@ -229,55 +227,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 📸 MEAL SCANNER
-  // ============================================================
-
-  Future<void> _openMealScanner({String? mealTypeOverride}) async {
-    final analysis = await Navigator.push<MealAnalysis>(
-      context,
-      MaterialPageRoute(builder: (_) => const MealScannerScreen()),
-    );
-
-    if (analysis == null) return;
-
-    final mealType = mealTypeOverride ?? _defaultMealTypeForNow();
-
-    final entry = MealEntry(
-      name: analysis.foodName,
-      quantity: analysis.quantity,
-      mealType: mealType,
-      calories: analysis.calories,
-      protein: analysis.protein,
-      carbs: analysis.carbs,
-      fats: analysis.fat,
-      source: 'scanner',
-    );
-
-    await _service.addMealEntry(
-      uid: _uid,
-      entry: entry,
-      date: _selectedDate,
-    );
-
-    await _load();
-
-    if (!mounted) return;
-    AppSnackbar.showSuccess(
-      context,
-      AppStrings.get('calories_scanned_success', params: {'name': entry.name}),
-    );
-  }
-
-  String _defaultMealTypeForNow() {
-    final hour = DateTime.now().hour;
-    if (hour < 11) return 'breakfast';
-    if (hour < 16) return 'lunch';
-    if (hour < 20) return 'dinner';
-    return 'snacks';
-  }
-
-  // ============================================================
-  // 🔜 SCAN MEAL - COMING SOON DIALOG
+  // ? SCAN MEAL - COMING SOON DIALOG
   // ============================================================
 
   Future<void> _showScanComingSoonDialog() async {
@@ -286,15 +236,15 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: FitGenieTheme.cardDark,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.workspace_premium, color: Colors.amber),
-            SizedBox(width: 8),
-            Text('Coming Soon'),
+            const Icon(Icons.workspace_premium, color: Colors.amber),
+            const SizedBox(width: 8),
+            Text(AppStrings.get('dashboard_coming_soon')),
           ],
         ),
         content: const Text(
-          'Meal Scanner ek Premium feature banega — jald hi available hoga!',
+          'Meal Scanner ek Premium feature banega ? jald hi available hoga!',
           style: TextStyle(color: Colors.grey),
         ),
         actions: [
@@ -308,7 +258,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 📚 SAVED MEALS PICKER
+  // ? SAVED MEALS PICKER
   // ============================================================
 
   Future<void> _openSavedMealsPicker({String? mealTypeOverride}) async {
@@ -341,7 +291,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 💾 SAVE MEAL AS TEMPLATE
+  // ? SAVE MEAL AS TEMPLATE
   // ============================================================
 
   Future<void> _saveMealAsTemplate(String mealType) async {
@@ -373,7 +323,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Save Meal Template 📝',
+              'Save Meal Template ?',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             const SizedBox(height: 8),
@@ -437,7 +387,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 💧 WATER
+  // ? WATER
   // ============================================================
 
   Future<void> _quickAddWater() async {
@@ -451,7 +401,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🎯 GOALS SHEET
+  // ? GOALS SHEET
   // ============================================================
 
   Future<void> _openGoalsSheet() async {
@@ -480,7 +430,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Nutrition Goals 🎯',
+                'Nutrition Goals ?',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const SizedBox(height: 16),
@@ -512,7 +462,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
                   ),
-                  child: const Text('Save Goals', style: TextStyle(color: Colors.white)),
+                  child: Text(AppStrings.get('calories_save_goals'), style: TextStyle(color: Colors.white)),
                 ),
               ),
             ],
@@ -529,7 +479,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ✏️ CUSTOM FOOD ENTRY SHEET
+  // ?? CUSTOM FOOD ENTRY SHEET
   // ============================================================
 
   Future<void> _openAddFoodSheet({
@@ -574,8 +524,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 children: [
                   Text(
                     entryId == null
-                        ? 'Custom Food Entry ✏️'
-                        : 'Edit Food ✏️',
+                        ? 'Custom Food Entry ??'
+                        : 'Edit Food ??',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -602,16 +552,16 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     decoration: _inputDecoration('Quantity / Serving'),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Meal Type', style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text(AppStrings.get('food_search_meal_type'), style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: {
-                      'breakfast': '🍳 Breakfast',
-                      'lunch': '🍛 Lunch',
-                      'dinner': '🍽 Dinner',
-                      'snacks': '🍿 Snacks',
+                      'breakfast': '? Breakfast',
+                      'lunch': '? Lunch',
+                      'dinner': '? Dinner',
+                      'snacks': '? Snacks',
                     }.entries.map((entry) {
                       final selected = selectedMeal == entry.key;
                       return GestureDetector(
@@ -753,7 +703,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ❌ DELETE ENTRY
+  // ? DELETE ENTRY
   // ============================================================
 
   Future<void> _deleteEntry(MealEntry entry) async {
@@ -768,7 +718,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🛠️ HELPER WIDGETS
+  // ?? HELPER WIDGETS
   // ============================================================
 
   Widget _goalField(TextEditingController controller, String label, String suffix) {
@@ -803,7 +753,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 📊 SUMMARY CARD
+  // ? SUMMARY CARD
   // ============================================================
 
   Widget _buildSummaryCard() {
@@ -883,7 +833,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // ⚡ QUICK ACTIONS
+  // ? QUICK ACTIONS
   // ============================================================
 
   Widget _buildQuickActions() {
@@ -988,7 +938,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 💧 WATER CONTROLS
+  // ? WATER CONTROLS
   // ============================================================
 
   Widget _buildWaterControls() {
@@ -1035,7 +985,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🍽️ MEAL SECTION
+  // ?? MEAL SECTION
   // ============================================================
 
   Widget _buildMealSection(String mealType, String title, String emoji) {
@@ -1081,7 +1031,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 ),
               const SizedBox(width: 8),
               Text(
-                '${_mealCalories(mealType)} cal • ${_mealProtein(mealType)}g protein',
+                '${_mealCalories(mealType)} cal ? ${_mealProtein(mealType)}g protein',
                 style: const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
               ),
             ],
@@ -1214,7 +1164,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🕘 RECENT FOODS
+  // ? RECENT FOODS
   // ============================================================
 
   Widget _buildRecentFoods() {
@@ -1272,7 +1222,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${food['calories'] ?? 0} cal • ${food['protein'] ?? 0}g P',
+                        '${food['calories'] ?? 0} cal ? ${food['protein'] ?? 0}g P',
                         style: const TextStyle(color: FitGenieTheme.muted, fontSize: 10),
                       ),
                     ],
@@ -1287,7 +1237,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   }
 
   // ============================================================
-  // 🏗️ MAIN BUILD
+  // ?? MAIN BUILD
   // ============================================================
 
   @override
@@ -1350,13 +1300,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           _buildWaterControls(),
           const SizedBox(height: 14),
 
-          _buildMealSection('breakfast', 'Breakfast', '🍳'),
+          _buildMealSection('breakfast', 'Breakfast', '?'),
           const SizedBox(height: 12),
-          _buildMealSection('lunch', 'Lunch', '🍛'),
+          _buildMealSection('lunch', 'Lunch', '?'),
           const SizedBox(height: 12),
-          _buildMealSection('dinner', 'Dinner', '🍽️'),
+          _buildMealSection('dinner', 'Dinner', '??'),
           const SizedBox(height: 12),
-          _buildMealSection('snacks', 'Snacks', '🍿'),
+          _buildMealSection('snacks', 'Snacks', '?'),
           const SizedBox(height: 12),
 
           _buildRecentFoods(),
@@ -1367,7 +1317,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
 }
 
 // ============================================================
-// 🧩 MEAL ENTRY TILE WIDGET
+// ? MEAL ENTRY TILE WIDGET
 // ============================================================
 
 class _MealEntryTile extends StatelessWidget {
@@ -1426,7 +1376,7 @@ class _MealEntryTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${entry.protein}g P • ${entry.carbs}g C • ${entry.fats}g F',
+                  '${entry.protein}g P ? ${entry.carbs}g C ? ${entry.fats}g F',
                   style: const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
                 ),
               ],
@@ -1446,9 +1396,9 @@ class _MealEntryTile extends StatelessWidget {
                   if (value == 'edit') onEdit();
                   if (value == 'delete') onDelete();
                 },
-                itemBuilder: (context) => const [
-                  PopupMenuItem(value: 'edit', child: Text('Edit')),
-                  PopupMenuItem(value: 'delete', child: Text('Delete')),
+                itemBuilder: (context) => [
+                  PopupMenuItem(value: 'edit', child: Text(AppStrings.get('edit'))),
+                  PopupMenuItem(value: 'delete', child: Text(AppStrings.get('delete'))),
                 ],
                 child: const Icon(Icons.more_vert, size: 18, color: FitGenieTheme.muted),
               ),

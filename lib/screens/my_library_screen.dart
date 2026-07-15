@@ -717,7 +717,7 @@ class _CustomWorkoutBuilderScreenState
                 ),
                 const SizedBox(height: 18),
 
-                const Text('Sets',
+                Text(AppStrings.get('label_sets'),
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 Row(
@@ -753,7 +753,7 @@ class _CustomWorkoutBuilderScreenState
                 ),
                 const SizedBox(height: 18),
 
-                const Text('Reps / Time',
+                Text(AppStrings.get('label_reps_time'),
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 TextField(
@@ -1384,7 +1384,7 @@ class _CustomWorkoutSessionScreenState
 
                   const SizedBox(height: 16),
 
-                  const Text('Sets',
+                  Text(AppStrings.get('label_sets'),
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   Row(
@@ -1422,7 +1422,7 @@ class _CustomWorkoutSessionScreenState
                   ),
 
                   const SizedBox(height: 16),
-                  const Text('Reps / Time',
+                  Text(AppStrings.get('label_reps_time'),
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
@@ -1440,7 +1440,7 @@ class _CustomWorkoutSessionScreenState
                   ),
 
                   const SizedBox(height: 16),
-                  const Text('Weight (kg)',
+                  Text(AppStrings.get('label_weight_kg'),
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   TextField(
@@ -1523,8 +1523,8 @@ class _CustomWorkoutSessionScreenState
             children: [
               Text(AppStrings.get('library_workout_done')),
               const SizedBox(height: 16),
-              Text('Sets logged: ${_loggedSets.length}'),
-              Text('Duration: $duration min'),
+              Text(AppStrings.get('library_sets_logged', params: {'count': '${_loggedSets.length}'})),
+              Text(AppStrings.get('library_duration_min', params: {'min': '$duration'})),
             ],
           ),
           actions: [

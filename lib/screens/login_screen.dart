@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../services/auth_service.dart';
 import 'signup_screen.dart';
 
@@ -179,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen>
           backgroundColor: FitGenieTheme.card,
           shape:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text('Reset Password'),
+          title: Text(AppStrings.get('login_reset_password')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -208,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(AppStrings.get('cancel')),
             ),
             FilledButton(
               onPressed: () async {
@@ -234,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen>
               style: FilledButton.styleFrom(
                 backgroundColor: FitGenieTheme.primary,
               ),
-              child: const Text('Send'),
+              child: Text(AppStrings.get('login_send')),
             ),
           ],
         );

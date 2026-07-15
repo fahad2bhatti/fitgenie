@@ -34,7 +34,6 @@ class LanguageProvider extends ChangeNotifier {
   // 🌐 Set Language
   // ──────────────────────────────────────────
   void setLanguage(bool isEnglish) {
-    if (_isEnglish == isEnglish) return;
     _isEnglish = isEnglish;
     HiveBoxes.settingsBox.put('language', _isEnglish ? 'en' : 'ur');
     notifyListeners();
