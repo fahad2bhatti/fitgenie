@@ -908,7 +908,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   // 🔥 CALORIES BURNED CARD
   // ═══════════════════════════════════════════
   Widget _buildCaloriesBurnedCard() {
-    const caloriesGoal = 2400;
+    final caloriesGoal = _caloriesGoal;
     final progress = caloriesGoal > 0
         ? (_todayCaloriesBurned / caloriesGoal).clamp(0.0, 1.0)
         : 0.0;
@@ -1096,7 +1096,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 120,
+            height: 128,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1124,7 +1124,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       duration: const Duration(milliseconds: 300),
                       width: 28,
                       height: workoutCount > 0
-                          ? (80 * h).clamp(16.0, 80.0)
+                          ? (80 * h).clamp(16.0, 76.0)
                           : 16,
                       decoration: BoxDecoration(
                         gradient: isToday || workoutCount > 0

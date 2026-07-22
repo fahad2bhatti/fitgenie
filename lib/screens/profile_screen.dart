@@ -218,6 +218,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+
+
   // ============ PHOTO METHODS ============
 
   void _showPhotoOptions() {
@@ -1271,73 +1273,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showEditGoalsDialog() {
-    final cc = TextEditingController(text: _caloriesGoal.toString());
-    final pc = TextEditingController(text: _proteinGoal.toString());
-    final wc = TextEditingController(text: _waterGoal.toString());
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: const Color(0xFF1A1A1A),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-            left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(AppStrings.get('profile_edit_goals'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
-              ],
-            ),
-            const SizedBox(height: 20),
-            TextField(
-                controller: cc,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Calories (kcal)', Icons.local_fire_department)),
-            const SizedBox(height: 12),
-            TextField(
-                controller: pc,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Protein (g)', Icons.egg_alt)),
-            const SizedBox(height: 12),
-            TextField(
-                controller: wc,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Water (glasses)', Icons.water_drop)),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  await _updateGoals(
-                    calories: int.tryParse(cc.text) ?? _caloriesGoal,
-                    protein: int.tryParse(pc.text) ?? _proteinGoal,
-                    water: int.tryParse(wc.text) ?? _waterGoal,
-                  );
-                  if (context.mounted) Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: FitGenieTheme.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 16)),
-                child: Text(AppStrings.get('save'),
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => _EditGoalsSheet(
+        initialCalories: _caloriesGoal,
+        initialProtein: _proteinGoal,
+        initialWater: _waterGoal,
+        inputDecoration: _inputDecoration,
+        onSave: (calories, protein, water) async {
+          await _updateGoals(
+            calories: calories,
+            protein: protein,
+            water: water,
+          );
+        },
       ),
-    ).whenComplete(() {
-      cc.dispose();
-      pc.dispose();
-      wc.dispose();
-    });
+    );
   }
 
   InputDecoration _inputDecoration(String label, IconData icon) {
@@ -1477,6 +1432,115 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: Text(AppStrings.get('profile_about_version')),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+        ],
+      ),
+    );
+  }
+}
+
+class _EditGoalsSheet extends StatefulWidget {
+  final int initialCalories;
+  final int initialProtein;
+  final int initialWater;
+  final InputDecoration Function(String, IconData) inputDecoration;
+  final Future<void> Function(int calories, int protein, int water) onSave;
+
+  const _EditGoalsSheet({
+    required this.initialCalories,
+    required this.initialProtein,
+    required this.initialWater,
+    required this.inputDecoration,
+    required this.onSave,
+  });
+
+  @override
+  State<_EditGoalsSheet> createState() => _EditGoalsSheetState();
+}
+
+class _EditGoalsSheetState extends State<_EditGoalsSheet> {
+  late final TextEditingController cc;
+  late final TextEditingController pc;
+  late final TextEditingController wc;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    cc = TextEditingController(text: widget.initialCalories.toString());
+    pc = TextEditingController(text: widget.initialProtein.toString());
+    wc = TextEditingController(text: widget.initialWater.toString());
+  }
+
+  @override
+  void dispose() {
+    cc.dispose();
+    pc.dispose();
+    wc.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+          left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(AppStrings.get('profile_edit_goals'),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+            ],
+          ),
+          const SizedBox(height: 20),
+          TextField(
+              controller: cc,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white),
+              decoration: widget.inputDecoration('Calories (kcal)', Icons.local_fire_department)),
+          const SizedBox(height: 12),
+          TextField(
+              controller: pc,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white),
+              decoration: widget.inputDecoration('Protein (g)', Icons.egg_alt)),
+          const SizedBox(height: 12),
+          TextField(
+              controller: wc,
+              keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white),
+              decoration: widget.inputDecoration('Water (glasses)', Icons.water_drop)),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _saving
+                  ? null
+                  : () async {
+                setState(() => _saving = true);
+                await widget.onSave(
+                  int.tryParse(cc.text) ?? widget.initialCalories,
+                  int.tryParse(pc.text) ?? widget.initialProtein,
+                  int.tryParse(wc.text) ?? widget.initialWater,
+                );
+                if (context.mounted) Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: FitGenieTheme.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 16)),
+              child: _saving
+                  ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              )
+                  : Text(AppStrings.get('save'),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+          ),
         ],
       ),
     );
