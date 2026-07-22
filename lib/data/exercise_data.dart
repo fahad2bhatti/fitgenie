@@ -38,6 +38,8 @@ class Exercise {
   bool get hasSteps => detailedSteps.isNotEmpty;
   bool get hasTips => tips.isNotEmpty;
   bool get hasMistakes => commonMistakes.isNotEmpty;
+
+  String get gifAsset => 'assets/exercises/$id.gif';
 }
 
 class ExerciseData {

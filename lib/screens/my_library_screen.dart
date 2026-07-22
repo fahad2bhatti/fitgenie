@@ -2,15 +2,15 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
 import '../widgets/fg_card.dart';
 import '../widgets/app_snackbar.dart';
 import '../core/app_strings.dart';
 import '../data/exercise_data.dart';
+import '../widgets/active_set_sheet.dart';
 
 // ============================================================
-// 📚 MY LIBRARY SCREEN
+// ? MY LIBRARY SCREEN
 // Custom workout builder + saved custom workouts + custom session
 // ============================================================
 
@@ -108,23 +108,23 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
   String _bodyPartEmoji(String bodyPart) {
     switch (bodyPart.toLowerCase()) {
       case 'chest':
-        return '🏋️';
+        return '??';
       case 'back':
-        return '🔙';
+        return '?';
       case 'legs':
-        return '🦵';
+        return '?';
       case 'arms':
-        return '💪';
+        return '?';
       case 'shoulders':
-        return '🎯';
+        return '?';
       case 'core':
-        return '🔥';
+        return '?';
       case 'cardio':
-        return '🏃';
+        return '?';
       case 'mixed':
-        return '📚';
+        return '?';
       default:
-        return '💪';
+        return '?';
     }
   }
 
@@ -198,7 +198,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                       color: Colors.white.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Text('📚', style: TextStyle(fontSize: 28)),
+                    child: const Text('?', style: TextStyle(fontSize: 28)),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -512,7 +512,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
 }
 
 // ============================================================
-// 🛠 CUSTOM WORKOUT BUILDER SCREEN
+// ? CUSTOM WORKOUT BUILDER SCREEN
 // Create / Edit custom workout
 // ============================================================
 
@@ -654,8 +654,8 @@ class _CustomWorkoutBuilderScreenState
       AppSnackbar.showSuccess(
         context,
         _isEditing
-            ? 'Workout updated successfully ✅'
-            : 'Workout saved successfully ✅',
+            ? 'Workout updated successfully ?'
+            : 'Workout saved successfully ?',
       );
       Navigator.pop(context);
     }
@@ -807,22 +807,22 @@ class _CustomWorkoutBuilderScreenState
   String _bodyPartEmoji(String bodyPart) {
     switch (bodyPart.toLowerCase()) {
       case 'chest':
-        return '🏋️';
+        return '??';
       case 'back':
-        return '🔙';
+        return '?';
       case 'legs':
-        return '🦵';
+        return '?';
       case 'shoulders':
-        return '🎯';
+        return '?';
       case 'biceps':
       case 'triceps':
-        return '💪';
+        return '?';
       case 'core':
-        return '🔥';
+        return '?';
       case 'cardio':
-        return '🏃';
+        return '?';
       default:
-        return '💪';
+        return '?';
     }
   }
 
@@ -1009,7 +1009,7 @@ class _CustomWorkoutBuilderScreenState
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              '${item['sets']} × ${item['reps']}',
+                              '${item['sets']} ? ${item['reps']}',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: FitGenieTheme.muted,
@@ -1073,47 +1073,27 @@ class _CustomWorkoutBuilderScreenState
                     child: FGCard(
                       child: Row(
                         children: [
-                          if (exercise.hasGif)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: CachedNetworkImage(
-                                imageUrl: exercise.gifUrl,
-                                width: 72,
-                                height: 72,
-                                fit: BoxFit.cover,
-                                placeholder: (c, u) => Container(
-                                  width: 72,
-                                  height: 72,
-                                  color: FitGenieTheme.background,
-                                  child: const Center(
-                                    child: SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2),
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: (c, u, e) => Container(
-                                  width: 72,
-                                  height: 72,
-                                  color: FitGenieTheme.background,
-                                  child: const Icon(Icons.fitness_center,
-                                      color: Colors.white24),
-                                ),
-                              ),
-                            )
-                          else
-                            Container(
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              exercise.gifAsset,
                               width: 72,
                               height: 72,
-                              decoration: BoxDecoration(
-                                color: FitGenieTheme.background,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.fitness_center,
-                                  color: Colors.white24),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: 72,
+                                  height: 72,
+                                  decoration: BoxDecoration(
+                                    color: FitGenieTheme.background,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(Icons.fitness_center,
+                                      color: Colors.white24),
+                                );
+                              },
                             ),
+                          ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
@@ -1128,7 +1108,7 @@ class _CustomWorkoutBuilderScreenState
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${exercise.bodyPart} • ${exercise.equipment}',
+                                  '${exercise.bodyPart} ? ${exercise.equipment}',
                                   style: TextStyle(
                                     color: FitGenieTheme.muted,
                                     fontSize: 12,
@@ -1137,7 +1117,7 @@ class _CustomWorkoutBuilderScreenState
                                 const SizedBox(height: 6),
                                 if (selected)
                                   Text(
-                                    '${_selectedExercises[exercise.id]!['sets']} × ${_selectedExercises[exercise.id]!['reps']}',
+                                    '${_selectedExercises[exercise.id]!['sets']} ? ${_selectedExercises[exercise.id]!['reps']}',
                                     style: const TextStyle(
                                       color: FitGenieTheme.primary,
                                       fontWeight: FontWeight.w600,
@@ -1174,7 +1154,7 @@ class _CustomWorkoutBuilderScreenState
 }
 
 // ============================================================
-// ▶️ CUSTOM WORKOUT SESSION SCREEN
+// ?? CUSTOM WORKOUT SESSION SCREEN
 // Starts a saved custom workout
 // ============================================================
 
@@ -1268,231 +1248,56 @@ class _CustomWorkoutSessionScreenState
       });
     }
   }
-
-  void _showLogSetDialog() {
+  void _startNextSet() {
     if (widget.exercises.isEmpty) return;
 
-    Map<String, dynamic> selected = widget.exercises.first;
-    final weightController = TextEditingController(text: '20');
-    final repsController =
-    TextEditingController(text: (selected['reps'] ?? '12').toString());
-    int selectedSets = (selected['sets'] ?? 1) as int;
+    Map<String, dynamic>? nextExercise;
+    int doneCount = 0;
+    int targetCount = 1;
+
+    for (final ex in widget.exercises) {
+      final name = (ex['name'] ?? 'Exercise').toString();
+      final target = (ex['sets'] ?? 1) as int;
+      final done = _loggedSets.where((s) => s['exercise'] == name).length;
+      if (done < target) {
+        nextExercise = ex;
+        doneCount = done;
+        targetCount = target;
+        break;
+      }
+    }
+
+    nextExercise ??= widget.exercises.first;
+
+    final exerciseObj =
+    _findExercise((nextExercise['exerciseId'] ?? '').toString());
+    final lastWeight = _loggedSets
+        .lastWhere(
+          (s) => s['exercise'] == nextExercise!['name'],
+      orElse: () => {'weight': 20.0},
+    )['weight'] as double? ?? 20.0;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: FitGenieTheme.cardDark,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          final exerciseObj =
-          _findExercise((selected['exerciseId'] ?? '').toString());
-
-          return Padding(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: 20,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppStrings.get('library_log_set'),
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  Text(
-                    AppStrings.get('library_select_exercise'),
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.background,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<Map<String, dynamic>>(
-                        isExpanded: true,
-                        value: selected,
-                        dropdownColor: FitGenieTheme.cardDark,
-                        items: widget.exercises.map((item) {
-                          return DropdownMenuItem(
-                            value: item,
-                            child: Text(item['name'] ?? 'Exercise'),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          if (value == null) return;
-                          setModalState(() {
-                            selected = value;
-                            selectedSets = (value['sets'] ?? 1) as int;
-                            repsController.text =
-                                (value['reps'] ?? '12').toString();
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-
-                  if (exerciseObj != null && exerciseObj.hasGif) ...[
-                    const SizedBox(height: 12),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: CachedNetworkImage(
-                        imageUrl: exerciseObj.gifUrl,
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        placeholder: (c, u) => Container(
-                          height: 120,
-                          color: FitGenieTheme.background,
-                          child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                        errorWidget: (c, u, e) => Container(
-                          height: 120,
-                          color: FitGenieTheme.background,
-                          child: const Center(
-                            child: Icon(Icons.fitness_center,
-                                color: Colors.white24),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: 16),
-
-                  Text(AppStrings.get('label_sets'),
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: ExerciseData.setsOptions.map((s) {
-                      final sel = selectedSets == s;
-                      return Expanded(
-                        child: GestureDetector(
-                          onTap: () =>
-                              setModalState(() => selectedSets = s),
-                          child: Container(
-                            margin: const EdgeInsets.only(right: 8),
-                            padding:
-                            const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: sel
-                                  ? FitGenieTheme.primary
-                                  : FitGenieTheme.background,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '$s',
-                                style: TextStyle(
-                                  color: sel
-                                      ? Colors.white
-                                      : FitGenieTheme.muted,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-
-                  const SizedBox(height: 16),
-                  Text(AppStrings.get('label_reps_time'),
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: repsController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: '12 or 45 sec',
-                      filled: true,
-                      fillColor: FitGenieTheme.background,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-                  Text(AppStrings.get('label_weight_kg'),
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: weightController,
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: '20',
-                      suffixText: 'kg',
-                      filled: true,
-                      fillColor: FitGenieTheme.background,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        for (int i = 0; i < selectedSets; i++) {
-                          await _logSet(
-                            (selected['name'] ?? 'Exercise').toString(),
-                            double.tryParse(weightController.text) ?? 0,
-                            repsController.text.trim().isEmpty
-                                ? '12'
-                                : repsController.text.trim(),
-                          );
-                        }
-                        if (context.mounted) Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: FitGenieTheme.primary,
-                      ),
-                      child: Text(
-                        AppStrings.get('library_save_sets'),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ActiveSetSheet(
+        exercise: exerciseObj,
+        exerciseNameFallback: (nextExercise!['name'] ?? 'Exercise').toString(),
+        initialWeight: lastWeight,
+        initialReps: (nextExercise['reps'] ?? '12').toString(),
+        setLabel: 'Set ${doneCount + 1} of $targetCount',
+        onSetLogged: (weight, reps, durationSeconds, toFailure) {
+          _logSet(
+            (nextExercise!['name'] ?? 'Exercise').toString(),
+            weight,
+            reps,
           );
         },
       ),
     );
   }
-
   Future<void> _finishWorkout() async {
     if (_sessionId == null) return;
 
@@ -1586,7 +1391,7 @@ class _CustomWorkoutSessionScreenState
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: FitGenieTheme.cardDark,
-        title: Text('${widget.workoutName} 📚'),
+        title: Text('${widget.workoutName} ?'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
@@ -1716,38 +1521,28 @@ class _CustomWorkoutSessionScreenState
                 child: FGCard(
                   child: Row(
                     children: [
-                      if (exercise != null && exercise.hasGif)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: CachedNetworkImage(
-                            imageUrl: exercise.gifUrl,
-                            width: 72,
-                            height: 72,
-                            fit: BoxFit.cover,
-                            placeholder: (c, u) => Container(
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: exercise != null
+                            ? Image.asset(
+                          exercise.gifAsset,
+                          width: 72,
+                          height: 72,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
                               width: 72,
                               height: 72,
-                              color: FitGenieTheme.background,
-                              child: const Center(
-                                child: SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2),
-                                ),
+                              decoration: BoxDecoration(
+                                color: FitGenieTheme.background,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ),
-                            errorWidget: (c, u, e) => Container(
-                              width: 72,
-                              height: 72,
-                              color: FitGenieTheme.background,
                               child: const Icon(Icons.fitness_center,
                                   color: Colors.white24),
-                            ),
-                          ),
+                            );
+                          },
                         )
-                      else
-                        Container(
+                            : Container(
                           width: 72,
                           height: 72,
                           decoration: BoxDecoration(
@@ -1757,6 +1552,7 @@ class _CustomWorkoutSessionScreenState
                           child: const Icon(Icons.fitness_center,
                               color: Colors.white24),
                         ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -1772,7 +1568,7 @@ class _CustomWorkoutSessionScreenState
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${item['sets']} × ${item['reps']}',
+                              '${item['sets']} ? ${item['reps']}',
                               style: TextStyle(
                                   color: FitGenieTheme.primary,
                                   fontSize: 12,
@@ -1856,7 +1652,7 @@ class _CustomWorkoutSessionScreenState
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${set['weight']} kg × ${set['reps']}',
+                                  '${set['weight']} kg ? ${set['reps']}',
                                   style: TextStyle(
                                       color: FitGenieTheme.muted,
                                       fontSize: 12),
@@ -1877,7 +1673,7 @@ class _CustomWorkoutSessionScreenState
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _showLogSetDialog,
+                  onPressed: _startNextSet,
                   icon: const Icon(Icons.add, color: Colors.white),
                   label: Text(
                     AppStrings.get('library_log_set'),
