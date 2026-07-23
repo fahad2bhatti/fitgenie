@@ -5,12 +5,15 @@ import 'dart:typed_data';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:uuid/uuid.dart';
 
 class LocalStorageService {
   // Singleton
   static final LocalStorageService _instance = LocalStorageService._internal();
   factory LocalStorageService() => _instance;
   LocalStorageService._internal();
+
+  static const _uuid = Uuid();
 
   // ═══════════════════════════════════════════
   // 🔐 SECURE STORAGE FOR ENCRYPTION KEY
@@ -460,6 +463,7 @@ class LocalStorageService {
       }
 
       pending.add({
+        'id': _uuid.v4(),
         'type': type,
         'data': _sanitizeData(data),
         'timestamp': DateTime.now().toIso8601String(),
@@ -521,6 +525,36 @@ class LocalStorageService {
       }
     } catch (e) {
       debugPrint('❌ incrementRetryCount error: $e');
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // Id-based variants — safe against index shifting when items are
+  // added/removed concurrently. Preferred over the index-based methods
+  // above, which SyncService used to call with a hardcoded index.
+  // ─────────────────────────────────────────
+  Future<void> removePendingSyncById(String id) async {
+    try {
+      final box = _getBox(_pendingSyncBox);
+      List<Map<String, dynamic>> pending = getPendingSyncs();
+      pending.removeWhere((item) => item['id'] == id);
+      await box.put('pending_list', pending);
+    } catch (e) {
+      debugPrint('❌ removePendingSyncById error: $e');
+    }
+  }
+
+  Future<void> incrementRetryCountById(String id) async {
+    try {
+      final box = _getBox(_pendingSyncBox);
+      List<Map<String, dynamic>> pending = getPendingSyncs();
+      final index = pending.indexWhere((item) => item['id'] == id);
+      if (index != -1) {
+        pending[index]['retryCount'] = (pending[index]['retryCount'] ?? 0) + 1;
+        await box.put('pending_list', pending);
+      }
+    } catch (e) {
+      debugPrint('❌ incrementRetryCountById error: $e');
     }
   }
 
@@ -607,4 +641,3 @@ class LocalStorageService {
     }
   }
 }
-

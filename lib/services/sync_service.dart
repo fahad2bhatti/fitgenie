@@ -15,6 +15,11 @@ class SyncService {
 
   bool _isSyncing = false;
 
+  // An unknown/unrecognized item is dropped (with a loud log) only after
+  // this many failed attempts, so a genuinely bad item can't grow the
+  // queue forever, but a transient failure still gets retried.
+  static const int _maxRetries = 5;
+
   // Sync all pending changes
   Future<void> syncPendingChanges() async {
     if (_isSyncing) return;
@@ -24,21 +29,46 @@ class SyncService {
     debugPrint('🔄 Starting sync...');
 
     try {
+      // Snapshot of the queue at the start of this run. Each item carries
+      // its own stable 'id', so removal/retry never depends on list
+      // position — earlier items failing no longer blocks later ones.
       final pendingList = _localStorage.getPendingSyncs();
 
-      for (int i = 0; i < pendingList.length; i++) {
-        final pending = pendingList[i];
-        final type = pending['type'] as String;
-        final data = Map<String, dynamic>.from(pending['data']);
+      for (final pending in pendingList) {
+        final id = pending['id'] as String?;
+        final type = pending['type'] as String? ?? 'unknown';
+        final retryCount = (pending['retryCount'] as int?) ?? 0;
+        final data = Map<String, dynamic>.from(pending['data'] ?? {});
 
         try {
           await _syncItem(type, data);
-          await _localStorage.removePendingSync(0); // Always remove first
+          if (id != null) {
+            await _localStorage.removePendingSyncById(id);
+          } else {
+            // Legacy item queued before ids existed — best effort cleanup.
+            await _localStorage.removePendingSync(0);
+          }
           debugPrint('✅ Synced: $type');
         } catch (e) {
           debugPrint('❌ Sync failed for $type: $e');
-          // Don't remove, will retry next time
-          break;
+
+          if (id == null) {
+            // No stable id to retry against — drop it rather than risk
+            // looping on it forever or deleting the wrong item.
+            debugPrint('⚠️ Dropping legacy pending item with no id ($type)');
+            continue;
+          }
+
+          if (retryCount + 1 >= _maxRetries) {
+            debugPrint(
+              '🛑 Giving up on pending sync "$type" after $_maxRetries attempts — dropping to avoid infinite retry: $e',
+            );
+            await _localStorage.removePendingSyncById(id);
+          } else {
+            await _localStorage.incrementRetryCountById(id);
+          }
+          // Continue with the rest of the queue instead of aborting the
+          // whole sync run on one bad/unreachable item.
         }
       }
 
@@ -59,6 +89,12 @@ class SyncService {
       case 'weight_log':
         await _syncWeightLog(data);
         break;
+      default:
+      // Previously fell through silently and was then marked "synced"
+      // by the caller, permanently losing the data. Throwing here means
+      // it's retried and, if genuinely unrecognized, eventually dropped
+      // with a loud log instead of vanishing quietly.
+        throw Exception('Unknown pending sync type: "$type"');
     }
   }
 
