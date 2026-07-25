@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
 import '../widgets/fg_card.dart';
 import '../widgets/app_snackbar.dart';
@@ -1045,14 +1044,10 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: CachedNetworkImage(
-                        imageUrl: selectedExercise!.gifUrl,
+                      child: Image.asset(
+                        selectedExercise!.gifAsset,
                         fit: BoxFit.cover,
-                        placeholder: (c, u) => Container(
-                          color: FitGenieTheme.background,
-                          child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                        ),
-                        errorWidget: (c, u, e) => Container(
+                        errorBuilder: (c, error, stackTrace) => Container(
                           color: FitGenieTheme.background,
                           child: const Center(child: Icon(Icons.fitness_center, color: Colors.white24)),
                         ),

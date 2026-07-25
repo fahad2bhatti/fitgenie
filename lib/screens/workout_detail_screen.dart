@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
 import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
@@ -480,24 +479,12 @@ class WorkoutDetailScreen extends StatelessWidget {
                 if (exercise != null && exercise.hasGif)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: exercise.gifUrl,
+                    child:Image.asset(
+                      exercise.gifAsset,
                       width: 68,
                       height: 68,
                       fit: BoxFit.cover,
-                      placeholder: (c, u) => Container(
-                        width: 68,
-                        height: 68,
-                        color: FitGenieTheme.background,
-                        child: const Center(
-                          child: SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                      ),
-                      errorWidget: (c, u, e) => Container(
+                      errorBuilder: (c, error, stackTrace) => Container(
                         width: 68,
                         height: 68,
                         color: FitGenieTheme.background,
@@ -597,24 +584,12 @@ class WorkoutDetailScreen extends StatelessWidget {
                     if (exercise != null && exercise.hasGif)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: CachedNetworkImage(
-                          imageUrl: exercise.gifUrl,
+                        child: Image.asset(
+                          exercise.gifAsset,
                           width: 78,
                           height: 78,
                           fit: BoxFit.cover,
-                          placeholder: (c, u) => Container(
-                            width: 78,
-                            height: 78,
-                            color: FitGenieTheme.background,
-                            child: const Center(
-                              child: SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              ),
-                            ),
-                          ),
-                          errorWidget: (c, u, e) => Container(
+                          errorBuilder: (c, error, stackTrace) => Container(
                             width: 78,
                             height: 78,
                             color: FitGenieTheme.background,

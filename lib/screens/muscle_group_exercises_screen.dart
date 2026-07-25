@@ -1,7 +1,6 @@
 // lib/screens/muscle_group_exercises_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../app/fitgenie_theme.dart';
 import '../core/app_strings.dart';
 import '../widgets/fg_card.dart';
@@ -358,56 +357,30 @@ class _MuscleGroupExercisesScreenState
                   const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Stack(
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: exercise.gifUrl,
+                      Image.asset(
+                        exercise.gifAsset,
                         height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
+                        errorBuilder: (context, error, stackTrace) => Container(
                           height: 200,
                           color: FitGenieTheme.background,
                           child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: widget.color.withValues(alpha: 0.5),
-                                  ),
-                                ),
+                                Icon(Icons.fitness_center,
+                                    size: 40, color: widget.color.withValues(alpha: 0.3)),
                                 const SizedBox(height: 8),
                                 Text(
-                                  AppStrings.get('muscle_exercises_loading'),
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: FitGenieTheme.muted),
+                                  exercise.name,
+                                  style: TextStyle(fontSize: 12, color: FitGenieTheme.muted),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        errorWidget: (context, url, error) => Container(
-                          height: 150,
-                          color: FitGenieTheme.background,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.fitness_center,
-                                    size: 40,
-                                    color: widget.color.withValues(alpha: 0.3)),
-                                const SizedBox(height: 8),
-                                Text(exercise.name,
-                                    style: TextStyle(
-                                        color: FitGenieTheme.muted,
-                                        fontSize: 12)),
-                              ],
-                            ),
-                          ),
-                        ),
+
                       ),
 
                       // Calories Badge
@@ -619,7 +592,7 @@ class _MuscleGroupExercisesScreenState
     final String equipment = exercise.equipment;
     final String difficulty = exercise.difficulty;
     final String instructions = exercise.instructions;
-    final String gifUrl = exercise.gifUrl;
+
     final int calories = exercise.caloriesPerMin;
     final String tempo = exercise.tempo;
     final List<String> muscles = exercise.musclesWorked;
@@ -679,7 +652,7 @@ class _MuscleGroupExercisesScreenState
               ),
 
               // ── GIF ──
-              if (gifUrl.isNotEmpty)
+              if (exercise.gifAsset.isNotEmpty)
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
@@ -689,18 +662,12 @@ class _MuscleGroupExercisesScreenState
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: CachedNetworkImage(
-                      imageUrl: gifUrl,
+                    child: Image.asset(
+                      exercise.gifAsset,
                       height: 280,
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      placeholder: (c, u) => Container(
-                        height: 280,
-                        color: FitGenieTheme.background,
-                        child: const Center(
-                            child: CircularProgressIndicator()),
-                      ),
-                      errorWidget: (c, u, e) => Container(
+                      errorBuilder: (c, error, stackTrace) => Container(
                         height: 200,
                         color: FitGenieTheme.background,
                         child: const Center(
