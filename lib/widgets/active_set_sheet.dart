@@ -138,7 +138,25 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
           const SizedBox(height: 20),
 
           if (_phase == _SetPhase.performing) ...[
+            if (widget.exercise != null && widget.exercise!.hasGif)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  widget.exercise!.gifAsset,
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, error, stackTrace) => Container(
+                    height: 180,
+                    color: FitGenieTheme.background,
+                    child: const Icon(Icons.fitness_center,
+                        color: Colors.white24, size: 40),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
             CircularStopwatch(key: _stopwatchKey, size: 200),
+
             const SizedBox(height: 24),
 
             // Weight stepper
