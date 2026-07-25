@@ -424,24 +424,17 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                   const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Stack(
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: exercise.gifUrl,
-                        height: 190,
+                      Image.asset(
+                        exercise.gifAsset,
+                        height: 280,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          height: 190,
-                          color: FitGenieTheme.background,
-                          child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          height: 150,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          height: 200,
                           color: FitGenieTheme.background,
                           child: const Center(
                             child: Icon(Icons.fitness_center,
-                                color: Colors.white24, size: 42),
+                                size: 50, color: Colors.white24),
                           ),
                         ),
                       ),
