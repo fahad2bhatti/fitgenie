@@ -680,6 +680,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "mobile_scanner",
+      "rootUri": "file:///home/fahad/.pub-cache/hosted/pub.dev/mobile_scanner-7.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "nm",
       "rootUri": "file:///home/fahad/.pub-cache/hosted/pub.dev/nm-0.5.0",
       "packageUri": "lib/",

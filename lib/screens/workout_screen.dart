@@ -13,6 +13,7 @@ import 'muscle_group_exercises_screen.dart';
 import 'workout_plan_screen.dart';
 import 'my_library_screen.dart';
 import 'workout_detail_screen.dart';
+import '../widgets/active_set_sheet.dart';
 
 // ============================================================
 // 🏋️ MAIN WORKOUT SCREEN (HUB)
@@ -1171,16 +1172,9 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: selectedExercise == null ? null : () async {
-                      for (int i = 0; i < selectedSets; i++) {
-                        await _logSet(selectedExercise!.name, double.tryParse(weightController.text) ?? 0, selectedReps);
-                      }
-                      if (!context.mounted) return;
-                      Navigator.pop(context);
-                      AppSnackbar.showSuccess(
-                        context,
-                        AppStrings.get('workout_sets_logged', params: {'count': '$selectedSets'}),
-                      );
+                    onPressed: selectedExercise == null ? null : () {
+                      Navigator.pop(context); // close exercise-picker sheet
+                      _startExerciseSession(selectedExercise!, selectedSets);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: selectedExercise == null ? Colors.grey : FitGenieTheme.primary,
@@ -1201,6 +1195,28 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         ),
       ),
     );
+  }
+  void _startExerciseSession(Exercise exercise, int totalSets, {int currentSet = 1}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ActiveSetSheet(
+        exercise: exercise,
+        exerciseNameFallback: exercise.name,
+        initialWeight: 20,
+        initialReps: '12',
+        setLabel: 'Set $currentSet of $totalSets',
+        onSetLogged: (weight, reps, durationSeconds, toFailure) {
+          _logSet(exercise.name, weight, int.tryParse(reps) ?? 12);
+        },
+      ),
+    ).then((_) {
+      if (currentSet < totalSets) {
+        _startExerciseSession(exercise, totalSets, currentSet: currentSet + 1);
+      }
+    });
   }
 
   Future<void> _logSet(String exercise, double weight, int reps) async {
