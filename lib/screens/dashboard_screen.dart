@@ -8,9 +8,12 @@ import '../widgets/fg_card.dart';
 import '../widgets/fg_progress.dart';
 import '../widgets/quick_action_tile.dart';
 import '../services/step_counter_service.dart';
+import '../services/nutrition_service.dart';
+import '../services/ai_service.dart' show MealAnalysis;
 import '../widgets/app_snackbar.dart';
 import '../core/app_strings.dart';
 import 'challenges_screen.dart';
+import 'meal_scanner_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userId;
@@ -34,6 +37,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     with WidgetsBindingObserver {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final StepCounterService _stepCounterService = StepCounterService();
+  final NutritionService _nutritionService = NutritionService();
 
   // Loading state
   bool _isLoading = true;
@@ -87,11 +91,11 @@ class _DashboardScreenState extends State<DashboardScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        debugPrint('🔄 App resumed — refreshing steps...');
+        debugPrint('🔄 App resumed → refreshing steps...');
         _refreshStepsOnResume();
         break;
       case AppLifecycleState.paused:
-        debugPrint('💾 App paused — saving steps...');
+        debugPrint('💾 App paused → saving steps...');
         _stepCounterService.forceSave();
         break;
       case AppLifecycleState.inactive:
@@ -137,9 +141,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     setState(() => _isLoading = false);
   }
 
-  // ═══════════════════════════════════════════
-  // 👣 INIT STEP COUNTER — FIXED!
-  // ═══════════════════════════════════════════
+  // ==========================================
+  // 👣 INIT STEP COUNTER
+  // ==========================================
   Future<void> _initStepCounter() async {
     try {
       final success = await _stepCounterService.initialize(widget.userId);
@@ -167,7 +171,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
         _stepCounterService.onGoogleFitStatusChanged = (status) {
           if (mounted) {
-            debugPrint('📊 Google Fit status: $status');
+            debugPrint('📡 Google Fit status: $status');
           }
         };
 
@@ -211,9 +215,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  // ═══════════════════════════════════════════
-  // 📊 LOAD DATA — FIXED!
-  // ═══════════════════════════════════════════
+  // ==========================================
+  // 🔄 LOAD DATA
+  // ==========================================
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
 
@@ -247,9 +251,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     setState(() => _isLoading = false);
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 🎯 LOAD GOALS
-  // ═══════════════════════════════════════════
+  // ==========================================
   Future<void> _loadGoals() async {
     if (_userId.isEmpty) return;
 
@@ -279,9 +283,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  // ═══════════════════════════════════════════
-  // 📈 LOAD TODAY PROGRESS — FIXED!
-  // ═══════════════════════════════════════════
+  // ==========================================
+  // 📊 LOAD TODAY PROGRESS
+  // ==========================================
   Future<void> _loadTodayProgress() async {
     if (_userId.isEmpty) return;
 
@@ -315,7 +319,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         }
 
         debugPrint(
-            '📊 Loaded from Firestore — Steps: $savedSteps, Using: $_todaySteps');
+            '✅ Loaded from Firestore → Steps: $savedSteps, Using: $_todaySteps');
       }
 
       final todayStart = DateTime(today.year, today.month, today.day);
@@ -361,9 +365,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 📅 LOAD WEEKLY ACTIVITY
-  // ═══════════════════════════════════════════
+  // ==========================================
   Future<void> _loadWeeklyActivity() async {
     if (_userId.isEmpty) return;
 
@@ -409,9 +413,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  // ═══════════════════════════════════════════
-  // 💾 UPDATE DAILY LOG
-  // ═══════════════════════════════════════════
+  // ==========================================
+  // 📝 UPDATE DAILY LOG
+  // ==========================================
   Future<void> _updateDailyLog({int? steps, int? water, int? activeMinutes}) async {
     if (_userId.isEmpty) return;
 
@@ -436,9 +440,107 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  // ═══════════════════════════════════════════
-  // 🎨 BUILD UI
-  // ═══════════════════════════════════════════
+  // ==========================================
+  // 📷 MEAL SCANNER (AI photo + barcode) — replaces old "Coming Soon"
+  // ==========================================
+  Future<void> _openMealScanner() async {
+    final analysis = await Navigator.push<MealAnalysis>(
+      context,
+      MaterialPageRoute(builder: (_) => const MealScannerScreen()),
+    );
+
+    if (analysis == null || !mounted) return;
+
+    final mealType = await _pickMealTypeForScan();
+    if (mealType == null || !mounted) return;
+
+    final entry = MealEntry(
+      name: analysis.foodName,
+      quantity: analysis.quantity,
+      mealType: mealType,
+      calories: analysis.calories,
+      protein: analysis.protein,
+      carbs: analysis.carbs,
+      fats: analysis.fat,
+      source: 'scanner',
+    );
+
+    await _nutritionService.addMealEntry(
+      uid: _userId,
+      entry: entry,
+      date: DateTime.now(),
+    );
+
+    // Refresh dashboard totals so today's calories/protein reflect the scan
+    await _loadTodayProgress();
+
+    if (!mounted) return;
+    AppSnackbar.showSuccess(
+      context,
+      AppStrings.get('calories_added_success', params: {'name': entry.name}),
+    );
+  }
+
+  /// Small bottom sheet asking which meal (breakfast/lunch/dinner/snacks)
+  /// the scanned item belongs to. Returns null if the user dismisses it.
+  Future<String?> _pickMealTypeForScan() async {
+    return showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Kis meal mein add karein? 🍽️',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: {
+                'breakfast': '🍳 Breakfast',
+                'lunch': '🍲 Lunch',
+                'dinner': '🍛 Dinner',
+                'snacks': '🍪 Snacks',
+              }.entries.map((entry) {
+                return GestureDetector(
+                  onTap: () => Navigator.pop(context, entry.key),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: FitGenieTheme.primary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: FitGenieTheme.primary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Text(
+                      entry.value,
+                      style: const TextStyle(
+                        color: FitGenieTheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ==========================================
+  // 🏗️ BUILD UI
+  // ==========================================
   @override
   Widget build(BuildContext context) {
     final name = widget.userName.trim().isEmpty ? 'User' : widget.userName.trim();
@@ -483,9 +585,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 👋 HEADER
-  // ═══════════════════════════════════════════
+  // ==========================================
   Widget _buildHeader(String name) {
     final hour = DateTime.now().hour;
     String greeting;
@@ -547,9 +649,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 👣 STEP COUNTER HELPER METHODS
-  // ═══════════════════════════════════════════
+  // ==========================================
   Widget _buildStatusDot() {
     Color color = _getStepStatusColor();
     return Container(
@@ -627,9 +729,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 👣 STEPS CARD
-  // ═══════════════════════════════════════════
+  // ==========================================
   Widget _buildStepsCard() {
     final progress =
     _stepsGoal > 0 ? (_todaySteps / _stepsGoal).clamp(0.0, 1.0) : 0.0;
@@ -866,7 +968,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 Expanded(
                   child: Text(
                     goalAchieved
-                        ? '✅ ${AppStrings.get('dashboard_goal_achieved')}'
+                        ? '🎉 ${AppStrings.get('dashboard_goal_achieved')}'
                         : AppStrings.get('dashboard_steps_to_go',
                         params: {'count': _formatNumber(_stepsGoal - _todaySteps)}),
                     style: TextStyle(
@@ -904,9 +1006,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 🔥 CALORIES BURNED CARD
-  // ═══════════════════════════════════════════
+  // ==========================================
   Widget _buildCaloriesBurnedCard() {
     final caloriesGoal = _caloriesGoal;
     final progress = caloriesGoal > 0
@@ -966,9 +1068,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 🎯 DAILY GOALS CARD
-  // ═══════════════════════════════════════════
+  // ==========================================
   Widget _buildDailyGoalsCard() {
     return FGCard(
       child: Column(
@@ -1057,9 +1159,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // 📅 WEEKLY ACTIVITY CARD
-  // ═══════════════════════════════════════════
+  // ==========================================
   Widget _buildWeeklyActivityCard() {
     final maxWorkouts = _weeklyWorkouts.reduce((a, b) => a > b ? a : b);
     final normalizedMax = maxWorkouts > 0 ? maxWorkouts : 1;
@@ -1163,9 +1265,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
+  // ==========================================
   // ⚡ QUICK ACTIONS
-  // ═══════════════════════════════════════════
+  // ==========================================
   Widget _buildQuickActions() {
     return Column(
       children: [
@@ -1226,34 +1328,11 @@ class _DashboardScreenState extends State<DashboardScreen>
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: Stack(
-                children: [
-                  QuickActionTile(
-                    icon: Icons.camera_alt,
-                    title: AppStrings.get('dashboard_scan_meal'),
-                    color: Colors.teal,
-                    onTap: _showComingSoonDialog,
-                  ),
-                  Positioned(
-                    top: 6,
-                    right: 6,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.amber,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        'SOON',
-                        style: TextStyle(
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              child: QuickActionTile(
+                icon: Icons.document_scanner,
+                title: AppStrings.get('dashboard_scan_meal'),
+                color: Colors.teal,
+                onTap: _openMealScanner,
               ),
             ),
           ],
@@ -1262,9 +1341,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  // ═══════════════════════════════════════════
-  // 📝 QUICK LOG SECTION
-  // ═══════════════════════════════════════════
+  // ==========================================
+  // ⚡ QUICK LOG SECTION
+  // ==========================================
   Widget _buildQuickLogSection() {
     return FGCard(
       child: Column(
@@ -1340,36 +1419,9 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  void _showComingSoonDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.workspace_premium, color: Colors.amber),
-            const SizedBox(width: 8),
-            Text(AppStrings.get('dashboard_coming_soon')),
-          ],
-        ),
-        content: Text(
-          AppStrings.get('dashboard_scanner_soon'),
-          style: const TextStyle(color: Colors.grey),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppStrings.get('ok')),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ═══════════════════════════════════════════
-  // 💬 DIALOGS
-  // ═══════════════════════════════════════════
+  // ==========================================
+  // 🗨️ DIALOGS
+  // ==========================================
   void _showAddStepsDialog() {
     final controller = TextEditingController();
     showDialog(
@@ -1564,9 +1616,9 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 }
 
-// ═══════════════════════════════════════════
-// 🎨 STEP RING PAINTER
-// ═══════════════════════════════════════════
+// ==========================================
+// 🎯 STEP RING PAINTER
+// ==========================================
 class _StepRingPainter extends CustomPainter {
   final double progress;
   final bool isGoalAchieved;
