@@ -3,8 +3,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../app/fitgenie_theme.dart';
 import '../services/ai_service.dart';
+import '../services/open_food_facts_service.dart';
 import 'dart:math' show min;
 
 class MealScannerScreen extends StatefulWidget {
@@ -16,6 +18,7 @@ class MealScannerScreen extends StatefulWidget {
 
 class _MealScannerScreenState extends State<MealScannerScreen> {
   final AIService _aiService = AIService();
+  final OpenFoodFactsService _foodFactsService = OpenFoodFactsService();
   final ImagePicker _picker = ImagePicker();
 
   File? _selectedImage;
@@ -51,8 +54,8 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-// 🤖 ANALYZE IMAGE - UPDATED
-// ==========================================
+  // 🤖 ANALYZE IMAGE (AI / Gemini)
+  // ==========================================
   Future<void> _analyzeImage() async {
     if (_selectedImage == null) return;
 
@@ -63,7 +66,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
     });
 
     try {
-      debugPrint('🔄 Starting image analysis...');
+      debugPrint('🔍 Starting image analysis...');
       final analysis = await _aiService.analyzeMealPhoto(_selectedImage!);
       debugPrint('✅ Analysis complete: ${analysis.foodName}');
 
@@ -83,6 +86,54 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       }
     }
   }
+
+  // ==========================================
+  // 🏷️ SCAN BARCODE (Open Food Facts)
+  // ==========================================
+  Future<void> _scanBarcode() async {
+    final barcode = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const _BarcodeScannerPage()),
+    );
+
+    if (barcode == null || barcode.isEmpty) return;
+
+    setState(() {
+      _selectedImage = null; // barcode result replaces any photo preview
+      _loading = true;
+      _error = null;
+      _analysis = null;
+    });
+
+    try {
+      debugPrint('🔍 Looking up barcode: $barcode');
+      final result = await _foodFactsService.getProductByBarcode(barcode);
+
+      if (!mounted) return;
+
+      if (result == null) {
+        setState(() {
+          _loading = false;
+          _error = 'Ye product Open Food Facts database mein nahi mila. Photo se try karo ya manually add karo.';
+        });
+        return;
+      }
+
+      setState(() {
+        _analysis = result;
+        _loading = false;
+      });
+    } catch (e) {
+      debugPrint('❌ Barcode lookup error: $e');
+      if (mounted) {
+        setState(() {
+          _error = 'Barcode lookup fail ho gaya. Dobara try karo.';
+          _loading = false;
+        });
+      }
+    }
+  }
+
   // ==========================================
   // 💾 SAVE TO CALORIES
   // ==========================================
@@ -124,7 +175,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
         child: Column(
           children: [
             // ==========================================
-            // 📷 IMAGE PREVIEW
+            // 🖼️ IMAGE PREVIEW
             // ==========================================
             Container(
               height: 280,
@@ -149,17 +200,20 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.restaurant_menu,
+                    _analysis != null ? Icons.qr_code_2 : Icons.restaurant_menu,
                     size: 80,
                     color: FitGenieTheme.muted.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Khana ki photo lo ya select karo',
+                    _analysis != null
+                        ? 'Barcode se product mil gaya'
+                        : 'Khana ki photo lo, ya packet barcode scan karo',
                     style: TextStyle(
                       color: FitGenieTheme.muted,
                       fontSize: 16,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -168,7 +222,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
             const SizedBox(height: 20),
 
             // ==========================================
-            // 📷 CAMERA & GALLERY BUTTONS
+            // 📷 CAMERA / GALLERY / BARCODE BUTTONS
             // ==========================================
             Row(
               children: [
@@ -191,6 +245,16 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: _ActionButton(
+                icon: Icons.qr_code_scanner,
+                label: 'Scan Barcode (packaged food)',
+                color: FitGenieTheme.success,
+                onTap: _scanBarcode,
+              ),
+            ),
 
             const SizedBox(height: 24),
 
@@ -211,7 +275,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'AI analyze kar raha hai... 🤖',
+                      'Analyze kar raha hai... ⏳',
                       style: TextStyle(color: FitGenieTheme.muted),
                     ),
                   ],
@@ -219,7 +283,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
               ),
 
             // ==========================================
-            // ❌ ERROR STATE
+            // ⚠️ ERROR STATE
             // ==========================================
             if (_error != null)
               Container(
@@ -239,16 +303,17 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                         style: const TextStyle(color: FitGenieTheme.error),
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.refresh, color: FitGenieTheme.error),
-                      onPressed: _analyzeImage,
-                    ),
+                    if (_selectedImage != null)
+                      IconButton(
+                        icon: const Icon(Icons.refresh, color: FitGenieTheme.error),
+                        onPressed: _analyzeImage,
+                      ),
                   ],
                 ),
               ),
 
             // ==========================================
-            // ✅ ANALYSIS RESULT
+            // ✅ ANALYSIS RESULT (shared by AI photo scan + barcode scan)
             // ==========================================
             if (_analysis != null) ...[
               _buildAnalysisCard(),
@@ -285,7 +350,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 🍽️ ANALYSIS CARD
+  // 🏷️ ANALYSIS CARD
   // ==========================================
   Widget _buildAnalysisCard() {
     return Container(
@@ -307,7 +372,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
               color: FitGenieTheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text('🍽️', style: TextStyle(fontSize: 32)),
+            child: const Text('🍲', style: TextStyle(fontSize: 32)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -361,7 +426,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 📊 NUTRITION GRID
+  // 🥗 NUTRITION GRID
   // ==========================================
   Widget _buildNutritionGrid() {
     return Row(
@@ -370,13 +435,13 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
           label: 'Protein',
           value: '${_analysis!.protein}g',
           color: FitGenieTheme.error,
-          icon: '🥩',
+          icon: '💪',
         ),
         _NutritionTile(
           label: 'Carbs',
           value: '${_analysis!.carbs}g',
           color: FitGenieTheme.warning,
-          icon: '🍚',
+          icon: '🌾',
         ),
         _NutritionTile(
           label: 'Fat',
@@ -388,7 +453,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
           label: 'Fiber',
           value: '${_analysis!.fiber}g',
           color: FitGenieTheme.success,
-          icon: '🥬',
+          icon: '🌿',
         ),
       ],
     );
@@ -466,11 +531,14 @@ class _ActionButton extends StatelessWidget {
           children: [
             Icon(icon, color: color),
             const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.bold,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -481,7 +549,7 @@ class _ActionButton extends StatelessWidget {
 }
 
 // ==========================================
-// 📊 NUTRITION TILE
+// 🔢 NUTRITION TILE
 // ==========================================
 class _NutritionTile extends StatelessWidget {
   final String label;
@@ -527,6 +595,88 @@ class _NutritionTile extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ==========================================
+// 📷 BARCODE SCANNER PAGE
+// Full-screen camera view using mobile_scanner. Pops the first detected
+// barcode value back to the caller.
+// ==========================================
+class _BarcodeScannerPage extends StatefulWidget {
+  const _BarcodeScannerPage();
+
+  @override
+  State<_BarcodeScannerPage> createState() => _BarcodeScannerPageState();
+}
+
+class _BarcodeScannerPageState extends State<_BarcodeScannerPage> {
+  final MobileScannerController _controller = MobileScannerController(
+    formats: const [BarcodeFormat.ean13, BarcodeFormat.ean8, BarcodeFormat.upcA, BarcodeFormat.upcE],
+  );
+  bool _handled = false;
+
+  void _onDetect(BarcodeCapture capture) {
+    if (_handled) return;
+    final barcodes = capture.barcodes;
+    if (barcodes.isEmpty) return;
+
+    final value = barcodes.first.rawValue;
+    if (value == null || value.isEmpty) return;
+
+    _handled = true;
+    Navigator.pop(context, value);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: const Text('Barcode Scan Karo'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.flash_on),
+            onPressed: () => _controller.toggleTorch(),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          MobileScanner(
+            controller: _controller,
+            onDetect: _onDetect,
+          ),
+          Center(
+            child: Container(
+              width: 260,
+              height: 160,
+              decoration: BoxDecoration(
+                border: Border.all(color: FitGenieTheme.primary, width: 3),
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Text(
+              'Packet ka barcode frame ke andar rakho',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+            ),
+          ),
+        ],
       ),
     );
   }
