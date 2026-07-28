@@ -14,6 +14,7 @@ import '../widgets/app_snackbar.dart';
 import '../core/app_strings.dart';
 import 'challenges_screen.dart';
 import 'meal_scanner_screen.dart';
+import 'exercise_library_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userId;
@@ -1305,10 +1306,16 @@ class _DashboardScreenState extends State<DashboardScreen>
           children: [
             Expanded(
               child: QuickActionTile(
-                icon: Icons.bar_chart,
-                title: AppStrings.get('dashboard_progress'),
+                icon: Icons.fitness_center,
+                title: 'Exercises',
                 color: Colors.blue,
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const ExerciseLibraryScreen()),
+                  );
+                },
               ),
             ),
             const SizedBox(width: 10),
