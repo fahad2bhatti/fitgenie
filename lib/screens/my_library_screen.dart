@@ -1245,8 +1245,8 @@ class _CustomWorkoutSessionScreenState
         initialWeight: lastWeight,
         initialReps: (nextExercise['reps'] ?? '12').toString(),
         setLabel: 'Set ${doneCount + 1} of $targetCount',
-        onSetLogged: (weight, reps, durationSeconds, toFailure) {
-          _logSet(
+        onSetLogged: (weight, reps, durationSeconds, toFailure)  async{
+          await _logSet(
             (nextExercise!['name'] ?? 'Exercise').toString(),
             weight,
             reps,
