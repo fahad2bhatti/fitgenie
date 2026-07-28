@@ -26,7 +26,7 @@ class ActiveSetSheet extends StatefulWidget {
 
   /// Called once the set is finished (before rest starts) so the parent
   /// can persist it to Firestore / local state.
-  final void Function(double weight, String reps, int durationSeconds, bool toFailure)
+  final Future<void> Function(double weight, String reps, int durationSeconds, bool toFailure)
   onSetLogged;
 
   const ActiveSetSheet({
@@ -72,10 +72,20 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
     setState(() => _reps = '$next');
   }
 
-  void _finishSet() {
+  void _finishSet() async {
     final elapsed = _stopwatchKey.currentState?.stop() ?? Duration.zero;
 
-    widget.onSetLogged(_weight, _reps, elapsed.inSeconds, _toFailure);
+    try {
+      await widget.onSetLogged(_weight, _reps, elapsed.inSeconds, _toFailure);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Set save nahi hua, dobara try karo')),
+        );
+      }
+    }
+
+    if (!mounted) return;
 
     final difficulty = widget.exercise?.difficulty ?? 'Beginner';
     _restSeconds = suggestedRestSeconds(
@@ -130,7 +140,7 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     _stopwatchKey.currentState?.stop();
-                    Navigator.pop(context);
+                    Navigator.pop(context , false);
                   },
                 ),
             ],
@@ -216,10 +226,10 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
             CircularRestTimer(
               initialSeconds: _restSeconds,
               onComplete: () {
-                if (mounted) Navigator.pop(context);
+                if (mounted) Navigator.pop(context , true);
               },
               onSkip: () {
-                if (mounted) Navigator.pop(context);
+                if (mounted) Navigator.pop(context , true);
               },
             ),
           ],

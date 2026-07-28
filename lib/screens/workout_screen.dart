@@ -1174,7 +1174,12 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                   child: ElevatedButton(
                     onPressed: selectedExercise == null ? null : () {
                       Navigator.pop(context); // close exercise-picker sheet
-                      _startExerciseSession(selectedExercise!, selectedSets);
+                      _startExerciseSession(
+                        selectedExercise!,
+                        selectedSets,
+                        double.tryParse(weightController.text) ?? 20,
+                        '$selectedReps',
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: selectedExercise == null ? Colors.grey : FitGenieTheme.primary,
@@ -1196,8 +1201,14 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
       ),
     );
   }
-  void _startExerciseSession(Exercise exercise, int totalSets, {int currentSet = 1}) {
-    showModalBottomSheet(
+  void _startExerciseSession(
+      Exercise exercise,
+      int totalSets,
+      double startWeight,
+      String startReps, {
+        int currentSet = 1,
+      }) {
+    showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       isDismissible: false,
@@ -1205,16 +1216,16 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
       builder: (context) => ActiveSetSheet(
         exercise: exercise,
         exerciseNameFallback: exercise.name,
-        initialWeight: 20,
-        initialReps: '12',
+        initialWeight: startWeight,
+        initialReps: startReps,
         setLabel: 'Set $currentSet of $totalSets',
-        onSetLogged: (weight, reps, durationSeconds, toFailure) {
-          _logSet(exercise.name, weight, int.tryParse(reps) ?? 12);
+        onSetLogged: (weight, reps, durationSeconds, toFailure) async{
+          await _logSet(exercise.name, weight, int.tryParse(reps) ?? 12);
         },
       ),
-    ).then((_) {
-      if (currentSet < totalSets) {
-        _startExerciseSession(exercise, totalSets, currentSet: currentSet + 1);
+    ).then((completed) {
+      if (completed == true && currentSet < totalSets) {
+        _startExerciseSession(exercise, totalSets, startWeight, startReps, currentSet: currentSet + 1);
       }
     });
   }
