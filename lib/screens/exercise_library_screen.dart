@@ -18,6 +18,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
   List<WgerCategory> _categories = [];
   List<WgerExercise> _exercises = [];
   List<WgerExercise> _filteredExercises = [];
+  final Map<int?, List<WgerExercise>> _cache = {}; // categoryId -> exercises, avoids re-fetching
 
   int? _selectedCategoryId; // null = "All"
   bool _loadingCategories = true;
@@ -53,13 +54,26 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
   Future<void> _loadExercises(int? categoryId) async {
     setState(() {
       _selectedCategoryId = categoryId;
-      _loadingExercises = true;
       _error = null;
     });
 
-    final exercises = await _service.getExercises(categoryId: categoryId, limit: 60);
+    // Already fetched this category before? Show it instantly, no network call.
+    if (_cache.containsKey(categoryId)) {
+      setState(() {
+        _exercises = _cache[categoryId]!;
+        _filteredExercises = _exercises;
+        _loadingExercises = false;
+      });
+      return;
+    }
+
+    setState(() => _loadingExercises = true);
+
+    final exercises = await _service.getExercises(categoryId: categoryId, limit: 25);
 
     if (!mounted) return;
+
+    _cache[categoryId] = exercises;
 
     setState(() {
       _exercises = exercises;
@@ -264,19 +278,7 @@ class _ExerciseTile extends StatelessWidget {
                 color: FitGenieTheme.primary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: exercise.imageUrl != null
-                  ? ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  exercise.imageUrl!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(
-                    Icons.fitness_center,
-                    color: FitGenieTheme.primary,
-                  ),
-                ),
-              )
-                  : const Icon(Icons.fitness_center, color: FitGenieTheme.primary),
+              child: const Icon(Icons.fitness_center, color: FitGenieTheme.primary),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -340,6 +342,10 @@ class ExerciseDetailScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 220,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return _placeholderImage(loading: true);
+                  },
                   errorBuilder: (_, __, ___) => _placeholderImage(),
                 ),
               )
@@ -399,7 +405,7 @@ class ExerciseDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _placeholderImage() {
+  Widget _placeholderImage({bool loading = false}) {
     return Container(
       width: double.infinity,
       height: 220,
@@ -407,7 +413,15 @@ class ExerciseDetailScreen extends StatelessWidget {
         color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(18),
       ),
-      child: Icon(Icons.fitness_center, size: 64, color: FitGenieTheme.muted.withValues(alpha: 0.4)),
+      child: loading
+          ? const Center(
+        child: SizedBox(
+          width: 28,
+          height: 28,
+          child: CircularProgressIndicator(strokeWidth: 2, color: FitGenieTheme.primary),
+        ),
+      )
+          : Icon(Icons.fitness_center, size: 64, color: FitGenieTheme.muted.withValues(alpha: 0.4)),
     );
   }
 
