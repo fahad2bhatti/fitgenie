@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../services/wger_service.dart';
 
 class ExerciseLibraryScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
       _filteredExercises = exercises;
       _loadingExercises = false;
       if (exercises.isEmpty) {
-        _error = 'Is category mein exercises nahi mile. Koi aur category try karo.';
+        _error = AppStrings.get('exercise_no_results');
       }
     });
   }
@@ -101,7 +102,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('🏋️ Exercise Library'),
+        title: Text(AppStrings.get('exercise_library_title')),
         centerTitle: true,
       ),
       body: Column(
@@ -114,7 +115,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
               onChanged: _onSearchChanged,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Exercise search karo...',
+                hintText: AppStrings.get('exercise_search_hint'),
                 hintStyle: TextStyle(color: FitGenieTheme.muted),
                 prefixIcon: Icon(Icons.search, color: FitGenieTheme.muted),
                 filled: true,
@@ -145,7 +146,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 children: [
                   _CategoryChip(
-                    label: 'All',
+                    label: AppStrings.get('exercise_all'),
                     selected: _selectedCategoryId == null,
                     onTap: () => _loadExercises(null),
                   ),
@@ -207,7 +208,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
 }
 
 // ==========================================
-// 🏷️ CATEGORY CHIP
+// 🏷 CATEGORY CHIP
 // ==========================================
 class _CategoryChip extends StatelessWidget {
   final String label;
@@ -249,7 +250,7 @@ class _CategoryChip extends StatelessWidget {
 }
 
 // ==========================================
-// 🃏 EXERCISE TILE
+// 🏋 EXERCISE TILE
 // ==========================================
 class _ExerciseTile extends StatelessWidget {
   final WgerExercise exercise;
@@ -312,7 +313,7 @@ class _ExerciseTile extends StatelessWidget {
 }
 
 // ==========================================
-// 📄 EXERCISE DETAIL SCREEN
+// 📖 EXERCISE DETAIL SCREEN
 // ==========================================
 class ExerciseDetailScreen extends StatelessWidget {
   final WgerExercise exercise;
@@ -374,25 +375,25 @@ class ExerciseDetailScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             if (exercise.muscles.isNotEmpty) ...[
-              _sectionTitle('🎯 Primary Muscles'),
+              _sectionTitle(AppStrings.get('exercise_primary_muscles')),
               _chipsRow(exercise.muscles, FitGenieTheme.primary),
               const SizedBox(height: 16),
             ],
 
             if (exercise.secondaryMuscles.isNotEmpty) ...[
-              _sectionTitle('💪 Secondary Muscles'),
+              _sectionTitle(AppStrings.get('exercise_secondary_muscles')),
               _chipsRow(exercise.secondaryMuscles, FitGenieTheme.teal),
               const SizedBox(height: 16),
             ],
 
             if (exercise.equipment.isNotEmpty) ...[
-              _sectionTitle('🛠️ Equipment'),
+              _sectionTitle(AppStrings.get('exercise_equipment')),
               _chipsRow(exercise.equipment, FitGenieTheme.warning),
               const SizedBox(height: 16),
             ],
 
             if (exercise.description.isNotEmpty) ...[
-              _sectionTitle('📋 How to do it'),
+              _sectionTitle(AppStrings.get('exercise_how_to')),
               const SizedBox(height: 8),
               Text(
                 exercise.description,
@@ -426,7 +427,12 @@ class ExerciseDetailScreen extends StatelessWidget {
   }
 
   Widget _sectionTitle(String title) {
-    return Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15));
+    return Text(
+      title,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 
   Widget _chipsRow(List<String> items, Color color) {
@@ -444,7 +450,13 @@ class ExerciseDetailScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: color.withValues(alpha: 0.3)),
             ),
-            child: Text(item, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+            child: Text(
+              item,
+              style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         )
             .toList(),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 import '../services/ai_service.dart';
 import '../services/open_food_facts_service.dart';
 import 'dart:math' show min;
@@ -49,7 +50,10 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
         _analyzeImage();
       }
     } catch (e) {
-      _showSnackBar('Image pick nahi ho payi: $e', isError: true);
+      _showSnackBar(
+        AppStrings.get('scanner_pick_error', params: {'error': e.toString()}),
+        isError: true,
+      );
     }
   }
 
@@ -66,9 +70,9 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
     });
 
     try {
-      debugPrint('🔍 Starting image analysis...');
+      debugPrint('Starting image analysis...');
       final analysis = await _aiService.analyzeMealPhoto(_selectedImage!);
-      debugPrint('✅ Analysis complete: ${analysis.foodName}');
+      debugPrint('Analysis complete: ${analysis.foodName}');
 
       if (mounted) {
         setState(() {
@@ -77,10 +81,12 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
         });
       }
     } catch (e) {
-      debugPrint('❌ Analysis error: $e');
+      debugPrint('Analysis error: $e');
       if (mounted) {
         setState(() {
-          _error = 'Analysis fail ho gayi: ${e.toString().substring(0, min(50, e.toString().length))}';
+          _error = AppStrings.get('scanner_error', params: {
+            'error': e.toString().substring(0, min(50, e.toString().length))
+          });
           _loading = false;
         });
       }
@@ -88,7 +94,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 🏷️ SCAN BARCODE (Open Food Facts)
+  // 📦 SCAN BARCODE (Open Food Facts)
   // ==========================================
   Future<void> _scanBarcode() async {
     final barcode = await Navigator.push<String>(
@@ -106,7 +112,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
     });
 
     try {
-      debugPrint('🔍 Looking up barcode: $barcode');
+      debugPrint('Looking up barcode: $barcode');
       final result = await _foodFactsService.getProductByBarcode(barcode);
 
       if (!mounted) return;
@@ -114,7 +120,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       if (result == null) {
         setState(() {
           _loading = false;
-          _error = 'Ye product Open Food Facts database mein nahi mila. Photo se try karo ya manually add karo.';
+          _error = AppStrings.get('scanner_barcode_not_found');
         });
         return;
       }
@@ -124,10 +130,10 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
         _loading = false;
       });
     } catch (e) {
-      debugPrint('❌ Barcode lookup error: $e');
+      debugPrint('Barcode lookup error: $e');
       if (mounted) {
         setState(() {
-          _error = 'Barcode lookup fail ho gaya. Dobara try karo.';
+          _error = AppStrings.get('scanner_barcode_error');
           _loading = false;
         });
       }
@@ -135,7 +141,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 💾 SAVE TO CALORIES
+  // ✅ SAVE TO CALORIES
   // ==========================================
   void _saveToCalories() {
     if (_analysis == null) return;
@@ -144,7 +150,10 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
     Navigator.pop(context, _analysis);
 
     _showSnackBar(
-      '${_analysis!.foodName} added! (+${_analysis!.calories} cal)',
+      AppStrings.get('scanner_added', params: {
+        'food': _analysis!.foodName,
+        'calories': '${_analysis!.calories}',
+      }),
       isError: false,
     );
   }
@@ -167,7 +176,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('🍽️ Meal Scanner'),
+        title: Text(AppStrings.get('scanner_title')),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -175,7 +184,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
         child: Column(
           children: [
             // ==========================================
-            // 🖼️ IMAGE PREVIEW
+            // 🖼 IMAGE PREVIEW
             // ==========================================
             Container(
               height: 280,
@@ -207,8 +216,8 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                   const SizedBox(height: 16),
                   Text(
                     _analysis != null
-                        ? 'Barcode se product mil gaya'
-                        : 'Khana ki photo lo, ya packet barcode scan karo',
+                        ? AppStrings.get('scanner_barcode_found')
+                        : AppStrings.get('scanner_placeholder'),
                     style: TextStyle(
                       color: FitGenieTheme.muted,
                       fontSize: 16,
@@ -222,14 +231,14 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
             const SizedBox(height: 20),
 
             // ==========================================
-            // 📷 CAMERA / GALLERY / BARCODE BUTTONS
+            // 🎛 CAMERA / GALLERY / BARCODE BUTTONS
             // ==========================================
             Row(
               children: [
                 Expanded(
                   child: _ActionButton(
                     icon: Icons.camera_alt,
-                    label: 'Camera',
+                    label: AppStrings.get('scanner_camera'),
                     color: FitGenieTheme.primary,
                     onTap: () => _pickImage(ImageSource.camera),
                   ),
@@ -238,7 +247,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 Expanded(
                   child: _ActionButton(
                     icon: Icons.photo_library,
-                    label: 'Gallery',
+                    label: AppStrings.get('scanner_gallery'),
                     color: FitGenieTheme.warning,
                     onTap: () => _pickImage(ImageSource.gallery),
                   ),
@@ -250,7 +259,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
               width: double.infinity,
               child: _ActionButton(
                 icon: Icons.qr_code_scanner,
-                label: 'Scan Barcode (packaged food)',
+                label: AppStrings.get('scanner_scan_barcode'),
                 color: FitGenieTheme.success,
                 onTap: _scanBarcode,
               ),
@@ -275,7 +284,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Analyze kar raha hai... ⏳',
+                      AppStrings.get('scanner_loading'),
                       style: TextStyle(color: FitGenieTheme.muted),
                     ),
                   ],
@@ -313,7 +322,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
               ),
 
             // ==========================================
-            // ✅ ANALYSIS RESULT (shared by AI photo scan + barcode scan)
+            // 📊 ANALYSIS RESULT (shared by AI photo scan + barcode scan)
             // ==========================================
             if (_analysis != null) ...[
               _buildAnalysisCard(),
@@ -329,9 +338,9 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 child: FilledButton.icon(
                   onPressed: _saveToCalories,
                   icon: const Icon(Icons.add),
-                  label: const Text(
-                    'Add to Today\'s Calories',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  label: Text(
+                    AppStrings.get('scanner_add'),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
@@ -350,7 +359,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 🏷️ ANALYSIS CARD
+  // 🍽 ANALYSIS CARD
   // ==========================================
   Widget _buildAnalysisCard() {
     return Container(
@@ -415,7 +424,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 ),
               ),
               Text(
-                'kcal',
+                AppStrings.get('scanner_kcal'),
                 style: TextStyle(color: FitGenieTheme.muted),
               ),
             ],
@@ -426,34 +435,34 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 🥗 NUTRITION GRID
+  // 📈 NUTRITION GRID
   // ==========================================
   Widget _buildNutritionGrid() {
     return Row(
       children: [
         _NutritionTile(
-          label: 'Protein',
+          label: AppStrings.get('scanner_protein'),
           value: '${_analysis!.protein}g',
           color: FitGenieTheme.error,
           icon: '💪',
         ),
         _NutritionTile(
-          label: 'Carbs',
+          label: AppStrings.get('scanner_carbs'),
           value: '${_analysis!.carbs}g',
           color: FitGenieTheme.warning,
-          icon: '🌾',
+          icon: '🍞',
         ),
         _NutritionTile(
-          label: 'Fat',
+          label: AppStrings.get('scanner_fat'),
           value: '${_analysis!.fat}g',
           color: Colors.yellow,
           icon: '🧈',
         ),
         _NutritionTile(
-          label: 'Fiber',
+          label: AppStrings.get('scanner_fiber'),
           value: '${_analysis!.fiber}g',
           color: FitGenieTheme.success,
-          icon: '🌿',
+          icon: '🌾',
         ),
       ],
     );
@@ -549,7 +558,7 @@ class _ActionButton extends StatelessWidget {
 }
 
 // ==========================================
-// 🔢 NUTRITION TILE
+// 📊 NUTRITION TILE
 // ==========================================
 class _NutritionTile extends StatelessWidget {
   final String label;
@@ -642,7 +651,7 @@ class _BarcodeScannerPageState extends State<_BarcodeScannerPage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('Barcode Scan Karo'),
+        title: Text(AppStrings.get('scanner_barcode_title')),
         actions: [
           IconButton(
             icon: const Icon(Icons.flash_on),
@@ -671,7 +680,7 @@ class _BarcodeScannerPageState extends State<_BarcodeScannerPage> {
             left: 0,
             right: 0,
             child: Text(
-              'Packet ka barcode frame ke andar rakho',
+              AppStrings.get('scanner_barcode_hint'),
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
             ),

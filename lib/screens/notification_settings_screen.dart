@@ -368,6 +368,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -376,6 +378,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         color: Colors.grey,
                         fontSize: 12,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -403,6 +407,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     Text(
                       AppStrings.get('notifications_time'),
                       style: const TextStyle(color: Colors.grey),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       _formatTimeDisplay(time),
@@ -410,6 +416,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         fontWeight: FontWeight.bold,
                         color: FitGenieTheme.primary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -455,6 +463,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -463,6 +473,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         color: Colors.grey,
                         fontSize: 12,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -488,6 +500,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   Text(
                     AppStrings.get('notifications_remind_every'),
                     style: const TextStyle(color: Colors.grey),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   DropdownButton<int>(
                     value: _waterIntervalHours,
@@ -498,10 +512,10 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     ),
                     underline: const SizedBox(),
                     items: [
-                      DropdownMenuItem(value: 1, child: Text(AppStrings.get('notifications_hour'))),
-                      DropdownMenuItem(value: 2, child: Text(AppStrings.get('notifications_hours', params: {'count': '2'}))),
-                      DropdownMenuItem(value: 3, child: Text(AppStrings.get('notifications_hours', params: {'count': '3'}))),
-                      DropdownMenuItem(value: 4, child: Text(AppStrings.get('notifications_hours', params: {'count': '4'}))),
+                      DropdownMenuItem(value: 1, child: Text(AppStrings.get('notifications_hour'), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(value: 2, child: Text(AppStrings.get('notifications_hours', params: {'count': '2'}), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(value: 3, child: Text(AppStrings.get('notifications_hours', params: {'count': '3'}), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(value: 4, child: Text(AppStrings.get('notifications_hours', params: {'count': '4'}), maxLines: 1, overflow: TextOverflow.ellipsis)),
                     ],
                     onChanged: (val) {
                       if (val != null) {

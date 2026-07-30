@@ -57,12 +57,16 @@ class LanguageSelectorDialog {
                   size: 24,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  AppStrings.get('language_select_title'),
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: FitGenieTheme.text,
+                Expanded(
+                  child: Text(
+                    AppStrings.get('language_select_title'),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: FitGenieTheme.text,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -153,6 +157,8 @@ class LanguageSelectorDialog {
                           : FontWeight.normal,
                       fontSize: 16,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -161,6 +167,8 @@ class LanguageSelectorDialog {
                       color: FitGenieTheme.muted,
                       fontSize: 12,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

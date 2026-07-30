@@ -120,12 +120,24 @@ class _WorkoutScreenState extends State<WorkoutScreen>
       children: [
         Text(emoji, style: const TextStyle(fontSize: 22)),
         const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(subtitle, style: TextStyle(fontSize: 12, color: FitGenieTheme.muted)),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 12, color: FitGenieTheme.muted),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -203,6 +215,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                       color: Colors.white.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -212,6 +226,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -219,6 +235,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         ? 'Recovery & stretch karo aaj'
                         : 'AI will generate your workout plan',
                     style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -503,16 +521,22 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   Text(
                     AppStrings.get('workout_full'),
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '${fullBodyPlan.totalExercises} exercises • ~${fullBodyPlan.estimatedMinutes} min',
                     style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'All muscles covered in one session',
                     style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -582,6 +606,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                                   Text(
                                     '$exerciseCount exercises',
                                     style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
@@ -1347,7 +1373,12 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
             }
           },
         ),
-        title: Text('${widget.workoutTitle} Workout', style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          '${widget.workoutTitle} Workout',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         actions: [
           if (_isWorkoutStarted)
             TextButton(
@@ -1399,6 +1430,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                       Text(
                         AppStrings.get('workout_ai_plan'),
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const Spacer(),
                       IconButton(icon: const Icon(Icons.refresh, size: 20), onPressed: _loadWorkoutPlan),
@@ -1438,7 +1471,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(AppStrings.get('library_logged'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(AppStrings.get('library_logged'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(color: FitGenieTheme.success.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
@@ -1501,8 +1534,18 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(s['exercise'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                                Text('${s['weight']} kg × ${s['reps']} reps', style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
+                                Text(
+                                  s['exercise'],
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  '${s['weight']} kg × ${s['reps']} reps',
+                                  style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),

@@ -78,6 +78,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (food.isEstimated)
@@ -108,6 +110,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       color: FitGenieTheme.muted,
                       fontSize: 12,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 18),
 

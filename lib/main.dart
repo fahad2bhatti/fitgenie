@@ -20,7 +20,7 @@ import 'widgets/offline_indicator.dart';
 
 import 'screens/onboarding_screen.dart';
 
-// ✅ NEW IMPORTS — Phase 1 language system
+// NEW IMPORTS - Phase 1 language system
 import 'core/hive_boxes.dart';
 import 'core/language_provider.dart';
 import 'screens/language_selection_screen.dart';
@@ -28,87 +28,63 @@ import 'screens/language_selection_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ─────────────────────────────────────────────
-  // STEP 1: Load Environment Variables FIRST
-  // ─────────────────────────────────────────────
   try {
     await dotenv.load(fileName: ".env");
-    debugPrint('✅ Environment loaded');
+    debugPrint('Environment loaded');
 
     final hasKey = dotenv.env['GEMINI_API_KEY']?.isNotEmpty ?? false;
-    debugPrint('✅ GEMINI_API_KEY found: $hasKey');
+    debugPrint('GEMINI_API_KEY found: $hasKey');
   } catch (e) {
-    debugPrint('⚠️ .env load error: $e');
+    debugPrint('.env load error: $e');
   }
 
-  // ─────────────────────────────────────────────
-  // STEP 2: Firebase Init
-  // ─────────────────────────────────────────────
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    debugPrint('✅ Firebase initialized');
+    debugPrint('Firebase initialized');
   } catch (e) {
-    debugPrint('⚠️ Firebase error: $e');
+    debugPrint('Firebase error: $e');
   }
 
-  // ─────────────────────────────────────────────
-  // STEP 3: Hive + LanguageProvider Init  (✅ NEW — Phase 1.7)
-  // ─────────────────────────────────────────────
   try {
     await HiveBoxes.init();
     LanguageProvider().init();
-    debugPrint('✅ Hive + LanguageProvider initialized');
+    debugPrint('Hive + LanguageProvider initialized');
   } catch (e) {
-    debugPrint('⚠️ Hive/LanguageProvider error: $e');
+    debugPrint('Hive/LanguageProvider error: $e');
   }
 
-  // ─────────────────────────────────────────────
-  // STEP 4: Local Storage Init
-  // ─────────────────────────────────────────────
   try {
     final localStorage = LocalStorageService();
     await localStorage.initialize();
-    debugPrint('✅ LocalStorage initialized');
+    debugPrint('LocalStorage initialized');
   } catch (e) {
-    debugPrint('⚠️ LocalStorage error: $e');
+    debugPrint('LocalStorage error: $e');
   }
 
-  // ─────────────────────────────────────────────
-  // STEP 5: Connectivity Init
-  // ─────────────────────────────────────────────
   try {
     await ConnectivityService().initialize();
-    debugPrint('✅ Connectivity initialized');
+    debugPrint('Connectivity initialized');
   } catch (e) {
-    debugPrint('⚠️ Connectivity error: $e');
+    debugPrint('Connectivity error: $e');
   }
 
-  // ─────────────────────────────────────────────
-  // STEP 6: Sync Service Start
-  // ─────────────────────────────────────────────
   try {
     SyncService().startAutoSync();
-    debugPrint('✅ SyncService started');
+    debugPrint('SyncService started');
   } catch (e) {
-    debugPrint('⚠️ SyncService error: $e');
+    debugPrint('SyncService error: $e');
   }
 
-  // ─────────────────────────────────────────────
-  // STEP 7: Notifications Init
-  // ─────────────────────────────────────────────
   try {
     await NotificationService().initialize();
     await NotificationService().scheduleAllDailyNotifications();
-    debugPrint('✅ Notifications initialized');
+    debugPrint('Notifications initialized');
   } catch (e) {
-    debugPrint('⚠️ Notification error: $e');
+    debugPrint('Notification error: $e');
   }
 
-  // ─────────────────────────────────────────────
-  // STEP 8: Run App
-  // ─────────────────────────────────────────────
   runApp(const FitGenieApp());
 }
 
@@ -126,9 +102,9 @@ class FitGenieApp extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
+// -----------------------------------------------
 // App Entry with Splash Screen
-// ─────────────────────────────────────────────
+// -----------------------------------------------
 class AppEntry extends StatefulWidget {
   const AppEntry({super.key});
 
@@ -150,16 +126,15 @@ class _AppEntryState extends State<AppEntry> {
     if (_showSplash) {
       return SplashScreen(onComplete: _onSplashComplete);
     }
-    // ✅ NEW — language gate sits between splash and auth
     return const LanguageGate();
   }
 }
 
-// ─────────────────────────────────────────────
-// ✅ NEW — LanguageGate
+// -----------------------------------------------
+// LanguageGate
 // Shows LanguageSelectionScreen once (first launch only),
 // then listens to LanguageProvider and moves into AuthGate.
-// ─────────────────────────────────────────────
+// -----------------------------------------------
 class LanguageGate extends StatefulWidget {
   const LanguageGate({super.key});
 
@@ -195,18 +170,18 @@ class _LanguageGateState extends State<LanguageGate> {
   }
 }
 
-// ─────────────────────────────────────────────
-// Helper class — carries name + onboarding status together
-// ─────────────────────────────────────────────
+// -----------------------------------------------
+// Helper class - carries name + onboarding status together
+// -----------------------------------------------
 class _UserGateInfo {
   final String name;
   final bool profileComplete;
   const _UserGateInfo({required this.name, required this.profileComplete});
 }
 
-// ─────────────────────────────────────────────
+// -----------------------------------------------
 // AuthGate with Offline Banner + Step Counter Init
-// ─────────────────────────────────────────────
+// -----------------------------------------------
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
 
@@ -263,111 +238,123 @@ class _AuthGateState extends State<AuthGate> {
     final stepService = StepCounterService();
     stepService.initialize(userId).then((success) {
       if (success) {
-        debugPrint('✅ Step counter pre-initialized for user: $userId');
+        debugPrint('Step counter pre-initialized for user: $userId');
       }
     }).catchError((e) {
-      debugPrint('⚠️ Step counter pre-init error: $e');
+      debugPrint('Step counter pre-init error: $e');
     });
   }
 
+  // ================================================================
+  // 🔤 LANGUAGE FIX: whole build() wrapped in AnimatedBuilder so that
+  // ANY screen below (Login, Onboarding, ShellScreen, etc.) rebuilds
+  // the instant LanguageProvider.setLanguage() is called anywhere
+  // in the app — no more app-restart needed to see new language.
+  // ================================================================
   @override
   Widget build(BuildContext context) {
-    return OfflineBanner(
-      child: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          final user = snapshot.data;
-
-          // Not logged in
-          if (user == null) {
-            return const login_screen.LoginScreen();
-          }
-
-          // Email verification check (only for email/password users)
-          final isEmailUser = user.providerData
-              .any((p) => p.providerId == 'password') &&
-              !user.providerData.any((p) => p.providerId == 'google.com');
-
-          if (!user.emailVerified && isEmailUser) {
-            return Scaffold(
-              backgroundColor: FitGenieTheme.bg,
-              body: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.email, color: Colors.blue, size: 64),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Email Verify Karo!',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Email pe verification link bheja hai. Verify karo phir login karo.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () async {
-                          await user.reload();
-                        },
-                        child: const Text('Check karo'),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          await FirebaseAuth.instance.signOut();
-                        },
-                        child: const Text('Logout'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-
-          // User logged in → initialize step counter
-          _initializeStepCounter(user.uid);
-
-          return FutureBuilder<_UserGateInfo>(
-            future: _getInfoFutureFor(user),
-            builder: (context, infoSnapshot) {
-              if (infoSnapshot.connectionState == ConnectionState.waiting) {
+    return AnimatedBuilder(
+      animation: LanguageProvider(),
+      builder: (context, _) {
+        return OfflineBanner(
+          child: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Scaffold(
                   body: Center(child: CircularProgressIndicator()),
                 );
               }
 
-              final info = infoSnapshot.data ??
-                  const _UserGateInfo(name: 'User', profileComplete: false);
+              final user = snapshot.data;
 
-              if (!info.profileComplete) {
-                return OnboardingScreen(
-                  userId: user.uid,
-                  userName: info.name,
+              // Not logged in
+              if (user == null) {
+                return const login_screen.LoginScreen();
+              }
+
+              // Email verification check (only for email/password users)
+              final isEmailUser = user.providerData
+                  .any((p) => p.providerId == 'password') &&
+                  !user.providerData.any((p) => p.providerId == 'google.com');
+
+              if (!user.emailVerified && isEmailUser) {
+                return Scaffold(
+                  backgroundColor: FitGenieTheme.bg,
+                  body: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.email, color: Colors.blue, size: 64),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Email Verify Karo!',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Email pe verification link bheja hai. Verify karo phir login karo.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await user.reload();
+                            },
+                            child: const Text('Check karo'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              await FirebaseAuth.instance.signOut();
+                            },
+                            child: const Text('Logout'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 );
               }
 
-              return ShellScreen(
-                userId: user.uid,
-                userName: info.name,
+              // User logged in - initialize step counter
+              _initializeStepCounter(user.uid);
+
+              return FutureBuilder<_UserGateInfo>(
+                future: _getInfoFutureFor(user),
+                builder: (context, infoSnapshot) {
+                  if (infoSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  final info = infoSnapshot.data ??
+                      const _UserGateInfo(name: 'User', profileComplete: false);
+
+                  if (!info.profileComplete) {
+                    return OnboardingScreen(
+                      userId: user.uid,
+                      userName: info.name,
+                    );
+                  }
+
+                  return ShellScreen(
+                    userId: user.uid,
+                    userName: info.name,
+                  );
+                },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

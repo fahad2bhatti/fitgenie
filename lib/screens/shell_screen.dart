@@ -424,6 +424,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -844,7 +846,13 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
               child: const Icon(Icons.psychology, color: FitGenieTheme.primary, size: 24),
             ),
             const SizedBox(width: 12),
-            Text(AppStrings.get('chat_about_title')),
+            Expanded(
+              child: Text(
+                AppStrings.get('chat_about_title'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         content: Column(
@@ -892,7 +900,13 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
           children: [
             const Icon(Icons.delete_outline, color: FitGenieTheme.error),
             const SizedBox(width: 8),
-            Text(AppStrings.get('chat_clear_title')),
+            Expanded(
+              child: Text(
+                AppStrings.get('chat_clear_title'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         content: Text(AppStrings.get('chat_clear_sub')),
