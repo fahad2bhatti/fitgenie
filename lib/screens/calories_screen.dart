@@ -967,15 +967,19 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: color, size: 22),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                color: color,
-                fontWeight: FontWeight.w700,
+            const SizedBox(height: 6),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: color,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -1130,13 +1134,16 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search, color: FitGenieTheme.primary, size: 18),
+                        Icon(Icons.bookmark_border, color: Colors.amber, size: 18),
                         const SizedBox(width: 6),
-                        Text(
-                          AppStrings.get('calories_search'),
-                          style: TextStyle(
-                            color: FitGenieTheme.primary,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            AppStrings.get('calories_saved'),
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

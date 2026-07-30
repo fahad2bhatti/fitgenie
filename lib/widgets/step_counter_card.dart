@@ -148,16 +148,22 @@ class _StepCounterCardState extends State<StepCounterCard>
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Row(
                       children: [
                         _buildStatusIndicator(),
                         const SizedBox(width: 6),
-                        Text(
-                          _getStatusText(),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _getStatusColor(),
+                        Expanded(
+                          child: Text(
+                            _getStatusText(),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _getStatusColor(),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

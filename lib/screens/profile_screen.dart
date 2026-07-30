@@ -432,14 +432,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(_name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Text(
+                  _name,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(width: 8),
                 const Icon(Icons.edit, size: 16, color: Colors.grey),
               ],
             ),
           ),
           const SizedBox(height: 4),
-          Text(_email, style: const TextStyle(color: Colors.grey)),
+          Text(
+            _email,
+            style: const TextStyle(color: Colors.grey),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -511,7 +521,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
-          Text(text, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12)),
+          Text(
+            text,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
@@ -573,8 +588,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Icon(icon, color: FitGenieTheme.primary, size: 24),
           const SizedBox(height: 8),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
         ],
       ),
     );
@@ -594,6 +609,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   AppStrings.get('profile_goals'),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ]),
               IconButton(
@@ -622,8 +639,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Icon(icon, color: color, size: 20),
         ),
         const SizedBox(width: 12),
-        Expanded(child: Text(label)),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Expanded(
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Text(value, style: const TextStyle(fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
       ],
     );
   }
@@ -669,11 +692,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const Text(
                       'Google Fit',
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
                     Text(
                       _getStatusText(_googleFitStatus),
                       style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w500),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -716,7 +743,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(AppStrings.get('profile_today_steps'), style: TextStyle(color: Colors.white70, fontSize: 12)),
+                      Text(
+                        AppStrings.get('profile_today_steps'),
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       Text(
                         '$_googleFitSteps',
                         style: const TextStyle(color: Colors.greenAccent, fontSize: 24, fontWeight: FontWeight.bold),
@@ -996,7 +1028,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Row(children: [
           const Icon(Icons.warning, color: FitGenieTheme.error),
           const SizedBox(width: 8),
-          Text(AppStrings.get('profile_delete_confirm_title'), style: const TextStyle(color: FitGenieTheme.error)),
+          Expanded(
+            child: Text(
+              AppStrings.get('profile_delete_confirm_title'),
+              style: const TextStyle(color: FitGenieTheme.error),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ]),
         content: const Text(
           'This will permanently delete your account and ALL data including:\n\n? Workouts & custom plans\n? Nutrition logs & saved meals\n? Profile & goals\n? AI chat history\n\nThis action CANNOT be undone.',
@@ -1032,7 +1071,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             const CircularProgressIndicator(color: FitGenieTheme.error),
             const SizedBox(width: 16),
-            Text(AppStrings.get('profile_deleting')),
+            Expanded(
+              child: Text(
+                AppStrings.get('profile_deleting'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),

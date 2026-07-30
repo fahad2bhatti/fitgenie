@@ -1352,7 +1352,11 @@ class _CustomWorkoutSessionScreenState
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
         backgroundColor: FitGenieTheme.cardDark,
-        title: Text('${widget.workoutName} 🔥'),
+        title: Text(
+          '${widget.workoutName} 🔥',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () {
@@ -1388,11 +1392,15 @@ class _CustomWorkoutSessionScreenState
                     widget.workoutName,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '${widget.exercises.length} selected exercises',
                     style: TextStyle(color: FitGenieTheme.muted),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -1410,6 +1418,8 @@ class _CustomWorkoutSessionScreenState
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
@@ -1424,6 +1434,8 @@ class _CustomWorkoutSessionScreenState
                   const Text(
                     'Workout Progress',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -1520,6 +1532,8 @@ class _CustomWorkoutSessionScreenState
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -1528,12 +1542,16 @@ class _CustomWorkoutSessionScreenState
                                   color: FitGenieTheme.primary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                             Text(
                               item['bodyPart'] ?? '',
                               style: TextStyle(
                                   color: FitGenieTheme.muted, fontSize: 11),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -1561,6 +1579,8 @@ class _CustomWorkoutSessionScreenState
                         Text(
                           AppStrings.get('library_no_sets'),
                           style: TextStyle(color: FitGenieTheme.muted),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -1601,12 +1621,16 @@ class _CustomWorkoutSessionScreenState
                                   set['exercise'],
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                   '${set['weight']} kg • ${set['reps']}',
                                   style: TextStyle(
                                       color: FitGenieTheme.muted,
                                       fontSize: 12),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),

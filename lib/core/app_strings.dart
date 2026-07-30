@@ -366,7 +366,7 @@ class AppStrings {
     // ==========================================
     'splash_loading': 'Loading...',
     'splash_initializing': 'Initializing',
-
+    'splash_tagline': 'Your AI Fitness Coach',
     // ==========================================
     // MEAL SCANNER
     // ==========================================
@@ -379,6 +379,29 @@ class AppStrings {
     'scanner_add': "Add to Today's Calories",
     'scanner_health': 'Health Tip',
     'scanner_quantity': 'Quantity',
+    'scanner_pick_error': 'Could not pick image: {error}',
+    'scanner_barcode_not_found': 'This product was not found in the Open Food Facts database. Try a photo or add manually.',
+    'scanner_barcode_error': 'Barcode lookup failed. Try again.',
+    'scanner_added': '{food} added! (+{calories} cal)',
+    'scanner_barcode_found': 'Product found via barcode',
+    'scanner_placeholder': 'Take a photo of your meal, or scan a packet barcode',
+    'scanner_scan_barcode': 'Scan Barcode (packaged food)',
+    'scanner_protein': 'Protein',
+    'scanner_carbs': 'Carbs',
+    'scanner_fat': 'Fat',
+    'scanner_fiber': 'Fiber',
+    'scanner_kcal': 'kcal',
+    'scanner_barcode_title': 'Scan Barcode',
+    'scanner_barcode_hint': 'Place the packet barcode inside the frame',
+    'exercise_library_title': 'Exercise Library',
+    'exercise_search_hint': 'Search exercises...',
+    'exercise_all': 'All',
+    'exercise_no_results': 'No exercises found in this category. Try another category.',
+    'exercise_primary_muscles': 'Primary Muscles',
+    'exercise_secondary_muscles': 'Secondary Muscles',
+    'exercise_equipment': 'Equipment',
+    'exercise_how_to': 'How to do it',
+
 
     // ==========================================
     // FOOD SEARCH
@@ -505,6 +528,8 @@ class AppStrings {
     'language_select_title': 'Apni Zaban Chuno',
     'language_english': 'English',
     'language_urdu': 'Roman Urdu',
+
+
 
     // ==========================================
     // ONBOARDING
@@ -855,6 +880,7 @@ class AppStrings {
     // ==========================================
     'splash_loading': 'Load ho raha hai...',
     'splash_initializing': 'Shuru ho raha hai',
+    'splash_tagline': 'Aapka AI Fitness Coach',
 
     // ==========================================
     // MEAL SCANNER
@@ -868,6 +894,31 @@ class AppStrings {
     'scanner_add': "Today's Calories mein add karo",
     'scanner_health': 'Sehat Ki Tip',
     'scanner_quantity': 'Quantity',
+
+
+
+    'scanner_pick_error': 'Image pick nahi ho payi: {error}',
+    'scanner_barcode_not_found': 'Ye product Open Food Facts database mein nahi mila. Photo se try karo ya manually add karo.',
+    'scanner_barcode_error': 'Barcode lookup fail ho gaya. Dobara try karo.',
+    'scanner_added': '{food} add ho gaya! (+{calories} cal)',
+    'scanner_barcode_found': 'Barcode se product mil gaya',
+    'scanner_placeholder': 'Khana ki photo lo, ya packet barcode scan karo',
+    'scanner_scan_barcode': 'Barcode Scan Karo (packaged food)',
+    'scanner_protein': 'Protein',
+    'scanner_carbs': 'Carbs',
+    'scanner_fat': 'Fat',
+    'scanner_fiber': 'Fiber',
+    'scanner_kcal': 'kcal',
+    'scanner_barcode_title': 'Barcode Scan Karo',
+    'scanner_barcode_hint': 'Packet ka barcode frame ke andar rakho',
+    'exercise_library_title': 'Exercise Library',
+    'exercise_search_hint': 'Exercise search karo...',
+    'exercise_all': 'All',
+    'exercise_no_results': 'Is category mein exercises nahi mile. Koi aur category try karo.',
+    'exercise_primary_muscles': 'Primary Muscles',
+    'exercise_secondary_muscles': 'Secondary Muscles',
+    'exercise_equipment': 'Equipment',
+    'exercise_how_to': 'Ye Kaise Karein',
 
     // ==========================================
     // FOOD SEARCH

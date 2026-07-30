@@ -52,6 +52,8 @@ class QuickActionButton extends StatelessWidget {
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -60,6 +62,8 @@ class QuickActionButton extends StatelessWidget {
                       color: FitGenieTheme.muted,
                       fontSize: 12,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

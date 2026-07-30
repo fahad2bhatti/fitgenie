@@ -501,9 +501,27 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           labelColor: FitGenieTheme.primary,
           unselectedLabelColor: FitGenieTheme.muted,
           tabs: [
-            Tab(text: AppStrings.get('challenges_daily')),
-            Tab(text: AppStrings.get('challenges_weekly')),
-            Tab(text: AppStrings.get('challenges_badges')),
+            Tab(
+              child: Text(
+                AppStrings.get('challenges_daily'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Tab(
+              child: Text(
+                AppStrings.get('challenges_weekly'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Tab(
+              child: Text(
+                AppStrings.get('challenges_badges'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
@@ -656,6 +674,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             color: FitGenieTheme.muted,
             fontSize: 11,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -688,11 +708,15 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      AppStrings.get('challenges_completed'),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: FitGenieTheme.muted,
+                    Flexible(
+                      child: Text(
+                        AppStrings.get('challenges_completed'),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: FitGenieTheme.muted,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -760,6 +784,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       AppStrings.get('challenges_weekly_reset'),
@@ -767,6 +793,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                         color: FitGenieTheme.muted,
                         fontSize: 12,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -794,12 +822,16 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               children: [
                 const Text('🏆', style: TextStyle(fontSize: 20)),
                 const SizedBox(width: 8),
-                Text(
-                  AppStrings.get('challenges_unlocked',
-                      params: {'count': '${_unlockedAchievements.length}'}),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    AppStrings.get('challenges_unlocked',
+                        params: {'count': '${_unlockedAchievements.length}'}),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -820,12 +852,16 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               children: [
                 const Text('🔒', style: TextStyle(fontSize: 20)),
                 const SizedBox(width: 8),
-                Text(
-                  AppStrings.get('challenges_locked',
-                      params: {'count': '${_lockedAchievements.length}'}),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    AppStrings.get('challenges_locked',
+                        params: {'count': '${_lockedAchievements.length}'}),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
