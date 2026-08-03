@@ -2,20 +2,23 @@
 //
 // Fixes Google Play "Health Content and Services" policy rejection.
 // Google requires apps giving fitness/nutrition guidance to remind users
-// to consult a healthcare professional.
+// to consult a healthcare professional — this now covers BOTH health/fitness
+// AND food/nutrition (AI meal scanner, calorie/macro estimates).
 //
 // Usage:
-// 1) MedicalDisclaimerDialog — show ONCE during onboarding (blocking, must accept).
-// 2) MedicalDisclaimerBanner — small persistent reminder on AI Coach chat screen
+// 1) MedicalDisclaimerDialog ? show ONCE during onboarding (blocking, must accept).
+// 2) MedicalDisclaimerBanner ? small persistent reminder on AI Coach chat screen
 //    and/or Dashboard (non-blocking).
 
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 
 const String _kSettingsBoxName = 'app_settings';
 const String _kDisclaimerAcceptedKey = 'medical_disclaimer_accepted_v1';
+const String _kWorkoutInjuryWarningKey = 'workout_injury_warning_shown_v1';
 
 /// Call this once at app startup (e.g. in splash/auth redirect logic)
 /// to check whether the user has already accepted the disclaimer.
@@ -29,8 +32,60 @@ Future<void> _markDisclaimerAccepted() async {
   await box.put(_kDisclaimerAcceptedKey, true);
 }
 
+Future<bool> _hasSeenWorkoutInjuryWarning() async {
+  final box = await Hive.openBox(_kSettingsBoxName);
+  return box.get(_kWorkoutInjuryWarningKey, defaultValue: false) as bool;
+}
+
+Future<void> _markWorkoutInjuryWarningSeen() async {
+  final box = await Hive.openBox(_kSettingsBoxName);
+  await box.put(_kWorkoutInjuryWarningKey, true);
+}
+
+/// Call this from a Workout screen's initState (NOT the medical disclaimer
+/// dialog — this is a separate, lighter, non-blocking warning specific to
+/// starting a workout). Shown as a SnackBar exactly ONCE ever per install
+/// (persisted in Hive) — never shown again after the first time, even if
+/// the user opens the Workout screen again.
+void showWorkoutInjuryWarningIfNeeded(BuildContext context) {
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    final alreadySeen = await _hasSeenWorkoutInjuryWarning();
+    if (alreadySeen || !context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded,
+                color: FitGenieTheme.warning, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                AppStrings.get('workout_injury_warning'),
+                style: const TextStyle(
+                    color: FitGenieTheme.text, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: FitGenieTheme.card,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+              color: FitGenieTheme.warning.withValues(alpha: 0.4)),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+
+    await _markWorkoutInjuryWarningSeen();
+  });
+}
+
 /// Blocking dialog shown once during onboarding.
-/// User must tap "I Understand & Agree" to proceed — cannot be dismissed
+/// User must tap "I Understand & Agree" to proceed ? cannot be dismissed
 /// by tapping outside or back button.
 class MedicalDisclaimerDialog extends StatelessWidget {
   const MedicalDisclaimerDialog({super.key});
@@ -75,29 +130,42 @@ class MedicalDisclaimerDialog extends StatelessWidget {
                       const Icon(Icons.health_and_safety_outlined,
                           color: FitGenieTheme.primary, size: 28),
                       const SizedBox(width: 10),
-                      const Text(
-                        'Health Disclaimer',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: FitGenieTheme.text,
+                      const Expanded(
+                        child: Text(
+                          'Health & Nutrition Disclaimer',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: FitGenieTheme.text,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
-                  const Text(
-                    'FitGenie provides general fitness and nutrition guidance '
-                        'for informational purposes only. It is not medical advice '
-                        'and is not a substitute for professional diagnosis or '
-                        'treatment.\n\n'
-                        'Please consult a qualified healthcare professional before '
-                        'starting any new workout or nutrition program, especially '
-                        'if you have any existing medical condition.',
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.5,
-                      color: FitGenieTheme.muted,
+                  const SingleChildScrollView(
+                    child: Text(
+                      'FitGenie provides general fitness and nutrition guidance '
+                          'for informational purposes only. It is not medical or '
+                          'dietary advice and is not a substitute for professional '
+                          'diagnosis or treatment.\n\n'
+                          'Calorie, macro, and nutrition data — including AI Meal '
+                          'Scanner results and food search estimates — are '
+                          'AI-generated or database-sourced estimates and may not '
+                          'be fully accurate. FitGenie does not verify allergen '
+                          'information; if you have food allergies or '
+                          'intolerances, always check ingredients yourself before '
+                          'eating.\n\n'
+                          'Please consult a qualified healthcare professional or '
+                          'registered dietitian before starting any new workout '
+                          'or nutrition program, especially if you have any '
+                          'existing medical condition, food allergy, or are '
+                          'pregnant.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.5,
+                        color: FitGenieTheme.muted,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -164,7 +232,7 @@ class MedicalDisclaimerBanner extends StatelessWidget {
           Expanded(
             child: Text(
               'For informational purposes only. Not a substitute for '
-                  'professional medical advice.',
+                  'professional medical or dietary advice.',
               style: TextStyle(
                 fontSize: compact ? 11 : 12,
                 color: FitGenieTheme.muted,
@@ -176,3 +244,5 @@ class MedicalDisclaimerBanner extends StatelessWidget {
     );
   }
 }
+
+

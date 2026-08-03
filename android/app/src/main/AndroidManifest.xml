@@ -91,14 +91,21 @@
     </application>
 
     <queries>
-        <!-- ✅ TEXT PROCESSING -->
-        <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT"/>
-            <data android:mimeType="text/plain"/>
-        </intent>
+    <!-- ✅ OPEN HTTPS LINKS (privacy policy, terms, etc.) -->
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="https" />
+    </intent>
 
-        <!-- ✅ HEALTH CONNECT AVAILABILITY CHECK -->
-        <package android:name="com.google.android.apps.healthdata"/>
-    </queries>
+    <!-- ✅ TEXT PROCESSING -->
+    <intent>
+        <action android:name="android.intent.action.PROCESS_TEXT"/>
+        <data android:mimeType="text/plain"/>
+    </intent>
+
+    <!-- ✅ HEALTH CONNECT AVAILABILITY CHECK -->
+    <package android:name="com.google.android.apps.healthdata"/>
+</queries>
 
 </manifest>
