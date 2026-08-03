@@ -4,6 +4,7 @@
   import 'package:flutter/material.dart';
   import '../app/fitgenie_theme.dart';
   import '../core/app_strings.dart';
+  import '../widgets/medical_disclaimer.dart';
 
   class SplashScreen extends StatefulWidget {
     final VoidCallback onComplete;
@@ -123,13 +124,14 @@
       _rotateController.repeat();
 
       // Navigate after 3.5 seconds
-      Future.delayed(const Duration(milliseconds: 3500), () {
+      Future.delayed(const Duration(milliseconds: 3500), () async {
+        if (!mounted) return;
+        await MedicalDisclaimerDialog.showIfNeeded(context);
         if (mounted) {
           widget.onComplete();
         }
       });
     }
-
     @override
     void dispose() {
       _mainController.dispose();

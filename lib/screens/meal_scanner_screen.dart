@@ -8,6 +8,7 @@ import '../app/fitgenie_theme.dart';
 import '../core/app_strings.dart';
 import '../services/ai_service.dart';
 import '../services/open_food_facts_service.dart';
+import '../widgets/medical_disclaimer.dart';
 import 'dart:math' show min;
 
 class MealScannerScreen extends StatefulWidget {
@@ -17,7 +18,8 @@ class MealScannerScreen extends StatefulWidget {
   State<MealScannerScreen> createState() => _MealScannerScreenState();
 }
 
-class _MealScannerScreenState extends State<MealScannerScreen> {
+class _MealScannerScreenState extends State<MealScannerScreen>
+    with SingleTickerProviderStateMixin {
   final AIService _aiService = AIService();
   final OpenFoodFactsService _foodFactsService = OpenFoodFactsService();
   final ImagePicker _picker = ImagePicker();
@@ -27,8 +29,29 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   bool _loading = false;
   String? _error;
 
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulseAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
+    _pulseAnim = Tween<double>(begin: 0.94, end: 1.06).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
   // ==========================================
-  // 📷 PICK IMAGE
+  // 📸 PICK IMAGE
   // ==========================================
   Future<void> _pickImage(ImageSource source) async {
     try {
@@ -94,7 +117,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 📦 SCAN BARCODE (Open Food Facts)
+  // 🔍 SCAN BARCODE (Open Food Facts)
   // ==========================================
   Future<void> _scanBarcode() async {
     final barcode = await Navigator.push<String>(
@@ -146,7 +169,6 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   void _saveToCalories() {
     if (_analysis == null) return;
 
-    // TODO: Save to Firestore/local storage
     Navigator.pop(context, _analysis);
 
     _showSnackBar(
@@ -176,68 +198,43 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(AppStrings.get('scanner_title')),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: FitGenieTheme.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.document_scanner,
+                  color: FitGenieTheme.primary, size: 18),
+            ),
+            const SizedBox(width: 10),
+            Text(AppStrings.get('scanner_title')),
+          ],
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
         child: Column(
           children: [
             // ==========================================
-            // 🖼 IMAGE PREVIEW
+            // 🎯 SCAN FRAME / IMAGE PREVIEW
             // ==========================================
-            Container(
-              height: 280,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: FitGenieTheme.card,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: FitGenieTheme.primary.withValues(alpha: 0.3),
-                  width: 2,
-                ),
-              ),
-              child: _selectedImage != null
-                  ? ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: Image.file(
-                  _selectedImage!,
-                  fit: BoxFit.cover,
-                ),
-              )
-                  : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    _analysis != null ? Icons.qr_code_2 : Icons.restaurant_menu,
-                    size: 80,
-                    color: FitGenieTheme.muted.withValues(alpha: 0.5),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _analysis != null
-                        ? AppStrings.get('scanner_barcode_found')
-                        : AppStrings.get('scanner_placeholder'),
-                    style: TextStyle(
-                      color: FitGenieTheme.muted,
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
+            _buildScanFrame(),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
 
             // ==========================================
-            // 🎛 CAMERA / GALLERY / BARCODE BUTTONS
+            // 🎛️ CAMERA / GALLERY / BARCODE BUTTONS
             // ==========================================
             Row(
               children: [
                 Expanded(
                   child: _ActionButton(
-                    icon: Icons.camera_alt,
+                    icon: Icons.camera_alt_rounded,
                     label: AppStrings.get('scanner_camera'),
                     color: FitGenieTheme.primary,
                     onTap: () => _pickImage(ImageSource.camera),
@@ -246,7 +243,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _ActionButton(
-                    icon: Icons.photo_library,
+                    icon: Icons.photo_library_rounded,
                     label: AppStrings.get('scanner_gallery'),
                     color: FitGenieTheme.warning,
                     onTap: () => _pickImage(ImageSource.gallery),
@@ -258,81 +255,44 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
             SizedBox(
               width: double.infinity,
               child: _ActionButton(
-                icon: Icons.qr_code_scanner,
+                icon: Icons.qr_code_scanner_rounded,
                 label: AppStrings.get('scanner_scan_barcode'),
                 color: FitGenieTheme.success,
                 onTap: _scanBarcode,
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
+            const MedicalDisclaimerBanner(compact: true),
+            const SizedBox(height: 8),
 
             // ==========================================
             // ⏳ LOADING STATE
             // ==========================================
-            if (_loading)
-              Container(
-                padding: const EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  color: FitGenieTheme.card,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    const CircularProgressIndicator(
-                      color: FitGenieTheme.primary,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppStrings.get('scanner_loading'),
-                      style: TextStyle(color: FitGenieTheme.muted),
-                    ),
-                  ],
-                ),
-              ),
+            if (_loading) ...[
+              const SizedBox(height: 12),
+              _buildLoadingCard(),
+            ],
 
             // ==========================================
             // ⚠️ ERROR STATE
             // ==========================================
-            if (_error != null)
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: FitGenieTheme.error.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: FitGenieTheme.error.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.error_outline, color: FitGenieTheme.error),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _error!,
-                        style: const TextStyle(color: FitGenieTheme.error),
-                      ),
-                    ),
-                    if (_selectedImage != null)
-                      IconButton(
-                        icon: const Icon(Icons.refresh, color: FitGenieTheme.error),
-                        onPressed: _analyzeImage,
-                      ),
-                  ],
-                ),
-              ),
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              _buildErrorCard(),
+            ],
 
             // ==========================================
-            // 📊 ANALYSIS RESULT (shared by AI photo scan + barcode scan)
+            // 📊 ANALYSIS RESULT
             // ==========================================
             if (_analysis != null) ...[
+              const SizedBox(height: 16),
               _buildAnalysisCard(),
               const SizedBox(height: 16),
               _buildNutritionGrid(),
               const SizedBox(height: 16),
               _buildHealthTip(),
               const SizedBox(height: 24),
-
-              // Save Button
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
@@ -359,7 +319,175 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 🍽 ANALYSIS CARD
+  // 🎯 SCAN FRAME (signature visual)
+  // Camera-viewfinder style corners around the preview, with a
+  // pulsing glow badge when idle — reinforces "AI is scanning" feel.
+  // ==========================================
+  Widget _buildScanFrame() {
+    return Stack(
+      children: [
+        Container(
+          height: 300,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [FitGenieTheme.card, FitGenieTheme.card2],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(26),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(26),
+            child: _selectedImage != null
+                ? Image.file(_selectedImage!, fit: BoxFit.cover)
+                : _buildEmptyPreview(),
+          ),
+        ),
+
+        // Corner brackets — always visible, camera-viewfinder style
+        Positioned.fill(
+          child: IgnorePointer(
+            child: CustomPaint(
+              painter: _ScanCornersPainter(
+                color: _analysis != null
+                    ? FitGenieTheme.success
+                    : FitGenieTheme.primary,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyPreview() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedBuilder(
+            animation: _pulseAnim,
+            builder: (context, child) => Transform.scale(
+              scale: _pulseAnim.value,
+              child: child,
+            ),
+            child: Container(
+              width: 92,
+              height: 92,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    FitGenieTheme.primary.withValues(alpha: 0.28),
+                    FitGenieTheme.teal.withValues(alpha: 0.16),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: FitGenieTheme.primary.withValues(alpha: 0.28),
+                    blurRadius: 32,
+                    spreadRadius: 4,
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.restaurant_menu_rounded,
+                size: 40,
+                color: FitGenieTheme.primary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 22),
+          Text(
+            AppStrings.get('scanner_placeholder'),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Camera se click karo ya gallery se pick karo',
+            style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingCard() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: FitGenieTheme.card,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
+      ),
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 22,
+            height: 22,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.4,
+              color: FitGenieTheme.primary,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              AppStrings.get('scanner_loading'),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorCard() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: FitGenieTheme.error.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: FitGenieTheme.error.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline, color: FitGenieTheme.error),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              _error!,
+              style: const TextStyle(color: FitGenieTheme.error),
+            ),
+          ),
+          if (_selectedImage != null)
+            IconButton(
+              icon: const Icon(Icons.refresh, color: FitGenieTheme.error),
+              onPressed: _analyzeImage,
+            ),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================
+  // 🍽️ ANALYSIS CARD
   // ==========================================
   Widget _buildAnalysisCard() {
     return Container(
@@ -367,21 +495,24 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            FitGenieTheme.primary.withValues(alpha: 0.2),
+            FitGenieTheme.primary.withValues(alpha: 0.18),
             FitGenieTheme.card,
           ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: FitGenieTheme.primary.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: const Text('🍲', style: TextStyle(fontSize: 32)),
+            child: const Text('🍛', style: TextStyle(fontSize: 30)),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -391,41 +522,47 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
                 Text(
                   _analysis!.foodName,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 19,
                     fontWeight: FontWeight.bold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   _analysis!.foodNameHindi,
-                  style: TextStyle(
-                    color: FitGenieTheme.muted,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: FitGenieTheme.muted, fontSize: 13),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  _analysis!.quantity,
-                  style: TextStyle(
-                    color: FitGenieTheme.primary,
-                    fontSize: 12,
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: FitGenieTheme.primary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _analysis!.quantity,
+                    style: const TextStyle(color: FitGenieTheme.primary, fontSize: 11, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 8),
           Column(
             children: [
               Text(
                 '${_analysis!.calories}',
                 style: const TextStyle(
                   fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                   color: FitGenieTheme.primary,
                 ),
               ),
               Text(
                 AppStrings.get('scanner_kcal'),
-                style: TextStyle(color: FitGenieTheme.muted),
+                style: TextStyle(color: FitGenieTheme.muted, fontSize: 11),
               ),
             ],
           ),
@@ -435,7 +572,7 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   }
 
   // ==========================================
-  // 📈 NUTRITION GRID
+  // 📊 NUTRITION GRID
   // ==========================================
   Widget _buildNutritionGrid() {
     return Row(
@@ -444,25 +581,25 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
           label: AppStrings.get('scanner_protein'),
           value: '${_analysis!.protein}g',
           color: FitGenieTheme.error,
-          icon: '💪',
+          icon: Icons.egg_alt_rounded,
         ),
         _NutritionTile(
           label: AppStrings.get('scanner_carbs'),
           value: '${_analysis!.carbs}g',
           color: FitGenieTheme.warning,
-          icon: '🍞',
+          icon: Icons.grain_rounded,
         ),
         _NutritionTile(
           label: AppStrings.get('scanner_fat'),
           value: '${_analysis!.fat}g',
-          color: Colors.yellow,
-          icon: '🧈',
+          color: Colors.amber,
+          icon: Icons.opacity_rounded,
         ),
         _NutritionTile(
           label: AppStrings.get('scanner_fiber'),
           value: '${_analysis!.fiber}g',
           color: FitGenieTheme.success,
-          icon: '🌾',
+          icon: Icons.eco_rounded,
         ),
       ],
     );
@@ -472,39 +609,81 @@ class _MealScannerScreenState extends State<MealScannerScreen> {
   // 💡 HEALTH TIP
   // ==========================================
   Widget _buildHealthTip() {
+    final healthy = _analysis!.isHealthy;
+    final tone = healthy ? FitGenieTheme.success : FitGenieTheme.warning;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _analysis!.isHealthy
-            ? FitGenieTheme.success.withValues(alpha: 0.1)
-            : FitGenieTheme.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: _analysis!.isHealthy
-              ? FitGenieTheme.success.withValues(alpha: 0.3)
-              : FitGenieTheme.warning.withValues(alpha: 0.3),
-        ),
+        color: tone.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: tone.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Text(
-            _analysis!.isHealthy ? '✅' : '⚠️',
-            style: const TextStyle(fontSize: 24),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: tone.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              healthy ? Icons.check_circle_rounded : Icons.info_rounded,
+              color: tone,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               _analysis!.healthTip,
-              style: TextStyle(
-                color: _analysis!.isHealthy ? FitGenieTheme.success : FitGenieTheme.warning,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: tone, fontSize: 13.5, height: 1.4),
             ),
           ),
         ],
       ),
     );
   }
+}
+
+// ==========================================
+// 🖼️ SCAN CORNERS PAINTER (signature element)
+// ==========================================
+class _ScanCornersPainter extends CustomPainter {
+  final Color color;
+
+  _ScanCornersPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withValues(alpha: 0.9)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+
+    const len = 26.0;
+    const inset = 16.0;
+
+    // Top-left
+    canvas.drawLine(const Offset(inset, inset + len), const Offset(inset, inset), paint);
+    canvas.drawLine(const Offset(inset, inset), const Offset(inset + len, inset), paint);
+
+    // Top-right
+    canvas.drawLine(Offset(size.width - inset, inset + len), Offset(size.width - inset, inset), paint);
+    canvas.drawLine(Offset(size.width - inset, inset), Offset(size.width - inset - len, inset), paint);
+
+    // Bottom-left
+    canvas.drawLine(Offset(inset, size.height - inset - len), Offset(inset, size.height - inset), paint);
+    canvas.drawLine(Offset(inset, size.height - inset), Offset(inset + len, size.height - inset), paint);
+
+    // Bottom-right
+    canvas.drawLine(Offset(size.width - inset, size.height - inset - len), Offset(size.width - inset, size.height - inset), paint);
+    canvas.drawLine(Offset(size.width - inset, size.height - inset), Offset(size.width - inset - len, size.height - inset), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ScanCornersPainter oldDelegate) => oldDelegate.color != color;
 }
 
 // ==========================================
@@ -558,13 +737,13 @@ class _ActionButton extends StatelessWidget {
 }
 
 // ==========================================
-// 📊 NUTRITION TILE
+// 🥗 NUTRITION TILE
 // ==========================================
 class _NutritionTile extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  final String icon;
+  final IconData icon;
 
   const _NutritionTile({
     required this.label,
@@ -578,28 +757,29 @@ class _NutritionTile extends StatelessWidget {
     return Expanded(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           color: FitGenieTheme.card,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [
-            Text(icon, style: const TextStyle(fontSize: 20)),
-            const SizedBox(height: 4),
+            Icon(icon, color: color, size: 18),
+            const SizedBox(height: 6),
             Text(
               value,
               style: TextStyle(
                 color: color,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 15,
               ),
             ),
             Text(
               label,
               style: TextStyle(
                 color: FitGenieTheme.muted,
-                fontSize: 11,
+                fontSize: 10.5,
               ),
             ),
           ],

@@ -11,6 +11,7 @@ import '../core/app_strings.dart';
 import 'food_search_screen.dart';
 import 'saved_meals_screen.dart';
 import 'meal_scanner_screen.dart';
+import '../widgets/medical_disclaimer.dart';
 
 class CaloriesScreen extends StatefulWidget {
   final String userId;
@@ -1311,6 +1312,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             AppStrings.get('calories_sub'),
             style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
           ),
+          const SizedBox(height: 10),
+          const MedicalDisclaimerBanner(compact: true),
           const SizedBox(height: 14),
 
           // Date Switcher

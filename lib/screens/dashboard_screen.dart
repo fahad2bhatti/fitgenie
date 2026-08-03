@@ -15,6 +15,7 @@ import '../core/app_strings.dart';
 import 'challenges_screen.dart';
 import 'meal_scanner_screen.dart';
 import 'exercise_library_screen.dart';
+import '../widgets/medical_disclaimer.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userId;
@@ -559,6 +560,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(name),
+                const SizedBox(height: 10),
+                const MedicalDisclaimerBanner(compact: true),
                 const SizedBox(height: 16),
                 _buildStepsCard(),
                 const SizedBox(height: 14),

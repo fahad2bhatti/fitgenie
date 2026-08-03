@@ -14,6 +14,7 @@ import 'workout_plan_screen.dart';
 import 'my_library_screen.dart';
 import 'workout_detail_screen.dart';
 import '../widgets/active_set_sheet.dart';
+import '../widgets/medical_disclaimer.dart';
 
 // ============================================================
 // 🏋️ MAIN WORKOUT SCREEN (HUB)
@@ -69,7 +70,9 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               AppStrings.get('workout_sub'),
               style: TextStyle(color: FitGenieTheme.muted, fontSize: 14),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+            const MedicalDisclaimerBanner(compact: true),
+            const SizedBox(height: 20),
 
             // ── 1. Quick Start (AI) ──
             _buildSectionLabel('⚡', AppStrings.get('workout_quick'), 'AI powered workout'),

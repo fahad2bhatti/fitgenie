@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
 
+
 class AppSnackbar {
   // ──────────────────────────────────────────
   // 🎯 Show Error Snackbar
