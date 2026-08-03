@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../core/language_provider.dart';
 
 class AIService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -106,17 +107,23 @@ class AIService {
 
     try {
       final base64Image = base64Encode(bytes);
+      final isEnglish = LanguageProvider().isEnglish;
+      final tipLanguage = isEnglish
+          ? 'Write the healthTip in plain English.'
+          : 'Write the healthTip in Roman Urdu / Hinglish (Hindi+English mix, Latin script only, no Hindi script).';
+
       final prompt = '''
 You are a nutrition expert. Analyze this food image carefully.
 Return ONLY a valid JSON object (no markdown, no code blocks, just pure JSON):
 {
   "foodName": "English name",
-  "foodNameHindi": "Hinglish name like Roti, Dal, Biryani",
+  "foodNameHindi": "Local/common name (e.g. Roti, Dal, Biryani)",
   "calories": 250, "protein": 10, "carbs": 30, "fat": 8, "fiber": 3,
   "quantity": "1 plate or 1 serving",
   "isHealthy": true,
-  "healthTip": "One short tip in Hinglish"
+  "healthTip": "One short tip"
 }
+$tipLanguage
 All numbers should be integers. isHealthy should be boolean.''';
 
       final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
