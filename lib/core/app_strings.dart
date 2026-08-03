@@ -50,6 +50,19 @@ class AppStrings {
     'login_remember': 'Remember me',
     'login_signup': "Don't have an account?",
     'login_signup_free': 'Sign up free',
+    'login_tagline': 'Transform your fitness journey',
+    'login_or': 'OR',
+    'login_terms_prefix': 'I agree to the ',
+    'login_terms_link': 'Terms of Service & Privacy Policy',
+    'login_terms_suffix': '.',
+    'login_terms_required': 'Please accept the Terms & Privacy Policy to continue.',
+    'login_email_required': 'Please enter your email',
+    'login_password_required': 'Please enter your password',
+    'login_generic_error': 'Something went wrong. Please check your internet.',
+    'login_google_error': 'Error signing in with Google.',
+    'login_link_error': 'Could not open the link.',
+    'login_reset_instructions': "Enter your email address and we'll send you a link to reset your password.",
+    'login_reset_failed': 'Failed to send reset email',
 
     // ==========================================
     // AUTH
@@ -188,7 +201,7 @@ class AppStrings {
     'workout_no_sets': 'No sets logged yet',
     'workout_tap_to_log': 'Tap + to log a set 💪',
     'workout_details': 'Details →',
-
+    'workout_injury_warning': 'Exercises with incorrect form can cause injury. Consider consulting a fitness professional before starting.',
     // ==========================================
     // LIBRARY SCREEN
     // ==========================================
@@ -564,6 +577,19 @@ class AppStrings {
     'login_remember': 'Mujhe yaad rakho',
     'login_signup': "Account nahi hai?",
     'login_signup_free': 'Free sign up karo',
+    'login_tagline': 'Apni fitness journey transform karo',
+    'login_or': 'YA',
+    'login_terms_prefix': 'Main ',
+    'login_terms_link': 'Terms of Service & Privacy Policy',
+    'login_terms_suffix': ' se agree karta hoon.',
+    'login_terms_required': 'Aage badhne ke liye Terms & Privacy Policy accept karo.',
+    'login_email_required': 'Email daal bhai',
+    'login_password_required': 'Password daal bhai',
+    'login_generic_error': 'Kuch gadbad ho gayi. Internet check kar.',
+    'login_google_error': 'Google Sign-in mein error aaya.',
+    'login_link_error': 'Link nahi khul saka.',
+    'login_reset_instructions': 'Apna email address daalo, hum tumhe password reset karne ka link bhej denge.',
+    'login_reset_failed': 'Reset email bhejne mein masla hua',
 
     // ==========================================
     // AUTH
@@ -702,6 +728,8 @@ class AppStrings {
     'workout_no_sets': 'Abhi koi set log nahi hua',
     'workout_tap_to_log': 'Tap + karo set log karne ke liye 💪',
     'workout_details': 'Details →',
+
+    'workout_injury_warning': 'Galat form se exercise karne se chot lag sakti hai. Shuru karne se pehle fitness professional se mashwara karo.',
 
     // ==========================================
     // LIBRARY SCREEN

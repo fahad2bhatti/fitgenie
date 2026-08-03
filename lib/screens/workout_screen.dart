@@ -945,6 +945,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
   @override
   void initState() {
     super.initState();
+    showWorkoutInjuryWarningIfNeeded(context);
     _availableExercises = ExerciseData.getByBodyPart(widget.workoutType);
     _loadWorkoutPlan();
   }
