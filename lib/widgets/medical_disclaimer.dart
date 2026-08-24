@@ -108,11 +108,16 @@ class MedicalDisclaimerDialog extends StatelessWidget {
       canPop: false,
       child: Dialog(
         backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: Container(
+              // 👇 FIX 1: cap the whole dialog's height to the screen
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
+              ),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: FitGenieTheme.card.withValues(alpha: 0.95),
@@ -143,31 +148,42 @@ class MedicalDisclaimerDialog extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 14),
-                  const SingleChildScrollView(
-                    child: Text(
-                      'FitGenie provides general fitness and nutrition guidance '
-                          'for informational purposes only. It is not medical or '
-                          'dietary advice and is not a substitute for professional '
-                          'diagnosis or treatment.\n\n'
-                          'Calorie, macro, and nutrition data — including AI Meal '
-                          'Scanner results and food search estimates — are '
-                          'AI-generated or database-sourced estimates and may not '
-                          'be fully accurate. FitGenie does not verify allergen '
-                          'information; if you have food allergies or '
-                          'intolerances, always check ingredients yourself before '
-                          'eating.\n\n'
-                          'Please consult a qualified healthcare professional or '
-                          'registered dietitian before starting any new workout '
-                          'or nutrition program, especially if you have any '
-                          'existing medical condition, food allergy, or are '
-                          'pregnant.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                        color: FitGenieTheme.muted,
+
+                  // 👇 FIX 2: Flexible + Scrollbar so text scrolls
+                  // instead of pushing the button off-screen
+                  Flexible(
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      radius: const Radius.circular(8),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Text(
+                          'FitGenie provides general fitness and nutrition guidance '
+                              'for informational purposes only. It is not medical or '
+                              'dietary advice and is not a substitute for professional '
+                              'diagnosis or treatment.\n\n'
+                              'Calorie, macro, and nutrition data — including AI Meal '
+                              'Scanner results and food search estimates — are '
+                              'AI-generated or database-sourced estimates and may not '
+                              'be fully accurate. FitGenie does not verify allergen '
+                              'information; if you have food allergies or '
+                              'intolerances, always check ingredients yourself before '
+                              'eating.\n\n'
+                              'Please consult a qualified healthcare professional or '
+                              'registered dietitian before starting any new workout '
+                              'or nutrition program, especially if you have any '
+                              'existing medical condition, food allergy, or are '
+                              'pregnant.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            height: 1.5,
+                            color: FitGenieTheme.muted,
+                          ),
+                        ),
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
