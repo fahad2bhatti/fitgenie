@@ -345,16 +345,6 @@ class AuthService {
     }
   }
 
-  // ═══════════════════════════════════════════
-  // 📝 SIGN UP (Legacy)
-  // ═══════════════════════════════════════════
-  Future<AuthResult> signUp(String email, String password) async {
-    return signUpWithName(
-      email: email,
-      password: password,
-      name: email.split('@').first,
-    );
-  }
 
   // ═══════════════════════════════════════════
   // 🚪 LOGOUT

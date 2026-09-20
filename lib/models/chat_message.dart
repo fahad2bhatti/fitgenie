@@ -11,13 +11,7 @@ class ChatMessage {
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
 
-  // Convert to API format for conversation history
-  Map<String, String> toApiFormat() {
-    return {
-      'role': isUser ? 'user' : 'assistant',
-      'content': text,
-    };
-  }
+
 
   // Convert to Map for Firestore
   Map<String, dynamic> toMap() {

@@ -125,38 +125,7 @@ class GoogleFitService {
     }
   }
 
-  Future<Map<String, dynamic>> getDiagnostics() async {
-    final diagnostics = <String, dynamic>{
-      'timestamp': DateTime.now().toIso8601String(),
-      'isConnected': _isConnected,
-      'hasUser': _currentUser != null,
-      'userEmail': _currentUser?.email,
-      'hasAccessToken': _accessToken != null,
-      'lastSuccessfulFetch': _lastSuccessfulFetch?.toIso8601String(),
-      'consecutiveErrors': _consecutiveErrors,
-      'healthConnectAvailable': false,
-      'isAuthorized': false,
-      'canFetchData': false,
-      'todaySteps': 0,
-    };
 
-    try {
-      diagnostics['healthConnectAvailable'] = await isHealthConnectAvailable();
-      if (diagnostics['healthConnectAvailable']) {
-        diagnostics['isAuthorized'] = await isAuthorized();
-      }
-      if (diagnostics['isAuthorized']) {
-        diagnostics['canFetchData'] = await canFetchData();
-      }
-      if (diagnostics['canFetchData']) {
-        diagnostics['todaySteps'] = await getTodaySteps();
-      }
-    } catch (e) {
-      diagnostics['error'] = e.toString();
-    }
-
-    return diagnostics;
-  }
 
   // ═══════════════════════════════════════════
   // 🔐 CONNECT TO GOOGLE FIT — FIXED!
@@ -520,23 +489,7 @@ class GoogleFitService {
     }
   }
 
-  // ═══════════════════════════════════════════
-  // 📊 GET ALL TODAY'S DATA
-  // ═══════════════════════════════════════════
-  Future<Map<String, dynamic>> getTodayData() async {
-    final steps = await getTodaySteps();
-    final calories = await getTodayCalories();
-    final distance = await getTodayDistance();
 
-    return {
-      'steps': steps,
-      'calories': calories,
-      'distance': distance,
-      'isConnected': _isConnected,
-      'email': _currentUser?.email,
-      'lastFetch': _lastSuccessfulFetch?.toIso8601String(),
-    };
-  }
 
   // ═══════════════════════════════════════════
   // 🔧 PARSE HELPERS

@@ -52,29 +52,6 @@ class AIService {
     return cleaned;
   }
 
-  Future<List<String>> fetchModelNames() async {
-    debugPrint('🔍 Fetching available models...');
-    if (!isConfigured) return ['models/gemini-flash-latest'];
-
-    final url = 'https://generativelanguage.googleapis.com/v1beta/models?key=$_apiKey';
-    try {
-      final response = await http.get(Uri.parse(url)).timeout(_timeout);
-      if (response.statusCode != 200) throw Exception('Models list failed ${response.statusCode}');
-      final data = jsonDecode(response.body);
-      final List models = (data['models'] as List?) ?? [];
-      final names = <String>[];
-      for (final m in models) {
-        final name = m['name'];
-        if (name is String && name.isNotEmpty) names.add(name);
-      }
-      debugPrint('✅ Found ${names.length} models');
-      return names;
-    } catch (e) {
-      debugPrint('❌ Error fetching models: $e');
-      return ['models/gemini-flash-latest'];
-    }
-  }
-
   // ==========================================
   // 📸 MEAL PHOTO SCANNER
   // ==========================================
@@ -105,14 +82,13 @@ class AIService {
 
     if (bytes.length < 1000) return _getDefaultMealAnalysis();
 
-    try {
-      final base64Image = base64Encode(bytes);
-      final isEnglish = LanguageProvider().isEnglish;
-      final tipLanguage = isEnglish
-          ? 'Write the healthTip in plain English.'
-          : 'Write the healthTip in Roman Urdu / Hinglish (Hindi+English mix, Latin script only, no Hindi script).';
+    final base64Image = base64Encode(bytes);
+    final isEnglish = LanguageProvider().isEnglish;
+    final tipLanguage = isEnglish
+        ? 'Write the healthTip in plain English.'
+        : 'Write the healthTip in Roman Urdu / Hinglish (Hindi+English mix, Latin script only, no Hindi script).';
 
-      final prompt = '''
+    final prompt = '''
 You are a nutrition and fitness assistant.
 
 Analyze the food image and estimate nutrition values only.
@@ -138,45 +114,62 @@ Return ONLY a valid JSON object (no markdown, no code blocks, just pure JSON):
 $tipLanguage
 All numbers should be integers. isHealthy should be boolean.''';
 
-      final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
+    final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
+    const maxRetries = 2;
 
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'contents': [{'parts': [
-            {'text': prompt},
-            {'inlineData': {'mimeType': 'image/jpeg', 'data': base64Image}}
-          ]}],
-          'generationConfig': {'temperature': 0.1, 'maxOutputTokens': 1000},
-          'safetySettings': [
-            {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
-            {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
-            {'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold': 'BLOCK_NONE'},
-            {'category': 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold': 'BLOCK_NONE'},
-          ],
-        }),
-      ).timeout(const Duration(seconds: 60));
+    for (int attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        final response = await http.post(
+          Uri.parse(url),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'contents': [{'parts': [
+              {'text': prompt},
+              {'inlineData': {'mimeType': 'image/jpeg', 'data': base64Image}}
+            ]}],
+            'generationConfig': {'temperature': 0.1, 'maxOutputTokens': 1000},
+            'safetySettings': [
+              {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
+              {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
+              {'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold': 'BLOCK_NONE'},
+              {'category': 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold': 'BLOCK_NONE'},
+            ],
+          }),
+        ).timeout(const Duration(seconds: 60));
 
-      debugPrint('📸 Response status: ${response.statusCode}');
+        debugPrint('📡 Response status: ${response.statusCode} (attempt ${attempt + 1})');
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final candidates = data['candidates'] as List?;
-        if (candidates != null && candidates.isNotEmpty) {
-          if (candidates[0]['finishReason'] == 'SAFETY') return _getDefaultMealAnalysis();
-          final parts = candidates[0]['content']?['parts'] as List?;
-          if (parts != null && parts.isNotEmpty) {
-            final text = parts[0]['text'] as String?;
-            if (text != null && text.isNotEmpty) return MealAnalysis.fromJson(text);
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final candidates = data['candidates'] as List?;
+          if (candidates != null && candidates.isNotEmpty) {
+            if (candidates[0]['finishReason'] == 'SAFETY') return _getDefaultMealAnalysis();
+            final parts = candidates[0]['content']?['parts'] as List?;
+            if (parts != null && parts.isNotEmpty) {
+              final text = parts[0]['text'] as String?;
+              if (text != null && text.isNotEmpty) return MealAnalysis.fromJson(text);
+            }
           }
+          return _getDefaultMealAnalysis();
         }
+
+        if ((response.statusCode == 503 || response.statusCode == 429) && attempt < maxRetries) {
+          debugPrint('⚠️ Meal scan got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
+          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+          continue;
+        }
+
+        return _getDefaultMealAnalysis();
+      } catch (e) {
+        debugPrint('❌ Meal analysis exception: $e');
+        if (attempt < maxRetries) {
+          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+          continue;
+        }
+        return _getDefaultMealAnalysis();
       }
-      return _getDefaultMealAnalysis();
-    } catch (e) {
-      debugPrint('❌ Meal analysis exception: $e');
-      return _getDefaultMealAnalysis();
     }
+    return _getDefaultMealAnalysis();
   }
 
   MealAnalysis _getDefaultMealAnalysis() {
@@ -188,59 +181,7 @@ All numbers should be integers. isHealthy should be boolean.''';
     );
   }
 
-  Future<MealAnalysis> searchFood(String foodName) async {
-    final cleanFoodName = _sanitizeInput(foodName);
-    if (cleanFoodName.isEmpty) return _getDefaultMealAnalysis();
-    if (!isConfigured) return _getOfflineFoodEstimate(cleanFoodName);
 
-    try {
-      final prompt = '''
-      You provide estimated nutritional information only.
-
-Do not provide medical advice, diagnosis, disease-specific diet plans, or treatment.
-
-Nutrition values are estimates only.
-
-For medical nutrition advice, users should consult a registered dietitian or qualified healthcare professional.
-Provide nutritional information for: "$cleanFoodName"
-Return ONLY a valid JSON object (no markdown, no extra text):
-{
-  "foodName": "$cleanFoodName", "foodNameHindi": "Hinglish name",
-  "calories": 200, "protein": 10, "carbs": 25, "fat": 8, "fiber": 3,
-  "quantity": "1 serving", "isHealthy": true, "healthTip": "short Hinglish tip"
-}''';
-      final result = await _tryDirectModel(prompt);
-      if (result != null) return MealAnalysis.fromJson(_validateResponse(result));
-      return _getOfflineFoodEstimate(cleanFoodName);
-    } catch (e) {
-      return _getOfflineFoodEstimate(cleanFoodName);
-    }
-  }
-
-  MealAnalysis _getOfflineFoodEstimate(String foodName) {
-    final commonFoods = {
-      'roti': MealAnalysis(foodName: 'Roti', foodNameHindi: 'Roti / Chapati', calories: 70, protein: 2, carbs: 15, fat: 1, fiber: 2, quantity: '1 roti', isHealthy: true, healthTip: 'Whole wheat roti fiber rich hoti hai!'),
-      'rice': MealAnalysis(foodName: 'Rice', foodNameHindi: 'Chawal', calories: 130, protein: 3, carbs: 28, fat: 0, fiber: 1, quantity: '1 cup cooked', isHealthy: true, healthTip: 'Brown rice zyada healthy hai white rice se.'),
-      'dal': MealAnalysis(foodName: 'Dal', foodNameHindi: 'Dal / Lentils', calories: 120, protein: 9, carbs: 20, fat: 1, fiber: 8, quantity: '1 bowl', isHealthy: true, healthTip: 'Dal protein ka best vegetarian source hai!'),
-      'chicken': MealAnalysis(foodName: 'Chicken Curry', foodNameHindi: 'Chicken Curry', calories: 250, protein: 25, carbs: 5, fat: 15, fiber: 1, quantity: '1 serving', isHealthy: true, healthTip: 'Grilled chicken zyada healthy hai fried se.'),
-      'egg': MealAnalysis(foodName: 'Egg', foodNameHindi: 'Anda', calories: 75, protein: 6, carbs: 1, fat: 5, fiber: 0, quantity: '1 egg', isHealthy: true, healthTip: 'Eggs complete protein source hain!'),
-      'paneer': MealAnalysis(foodName: 'Paneer', foodNameHindi: 'Paneer', calories: 265, protein: 18, carbs: 3, fat: 20, fiber: 0, quantity: '100g', isHealthy: true, healthTip: 'Paneer protein rich hai but fat bhi high hai.'),
-      'samosa': MealAnalysis(foodName: 'Samosa', foodNameHindi: 'Samosa', calories: 250, protein: 4, carbs: 25, fat: 15, fiber: 2, quantity: '1 piece', isHealthy: false, healthTip: 'Samosa tasty hai but fried hai - limit mein khao!'),
-      'biryani': MealAnalysis(foodName: 'Biryani', foodNameHindi: 'Biryani', calories: 350, protein: 15, carbs: 45, fat: 12, fiber: 2, quantity: '1 plate', isHealthy: false, healthTip: 'Biryani heavy hai - portion control important!'),
-    };
-
-    final lowerName = foodName.toLowerCase();
-    for (final key in commonFoods.keys) {
-      if (lowerName.contains(key)) return commonFoods[key]!;
-    }
-
-    return MealAnalysis(
-      foodName: foodName, foodNameHindi: foodName,
-      calories: 200, protein: 8, carbs: 25, fat: 8, fiber: 3,
-      quantity: '1 serving', isHealthy: true,
-      healthTip: 'Estimated values - actual may vary.',
-    );
-  }
 
   // ==========================================
   // 🤖 MAIN CHAT FUNCTION
@@ -318,38 +259,54 @@ Max 150 words:''';
     if (!isConfigured) return null;
 
     final url = 'https://generativelanguage.googleapis.com/v1beta/$modelName:generateContent?key=$_apiKey';
+    const maxRetries = 2;
 
-    try {
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'contents': [{'role': 'user', 'parts': [{'text': prompt}]}],
-          'generationConfig': {'temperature': 0.7, 'maxOutputTokens': 1500, 'topP': 0.9, 'topK': 40},
-          'safetySettings': [
-            {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
-            {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
-            {'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold': 'BLOCK_NONE'},
-            {'category': 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold': 'BLOCK_NONE'},
-          ],
-        }),
-      ).timeout(_timeout);
+    for (int attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        final response = await http.post(
+          Uri.parse(url),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'contents': [{'role': 'user', 'parts': [{'text': prompt}]}],
+            'generationConfig': {'temperature': 0.7, 'maxOutputTokens': 1500, 'topP': 0.9, 'topK': 40},
+            'safetySettings': [
+              {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
+              {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
+              {'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold': 'BLOCK_NONE'},
+              {'category': 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold': 'BLOCK_NONE'},
+            ],
+          }),
+        ).timeout(_timeout);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final candidates = data['candidates'] as List?;
-        if (candidates != null && candidates.isNotEmpty) {
-          final text = candidates[0]['content']?['parts']?[0]?['text'];
-          if (text is String && text.trim().isNotEmpty) {
-            debugPrint('✅ Success with $modelName');
-            return text.trim();
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final candidates = data['candidates'] as List?;
+          if (candidates != null && candidates.isNotEmpty) {
+            final text = candidates[0]['content']?['parts']?[0]?['text'];
+            if (text is String && text.trim().isNotEmpty) {
+              debugPrint('✅ Success with $modelName (attempt ${attempt + 1})');
+              return text.trim();
+            }
           }
+          return null;
         }
-      } else {
+
+        if ((response.statusCode == 503 || response.statusCode == 429) && attempt < maxRetries) {
+          debugPrint('⚠️ $modelName got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
+          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+          continue;
+        }
+
         debugPrint('❌ $modelName failed: ${response.statusCode}');
+        return null;
+      } catch (e) {
+        if (attempt < maxRetries) {
+          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+          continue;
+        }
+        debugPrint('❌ API call error: $e');
+        return null;
       }
-    } catch (e) {
-      debugPrint('❌ API call error: $e');
     }
     return null;
   }

@@ -4,10 +4,19 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.fahadapps.fitgenie"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -21,8 +30,6 @@ android {
 
     defaultConfig {
         applicationId = "com.fahadapps.fitgenie"
-        // Chahe to yahan direct 23 likh sakta hai:
-        // minSdk = 23
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -30,16 +37,12 @@ android {
         multiDexEnabled = true
     }
 
-    // 🔐 DIRECT SIGNING CONFIG — NO Properties
     signingConfigs {
         create("release") {
-            // Yahan apna upload-keystore.jks ka path, jo already ban chuka hai:
-            storeFile = file("upload-keystore.jks")
-
-            // 👇 Yahan WAHI password daal jo tu ne keystore banate waqt diya tha
-            storePassword = "REDACTED"
-            keyAlias = "upload"
-            keyPassword = "REDACTED"
+            storeFile = file(keystoreProperties["storeFile"] as String? ?: "upload-keystore.jks")
+            storePassword = keystoreProperties["storePassword"] as String?
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
         }
     }
 
@@ -47,15 +50,13 @@ android {
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
 
-            // R8 issues avoid karne ke liye:
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
 
-            // ProGuard abhi ke liye hata diya:
-            // proguardFiles(
-            //     getDefaultProguardFile("proguard-android-optimize.txt"),
-            //     "proguard-rules.pro"
-            // )
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

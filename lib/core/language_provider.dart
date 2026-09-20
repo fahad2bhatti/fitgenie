@@ -21,14 +21,6 @@ class LanguageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ──────────────────────────────────────────
-  // 🌐 Toggle Language
-  // ──────────────────────────────────────────
-  void toggleLanguage() {
-    _isEnglish = !_isEnglish;
-    HiveBoxes.settingsBox.put('language', _isEnglish ? 'en' : 'ur');
-    notifyListeners();
-  }
 
   // ──────────────────────────────────────────
   // 🌐 Set Language

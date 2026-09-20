@@ -38,13 +38,6 @@ class ConnectivityService extends ChangeNotifier {
     }
   }
 
-  // Check current status
-  Future<bool> checkConnection() async {
-    final result = await _connectivity.checkConnectivity();
-    _updateStatus(result);
-    return _isOnline;
-  }
-
   @override
   void dispose() {
     super.dispose();

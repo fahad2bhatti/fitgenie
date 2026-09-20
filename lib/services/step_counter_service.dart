@@ -154,48 +154,9 @@ class StepCounterService {
     return status;
   }
 
-  /// Quick check — returns simple bool
-  Future<bool> isGoogleFitEnabled() async {
-    try {
-      if (!_useGoogleFit) return false;
 
-      final isAvailable = await _googleFit.isHealthConnectAvailable();
-      if (!isAvailable) return false;
 
-      final isAuthorized = await _googleFit.isAuthorized();
-      if (!isAuthorized) return false;
 
-      final canFetch = await _googleFit.canFetchData();
-      return canFetch;
-    } catch (e) {
-      debugPrint('❌ Quick check error: $e');
-      return false;
-    }
-  }
-
-  // ✅ FIX: Removed throw UnimplementedError()
-  /// Get readable status string
-  Future<String> getGoogleFitStatusText() async {
-    final status = await checkGoogleFitStatus();
-    switch (status.overallStatus) {
-      case GoogleFitConnectionStatus.connected:
-        return '✅ Connected — ${status.todaySteps} steps today';
-      case GoogleFitConnectionStatus.connectedNoData:
-        return '🟡 Connected — No data yet, walk a few steps';
-      case GoogleFitConnectionStatus.connecting:
-        return '🔄 Connecting...';
-      case GoogleFitConnectionStatus.notAuthorized:
-        return '🔐 Not authorized — Tap to grant permission';
-      case GoogleFitConnectionStatus.permissionDenied:
-        return '❌ Activity permission denied';
-      case GoogleFitConnectionStatus.unavailable:
-        return '📱 Health Connect not installed';
-      case GoogleFitConnectionStatus.disconnected:
-        return '🔌 Disconnected — Tap to connect';
-      case GoogleFitConnectionStatus.error:
-        return '⚠️ Error: ${status.errorMessage}';
-    }
-  }
 
   // ═══════════════════════════════════════════
   // 🔄 GOOGLE FIT SYNC (Every 5 min)
