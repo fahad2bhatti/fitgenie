@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/ads_service.dart';
 import '../app/fitgenie_theme.dart';
 import '../widgets/fg_card.dart';
 import '../widgets/app_snackbar.dart';
@@ -948,6 +949,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
     showWorkoutInjuryWarningIfNeeded(context);
     _availableExercises = ExerciseData.getByBodyPart(widget.workoutType);
     _loadWorkoutPlan();
+    AdsService.instance.loadInterstitialAd();
   }
 
   Future<void> _loadWorkoutPlan() async {
@@ -1308,7 +1310,14 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () { Navigator.pop(context); Navigator.pop(context); },
+                onPressed: () {
+                  Navigator.pop(context);
+                  AdsService.instance.showInterstitialAd(
+                    onDismissed: () {
+                      if (mounted) Navigator.pop(context);
+                    },
+                  );
+                },
                 style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.primary),
                 child: Text(
                   AppStrings.get('done'),

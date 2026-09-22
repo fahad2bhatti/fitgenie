@@ -16,6 +16,7 @@ import 'services/connectivity_service.dart';
 import 'services/local_storage_service.dart';
 import 'services/sync_service.dart';
 import 'services/step_counter_service.dart';
+import 'services/ads_service.dart';
 import 'widgets/offline_indicator.dart';
 
 import 'screens/onboarding_screen.dart';
@@ -45,6 +46,13 @@ Future<void> main() async {
     debugPrint('Firebase initialized');
   } catch (e) {
     debugPrint('Firebase error: $e');
+  }
+
+  try {
+    await AdsService.initialize();
+    debugPrint('AdMob initialized');
+  } catch (e) {
+    debugPrint('AdMob init error: $e');
   }
 
   try {

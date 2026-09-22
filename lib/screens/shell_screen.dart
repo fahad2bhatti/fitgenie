@@ -10,6 +10,7 @@ import 'calories_screen.dart';
 import 'workout_screen.dart';
 import 'progress_screen.dart';
 import 'profile_screen.dart';
+import '../widgets/banner_ad_widget.dart';
 
 // ============ MAIN SHELL SCREEN ============
 
@@ -51,7 +52,12 @@ class _ShellScreenState extends State<ShellScreen> {
     return Scaffold(
       backgroundColor: FitGenieTheme.background,
       body: SafeArea(
-        child: _buildCurrentPage(),
+        child: Column(
+          children: [
+            Expanded(child: _buildCurrentPage()),
+            const BannerAdWidget(),
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

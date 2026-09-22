@@ -20,6 +20,7 @@
         "flutter_secure_storage",
         "google_fonts",
         "google_generative_ai",
+        "google_mobile_ads",
         "google_sign_in",
         "hive_flutter",
         "http",
@@ -129,6 +130,17 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "google_mobile_ads",
+      "version": "9.1.0",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter",
+        "webview_flutter_android",
+        "webview_flutter_wkwebview"
       ]
     },
     {
@@ -862,6 +874,35 @@
       ]
     },
     {
+      "name": "webview_flutter",
+      "version": "4.14.1",
+      "dependencies": [
+        "flutter",
+        "webview_flutter_android",
+        "webview_flutter_platform_interface",
+        "webview_flutter_wkwebview"
+      ]
+    },
+    {
+      "name": "webview_flutter_wkwebview",
+      "version": "3.26.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "path",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter_android",
+      "version": "4.14.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
       "name": "url_launcher_windows",
       "version": "3.1.5",
       "dependencies": [
@@ -1526,6 +1567,15 @@
       "dependencies": [
         "source_span",
         "string_scanner"
+      ]
+    },
+    {
+      "name": "webview_flutter_platform_interface",
+      "version": "2.15.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
       ]
     },
     {
