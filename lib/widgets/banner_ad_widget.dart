@@ -16,20 +16,12 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   @override
   void initState() {
     super.initState();
-    _loadAd();
-  }
-
-  Future<void> _loadAd() async {
-    final width = MediaQuery.of(context).size.width;
-    final size =
-        await AdsService.instance.adaptiveBannerSize(width) ?? AdSize.banner;
-    final ad = AdsService.instance.createBannerAd(
-      size: size,
-      onLoaded: (loadedAd) {
+    _bannerAd = AdsService.instance.createBannerAd(
+      size: AdSize.banner, // fixed 320x50 — small, standard size
+      onLoaded: (ad) {
         if (mounted) setState(() => _isLoaded = true);
       },
     );
-    if (mounted) setState(() => _bannerAd = ad);
   }
 
   @override
@@ -40,13 +32,12 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isLoaded || _bannerAd == null) {
-      return const SizedBox.shrink();
-    }
     return SizedBox(
       width: double.infinity,
-      height: _bannerAd!.size.height.toDouble(),
-      child: AdWidget(ad: _bannerAd!),
+      height: AdSize.banner.height.toDouble(), // 50dp reserved always
+      child: (_isLoaded && _bannerAd != null)
+          ? AdWidget(ad: _bannerAd!)
+          : const SizedBox.shrink(),
     );
   }
 }
