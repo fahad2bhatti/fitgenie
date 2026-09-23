@@ -24,7 +24,6 @@ class FGCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
         decoration: BoxDecoration(
           color: color ?? FitGenieTheme.card,
           borderRadius: BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
@@ -38,7 +37,10 @@ class FGCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
           child: Material(
             color: Colors.transparent,
-            child: child,
+            child: Padding(
+              padding: padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
+              child: child,
+            ),
           ),
         ),
       ),

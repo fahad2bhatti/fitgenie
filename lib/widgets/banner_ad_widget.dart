@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/ads_service.dart';
 
-/// Drop this widget anywhere in a screen's layout (e.g. bottom of a
-/// Column, or above a bottom nav bar) to show a banner ad. Shows nothing
-/// while loading or if the ad fails to load — never breaks layout.
 class BannerAdWidget extends StatefulWidget {
   const BannerAdWidget({super.key});
 
@@ -19,13 +16,20 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   @override
   void initState() {
     super.initState();
-    _bannerAd = AdsService.instance.createBannerAd(
-      onLoaded: (ad) {
-        if (mounted) {
-          setState(() => _isLoaded = true);
-        }
+    _loadAd();
+  }
+
+  Future<void> _loadAd() async {
+    final width = MediaQuery.of(context).size.width;
+    final size =
+        await AdsService.instance.adaptiveBannerSize(width) ?? AdSize.banner;
+    final ad = AdsService.instance.createBannerAd(
+      size: size,
+      onLoaded: (loadedAd) {
+        if (mounted) setState(() => _isLoaded = true);
       },
     );
+    if (mounted) setState(() => _bannerAd = ad);
   }
 
   @override
@@ -40,7 +44,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
       return const SizedBox.shrink();
     }
     return SizedBox(
-      width: _bannerAd!.size.width.toDouble(),
+      width: double.infinity,
       height: _bannerAd!.size.height.toDouble(),
       child: AdWidget(ad: _bannerAd!),
     );

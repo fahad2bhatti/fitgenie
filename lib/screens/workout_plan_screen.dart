@@ -147,13 +147,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         ),
       ],
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          '${widget.plan.emoji} ${widget.plan.name}',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
         background: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
