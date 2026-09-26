@@ -1213,7 +1213,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-    ).whenComplete(() => nameController.dispose());
+    ).whenComplete(() {
+      // ✅ FIX: showModalBottomSheet's Future completes the instant
+      // Navigator.pop() is called — but the sheet's closing animation
+      // (~250ms) is still rendering the TextField at that point.
+      // Disposing nameController immediately crashes mid-animation
+      // ("TextEditingController used after being disposed"). Delay
+      // disposal until after the close transition has actually finished.
+      Future.delayed(const Duration(milliseconds: 300), () {
+        nameController.dispose();
+      });
+    });
   }
 
   Widget _buildDropdown(String value, List<String> items, Function(String?) onChanged) {

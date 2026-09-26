@@ -202,6 +202,17 @@ class _AuthGateState extends State<AuthGate> {
   Future<_UserGateInfo>? _cachedInfoFuture;
   String? _lastInitializedUid;
 
+  // ✅ FIX: cache the stream ONCE instead of calling
+  // FirebaseAuth.instance.authStateChanges() fresh inside build().
+  // A brand-new stream reference on every rebuild makes StreamBuilder
+  // think it's a different stream and resubscribe (briefly showing the
+  // loading spinner). That tears down and recreates everything below it
+  // — including OnboardingScreen — which resets its PageView back to
+  // page 0 every time setLanguage() fires (e.g. from the onboarding
+  // language page's own "Continue" button).
+  late final Stream<User?> _authStream =
+  FirebaseAuth.instance.authStateChanges();
+
   Future<_UserGateInfo> _resolveUserInfo(User user) async {
     String name = 'User';
     bool profileComplete = false;
@@ -266,7 +277,7 @@ class _AuthGateState extends State<AuthGate> {
       builder: (context, _) {
         return OfflineBanner(
           child: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
+            stream: _authStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Scaffold(
@@ -348,6 +359,7 @@ class _AuthGateState extends State<AuthGate> {
 
                   if (!info.profileComplete) {
                     return OnboardingScreen(
+                      key: ValueKey(user.uid), // extra safety: stable identity
                       userId: user.uid,
                       userName: info.name,
                     );

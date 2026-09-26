@@ -69,6 +69,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
     _calculateWeeklyReport();
 
+    if (!mounted) return; // ✅ FIX: screen may have been disposed mid-await
     setState(() => _isLoading = false);
   }
 

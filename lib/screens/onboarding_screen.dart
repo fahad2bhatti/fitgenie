@@ -75,21 +75,27 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     }
   }
 
-  void _next() {
+  void _next() async {
     if (!_canContinue) return;
 
-    if (_pageIndex == 0) {
-      _languageProvider.setLanguage(_selectedEnglish);
-    }
-
     if (_pageIndex == _totalPages - 1) {
+      if (_pageIndex == 0) {
+        _languageProvider.setLanguage(_selectedEnglish);
+      }
       _finish();
       return;
     }
-    _pageController.nextPage(
+
+    final wasLanguagePage = _pageIndex == 0;
+
+    await _pageController.nextPage(
       duration: const Duration(milliseconds: 420),
       curve: Curves.easeInOutCubic,
     );
+
+    if (wasLanguagePage && mounted) {
+      _languageProvider.setLanguage(_selectedEnglish);
+    }
   }
 
   void _back() {
@@ -235,15 +241,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                AppStrings.get('onboarding_welcome',
-                    params: {'name': widget.userName}),
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: FitGenieTheme.text,
+              Expanded(
+                child: Text(
+                  AppStrings.get('onboarding_welcome',
+                      params: {'name': widget.userName}),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: FitGenieTheme.text,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
                 child: Text(
