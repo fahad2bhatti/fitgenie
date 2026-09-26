@@ -18,6 +18,26 @@ class AppStrings {
     'language_urdu': 'Roman Urdu',
 
     // ==========================================
+    // WELCOME INTRO (new user, shown once before onboarding)
+    // ==========================================
+    'welcome_intro_tagline': 'Your AI-powered fitness companion',
+    'welcome_intro_greeting': 'Welcome, {name} 👋',
+    'welcome_intro_subtitle':
+    "Let's take a quick look at what FitGenie can do for you.",
+    'welcome_feature_ai_title': 'AI Coach',
+    'welcome_feature_ai_sub': 'Get personalized fitness advice, anytime.',
+    'welcome_feature_workouts_title': 'Guided Workouts',
+    'welcome_feature_workouts_sub':
+    'Follow along with animated exercise demos.',
+    'welcome_feature_nutrition_title': 'Nutrition Tracking',
+    'welcome_feature_nutrition_sub':
+    'Log meals and hit your calorie & protein goals.',
+    'welcome_feature_progress_title': 'Progress Charts',
+    'welcome_feature_progress_sub':
+    'Watch your weight, workouts and streaks over time.',
+    'welcome_get_started': 'Get Started',
+
+    // ==========================================
     // ONBOARDING
     // ==========================================
     'onboarding_welcome': 'Hi {name} 👋',
@@ -542,7 +562,25 @@ class AppStrings {
     'language_english': 'English',
     'language_urdu': 'Roman Urdu',
 
-
+    // ==========================================
+    // WELCOME INTRO (naya user, onboarding se pehle sirf ek dafa)
+    // ==========================================
+    'welcome_intro_tagline': 'Aapka AI-powered fitness saathi',
+    'welcome_intro_greeting': 'Khush amdeed, {name} 👋',
+    'welcome_intro_subtitle':
+    'Chalein zara dekhtay hain FitGenie aapke liye kya kar sakta hai.',
+    'welcome_feature_ai_title': 'AI Coach',
+    'welcome_feature_ai_sub': 'Jab bhi chahein, personalized fitness advice.',
+    'welcome_feature_workouts_title': 'Guided Workouts',
+    'welcome_feature_workouts_sub':
+    'Animated exercise demos ke sath workout karein.',
+    'welcome_feature_nutrition_title': 'Nutrition Tracking',
+    'welcome_feature_nutrition_sub':
+    'Meals log karein aur calorie/protein goals hit karein.',
+    'welcome_feature_progress_title': 'Progress Charts',
+    'welcome_feature_progress_sub':
+    'Apna weight, workouts aur streaks time ke sath dekhein.',
+    'welcome_get_started': 'Shuru Karein',
 
     // ==========================================
     // ONBOARDING

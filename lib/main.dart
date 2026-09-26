@@ -20,6 +20,7 @@ import 'services/ads_service.dart';
 import 'widgets/offline_indicator.dart';
 
 import 'screens/onboarding_screen.dart';
+import 'screens/welcome_intro_screen.dart';
 
 // NEW IMPORTS - Phase 1 language system
 import 'core/hive_boxes.dart';
@@ -358,7 +359,7 @@ class _AuthGateState extends State<AuthGate> {
                       const _UserGateInfo(name: 'User', profileComplete: false);
 
                   if (!info.profileComplete) {
-                    return OnboardingScreen(
+                    return NewUserFlow(
                       key: ValueKey(user.uid), // extra safety: stable identity
                       userId: user.uid,
                       userName: info.name,
@@ -375,6 +376,46 @@ class _AuthGateState extends State<AuthGate> {
           ),
         );
       },
+    );
+  }
+}
+
+// -----------------------------------------------
+// NewUserFlow
+// Shown only for a brand-new user (profileComplete == false in Firestore).
+// Shows the animated WelcomeIntroScreen once, then swaps (locally, no
+// Navigator push needed) into the existing OnboardingScreen data wizard.
+// Gated by the same Firestore flag Onboarding already uses, so it only
+// ever appears on a user's very first successful signup/login.
+// -----------------------------------------------
+class NewUserFlow extends StatefulWidget {
+  final String userId;
+  final String userName;
+
+  const NewUserFlow({
+    super.key,
+    required this.userId,
+    required this.userName,
+  });
+
+  @override
+  State<NewUserFlow> createState() => _NewUserFlowState();
+}
+
+class _NewUserFlowState extends State<NewUserFlow> {
+  bool _showIntro = true;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showIntro) {
+      return WelcomeIntroScreen(
+        userName: widget.userName,
+        onGetStarted: () => setState(() => _showIntro = false),
+      );
+    }
+    return OnboardingScreen(
+      userId: widget.userId,
+      userName: widget.userName,
     );
   }
 }

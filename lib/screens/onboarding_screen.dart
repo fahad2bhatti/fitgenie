@@ -41,6 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   double? _weight; // kg
   String? _fitnessLevel;
   String? _goal;
+  bool _useFeetInches = false; // false = cm, true = ft/in
 
   static const _totalPages = 6;
 
@@ -415,14 +416,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       subtitle: AppStrings.onboardingHeightSub,
       child: Column(
         children: [
-          _statSliderCard(
-            label: 'Height',
-            value: height,
-            unit: 'cm',
-            min: 120,
-            max: 220,
-            onChanged: (v) => setState(() => _height = v),
-          ),
+          _unitToggle(),
+          const SizedBox(height: 16),
+          _useFeetInches
+              ? _heightFeetInchesCard(height)
+              : _statSliderCard(
+                  label: 'Height',
+                  value: height,
+                  unit: 'cm',
+                  min: 120,
+                  max: 220,
+                  onChanged: (v) => setState(() => _height = v),
+                ),
           const SizedBox(height: 20),
           _statSliderCard(
             label: 'Weight',
@@ -431,6 +436,150 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             min: 30,
             max: 180,
             onChanged: (v) => setState(() => _weight = v),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================
+  // Height unit toggle (cm / ft-in)
+  // ==========================================
+  Widget _unitToggle() {
+    return Row(
+      children: [
+        Expanded(
+          child: _unitChip(
+            label: 'cm',
+            selected: !_useFeetInches,
+            onTap: () => setState(() => _useFeetInches = false),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: _unitChip(
+            label: 'ft/in',
+            selected: _useFeetInches,
+            onTap: () => setState(() => _useFeetInches = true),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _unitChip({
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return _TapScale(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected
+              ? FitGenieTheme.primary.withValues(alpha: 0.15)
+              : FitGenieTheme.card,
+          borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+          border: Border.all(
+            color: selected ? FitGenieTheme.primary : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? FitGenieTheme.text : FitGenieTheme.muted,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _heightFeetInchesCard(double heightCm) {
+    final totalInches = heightCm / 2.54;
+    final feet = (totalInches / 12).floor().clamp(3, 7);
+    final inches = (totalInches - (feet * 12)).round().clamp(0, 11);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: FitGenieTheme.card,
+        borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Height', style: TextStyle(color: FitGenieTheme.muted)),
+              Text(
+                "$feet' $inches\"",
+                style: const TextStyle(
+                  color: FitGenieTheme.text,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    const Text('Feet',
+                        style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        activeTrackColor: FitGenieTheme.teal,
+                        inactiveTrackColor: FitGenieTheme.card2,
+                        thumbColor: FitGenieTheme.teal,
+                        overlayColor: FitGenieTheme.teal.withValues(alpha: 0.2),
+                      ),
+                      child: Slider(
+                        value: feet.toDouble(),
+                        min: 3,
+                        max: 7,
+                        divisions: 4,
+                        onChanged: (v) => setState(() =>
+                            _height = (v.round() * 30.48) + (inches * 2.54)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  children: [
+                    const Text('Inches',
+                        style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        activeTrackColor: FitGenieTheme.teal,
+                        inactiveTrackColor: FitGenieTheme.card2,
+                        thumbColor: FitGenieTheme.teal,
+                        overlayColor: FitGenieTheme.teal.withValues(alpha: 0.2),
+                      ),
+                      child: Slider(
+                        value: inches.toDouble(),
+                        min: 0,
+                        max: 11,
+                        divisions: 11,
+                        onChanged: (v) => setState(() =>
+                            _height = (feet * 30.48) + (v.round() * 2.54)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
