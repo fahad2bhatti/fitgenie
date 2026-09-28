@@ -262,7 +262,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           child: _buildStatCard(
             icon: Icons.fitness_center,
             value: '${widget.plan.totalExercises}',
-            label: 'Exercises',
+            label: AppStrings.get('workout_plan_exercises_label'),
             color: color,
           ),
         ),

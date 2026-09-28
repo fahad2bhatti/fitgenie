@@ -222,8 +222,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
     _dailyChallenges = [
       Challenge(
         id: 'daily_calories',
-        title: 'Hit Calorie Goal',
-        description: 'Reach your daily calorie target',
+        title: AppStrings.get('challenge_daily_calories_title'),
+        description: AppStrings.get('challenge_daily_calories_desc'),
         icon: '🔥',
         targetValue: _caloriesGoal,
         currentValue: _todayCalories,
@@ -232,8 +232,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Challenge(
         id: 'daily_protein',
-        title: 'Protein Power',
-        description: 'Reach your protein goal',
+        title: AppStrings.get('challenge_daily_protein_title'),
+        description: AppStrings.get('challenge_daily_protein_desc'),
         icon: '💪',
         targetValue: _proteinGoal,
         currentValue: _todayProtein,
@@ -242,8 +242,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Challenge(
         id: 'daily_workout',
-        title: 'Workout Warrior',
-        description: 'Complete at least 1 workout',
+        title: AppStrings.get('challenge_daily_workout_title'),
+        description: AppStrings.get('challenge_daily_workout_desc'),
         icon: '🏋️',
         targetValue: 1,
         currentValue: _todayWorkouts,
@@ -252,8 +252,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Challenge(
         id: 'daily_water',
-        title: 'Stay Hydrated',
-        description: 'Drink $_waterGoal glasses of water',
+        title: AppStrings.get('challenge_daily_water_title'),
+        description: AppStrings.get('challenge_daily_water_desc', params: {'goal': '$_waterGoal'}),
         icon: '💧',
         targetValue: _waterGoal,
         currentValue: _todayWater,
@@ -262,8 +262,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Challenge(
         id: 'daily_log',
-        title: 'Track Everything',
-        description: 'Log calories, protein & water',
+        title: AppStrings.get('challenge_daily_log_title'),
+        description: AppStrings.get('challenge_daily_log_desc'),
         icon: '📝',
         targetValue: 3,
         currentValue: (_todayCalories > 0 ? 1 : 0) +
@@ -277,8 +277,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
     _weeklyChallenges = [
       Challenge(
         id: 'weekly_workouts',
-        title: '5 Day Warrior',
-        description: 'Complete 5 workouts this week',
+        title: AppStrings.get('challenge_weekly_workouts_title'),
+        description: AppStrings.get('challenge_weekly_workouts_desc'),
         icon: '🔥',
         targetValue: 5,
         currentValue: _totalWorkouts.clamp(0, 5),
@@ -287,8 +287,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Challenge(
         id: 'weekly_streak',
-        title: 'Consistency King',
-        description: 'Maintain a 7 day streak',
+        title: AppStrings.get('challenge_weekly_streak_title'),
+        description: AppStrings.get('challenge_weekly_streak_desc'),
         icon: '👑',
         targetValue: 7,
         currentValue: _currentStreak.clamp(0, 7),
@@ -297,8 +297,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Challenge(
         id: 'weekly_protein',
-        title: 'Protein Champion',
-        description: 'Hit protein goal 5 days',
+        title: AppStrings.get('challenge_weekly_protein_title'),
+        description: AppStrings.get('challenge_weekly_protein_desc'),
         icon: '🥩',
         targetValue: 5,
         currentValue: 3,
@@ -312,8 +312,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
     final allAchievements = [
       Achievement(
         id: 'first_workout',
-        title: 'First Step',
-        description: 'Complete your first workout',
+        title: AppStrings.get('achievement_first_workout_title'),
+        description: AppStrings.get('achievement_first_workout_desc'),
         icon: '🎯',
         requirement: 1,
         currentProgress: _totalWorkouts,
@@ -322,8 +322,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'workout_10',
-        title: 'Getting Strong',
-        description: 'Complete 10 workouts',
+        title: AppStrings.get('achievement_workout_10_title'),
+        description: AppStrings.get('achievement_workout_10_desc'),
         icon: '💪',
         requirement: 10,
         currentProgress: _totalWorkouts,
@@ -332,8 +332,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'workout_50',
-        title: 'Fitness Freak',
-        description: 'Complete 50 workouts',
+        title: AppStrings.get('achievement_workout_50_title'),
+        description: AppStrings.get('achievement_workout_50_desc'),
         icon: '🔥',
         requirement: 50,
         currentProgress: _totalWorkouts,
@@ -342,8 +342,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'workout_100',
-        title: 'Iron Man',
-        description: 'Complete 100 workouts',
+        title: AppStrings.get('achievement_workout_100_title'),
+        description: AppStrings.get('achievement_workout_100_desc'),
         icon: '🦾',
         requirement: 100,
         currentProgress: _totalWorkouts,
@@ -352,8 +352,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'streak_3',
-        title: 'On Fire',
-        description: 'Maintain a 3 day streak',
+        title: AppStrings.get('achievement_streak_3_title'),
+        description: AppStrings.get('achievement_streak_3_desc'),
         icon: '🔥',
         requirement: 3,
         currentProgress: _longestStreak,
@@ -362,8 +362,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'streak_7',
-        title: 'Week Warrior',
-        description: 'Maintain a 7 day streak',
+        title: AppStrings.get('achievement_streak_7_title'),
+        description: AppStrings.get('achievement_streak_7_desc'),
         icon: '⚡',
         requirement: 7,
         currentProgress: _longestStreak,
@@ -372,8 +372,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'streak_30',
-        title: 'Unstoppable',
-        description: 'Maintain a 30 day streak',
+        title: AppStrings.get('achievement_streak_30_title'),
+        description: AppStrings.get('achievement_streak_30_desc'),
         icon: '👑',
         requirement: 30,
         currentProgress: _longestStreak,
@@ -382,8 +382,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'streak_100',
-        title: 'Legend',
-        description: 'Maintain a 100 day streak',
+        title: AppStrings.get('achievement_streak_100_title'),
+        description: AppStrings.get('achievement_streak_100_desc'),
         icon: '🏆',
         requirement: 100,
         currentProgress: _longestStreak,
@@ -392,8 +392,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'calories_10000',
-        title: 'Fuel Master',
-        description: 'Log 10,000 total calories',
+        title: AppStrings.get('achievement_calories_10000_title'),
+        description: AppStrings.get('achievement_calories_10000_desc'),
         icon: '🍽️',
         requirement: 10000,
         currentProgress: _totalCaloriesLogged,
@@ -402,8 +402,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'calories_100000',
-        title: 'Nutrition Pro',
-        description: 'Log 100,000 total calories',
+        title: AppStrings.get('achievement_calories_100000_title'),
+        description: AppStrings.get('achievement_calories_100000_desc'),
         icon: '🥗',
         requirement: 100000,
         currentProgress: _totalCaloriesLogged,
@@ -412,8 +412,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'protein_1000',
-        title: 'Protein Lover',
-        description: 'Log 1,000g protein',
+        title: AppStrings.get('achievement_protein_1000_title'),
+        description: AppStrings.get('achievement_protein_1000_desc'),
         icon: '🥩',
         requirement: 1000,
         currentProgress: _totalProteinLogged,
@@ -422,8 +422,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'protein_10000',
-        title: 'Muscle Builder',
-        description: 'Log 10,000g protein',
+        title: AppStrings.get('achievement_protein_10000_title'),
+        description: AppStrings.get('achievement_protein_10000_desc'),
         icon: '💪',
         requirement: 10000,
         currentProgress: _totalProteinLogged,
@@ -432,8 +432,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'early_bird',
-        title: 'Early Bird',
-        description: 'Log breakfast before 8 AM',
+        title: AppStrings.get('achievement_early_bird_title'),
+        description: AppStrings.get('achievement_early_bird_desc'),
         icon: '🌅',
         requirement: 1,
         currentProgress: 0,
@@ -442,8 +442,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       ),
       Achievement(
         id: 'perfect_day',
-        title: 'Perfect Day',
-        description: 'Hit all daily goals in one day',
+        title: AppStrings.get('achievement_perfect_day_title'),
+        description: AppStrings.get('achievement_perfect_day_desc'),
         icon: '⭐',
         requirement: 1,
         currentProgress: (_todayCalories >= _caloriesGoal &&
@@ -1225,7 +1225,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             if (!isUnlocked) ...[
               const SizedBox(height: 12),
               Text(
-                'Progress: ${achievement.currentProgress}/${achievement.requirement}',
+                AppStrings.get('challenges_progress_label', params: {'current': '${achievement.currentProgress}', 'required': '${achievement.requirement}'}),
                 style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
               ),
             ],

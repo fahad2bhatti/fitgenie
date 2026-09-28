@@ -318,8 +318,10 @@ class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppStrings.get('welcome_intro_greeting',
-                              params: {'name': widget.userName}),
+                          widget.userName.trim().isEmpty
+                              ? AppStrings.get('welcome_back_generic')
+                              : AppStrings.get('welcome_intro_greeting',
+                                  params: {'name': widget.userName}),
                           style: const TextStyle(
                             color: FitGenieTheme.text,
                             fontSize: 30,

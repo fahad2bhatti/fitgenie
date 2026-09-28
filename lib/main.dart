@@ -1,6 +1,7 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -202,6 +203,9 @@ class _AuthGateState extends State<AuthGate> {
   String? _cachedUid;
   Future<_UserGateInfo>? _cachedInfoFuture;
   String? _lastInitializedUid;
+  bool _wasLoggedIn = false;
+  bool _showPostLogoutIntro = false;
+  StreamSubscription<User?>? _authSub;
 
   // ✅ FIX: cache the stream ONCE instead of calling
   // FirebaseAuth.instance.authStateChanges() fresh inside build().
@@ -213,6 +217,25 @@ class _AuthGateState extends State<AuthGate> {
   // language page's own "Continue" button).
   late final Stream<User?> _authStream =
   FirebaseAuth.instance.authStateChanges();
+
+  @override
+  void initState() {
+    super.initState();
+    _authSub = _authStream.listen((user) {
+      if (user != null) {
+        _wasLoggedIn = true;
+      } else if (_wasLoggedIn) {
+        _wasLoggedIn = false;
+        if (mounted) setState(() => _showPostLogoutIntro = true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
 
   Future<_UserGateInfo> _resolveUserInfo(User user) async {
     String name = 'User';
@@ -290,6 +313,13 @@ class _AuthGateState extends State<AuthGate> {
 
               // Not logged in
               if (user == null) {
+                if (_showPostLogoutIntro) {
+                  return WelcomeIntroScreen(
+                    userName: '',
+                    onGetStarted: () =>
+                        setState(() => _showPostLogoutIntro = false),
+                  );
+                }
                 return const login_screen.LoginScreen();
               }
 

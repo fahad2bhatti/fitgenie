@@ -169,8 +169,8 @@ class _SignupScreenState extends State<SignupScreen>
 
                             const SizedBox(height: 20),
 
-                            const Text(
-                              'Create Account',
+                            Text(
+                              AppStrings.get('signup_title'),
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w800,
@@ -178,8 +178,8 @@ class _SignupScreenState extends State<SignupScreen>
                               ),
                             ),
                             const SizedBox(height: 8),
-                            const Text(
-                              'Start your fitness journey today',
+                            Text(
+                              AppStrings.get('signup_subtitle'),
                               style: TextStyle(
                                 color: FitGenieTheme.muted,
                                 fontSize: 14,
@@ -325,8 +325,8 @@ class _SignupScreenState extends State<SignupScreen>
                                     color: Colors.white,
                                   ),
                                 )
-                                    : const Text(
-                                  'Create Account',
+                                    : Text(
+                                  AppStrings.get('signup_button'),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w800,
                                     fontSize: 16,
@@ -343,16 +343,16 @@ class _SignupScreenState extends State<SignupScreen>
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      'Already have an account?',
+                                    Text(
+                                      AppStrings.get('signup_have_account'),
                                       style: TextStyle(
                                           color: FitGenieTheme.muted,
                                           fontSize: 13),
                                     ),
                                     TextButton(
                                       onPressed: _goToLogin,
-                                      child: const Text(
-                                        'Sign In',
+                                      child: Text(
+                                        AppStrings.get('signup_sign_in'),
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -360,7 +360,7 @@ class _SignupScreenState extends State<SignupScreen>
                                   ],
                                 ),
                                 Text(
-                                  'Want to use Google? Sign in from the login page.',
+                                  AppStrings.get('signup_google_hint'),
                                   style: TextStyle(
                                     color: FitGenieTheme.muted.withValues(alpha: 0.5),
                                     fontSize: 11,

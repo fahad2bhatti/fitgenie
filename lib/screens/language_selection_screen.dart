@@ -81,7 +81,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               const SizedBox(height: 8),
               Center(
                 child: Text(
-                  'You can change this later in Settings',
+                  AppStrings.get('onboarding_lang_subtitle'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,
@@ -94,7 +94,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               // English Option
               _buildLanguageCard(
                 title: AppStrings.get('language_english'),
-                subtitle: 'Everything in English',
+                subtitle: AppStrings.get('onboarding_lang_en_desc'),
                 isSelected: _selectedEnglish,
                 onTap: () => _selectLanguage(true),
               ),
@@ -103,7 +103,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               // Roman Urdu Option
               _buildLanguageCard(
                 title: AppStrings.get('language_urdu'),
-                subtitle: 'Roman Urdu mein',
+                subtitle: AppStrings.get('onboarding_lang_ur_desc'),
                 isSelected: !_selectedEnglish,
                 onTap: () => _selectLanguage(false),
               ),
@@ -124,7 +124,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     ),
                   ),
                   child: Text(
-                    _selectedEnglish ? 'Continue' : 'Aagay Barho',
+                    _selectedEnglish ? AppStrings.get('lang_select_continue_en') : AppStrings.get('lang_select_continue_ur'),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

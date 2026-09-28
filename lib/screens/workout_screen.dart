@@ -213,7 +213,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    todayInfo['day'] ?? 'Today',
+                    todayInfo['day'] ?? AppStrings.get('workout_today'),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.white.withValues(alpha: 0.7),
@@ -224,7 +224,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isRestDay ? AppStrings.get('workout_rest') : todayInfo['type'] ?? 'Workout',
+                    isRestDay ? AppStrings.get('workout_rest') : todayInfo['type'] ?? AppStrings.get('workout_fallback_type'),
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -236,8 +236,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   const SizedBox(height: 4),
                   Text(
                     isRestDay
-                        ? 'Recovery & stretch karo aaj'
-                        : 'AI will generate your workout plan',
+                        ? AppStrings.get('workout_rest_subtitle')
+                        : AppStrings.get('workout_ai_subtitle'),
                     style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -537,7 +537,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'All muscles covered in one session',
+                    AppStrings.get('workout_full_desc'),
                     style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -575,7 +575,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 if (hasData)
                   ...snapshot.data!.docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
-                    final name = data['name'] ?? 'My Workout';
+                    final name = data['name'] ?? AppStrings.get('workout_my_workout_fallback');
                     final exerciseCount = (data['exercises'] as List?)?.length ?? 0;
 
                     return Container(
@@ -717,7 +717,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                       Icon(Icons.library_books, color: FitGenieTheme.muted, size: 18),
                       const SizedBox(width: 6),
                       Text(
-                        'View All',
+                        AppStrings.get('workout_view_all'),
                         style: TextStyle(
                           color: FitGenieTheme.muted,
                           fontWeight: FontWeight.bold,
@@ -780,22 +780,22 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         return Column(
           children: snapshot.data!.docs.map((doc) {
             final data = doc.data() as Map<String, dynamic>;
-            final type = data['type'] ?? 'Workout';
+            final type = data['type'] ?? AppStrings.get('workout_fallback_type');
             final sets = data['totalSets'] ?? 0;
             final duration = data['duration'] ?? 0;
             final status = data['status'] ?? 'completed';
             final startedAt = data['startedAt'] as Timestamp?;
 
-            String dateStr = 'Recently';
+            String dateStr = AppStrings.get('workout_recently');
             if (startedAt != null) {
               final date = startedAt.toDate();
               final diff = DateTime.now().difference(date);
               if (diff.inDays == 0) {
-                dateStr = 'Today';
+                dateStr = AppStrings.get('workout_today');
               } else if (diff.inDays == 1) {
-                dateStr = 'Yesterday';
+                dateStr = AppStrings.get('workout_yesterday');
               } else if (diff.inDays < 7) {
-                dateStr = '${diff.inDays} days ago';
+                dateStr = AppStrings.get('workout_days_ago', params: {'days': '${diff.inDays}'});
               } else {
                 dateStr = '${date.day}/${date.month}/${date.year}';
               }
@@ -968,7 +968,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _workoutPlan = 'Could not generate plan. Start manually! 💪';
+          _workoutPlan = AppStrings.get('workout_plan_fallback');
           _isLoading = false;
         });
       }
@@ -1250,7 +1250,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         exerciseNameFallback: exercise.name,
         initialWeight: startWeight,
         initialReps: startReps,
-        setLabel: 'Set $currentSet of $totalSets',
+        setLabel: AppStrings.get('workout_set_label', params: {'current': '$currentSet', 'total': '$totalSets'}),
         onSetLogged: (weight, reps, durationSeconds, toFailure) async{
           await _logSet(exercise.name, weight, int.tryParse(reps) ?? 12);
         },
@@ -1300,8 +1300,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _completionStat('💪', '${_loggedSets.length}', 'Sets'),
-                  _completionStat('⏱️', '$duration', 'Minutes'),
+                  _completionStat('💪', '${_loggedSets.length}', AppStrings.get('workout_stat_sets')),
+                  _completionStat('⏱️', '$duration', AppStrings.get('workout_stat_minutes')),
                 ],
               ),
             ],

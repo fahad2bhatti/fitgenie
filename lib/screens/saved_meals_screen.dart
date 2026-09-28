@@ -215,10 +215,10 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                                   _confirmDelete(meal);
                                 }
                               },
-                              itemBuilder: (context) => const [
+                              itemBuilder: (context) => [
                                 PopupMenuItem(
                                   value: 'delete',
-                                  child: Text('Delete'),
+                                  child: Text(AppStrings.get('delete')),
                                 ),
                               ],
                               child: const Icon(Icons.more_vert,

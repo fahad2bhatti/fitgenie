@@ -249,7 +249,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                   itemBuilder: (context, index) {
                     final doc = docs[index];
                     final data = doc.data() as Map<String, dynamic>;
-                    final name = data['name'] ?? 'My Workout';
+                    final name = data['name'] ?? AppStrings.get('workout_my_workout_fallback');
                     final bodyPart = data['bodyPart'] ?? 'Mixed';
                     final exercises =
                     (data['exercises'] as List<dynamic>? ?? []);
@@ -322,7 +322,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      map['name'] ?? 'Exercise',
+                                      map['name'] ?? AppStrings.get('library_exercise_fallback'),
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: FitGenieTheme.muted,
@@ -603,7 +603,7 @@ class _CustomWorkoutBuilderScreenState
       return;
     }
     if (_selectedExercises.isEmpty) {
-      AppSnackbar.showWarning(context, 'At least 1 exercise select karo');
+      AppSnackbar.showWarning(context, AppStrings.get('library_min_exercise'));
       return;
     }
 
@@ -633,8 +633,8 @@ class _CustomWorkoutBuilderScreenState
       AppSnackbar.showSuccess(
         context,
         _isEditing
-            ? 'Workout updated successfully ✅'
-            : 'Workout saved successfully ✅',
+            ? AppStrings.get('library_update_success')
+            : AppStrings.get('library_save_success'),
       );
       Navigator.pop(context);
     }
@@ -734,7 +734,7 @@ class _CustomWorkoutBuilderScreenState
                   controller: repsController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Example: 12 or 45 sec',
+                    hintText: AppStrings.get('library_reps_hint'),
                     hintStyle: TextStyle(color: FitGenieTheme.muted),
                     filled: true,
                     fillColor: FitGenieTheme.background,
@@ -959,7 +959,7 @@ class _CustomWorkoutBuilderScreenState
                         children: [
                           Expanded(
                             child: Text(
-                              item['name'] ?? 'Exercise',
+                              item['name'] ?? AppStrings.get('library_exercise_fallback'),
                               style: const TextStyle(fontSize: 13),
                             ),
                           ),
@@ -1212,7 +1212,7 @@ class _CustomWorkoutSessionScreenState
     int targetCount = 1;
 
     for (final ex in widget.exercises) {
-      final name = (ex['name'] ?? 'Exercise').toString();
+      final name = (ex['name'] ?? AppStrings.get('library_exercise_fallback')).toString();
       final target = (ex['sets'] ?? 1) as int;
       final done = _loggedSets.where((s) => s['exercise'] == name).length;
       if (done < target) {
@@ -1241,13 +1241,13 @@ class _CustomWorkoutSessionScreenState
       builder: (context) => ActiveSetSheet(
         exercise: exerciseObj,
         exerciseNameFallback:
-        (nextExercise!['name'] ?? 'Exercise').toString(),
+        (nextExercise!['name'] ?? AppStrings.get('library_exercise_fallback')).toString(),
         initialWeight: lastWeight,
         initialReps: (nextExercise['reps'] ?? '12').toString(),
-        setLabel: 'Set ${doneCount + 1} of $targetCount',
+        setLabel: AppStrings.get('workout_set_label', params: {'current': '${doneCount + 1}', 'total': '$targetCount'}),
         onSetLogged: (weight, reps, durationSeconds, toFailure)  async{
           await _logSet(
-            (nextExercise!['name'] ?? 'Exercise').toString(),
+            (nextExercise!['name'] ?? AppStrings.get('library_exercise_fallback')).toString(),
             weight,
             reps,
           );
@@ -1431,9 +1431,9 @@ class _CustomWorkoutSessionScreenState
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Workout Progress',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Text(
+                    AppStrings.get('library_workout_progress'),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1527,7 +1527,7 @@ class _CustomWorkoutSessionScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item['name'] ?? 'Exercise',
+                              item['name'] ?? AppStrings.get('library_exercise_fallback'),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,

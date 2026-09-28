@@ -318,8 +318,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      '📊 Weekly Report',
+                    Text(
+                      AppStrings.get('progress_title'),
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -327,7 +327,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                       ),
                     ),
                     Text(
-                      'Track your fitness journey',
+                      AppStrings.get('progress_sub'),
                       style: TextStyle(
                         fontSize: 14,
                         color: FitGenieTheme.muted,
@@ -389,8 +389,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     children: [
                       Icon(Icons.bar_chart, color: FitGenieTheme.primary, size: 20),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Workouts This Week',
+                      Text(
+                        AppStrings.get('progress_workouts'),
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const Spacer(),
@@ -478,8 +478,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     children: [
                       Icon(Icons.local_fire_department, color: FitGenieTheme.hot, size: 20),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Calories This Week',
+                      Text(
+                        AppStrings.get('progress_calories'),
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const Spacer(),
@@ -590,8 +590,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     children: [
                       Icon(Icons.restaurant, color: FitGenieTheme.teal, size: 20),
                       const SizedBox(width: 8),
-                      const Text(
-                        'Protein This Week',
+                      Text(
+                        AppStrings.get('progress_protein'),
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const Spacer(),
@@ -716,8 +716,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         children: [
                           Icon(Icons.monitor_weight, color: FitGenieTheme.teal, size: 20),
                           const SizedBox(width: 8),
-                          const Text(
-                            'Weight Trend',
+                          Text(
+                            AppStrings.get('progress_weight'),
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
@@ -780,8 +780,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         children: [
                           Icon(Icons.smart_toy, color: Colors.purple, size: 20),
                           const SizedBox(width: 8),
-                          const Text(
-                            'AI Insights',
+                          Text(
+                            AppStrings.get('progress_insight'),
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
@@ -810,7 +810,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           Icon(Icons.lightbulb_outline, size: 40, color: Colors.purple.withValues(alpha: 0.5)),
                           const SizedBox(height: 8),
                           Text(
-                            'Tap "Get Insight" for AI analysis',
+                            AppStrings.get('progress_tap_insight'),
                             style: TextStyle(color: FitGenieTheme.muted),
                           ),
                         ],
@@ -838,8 +838,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    '🏆 All Time Stats',
+                  Text(
+                    AppStrings.get('progress_stats'),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 16),
@@ -1080,13 +1080,13 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         ),
         child: Column(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('🏆', style: TextStyle(fontSize: 24)),
-                SizedBox(width: 8),
+                const Text('🏆', style: TextStyle(fontSize: 24)),
+                const SizedBox(width: 8),
                 Text(
-                  'Best Day This Week!',
+                  AppStrings.get('progress_best'),
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 16,
@@ -1152,8 +1152,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '📋 Daily Breakdown',
+          Text(
+            AppStrings.get('progress_daily_breakdown'),
             style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
           ),
           const SizedBox(height: 14),
@@ -1196,8 +1196,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                                 color: FitGenieTheme.primary,
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Text(
-                                'TODAY',
+                              child: Text(
+                                AppStrings.get('progress_today'),
                                 style: TextStyle(
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,

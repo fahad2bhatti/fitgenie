@@ -80,31 +80,31 @@ class _ShellScreenState extends State<ShellScreen> {
           selectedFontSize: 12,
           unselectedFontSize: 11,
           elevation: 0,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Home',
+              icon: const Icon(Icons.home_outlined),
+              activeIcon: const Icon(Icons.home),
+              label: AppStrings.get('shell_nav_home'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.restaurant_outlined),
-              activeIcon: Icon(Icons.restaurant),
-              label: 'Nutrition',
+              icon: const Icon(Icons.restaurant_outlined),
+              activeIcon: const Icon(Icons.restaurant),
+              label: AppStrings.get('shell_nav_nutrition'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.fitness_center_outlined),
-              activeIcon: Icon(Icons.fitness_center),
-              label: 'Workout',
+              icon: const Icon(Icons.fitness_center_outlined),
+              activeIcon: const Icon(Icons.fitness_center),
+              label: AppStrings.get('shell_nav_workout'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.trending_up_outlined),
-              activeIcon: Icon(Icons.trending_up),
-              label: 'Progress',
+              icon: const Icon(Icons.trending_up_outlined),
+              activeIcon: const Icon(Icons.trending_up),
+              label: AppStrings.get('shell_nav_progress'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Profile',
+              icon: const Icon(Icons.person_outline),
+              activeIcon: const Icon(Icons.person),
+              label: AppStrings.get('shell_nav_profile'),
             ),
           ],
         ),
@@ -175,7 +175,7 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
   }
 
   void _addWelcomeMessage() {
-    final name = widget.userName.isNotEmpty ? widget.userName : 'Champ';
+    final name = widget.userName.isNotEmpty ? widget.userName : AppStrings.get('shell_champ_fallback');
     _messages.add(_ChatMessage(
       text: AppStrings.get('chat_welcome', params: {'name': name}),
       isUser: false,
@@ -324,8 +324,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'FitGenie AI Coach',
+                Text(
+                  AppStrings.get('shell_ai_coach_title'),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -363,13 +363,13 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
         // Info Button
         IconButton(
           icon: const Icon(Icons.info_outline, color: Colors.white70, size: 22),
-          tooltip: 'About AI Coach',
+          tooltip: AppStrings.get('shell_about_ai_coach'),
           onPressed: _showAboutDialog,
         ),
         // Clear Chat Button
         IconButton(
           icon: const Icon(Icons.delete_outline, color: Colors.white70, size: 22),
-          tooltip: 'Clear Chat',
+          tooltip: AppStrings.get('shell_clear_chat'),
           onPressed: _showClearChatDialog,
         ),
       ],

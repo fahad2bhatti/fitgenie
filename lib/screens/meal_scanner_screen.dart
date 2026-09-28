@@ -419,7 +419,7 @@ class _MealScannerScreenState extends State<MealScannerScreen>
           ),
           const SizedBox(height: 6),
           Text(
-            'Camera se click karo ya gallery se pick karo',
+            AppStrings.get('scanner_camera_gallery_hint'),
             style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
             textAlign: TextAlign.center,
           ),

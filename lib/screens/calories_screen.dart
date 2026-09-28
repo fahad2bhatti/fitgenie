@@ -1063,13 +1063,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                       color: Colors.amber.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.bookmark_add_outlined, size: 14, color: Colors.amber),
-                        SizedBox(width: 4),
+                        const Icon(Icons.bookmark_add_outlined, size: 14, color: Colors.amber),
+                        const SizedBox(width: 4),
                         Text(
-                          'Save',
+                          AppStrings.get('save'),
                           style: TextStyle(
                             color: Colors.amber,
                             fontSize: 11,
