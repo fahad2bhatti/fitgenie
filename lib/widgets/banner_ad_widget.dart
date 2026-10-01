@@ -12,16 +12,44 @@ class BannerAdWidget extends StatefulWidget {
 class _BannerAdWidgetState extends State<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
+  int _retries = 0;
+  static const _maxRetries = 3;
 
   @override
   void initState() {
     super.initState();
-    _bannerAd = AdsService.instance.createBannerAd(
-      size: AdSize.banner, // fixed 320x50 — small, standard size
-      onLoaded: (ad) {
-        if (mounted) setState(() => _isLoaded = true);
-      },
-    );
+    _load();
+  }
+
+  void _load() {
+    _bannerAd?.dispose();
+    _isLoaded = false;
+
+    _bannerAd = BannerAd(
+      adUnitId: AdsService.instance.bannerAdUnitId,
+      size: AdSize.banner, // 320x50
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() => _isLoaded = true);
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('Banner failed: $error');
+          ad.dispose();
+          if (identical(_bannerAd, ad)) _bannerAd = null;
+          if (mounted && _retries < _maxRetries) {
+            _retries++;
+            Future.delayed(Duration(seconds: 30 * _retries), () {
+              if (mounted) _load();
+            });
+          }
+        },
+      ),
+    )..load();
   }
 
   @override
@@ -34,7 +62,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: AdSize.banner.height.toDouble(), // 50dp reserved always
+      height: AdSize.banner.height.toDouble(),
       child: (_isLoaded && _bannerAd != null)
           ? AdWidget(ad: _bannerAd!)
           : const SizedBox.shrink(),

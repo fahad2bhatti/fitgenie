@@ -8,18 +8,16 @@ class AdsService {
 
   static Future<void> initialize() async {
     final completer = Completer<void>();
-    final params = ConsentRequestParameters(tagForUnderAgeOfConsent: false);
 
     ConsentInformation.instance.requestConsentInfoUpdate(
-      params,
-      () async {
-        if (await ConsentInformation.instance.isConsentFormAvailable()) {
-          ConsentForm.loadAndShowConsentFormIfRequired((formError) {
-            if (!completer.isCompleted) completer.complete();
-          });
-        } else {
+      ConsentRequestParameters(tagForUnderAgeOfConsent: false),
+      () {
+        ConsentForm.loadAndShowConsentFormIfRequired((formError) {
+          if (formError != null) {
+            debugPrint('UMP form error: ${formError.message}');
+          }
           if (!completer.isCompleted) completer.complete();
-        }
+        });
       },
       (FormError error) {
         debugPrint('UMP consent error: ${error.message}');
@@ -28,7 +26,10 @@ class AdsService {
     );
 
     await completer.future;
-    await MobileAds.instance.initialize();
+
+    if (await ConsentInformation.instance.canRequestAds()) {
+      await MobileAds.instance.initialize();
+    }
   }
 
   bool get _testMode => kDebugMode;
