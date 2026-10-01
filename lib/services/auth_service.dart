@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
+import '../core/app_strings.dart';
 
 // ═══════════════════════════════════════════
 // 📦 AUTH RESULT CLASS
@@ -89,19 +90,19 @@ class AuthService {
   }
 
   String? _validatePassword(String password) {
-    if (password.isEmpty) return 'Please enter your password.';
-    if (password.length < 8) return 'Password must be at least 8 characters.';
-    if (!password.contains(RegExp(r'[A-Z]'))) return 'Password must contain at least one uppercase letter (A-Z).';
-    if (!password.contains(RegExp(r'[a-z]'))) return 'Password must contain at least one lowercase letter (a-z).';
-    if (!password.contains(RegExp(r'[0-9]'))) return 'Password must contain at least one number (0-9).';
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]'))) return 'Password must contain at least one special character (!@#\$%^&*).';
+    if (password.isEmpty) return AppStrings.get('authsvc_enter_password');
+    if (password.length < 8) return AppStrings.get('authsvc_pw_min');
+    if (!password.contains(RegExp(r'[A-Z]'))) return AppStrings.get('authsvc_pw_upper');
+    if (!password.contains(RegExp(r'[a-z]'))) return AppStrings.get('authsvc_pw_lower');
+    if (!password.contains(RegExp(r'[0-9]'))) return AppStrings.get('authsvc_pw_number');
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]'))) return AppStrings.get('authsvc_pw_special');
     return null;
   }
 
   String? _validateName(String name) {
-    if (name.trim().isEmpty) return 'Please enter your name.';
-    if (name.trim().length < 2) return 'Name must be at least 2 characters.';
-    if (name.trim().length > 50) return 'Name is too long (max 50 characters).';
+    if (name.trim().isEmpty) return AppStrings.get('authsvc_enter_name');
+    if (name.trim().length < 2) return AppStrings.get('authsvc_name_short');
+    if (name.trim().length > 50) return AppStrings.get('authsvc_name_long');
     return null;
   }
 
@@ -111,7 +112,7 @@ class AuthService {
   String? _checkBruteForce() {
     if (_lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!)) {
       final remaining = _lockoutUntil!.difference(DateTime.now()).inSeconds;
-      return 'Too many attempts. Please try again in $remaining seconds.';
+      return AppStrings.get('authsvc_too_many_attempts', params: {'seconds': '$remaining'});
     }
     return null;
   }
@@ -136,13 +137,13 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> signInWithGoogle() async {
 
-      try {
-        // Sirf agar already signed in ho tab signOut karo
-        if (await _googleSignIn.isSignedIn()) {
-          await _googleSignIn.disconnect(); // Firebase affect nahi hoga
-        }
+    try {
+      // Sirf agar already signed in ho tab signOut karo
+      if (await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.disconnect(); // Firebase affect nahi hoga
+      }
 
-        debugPrint('🔄 Starting Google Sign-in...');
+      debugPrint('🔄 Starting Google Sign-in...');
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
@@ -150,7 +151,7 @@ class AuthService {
         debugPrint('❌ Google Sign-in cancelled by user');
         return AuthResult(
           success: false,
-          message: 'Google Sign-in was cancelled.',
+          message: AppStrings.get('authsvc_google_cancelled'),
         );
       }
 
@@ -173,14 +174,14 @@ class AuthService {
 
         return AuthResult(
           success: true,
-          message: 'Welcome ${user.displayName ?? 'User'}! 🎉',
+          message: AppStrings.get('authsvc_welcome_user', params: {'name': user.displayName ?? 'User'}),
           user: user,
         );
       }
 
       return AuthResult(
         success: false,
-        message: 'Google Sign-in failed. Please try again.',
+        message: AppStrings.get('authsvc_google_failed'),
       );
     } on FirebaseAuthException catch (e) {
       debugPrint('❌ FirebaseAuthException: ${e.code} - ${e.message}');
@@ -192,7 +193,7 @@ class AuthService {
       debugPrint('❌ Google Sign-in error: $e');
       return AuthResult(
         success: false,
-        message: 'Google Sign-in failed. Please check your internet connection.',
+        message: AppStrings.get('authsvc_google_failed_net'),
       );
     }
   }
@@ -252,9 +253,9 @@ class AuthService {
 
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty) return AuthResult(success: false, message: 'Please enter your email.');
-      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
-      if (password.isEmpty) return AuthResult(success: false, message: 'Please enter your password.');
+      if (cleanEmail.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_email'));
+      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
+      if (password.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_password'));
 
       debugPrint('🔄 Attempting login for: $cleanEmail');
 
@@ -273,7 +274,7 @@ class AuthService {
 
       return AuthResult(
         success: true,
-        message: 'Welcome back! 🎉',
+        message: AppStrings.get('authsvc_welcome_back'),
         user: user,
       );
     } on FirebaseAuthException catch (e) {
@@ -283,7 +284,7 @@ class AuthService {
     } catch (e) {
       debugPrint('❌ Unknown error: $e');
       _recordFailedAttempt();
-      return AuthResult(success: false, message: 'Something went wrong. Please check your internet connection.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_generic_net'));
     }
   }
 
@@ -303,14 +304,14 @@ class AuthService {
       final nameError = _validateName(cleanName);
       if (nameError != null) return AuthResult(success: false, message: nameError);
 
-      if (cleanEmail.isEmpty) return AuthResult(success: false, message: 'Please enter your email.');
-      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
+      if (cleanEmail.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_email'));
+      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
 
       final passwordError = _validatePassword(password);
       if (passwordError != null) return AuthResult(success: false, message: passwordError);
 
       if (confirmPassword != null && password != confirmPassword) {
-        return AuthResult(success: false, message: 'Passwords do not match.');
+        return AuthResult(success: false, message: AppStrings.get('authsvc_pw_mismatch'));
       }
 
       debugPrint('🔄 Attempting signup for: $cleanEmail');
@@ -330,18 +331,18 @@ class AuthService {
 
         return AuthResult(
           success: true,
-          message: 'Account created! Please verify your email. 🎉',
+          message: AppStrings.get('authsvc_signup_ok'),
           user: user,
         );
       }
 
-      return AuthResult(success: false, message: 'Signup failed. Please try again.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_signup_failed'));
     } on FirebaseAuthException catch (e) {
       debugPrint('❌ FirebaseAuthException: ${e.code}');
       return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
       debugPrint('❌ Unknown error: $e');
-      return AuthResult(success: false, message: 'Something went wrong. Please check your internet connection.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_generic_net'));
     }
   }
 
@@ -369,19 +370,19 @@ class AuthService {
     try {
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty) return AuthResult(success: false, message: 'Please enter your email.');
-      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
+      if (cleanEmail.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_email'));
+      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
 
       await _auth.sendPasswordResetEmail(email: cleanEmail);
 
       return AuthResult(
         success: true,
-        message: 'Password reset link has been sent to your email! 📧',
+        message: AppStrings.get('authsvc_reset_sent'),
       );
     } on FirebaseAuthException catch (e) {
       return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
-      return AuthResult(success: false, message: 'Something went wrong. Please try again.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_generic_retry'));
     }
   }
 
@@ -447,7 +448,7 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateUserName(String name) async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
+    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     final cleanName = _sanitizeName(name);
     final nameError = _validateName(cleanName);
@@ -456,9 +457,9 @@ class AuthService {
     try {
       await user.updateDisplayName(cleanName);
       await _firestore.collection('users').doc(user.uid).update({'name': cleanName});
-      return AuthResult(success: true, message: 'Name updated successfully! ✅');
+      return AuthResult(success: true, message: AppStrings.get('authsvc_name_updated'));
     } catch (e) {
-      return AuthResult(success: false, message: 'Failed to update name. Please try again.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_name_update_failed'));
     }
   }
 
@@ -467,16 +468,16 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateEmail(String newEmail) async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
+    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     final cleanEmail = _sanitizeEmail(newEmail);
-    if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: 'Please enter a valid email address.');
+    if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
 
     try {
       await user.verifyBeforeUpdateEmail(cleanEmail);
-      return AuthResult(success: true, message: 'Verification email sent. Please check your inbox! 📧');
+      return AuthResult(success: true, message: AppStrings.get('authsvc_verify_sent'));
     } catch (e) {
-      return AuthResult(success: false, message: 'Failed to update email. Please try again.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_email_update_failed'));
     }
   }
 
@@ -485,16 +486,16 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updatePassword(String newPassword) async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
+    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     final passwordError = _validatePassword(newPassword);
     if (passwordError != null) return AuthResult(success: false, message: passwordError);
 
     try {
       await user.updatePassword(newPassword);
-      return AuthResult(success: true, message: 'Password updated successfully! 🔐');
+      return AuthResult(success: true, message: AppStrings.get('authsvc_pw_updated'));
     } catch (e) {
-      return AuthResult(success: false, message: 'Failed to update password. Please log in again and retry.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_pw_update_failed'));
     }
   }
 
@@ -503,14 +504,14 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> deleteAccount() async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: 'User is not logged in.');
+    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     try {
       await _firestore.collection('users').doc(user.uid).delete();
       await user.delete();
-      return AuthResult(success: true, message: 'Account deleted successfully.');
+      return AuthResult(success: true, message: AppStrings.get('authsvc_deleted'));
     } catch (e) {
-      return AuthResult(success: false, message: 'Failed to delete account. Please log in again and retry.');
+      return AuthResult(success: false, message: AppStrings.get('authsvc_delete_failed'));
     }
   }
 
@@ -520,30 +521,29 @@ class AuthService {
   String _getFirebaseErrorMessage(String code) {
     switch (code) {
       case 'email-already-in-use':
-        return 'This email is already registered. Please sign in instead.';
+        return AppStrings.get('authsvc_err_email_in_use');
       case 'invalid-email':
-        return 'The email address is not valid.';
+        return AppStrings.get('authsvc_err_invalid_email');
       case 'weak-password':
-        return 'Password is too weak. Please choose a stronger password.';
+        return AppStrings.get('authsvc_err_weak_pw');
       case 'user-not-found':
-        return 'No account found with this email address.';
+        return AppStrings.get('authsvc_err_no_user');
       case 'wrong-password':
-        return 'Incorrect password. Please try again.';
+        return AppStrings.get('authsvc_err_wrong_pw');
       case 'invalid-credential':
-        return 'Incorrect email or password. Please try again.';
+        return AppStrings.get('authsvc_err_bad_cred');
       case 'user-disabled':
-        return 'This account has been disabled. Please contact support.';
+        return AppStrings.get('authsvc_err_disabled');
       case 'too-many-requests':
-        return 'Too many attempts. Please wait a moment and try again.';
+        return AppStrings.get('authsvc_err_too_many');
       case 'network-request-failed':
-        return 'Network error. Please check your internet connection.';
+        return AppStrings.get('authsvc_err_network');
       case 'requires-recent-login':
-        return 'Please log in again to complete this action.';
+        return AppStrings.get('authsvc_err_recent_login');
       case 'operation-not-allowed':
-        return 'This sign-in method is not enabled. Please contact support.';
+        return AppStrings.get('authsvc_err_not_allowed');
       default:
-        return 'Something went wrong. Please try again.';
+        return AppStrings.get('authsvc_generic_retry');
     }
   }
 }
-

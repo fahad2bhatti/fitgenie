@@ -6,8 +6,8 @@
 // AND food/nutrition (AI meal scanner, calorie/macro estimates).
 //
 // Usage:
-// 1) MedicalDisclaimerDialog ? show ONCE during onboarding (blocking, must accept).
-// 2) MedicalDisclaimerBanner ? small persistent reminder on AI Coach chat screen
+// 1) MedicalDisclaimerDialog → show ONCE during onboarding (blocking, must accept).
+// 2) MedicalDisclaimerBanner → small persistent reminder on AI Coach chat screen
 //    and/or Dashboard (non-blocking).
 
 import 'dart:ui';
@@ -85,7 +85,7 @@ void showWorkoutInjuryWarningIfNeeded(BuildContext context) {
 }
 
 /// Blocking dialog shown once during onboarding.
-/// User must tap "I Understand & Agree" to proceed ? cannot be dismissed
+/// User must tap "I Understand & Agree" to proceed → cannot be dismissed
 /// by tapping outside or back button.
 class MedicalDisclaimerDialog extends StatelessWidget {
   const MedicalDisclaimerDialog({super.key});
@@ -135,10 +135,10 @@ class MedicalDisclaimerDialog extends StatelessWidget {
                       const Icon(Icons.health_and_safety_outlined,
                           color: FitGenieTheme.primary, size: 28),
                       const SizedBox(width: 10),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Health & Nutrition Disclaimer',
-                          style: TextStyle(
+                          AppStrings.get('disclaimer_title'),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: FitGenieTheme.text,
@@ -158,22 +158,7 @@ class MedicalDisclaimerDialog extends StatelessWidget {
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.only(right: 8),
                         child: Text(
-                          'FitGenie provides general fitness and nutrition guidance '
-                              'for informational purposes only. It is not medical or '
-                              'dietary advice and is not a substitute for professional '
-                              'diagnosis or treatment.\n\n'
-                              'Calorie, macro, and nutrition data — including AI Meal '
-                              'Scanner results and food search estimates — are '
-                              'AI-generated or database-sourced estimates and may not '
-                              'be fully accurate. FitGenie does not verify allergen '
-                              'information; if you have food allergies or '
-                              'intolerances, always check ingredients yourself before '
-                              'eating.\n\n'
-                              'Please consult a qualified healthcare professional or '
-                              'registered dietitian before starting any new workout '
-                              'or nutrition program, especially if you have any '
-                              'existing medical condition, food allergy, or are '
-                              'pregnant.',
+                          AppStrings.get('disclaimer_body'),
                           style: TextStyle(
                             fontSize: 14,
                             height: 1.5,
@@ -201,9 +186,9 @@ class MedicalDisclaimerDialog extends StatelessWidget {
                         await _markDisclaimerAccepted();
                         if (context.mounted) Navigator.of(context).pop();
                       },
-                      child: const Text(
-                        'I Understand & Agree',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      child: Text(
+                        AppStrings.get('disclaimer_agree'),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -247,8 +232,7 @@ class MedicalDisclaimerBanner extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'For informational purposes only. Not a substitute for '
-                  'professional medical or dietary advice.',
+              AppStrings.get('disclaimer_banner'),
               style: TextStyle(
                 fontSize: compact ? 11 : 12,
                 color: FitGenieTheme.muted,
@@ -260,5 +244,3 @@ class MedicalDisclaimerBanner extends StatelessWidget {
     );
   }
 }
-
-

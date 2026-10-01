@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:permission_handler/permission_handler.dart';
+import '../core/app_strings.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -15,19 +16,11 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notifications =
   FlutterLocalNotificationsPlugin();
 
-  // Motivation Quotes
-  final List<String> _motivationQuotes = [
-    "The only bad workout is the one that didn't happen! 💪",
-    "Your body can do it. It's your mind you need to convince! 🧠",
-    "Sore today, strong tomorrow! 🔥",
-    "Don't stop when you're tired. Stop when you're done! 🏆",
-    "Fitness is not about being better than someone else. It's about being better than you used to be! ⭐",
-    "The pain you feel today will be the strength you feel tomorrow! 💥",
-    "Push yourself because no one else is going to do it for you! 🚀",
-    "Success starts with self-discipline! 🎯",
-    "Make yourself proud! 👏",
-    "Believe in yourself and all that you are! ✨",
-  ];
+  // Motivation quotes live in AppStrings as push_quote_1 .. push_quote_10
+  // (English + Roman Urdu). Each day gets a DIFFERENT quote.
+  static const int _quoteCount = 10;
+  static const int _motivationBaseId = 100; // IDs 100 .. 100+_motivationDays-1
+  static const int _motivationDays = 30;    // pre-schedule 30 days ahead
 
   // ============ INITIALIZE ============
   Future<void> initialize() async {
@@ -113,13 +106,13 @@ class NotificationService {
     // 1. Morning Workout Reminder - 7:00 AM
     await _scheduleDailyNotification(
       id: 1,
-      title: '💪 Morning Workout Time!',
-      body: 'Good morning! Time to crush your workout!',
+      title: AppStrings.get('push_morning_title'),
+      body: AppStrings.get('push_morning_body'),
       hour: 7,
       minute: 0,
       channelId: 'workout_reminder',
-      channelName: 'Workout Reminders',
-      channelDescription: 'Daily workout reminders',
+      channelName: AppStrings.get('push_workout_channel'),
+      channelDescription: AppStrings.get('push_workout_channel_desc'),
     );
 
     // 2. Water Reminders - Every 2 hours (9 AM to 9 PM)
@@ -128,37 +121,28 @@ class NotificationService {
     // 3. Lunch Calorie Log - 2:00 PM
     await _scheduleDailyNotification(
       id: 20,
-      title: '🍽️ Log Your Lunch!',
-      body: "Don't forget to log your lunch calories!",
+      title: AppStrings.get('push_lunch_title'),
+      body: AppStrings.get('push_lunch_body'),
       hour: 14,
       minute: 0,
       channelId: 'calorie_reminder',
-      channelName: 'Calorie Reminders',
-      channelDescription: 'Reminders to log your meals',
+      channelName: AppStrings.get('push_calorie_channel'),
+      channelDescription: AppStrings.get('push_calorie_channel_desc'),
     );
 
     // 4. Daily Motivation - 6:00 PM
-    await _scheduleDailyNotification(
-      id: 21,
-      title: '🔥 Daily Motivation',
-      body: _getRandomMotivationQuote(),
-      hour: 18,
-      minute: 0,
-      channelId: 'motivation',
-      channelName: 'Daily Motivation',
-      channelDescription: 'Daily motivational quotes',
-    );
+    await _scheduleMotivationNotifications(hour: 18, minute: 0);
 
     // 5. Evening Calorie Reminder - 8:00 PM
     await _scheduleDailyNotification(
       id: 22,
-      title: '🌙 Evening Check-in',
-      body: 'Log your dinner & complete today\'s tracking! 📊',
+      title: AppStrings.get('push_evening_title'),
+      body: AppStrings.get('push_evening_body'),
       hour: 20,
       minute: 0,
       channelId: 'calorie_reminder',
-      channelName: 'Calorie Reminders',
-      channelDescription: 'Reminders to log your meals',
+      channelName: AppStrings.get('push_calorie_channel'),
+      channelDescription: AppStrings.get('push_calorie_channel_desc'),
     );
 
     debugPrint('✅ All notifications scheduled successfully!');
@@ -172,13 +156,39 @@ class NotificationService {
     for (int i = 0; i < waterTimes.length; i++) {
       await _scheduleDailyNotification(
         id: 10 + i, // IDs: 10, 11, 12, 13, 14, 15, 16
-        title: '💧 Stay Hydrated!',
-        body: 'Time to drink a glass of water!',
+        title: AppStrings.get('push_water_title'),
+        body: AppStrings.get('push_water_body'),
         hour: waterTimes[i],
         minute: 0,
         channelId: 'water_reminder',
-        channelName: 'Water Reminders',
-        channelDescription: 'Reminders to drink water',
+        channelName: AppStrings.get('push_water_channel'),
+        channelDescription: AppStrings.get('push_water_channel_desc'),
+      );
+    }
+  }
+
+  // ============ SCHEDULE MOTIVATION (NEW QUOTE EVERY DAY) ============
+  Future<void> _scheduleMotivationNotifications({
+    required int hour,
+    required int minute,
+  }) async {
+    // Random starting point so users don't always begin with quote #1,
+    // then walk through all quotes in order (no repeats until all 10 are used).
+    final start = Random().nextInt(_quoteCount);
+
+    for (int i = 0; i < _motivationDays; i++) {
+      final quoteNo = ((start + i) % _quoteCount) + 1;
+      await _scheduleDailyNotification(
+        id: _motivationBaseId + i,
+        title: AppStrings.get('push_motivation_title'),
+        body: AppStrings.get('push_quote_$quoteNo'),
+        hour: hour,
+        minute: minute,
+        channelId: 'motivation',
+        channelName: AppStrings.get('push_motivation_channel'),
+        channelDescription: AppStrings.get('push_motivation_channel_desc'),
+        repeatDaily: false,
+        dayOffset: i,
       );
     }
   }
@@ -193,6 +203,8 @@ class NotificationService {
     required String channelId,
     required String channelName,
     required String channelDescription,
+    bool repeatDaily = true,
+    int dayOffset = 0,
   }) async {
     try {
       final now = tz.TZDateTime.now(tz.local);
@@ -205,9 +217,15 @@ class NotificationService {
         minute,
       );
 
-      // If time has passed today, schedule for tomorrow
-      if (scheduledDate.isBefore(now)) {
-        scheduledDate = scheduledDate.add(const Duration(days: 1));
+      if (repeatDaily) {
+        // If time has passed today, schedule for tomorrow
+        if (scheduledDate.isBefore(now)) {
+          scheduledDate = scheduledDate.add(const Duration(days: 1));
+        }
+      } else {
+        // One-off notification on a specific day (today + dayOffset)
+        scheduledDate = scheduledDate.add(Duration(days: dayOffset));
+        if (scheduledDate.isBefore(now)) return; // today's slot already passed
       }
 
       await _notifications.zonedSchedule(
@@ -223,7 +241,8 @@ class NotificationService {
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time, // Repeat daily
+        matchDateTimeComponents:
+        repeatDaily ? DateTimeComponents.time : null, // Repeat daily or one-off
       );
 
       debugPrint('📅 Scheduled: $title at $hour:$minute');
@@ -243,8 +262,8 @@ class NotificationService {
       body,
       _getNotificationDetails(
         channelId: 'instant',
-        channelName: 'Instant Notifications',
-        channelDescription: 'Instant notifications',
+        channelName: AppStrings.get('push_instant_channel'),
+        channelDescription: AppStrings.get('push_instant_channel_desc'),
       ),
     );
   }
@@ -252,23 +271,17 @@ class NotificationService {
   // ============ SHOW GOAL ACHIEVED NOTIFICATION ============
   Future<void> showGoalAchievedNotification(String goalName) async {
     await showInstantNotification(
-      title: '🎉 Goal Achieved!',
-      body: 'Congratulations! You completed your $goalName goal!',
+      title: AppStrings.get('push_goal_title'),
+      body: AppStrings.get('push_goal_body', params: {'goal': goalName}),
     );
   }
 
   // ============ SHOW WORKOUT COMPLETED NOTIFICATION ============
   Future<void> showWorkoutCompletedNotification() async {
     await showInstantNotification(
-      title: '💪 Workout Complete!',
-      body: 'Great job! You crushed your workout today!',
+      title: AppStrings.get('push_done_title'),
+      body: AppStrings.get('push_done_body'),
     );
-  }
-
-  // ============ GET RANDOM MOTIVATION QUOTE ============
-  String _getRandomMotivationQuote() {
-    final random = Random();
-    return _motivationQuotes[random.nextInt(_motivationQuotes.length)];
   }
 
   // ============ CANCEL ALL NOTIFICATIONS ============
@@ -311,13 +324,13 @@ class NotificationService {
     if (workoutEnabled) {
       await _scheduleDailyNotification(
         id: 1,
-        title: '💪 Morning Workout Time!',
-        body: 'Good morning! Time to crush your workout!',
+        title: AppStrings.get('push_morning_title'),
+        body: AppStrings.get('push_morning_body'),
         hour: workoutHour,
         minute: workoutMinute,
         channelId: 'workout_reminder',
-        channelName: 'Workout Reminders',
-        channelDescription: 'Daily workout reminders',
+        channelName: AppStrings.get('push_workout_channel'),
+        channelDescription: AppStrings.get('push_workout_channel_desc'),
       );
     }
 
@@ -330,27 +343,21 @@ class NotificationService {
     if (lunchEnabled) {
       await _scheduleDailyNotification(
         id: 20,
-        title: '🍽️ Log Your Lunch!',
-        body: "Don't forget to log your lunch calories!",
+        title: AppStrings.get('push_lunch_title'),
+        body: AppStrings.get('push_lunch_body'),
         hour: lunchHour,
         minute: lunchMinute,
         channelId: 'calorie_reminder',
-        channelName: 'Calorie Reminders',
-        channelDescription: 'Reminders to log your meals',
+        channelName: AppStrings.get('push_calorie_channel'),
+        channelDescription: AppStrings.get('push_calorie_channel_desc'),
       );
     }
 
     // 4. Motivation
     if (motivationEnabled) {
-      await _scheduleDailyNotification(
-        id: 21,
-        title: '🔥 Daily Motivation',
-        body: _getRandomMotivationQuote(),
+      await _scheduleMotivationNotifications(
         hour: motivationHour,
         minute: motivationMinute,
-        channelId: 'motivation',
-        channelName: 'Daily Motivation',
-        channelDescription: 'Daily motivational quotes',
       );
     }
 
@@ -358,13 +365,13 @@ class NotificationService {
     if (eveningEnabled) {
       await _scheduleDailyNotification(
         id: 22,
-        title: '🌙 Evening Check-in',
-        body: 'Log your dinner & complete today\'s tracking! 📊',
+        title: AppStrings.get('push_evening_title'),
+        body: AppStrings.get('push_evening_body'),
         hour: eveningHour,
         minute: eveningMinute,
         channelId: 'calorie_reminder',
-        channelName: 'Calorie Reminders',
-        channelDescription: 'Reminders to log your meals',
+        channelName: AppStrings.get('push_calorie_channel'),
+        channelDescription: AppStrings.get('push_calorie_channel_desc'),
       );
     }
 
@@ -377,13 +384,13 @@ class NotificationService {
     for (int hour = 9; hour <= 21; hour += intervalHours) {
       await _scheduleDailyNotification(
         id: id++,
-        title: '💧 Stay Hydrated!',
-        body: 'Time to drink a glass of water!',
+        title: AppStrings.get('push_water_title'),
+        body: AppStrings.get('push_water_body'),
         hour: hour,
         minute: 0,
         channelId: 'water_reminder',
-        channelName: 'Water Reminders',
-        channelDescription: 'Reminders to drink water',
+        channelName: AppStrings.get('push_water_channel'),
+        channelDescription: AppStrings.get('push_water_channel_desc'),
       );
     }
   }
