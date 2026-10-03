@@ -1,15 +1,30 @@
+# ---- Flutter ----
 -keep class io.flutter.** { *; }
 -keep class io.flutter.plugins.** { *; }
+
+# ---- Firebase / Google Play services ----
 -keep class com.google.firebase.** { *; }
 -keep class com.google.android.gms.** { *; }
 -keep class com.google.android.gms.auth.** { *; }
 -keep class com.google.android.gms.common.** { *; }
 -keep class com.google.android.gms.fitness.** { *; }
 -keep class ** extends com.google.protobuf.GeneratedMessageLite { *; }
+
+# ---- Attributes (Signature is REQUIRED for Gson TypeToken under R8) ----
+-keepattributes Signature
 -keepattributes *Annotation*
+-keepattributes InnerClasses,EnclosingMethod
 -keepattributes SourceFile,LineNumberTable
-# Flutter deferred components (Play Feature Delivery) - not used in this app,
-# safe to ignore since Play Core split-install classes aren't a real dependency.
+
+# ---- flutter_local_notifications (Gson TypeToken fix) ----
+-keep class com.dexterous.** { *; }
+-keep class com.google.gson.** { *; }
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+
+# ---- Flutter deferred components (Play Feature Delivery) ----
+# Not used in this app, safe to ignore since Play Core split-install
+# classes aren't a real dependency.
 -dontwarn com.google.android.play.core.splitcompat.SplitCompatApplication
 -dontwarn com.google.android.play.core.splitinstall.SplitInstallException
 -dontwarn com.google.android.play.core.splitinstall.SplitInstallManager
