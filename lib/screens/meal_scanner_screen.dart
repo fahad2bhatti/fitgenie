@@ -7,6 +7,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../app/fitgenie_theme.dart';
 import '../core/app_strings.dart';
 import '../services/ai_service.dart';
+import '../services/ad_manager.dart';
 import '../services/open_food_facts_service.dart';
 import '../widgets/medical_disclaimer.dart';
 import 'dart:math' show min;
@@ -25,6 +26,7 @@ class _MealScannerScreenState extends State<MealScannerScreen>
   final ImagePicker _picker = ImagePicker();
 
   File? _selectedImage;
+  bool _scanUnlocked = false; // is photo ke liye ad ho chuka
   MealAnalysis? _analysis;
   bool _loading = false;
   String? _error;
@@ -42,6 +44,33 @@ class _MealScannerScreenState extends State<MealScannerScreen>
     _pulseAnim = Tween<double>(begin: 0.94, end: 1.06).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+  }
+
+  // Ad ready na ho (No fill) to scan free. Warna opt-in dialog, phir rewarded.
+  Future<bool> _passAdGate() async {
+    if (!AdManager.instance.isRewardedReady(RewardKind.scan)) return true;
+    final watch = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(AppStrings.get('ad_scan_title')),
+        content: Text(AppStrings.get('ad_scan_body')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(AppStrings.get('chat_cancel')),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(AppStrings.get('ad_watch')),
+          ),
+        ],
+      ),
+    );
+    if (watch != true) return false;
+    final result = await AdManager.instance.showRewarded(RewardKind.scan);
+    return result != RewardResult.dismissed;
   }
 
   @override
@@ -69,7 +98,8 @@ class _MealScannerScreenState extends State<MealScannerScreen>
           _error = null;
         });
 
-        // Auto analyze
+        // Auto analyze (naya photo = naya scan = naya ad)
+        _scanUnlocked = false;
         _analyzeImage();
       }
     } catch (e) {
@@ -85,6 +115,16 @@ class _MealScannerScreenState extends State<MealScannerScreen>
   // ==========================================
   Future<void> _analyzeImage() async {
     if (_selectedImage == null) return;
+
+    // Har naye photo par ek ad; analysis fail hone par retry mein dobara nahi
+    if (!_scanUnlocked) {
+      if (!await _passAdGate()) {
+        if (mounted) setState(() => _selectedImage = null);
+        return;
+      }
+      _scanUnlocked = true;
+      if (!mounted) return;
+    }
 
     setState(() {
       _loading = true;

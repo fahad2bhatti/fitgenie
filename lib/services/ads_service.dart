@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'ad_manager.dart';
+
 class AdsService {
   AdsService._();
   static final AdsService instance = AdsService._();
@@ -33,10 +35,7 @@ class AdsService {
 
     if (await ConsentInformation.instance.canRequestAds()) {
       await MobileAds.instance.initialize();
-    }
-
-    if (await ConsentInformation.instance.canRequestAds()) {
-      await MobileAds.instance.initialize();
+      AdManager.instance.init();
     }
   }
 
@@ -114,12 +113,14 @@ class AdsService {
 
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (ad) {
+        AdManager.instance.fullScreenEnded();
         ad.dispose();
         _interstitialAd = null;
         loadInterstitialAd();
         onDismissed?.call();
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
+        AdManager.instance.fullScreenEnded();
         ad.dispose();
         _interstitialAd = null;
         loadInterstitialAd();
@@ -129,6 +130,7 @@ class AdsService {
 
     _lastInterstitialShown = now;
     _interstitialShownThisSession++;
+    AdManager.instance.fullScreenStarted();
     ad.show();
   }
 

@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import '../app/fitgenie_theme.dart';
 import '../core/app_strings.dart';
 import '../services/ai_service.dart';
+import '../services/ad_manager.dart';
+import '../services/chat_quota_service.dart';
 import 'dashboard_screen.dart';
 import 'calories_screen.dart';
 import 'workout_screen.dart';
@@ -31,6 +33,10 @@ class ShellScreen extends StatefulWidget {
 class _ShellScreenState extends State<ShellScreen> {
   int _currentIndex = 0;
 
+  // Banner sirf Home, Nutrition aur Progress tab par
+  bool get _showBanner =>
+      _currentIndex == 0 || _currentIndex == 1 || _currentIndex == 3;
+
   void _goToWorkout() {
     setState(() => _currentIndex = 2);
   }
@@ -55,7 +61,7 @@ class _ShellScreenState extends State<ShellScreen> {
         child: Column(
           children: [
             Expanded(child: _buildCurrentPage()),
-            const BannerAdWidget(),
+            if (_showBanner) const BannerAdWidget(),
           ],
         ),
       ),
@@ -195,8 +201,59 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
     });
   }
 
+  // Firestore error / offline mein user ko block nahi karte
+  Future<bool> _consumeQuota() async {
+    try {
+      return await ChatQuotaService.instance.tryConsume();
+    } catch (_) {
+      return true;
+    }
+  }
+
+  Future<void> _offerChatBonus(String text) async {
+    if (!mounted) return;
+    final watch = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(AppStrings.get('ad_chat_limit_title')),
+        content: Text(AppStrings.get('ad_chat_limit_body',
+            params: {'count': '${ChatQuotaService.bonusPerAd}'})),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(AppStrings.get('chat_cancel')),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(AppStrings.get('ad_watch')),
+          ),
+        ],
+      ),
+    );
+    if (watch != true || !mounted) return;
+
+    final result = await AdManager.instance.showRewarded(RewardKind.chat);
+    if (!mounted) return;
+    if (result == RewardResult.dismissed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.get('ad_not_completed'))),
+      );
+      return;
+    }
+    await ChatQuotaService.instance.addBonus();
+    if (mounted) await _sendMessage(text);
+  }
+
   Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty || _isLoading) return;
+
+    if (!await _consumeQuota()) {
+      await _offerChatBonus(text);
+      return;
+    }
+    if (!mounted) return;
 
     final userMessage = text.trim();
     _controller.clear();

@@ -8,6 +8,7 @@ import '../widgets/app_snackbar.dart';
 import '../core/app_strings.dart';
 import '../data/exercise_data.dart';
 import '../widgets/active_set_sheet.dart';
+import '../services/ads_service.dart';
 
 // ============================================================
 // MY LIBRARY SCREEN
@@ -1142,6 +1143,12 @@ class _CustomWorkoutSessionScreenState
   DateTime? _startTime;
   final List<Map<String, dynamic>> _loggedSets = [];
 
+  @override
+  void initState() {
+    super.initState();
+    AdsService.instance.loadInterstitialAd();
+  }
+
   Exercise? _findExercise(String exerciseId) {
     try {
       return ExerciseData.getAllExercises()
@@ -1295,8 +1302,13 @@ class _CustomWorkoutSessionScreenState
           actions: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
+                final nav = Navigator.of(context);
+                nav.pop(); // dialog band
+                AdsService.instance.showInterstitialAd(
+                  onDismissed: () {
+                    if (mounted) nav.pop(); // session screen band
+                  },
+                );
               },
               style:
               ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.primary),

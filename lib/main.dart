@@ -18,6 +18,7 @@ import 'services/local_storage_service.dart';
 import 'services/sync_service.dart';
 import 'services/step_counter_service.dart';
 import 'services/ads_service.dart';
+import 'services/ad_manager.dart';
 import 'widgets/offline_indicator.dart';
 
 import 'screens/onboarding_screen.dart';
@@ -205,6 +206,7 @@ class _AuthGateState extends State<AuthGate> {
   String? _lastInitializedUid;
   bool _wasLoggedIn = false;
   bool _showPostLogoutIntro = false;
+  bool _appOpenTried = false;
   StreamSubscription<User?>? _authSub;
 
   // ✅ FIX: cache the stream ONCE instead of calling
@@ -393,6 +395,14 @@ class _AuthGateState extends State<AuthGate> {
                       key: ValueKey(user.uid), // extra safety: stable identity
                       userId: user.uid,
                       userName: info.name,
+                    );
+                  }
+
+                  // App Open ad: sirf returning (onboarded) user ko, ek baar
+                  if (!_appOpenTried) {
+                    _appOpenTried = true;
+                    WidgetsBinding.instance.addPostFrameCallback(
+                      (_) => AdManager.instance.showAppOpenIfAvailable(),
                     );
                   }
 
