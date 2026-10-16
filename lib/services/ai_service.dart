@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../core/language_provider.dart';
 
@@ -18,7 +19,7 @@ class AIService {
   // do NOT rely on .env for release builds (it ships inside the APK).
   // ═══════════════════════════════════════════
   static const String _dartDefineKey =
-      String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
+  String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
 
   static String get _apiKey {
     if (_dartDefineKey.isNotEmpty) return _dartDefineKey;
@@ -30,9 +31,58 @@ class AIService {
     return key;
   }
 
-  static bool get isConfigured => _apiKey.isNotEmpty && _apiKey.length > 20;
+  static bool get isConfigured {
+    // Proxy ready hai to Gemini key optional
+    if (!_proxyUrl.contains('YOUR-SUBDOMAIN') && _proxyUrl.isNotEmpty) return true;
+    return _apiKey.isNotEmpty && _apiKey.length > 20;
+  }
 
   static const Duration _timeout = Duration(seconds: 30);
+
+  // ═══════════════════════════════════════════
+  // 🚀 GROQ PROXY (Cloudflare Worker) — Groq key server pe rehti hai
+  // Deploy ke baad apna worker URL yahan paste karo.
+  // Jab tak YOUR-SUBDOMAIN hai, proxy skip hoti hai aur Gemini chalta hai.
+  // ═══════════════════════════════════════════
+  static const String _proxyUrl = 'https://fitgenie-ai.fahadsaeed2622.workers.dev';
+
+  Future<String?> _callProxy({
+    required String task, // 'chat' | 'scan'
+    required String prompt,
+    String? imageBase64,
+  }) async {
+    if (_proxyUrl.contains('YOUR-SUBDOMAIN')) return null;
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+      final token = await user.getIdToken();
+      final res = await http
+          .post(
+        Uri.parse(_proxyUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'task': task,
+          'prompt': prompt,
+          if (imageBase64 != null) 'imageBase64': imageBase64,
+        }),
+      )
+          .timeout(const Duration(seconds: 45));
+      if (res.statusCode == 200) {
+        final text = jsonDecode(res.body)['text'];
+        if (text is String && text.trim().isNotEmpty) {
+          debugPrint('✅ Proxy ok (${jsonDecode(res.body)['model']})');
+          return text.trim();
+        }
+      }
+      debugPrint('⚠️ Proxy failed: ${res.statusCode} ${res.body}');
+    } catch (e) {
+      debugPrint('⚠️ Proxy error: $e');
+    }
+    return null;
+  }
 
   static String _sanitizeInput(String input) {
     if (input.isEmpty) return '';
@@ -114,6 +164,10 @@ Return ONLY a valid JSON object (no markdown, no code blocks, just pure JSON):
 $tipLanguage
 All numbers should be integers. isHealthy should be boolean.''';
 
+    // 1) Groq via proxy (fast + free), 2) Gemini fallback
+    final proxied = await _callProxy(task: 'scan', prompt: prompt, imageBase64: base64Image);
+    if (proxied != null) return MealAnalysis.fromJson(proxied);
+
     final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
     const maxRetries = 2;
 
@@ -127,7 +181,7 @@ All numbers should be integers. isHealthy should be boolean.''';
               {'text': prompt},
               {'inlineData': {'mimeType': 'image/jpeg', 'data': base64Image}}
             ]}],
-            'generationConfig': {'temperature': 0.1, 'maxOutputTokens': 1000},
+            'generationConfig': {'temperature': 0.1, 'maxOutputTokens': 4096},
             'safetySettings': [
               {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
               {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
@@ -247,6 +301,8 @@ Max 150 words:''';
   }
 
   Future<String?> _tryDirectModel(String prompt) async {
+    final viaProxy = await _callProxy(task: 'chat', prompt: prompt);
+    if (viaProxy != null) return viaProxy;
     try {
       return await _callGeminiAPI('models/gemini-flash-latest', prompt);
     } catch (e) {
@@ -268,7 +324,7 @@ Max 150 words:''';
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'contents': [{'role': 'user', 'parts': [{'text': prompt}]}],
-            'generationConfig': {'temperature': 0.7, 'maxOutputTokens': 1500, 'topP': 0.9, 'topK': 40},
+            'generationConfig': {'temperature': 0.7, 'maxOutputTokens': 4096, 'topP': 0.9, 'topK': 40},
             'safetySettings': [
               {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
               {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
@@ -297,7 +353,7 @@ Max 150 words:''';
           continue;
         }
 
-        debugPrint('❌ $modelName failed: ${response.statusCode}');
+        debugPrint('❌ $modelName failed: ${response.statusCode} ${response.body}');
         return null;
       } catch (e) {
         if (attempt < maxRetries) {
@@ -399,7 +455,8 @@ Max 150 words:''';
 
   Future<String> generateWorkout({required String uid, required String workoutType, String level = 'intermediate'}) async {
     final cleanType = _sanitizeInput(workoutType);
-    if (cleanType.isEmpty || !isConfigured) return _getOfflineWorkout(cleanType.isEmpty ? 'chest' : cleanType);
+    if (cleanType.isEmpty) return _getOfflineWorkout('chest');
+    // isConfigured check hata diya — proxy se chalega
 
     try {
       final userContext = await _getUserContext(uid);
