@@ -502,12 +502,35 @@ class AuthService {
   // ═══════════════════════════════════════════
   // 🗑️ DELETE ACCOUNT
   // ═══════════════════════════════════════════
+  Future<void> _deleteCollection(CollectionReference<Map<String, dynamic>> ref) async {
+    while (true) {
+      final snap = await ref.limit(300).get();
+      if (snap.docs.isEmpty) break;
+      final batch = _firestore.batch();
+      for (final d in snap.docs) {
+        batch.delete(d.reference);
+      }
+      await batch.commit();
+    }
+  }
+
   Future<AuthResult> deleteAccount() async {
     final user = currentUser;
     if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     try {
-      await _firestore.collection('users').doc(user.uid).delete();
+      final userRef = _firestore.collection('users').doc(user.uid);
+
+      // dailyLogs/{date}/entries (nested subcollection)
+      final logs = await userRef.collection('dailyLogs').get();
+      for (final d in logs.docs) {
+        await _deleteCollection(d.reference.collection('entries'));
+      }
+      for (final name in ['dailyLogs', 'workouts', 'goals', 'weightLogs', 'customWorkouts',
+                          'settings', 'usage', 'savedMeals', 'recentFoods', 'aiChats']) {
+        await _deleteCollection(userRef.collection(name));
+      }
+      await userRef.delete();
       await user.delete();
       return AuthResult(success: true, message: AppStrings.get('authsvc_deleted'));
     } catch (e) {

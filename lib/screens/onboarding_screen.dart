@@ -302,7 +302,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget _languagePage() {
     return _pageWrapper(
       title: AppStrings.get('language_select_title'),
-      subtitle: 'You can change this later in Settings',
+      subtitle: AppStrings.get('onboarding_change_later'),
       child: Column(
         children: [
           _selectableCard(
@@ -330,9 +330,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ==========================================
   Widget _genderPage() {
     final options = [
-      {'label': 'Male', 'icon': Icons.male},
-      {'label': 'Female', 'icon': Icons.female},
-      {'label': 'Other', 'icon': Icons.person},
+      {'label': 'Male', 'display': AppStrings.get('gender_male'), 'icon': Icons.male},
+      {'label': 'Female', 'display': AppStrings.get('gender_female'), 'icon': Icons.female},
+      {'label': 'Other', 'display': AppStrings.get('gender_other'), 'icon': Icons.person},
     ];
 
     return _pageWrapper(
@@ -345,6 +345,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             padding: const EdgeInsets.only(bottom: 12),
             child: _selectableCard(
               label: o['label'] as String,
+              displayLabel: o['display'] as String?,
               icon: o['icon'] as IconData,
               selected: selected,
               onTap: () => setState(() => _gender = o['label'] as String),
@@ -382,7 +383,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
           ),
-          const Text('saal', style: TextStyle(color: FitGenieTheme.muted)),
+          Text(AppStrings.get('onboarding_years_suffix'), style: TextStyle(color: FitGenieTheme.muted)),
           const SizedBox(height: 24),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
@@ -421,7 +422,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           _useFeetInches
               ? _heightFeetInchesCard(height)
               : _statSliderCard(
-                  label: 'Height',
+                  label: AppStrings.get('onboarding_height_label'),
                   value: height,
                   unit: 'cm',
                   min: 120,
@@ -430,7 +431,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 ),
           const SizedBox(height: 20),
           _statSliderCard(
-            label: 'Weight',
+            label: AppStrings.get('onboarding_weight_label'),
             value: weight,
             unit: 'kg',
             min: 30,
@@ -450,7 +451,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       children: [
         Expanded(
           child: _unitChip(
-            label: 'cm',
+            label: AppStrings.get('unit_cm'),
             selected: !_useFeetInches,
             onTap: () => setState(() => _useFeetInches = false),
           ),
@@ -458,7 +459,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         const SizedBox(width: 10),
         Expanded(
           child: _unitChip(
-            label: 'ft/in',
+            label: AppStrings.get('unit_ft_in'),
             selected: _useFeetInches,
             onTap: () => setState(() => _useFeetInches = true),
           ),
@@ -516,7 +517,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Height', style: TextStyle(color: FitGenieTheme.muted)),
+              Text(AppStrings.get('onboarding_height_label'), style: TextStyle(color: FitGenieTheme.muted)),
               Text(
                 "$feet' $inches\"",
                 style: const TextStyle(
@@ -533,7 +534,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               Expanded(
                 child: Column(
                   children: [
-                    const Text('Feet',
+                    Text(AppStrings.get('onboarding_feet_label'),
                         style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
@@ -558,7 +559,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               Expanded(
                 child: Column(
                   children: [
-                    const Text('Inches',
+                    Text(AppStrings.get('onboarding_inches_label'),
                         style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
@@ -645,9 +646,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ==========================================
   Widget _fitnessLevelPage() {
     final levels = [
-      {'label': 'Beginner', 'desc': 'Abhi shuru kar raha/rahi hoon'},
-      {'label': 'Intermediate', 'desc': 'Kuch mahino se active hoon'},
-      {'label': 'Advanced', 'desc': 'Regular training kar raha/rahi hoon'},
+      {'label': 'Beginner', 'display': AppStrings.get('level_beginner'), 'desc': AppStrings.get('onboarding_level_beginner_desc')},
+      {'label': 'Intermediate', 'display': AppStrings.get('level_intermediate'), 'desc': AppStrings.get('onboarding_level_intermediate_desc')},
+      {'label': 'Advanced', 'display': AppStrings.get('level_advanced'), 'desc': AppStrings.get('onboarding_level_advanced_desc')},
     ];
 
     return _pageWrapper(
@@ -660,6 +661,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             padding: const EdgeInsets.only(bottom: 12),
             child: _selectableCard(
               label: l['label'] as String,
+              displayLabel: l['display'],
               description: l['desc'] as String,
               icon: Icons.fitness_center,
               selected: selected,
@@ -677,9 +679,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ==========================================
   Widget _goalPage() {
     final goals = [
-      {'label': 'Lose Weight', 'icon': Icons.trending_down},
-      {'label': 'Build Muscle', 'icon': Icons.fitness_center},
-      {'label': 'Stay Fit', 'icon': Icons.favorite},
+      {'label': 'Lose Weight', 'display': AppStrings.get('goal_lose_weight'), 'icon': Icons.trending_down},
+      {'label': 'Build Muscle', 'display': AppStrings.get('goal_build_muscle'), 'icon': Icons.fitness_center},
+      {'label': 'Stay Fit', 'display': AppStrings.get('goal_get_fit'), 'icon': Icons.favorite},
       {'label': 'Gain Strength', 'icon': Icons.bolt},
     ];
 
@@ -693,6 +695,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             padding: const EdgeInsets.only(bottom: 12),
             child: _selectableCard(
               label: g['label'] as String,
+              displayLabel: g['display'] as String?,
               icon: g['icon'] as IconData,
               selected: selected,
               onTap: () => setState(() => _goal = g['label'] as String),
@@ -739,11 +742,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ✨ Selectable card with smooth scale-on-tap feedback
   Widget _selectableCard({
     required String label,
+    String? displayLabel,
     required IconData icon,
     required bool selected,
     required VoidCallback onTap,
     String? description,
   }) {
+    final shown = displayLabel ?? label;
     return _TapScale(
       onTap: onTap,
       child: AnimatedContainer(
@@ -776,7 +781,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    label,
+                    shown,
                     style: TextStyle(
                       color: selected
                           ? FitGenieTheme.text

@@ -28,7 +28,7 @@ class NotificationService {
     tz_data.initializeTimeZones();
 
     // Android settings
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_fitgenie');
 
     // iOS settings
     const iosSettings = DarwinInitializationSettings(
@@ -59,10 +59,6 @@ class NotificationService {
       await Permission.notification.request();
     }
 
-    // Request exact alarm permission (Android 12+)
-    if (await Permission.scheduleExactAlarm.isDenied) {
-      await Permission.scheduleExactAlarm.request();
-    }
   }
 
   // ============ ON NOTIFICATION TAPPED ============
@@ -84,7 +80,7 @@ class NotificationService {
         channelDescription: channelDescription,
         importance: Importance.high,
         priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
+        icon: '@drawable/ic_stat_fitgenie',
         color: const Color(0xFF00E676),
         enableLights: true,
         enableVibration: true,

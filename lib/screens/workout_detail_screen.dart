@@ -402,7 +402,7 @@ class WorkoutDetailScreen extends StatelessWidget {
           child: _statCard(
             icon: Icons.fitness_center,
             value: '$uniqueExercises',
-            label: 'Exercises',
+            label: AppStrings.get('label_exercises'),
             color: FitGenieTheme.teal,
           ),
         ),

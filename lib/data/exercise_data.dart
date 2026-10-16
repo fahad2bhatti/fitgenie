@@ -1,4 +1,8 @@
 // lib/data/exercise_data.dart
+// Bilingual exercise library — English + Roman Urdu
+// Display language follows LanguageProvider.
+
+import '../core/language_provider.dart';
 
 class Exercise {
   final String id;
@@ -6,14 +10,16 @@ class Exercise {
   final String bodyPart;
   final String equipment;
   final String difficulty;
-  final String instructions;
+  final String instructionsEn;
+  final String instructionsUr;
   final List<String> musclesWorked;
-
-  // ✅ NEW FIELDS — Animation & Details
   final String gifUrl;
-  final List<String> detailedSteps;
-  final List<String> tips;
-  final List<String> commonMistakes;
+  final List<String> detailedStepsEn;
+  final List<String> detailedStepsUr;
+  final List<String> tipsEn;
+  final List<String> tipsUr;
+  final List<String> commonMistakesEn;
+  final List<String> commonMistakesUr;
   final int caloriesPerMin;
   final String tempo;
 
@@ -23,17 +29,27 @@ class Exercise {
     required this.bodyPart,
     required this.equipment,
     required this.difficulty,
-    required this.instructions,
+    required this.instructionsEn,
+    required this.instructionsUr,
     required this.musclesWorked,
     this.gifUrl = '',
-    this.detailedSteps = const [],
-    this.tips = const [],
-    this.commonMistakes = const [],
+    this.detailedStepsEn = const [],
+    this.detailedStepsUr = const [],
+    this.tipsEn = const [],
+    this.tipsUr = const [],
+    this.commonMistakesEn = const [],
+    this.commonMistakesUr = const [],
     this.caloriesPerMin = 5,
     this.tempo = '2-1-2',
   });
 
-  // ✅ FIXED GETTERS — steps ab detailedSteps return karega
+  bool get _en => LanguageProvider().isEnglish;
+
+  String get instructions => _en ? instructionsEn : instructionsUr;
+  List<String> get detailedSteps => _en ? detailedStepsEn : detailedStepsUr;
+  List<String> get tips => _en ? tipsEn : tipsUr;
+  List<String> get commonMistakes => _en ? commonMistakesEn : commonMistakesUr;
+
   bool get hasGif => gifUrl.isNotEmpty;
   bool get hasSteps => detailedSteps.isNotEmpty;
   bool get hasTips => tips.isNotEmpty;
@@ -43,9 +59,6 @@ class Exercise {
 }
 
 class ExerciseData {
-  // ==========================================
-  // 🎛️ SETS & REPS OPTIONS
-  // ==========================================
   static const List<int> setsOptions = [1, 2, 3, 4, 5];
   static const List<int> repsOptions = [5, 6, 8, 10, 12, 15, 20, 25, 30];
   static const List<double> weightOptions = [
@@ -54,9 +67,6 @@ class ExerciseData {
     80, 85, 90, 95, 100, 110, 120, 130, 140, 150
   ];
 
-  // ==========================================
-  // 📋 BODY PARTS
-  // ==========================================
   static const List<Map<String, dynamic>> bodyParts = [
     {'name': 'Chest', 'emoji': '🏋️', 'color': 0xFFE53935},
     {'name': 'Back', 'emoji': '🔙', 'color': 0xFF1E88E5},
@@ -68,9 +78,7 @@ class ExerciseData {
     {'name': 'Cardio', 'emoji': '🏃', 'color': 0xFFD81B60},
   ];
 
-  // ==========================================
-  // 🏋️ CHEST EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== CHEST ==========
   static const List<Exercise> chest = [
     Exercise(
       id: 'chest_1',
@@ -78,12 +86,20 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Bench pe leto, bar chest tak lao, push karo',
-      musclesWorked: ['Chest', 'Triceps', 'Shoulders'],
+      instructionsEn: 'Lie on the bench, bar chest to bring, press',
+      instructionsUr: 'Bench pe leto, bar chest tak lao, push karo',
+      musclesWorked: const ['Chest', 'Triceps', 'Shoulders'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bench-Press.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Lie on a flat bench, plant your feet firmly on the floor',
+        'Bar use a grip slightly wider than shoulder-width',
+        'Unrack the bar, arms fully extended',
+        'Slowly lower the bar to your mid-chest (2 sec down)',
+        'Touch your chest or stop about 1 inch above',
+        'Press back up explosively (1 sec up)',
+        'Lock out the arms at the top, then repeat',
+      ],
+      detailedStepsUr: const [
         'Flat bench pe let jao, feet floor pe firmly rakhho',
         'Bar ko shoulder-width se thoda wider grip karo',
         'Bar rack se uthao, arms fully extended',
@@ -92,7 +108,15 @@ class ExerciseData {
         'Explosively push karo back up (1 sec up)',
         'Arms lock out karo top pe, repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Squeeze your shoulder blades and set them into the bench',
+        'Keep your feet planted firmly on the floor — drive through heels',
+        'The bar path should be slightly diagonal (nipple line)',
+        'Breathe in while lowering, breathe out while pushing',
+        'Keep wrists straight — bar on the base of the palms',
+        'Spotter keep heavy sets for',
+      ],
+      tipsUr: const [
         'Shoulder blades ko squeeze karke bench pe set karo',
         'Feet firmly floor pe rakhho — drive through heels',
         'Bar path slightly diagonal hona chahiye (nipple line)',
@@ -100,13 +124,22 @@ class ExerciseData {
         'Wrist straight rakhho — bar palm ke base pe',
         'Spotter rakhho heavy sets ke liye',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Don\'t bounce the bar off your chest — stay controlled',
+        '❌ Don\'t lift your hips — keep glutes tight on the bench',
+        '❌ Don\'t flare elbows to 90° — keep a 45–75° angle',
+        '❌ Half reps — full range of motion use',
+        '❌ Neck on bar lana — lower chest on target',
+      ],
+      commonMistakesUr: const [
         '❌ Bar bounce karna chest se — control rakho',
         '❌ Hips uthana bench se — glutes tight rakho',
         '❌ Elbows 90° flare karna — 45-75° angle rakho',
         '❌ Half reps — full range of motion use karo',
         '❌ Neck pe bar lana — lower chest pe target karo',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'chest_2',
@@ -114,12 +147,21 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Dumbbells',
       difficulty: 'Intermediate',
-      instructions: 'Incline bench pe, dumbbells push karo',
-      musclesWorked: ['Upper Chest', 'Shoulders'],
+      instructionsEn: 'On an incline bench,, dumbbells press',
+      instructionsUr: 'Incline bench pe, dumbbells push karo',
+      musclesWorked: const ['Upper Chest', 'Shoulders'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif',
-      caloriesPerMin: 7,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Incline bench 30-45° angle on set',
+        'Hold a dumbbell in each hand',
+        'Sit on the bench, rest the dumbbells on your thighs',
+        'One at a time, bring the dumbbells to shoulder level',
+        'Keep your palms facing forward',
+        'Dumbbells press upar — arms fully extend',
+        'Slowly down bring, elbow 90° bend',
+        'Chest in stretch feel bottom on',
+      ],
+      detailedStepsUr: const [
         'Incline bench 30-45° angle pe set karo',
         'Dono haathon mein dumbbells pakdo',
         'Bench pe baitho, dumbbells thighs pe rakho',
@@ -129,19 +171,34 @@ class ExerciseData {
         'Slowly neeche lao, elbow 90° bend karo',
         'Chest mein stretch feel karo bottom pe',
       ],
-      tips: [
+      tipsEn: const [
+        'A 30° bench angle is best for upper chest',
+        'Angles above 45° shift more load to the shoulders',
+        'Dumbbells slightly andar arc in bring (slight curve)',
+        'Top on dumbbells touch don\'t — constant tension',
+        'Core tight keep poore movement in',
+      ],
+      tipsUr: const [
         'Bench angle 30° best hai upper chest ke liye',
         '45° se zyada angle shoulders ko zyada hit karega',
         'Dumbbells ko thoda andar arc mein lao (slight curve)',
         'Top pe dumbbells touch mat karo — constant tension',
         'Core tight rakho poore movement mein',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Don\'t set the bench too high (60°+) — it becomes a shoulder press',
+        '❌ Don\'t bounce the dumbbells at the bottom',
+        '❌ Back arch very more — natural arch ok hai',
+        '❌ Dumbbells crash karna top on — control keep',
+      ],
+      commonMistakesUr: const [
         '❌ Bench angle bahut zyada (60°+) — shoulder press ban jata hai',
         '❌ Dumbbells bounce karna bottom pe',
         '❌ Back arch bahut zyada — natural arch ok hai',
         '❌ Dumbbells crash karna top pe — control rakho',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'chest_3',
@@ -149,12 +206,20 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Decline bench, lower chest target',
-      musclesWorked: ['Lower Chest', 'Triceps'],
+      instructionsEn: 'Decline bench, lower chest target',
+      instructionsUr: 'Decline bench, lower chest target',
+      musclesWorked: const ['Lower Chest', 'Triceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Decline-Barbell-Bench-Press.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Lie on a decline bench, legs locked',
+        'Hold the bar at shoulder-width grip',
+        'Unrack the bar carefully',
+        'Lower chest / upper abs area to bar bring',
+        'Touch or hold 1 inch above',
+        'Press back up explosively',
+        'Lock out arms at top, repeat',
+      ],
+      detailedStepsUr: const [
         'Decline bench pe let jao, legs locked',
         'Bar ko shoulder-width grip karo',
         'Bar rack se uthao carefully',
@@ -163,18 +228,32 @@ class ExerciseData {
         'Push back up explosively',
         'Lock out arms at top, repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'A 15–30° decline is enough',
+        'Always use a spotter — the bar moves over your face',
+        'It isolates the lower chest better than flat',
+        'Grip width experiment — slightly narrow bhi try',
+      ],
+      tipsUr: const [
         'Decline angle 15-30° sufficient hai',
         'Spotter zaroor rakho — bar face ke upar aata hai',
         'Lower chest ko isolate karta hai better than flat',
         'Grip width experiment karo — thoda narrow bhi try karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Don\'t use a steep decline — stay under 30°',
+        '❌ Risk of the bar toward the neck — a spotter is required',
+        '❌ Don\'t let your legs go loose — keep them firmly locked keep',
+        '❌ Ego lifting — controlled weight use',
+      ],
+      commonMistakesUr: const [
         '❌ Bahut steep decline — 30° se zyada mat jao',
         '❌ Bar neck pe lane ka risk — spotter must hai',
         '❌ Legs dheel chhodna — firmly locked rakho',
         '❌ Ego lifting — controlled weight use karo',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'chest_4',
@@ -182,12 +261,20 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Arms wide, chest stretch feel karo',
-      musclesWorked: ['Chest'],
+      instructionsEn: 'Arms wide, chest stretch feel',
+      instructionsUr: 'Arms wide, chest stretch feel karo',
+      musclesWorked: const ['Chest'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Fly.gif',
-      caloriesPerMin: 6,
-      tempo: '3-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Lie on a flat bench, ek ek dumbbell lift',
+        'Extend your arms up with palms facing each other',
+        'Keep a slight bend in the elbows (15-20°)',
+        'Open your arms in a wide arc as you lower',
+        'Feel a deep stretch in the chest bottom on',
+        'Same arc in wapas upar bring — squeeze chest',
+        'Top on dumbbells touch don\'t — tension maintain',
+      ],
+      detailedStepsUr: const [
         'Flat bench pe let jao, ek ek dumbbell uthao',
         'Arms upar extend karo — palms facing each other',
         'Elbows mein slight bend rakho (15-20°)',
@@ -196,19 +283,34 @@ class ExerciseData {
         'Same arc mein wapas upar lao — squeeze chest',
         'Top pe dumbbells touch mat karo — tension maintain karo',
       ],
-      tips: [
+      tipsEn: const [
+        'This is an isolation move — use a light weight',
+        'Keep the same elbow angle throughout the movement',
+        'Feel the stretch — not pain honi needed',
+        'Mind-muscle connection — chest squeeze',
+        'Slow & controlled — momentum don\'t use',
+      ],
+      tipsUr: const [
         'Yeh isolation exercise hai — light weight use karo',
         'Elbow angle fixed rakho poore movement mein',
         'Stretch feel karo — pain nahi honi chahiye',
         'Mind-muscle connection — chest ko squeeze karo',
         'Slow & controlled — momentum mat use karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Don\'t lock arms straight — keep elbows slightly bent',
+        '❌ Don\'t go heavy — this is isolation, no ego lifting',
+        '❌ Very deep jaana — shoulder injury ka risk',
+        '❌ Press in convert karna — arc motion maintain',
+      ],
+      commonMistakesUr: const [
         '❌ Arms straight rakhna — elbows slightly bent rakho',
         '❌ Heavy weight — yeh isolation hai, ego lift mat karo',
         '❌ Bahut deep jaana — shoulder injury ka risk',
         '❌ Press mein convert karna — arc motion maintain karo',
       ],
+      caloriesPerMin: 6,
+      tempo: '3-1-2',
     ),
     Exercise(
       id: 'chest_5',
@@ -216,12 +318,21 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Cable',
       difficulty: 'Intermediate',
-      instructions: 'Cables center mein bring karo',
-      musclesWorked: ['Chest', 'Shoulders'],
+      instructionsEn: 'Cables center in bring',
+      instructionsUr: 'Cables center mein bring karo',
+      musclesWorked: const ['Chest', 'Shoulders'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crossover.gif',
-      caloriesPerMin: 6,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Stand in the middle of the cable machine',
+        'Set both pulleys high',
+        'Grab one handle with each hand',
+        'Take one step forward with a slight forward lean',
+        'Start with your arms open wide',
+        'Handles down and center in bring (arc motion)',
+        'Hands cross bhi kar sakte ho bottom on — extra squeeze',
+        'Slowly wapas starting position on jao',
+      ],
+      detailedStepsUr: const [
         'Cable machine ke beech mein khade ho jao',
         'Dono pulleys upar set karo (high position)',
         'Ek ek haath se handles pakdo',
@@ -231,19 +342,34 @@ class ExerciseData {
         'Hands cross bhi kar sakte ho bottom pe — extra squeeze',
         'Slowly wapas starting position pe jao',
       ],
-      tips: [
+      tipsEn: const [
+        'Change pulley height to target different chest areas',
+        'High pulley = lower chest, Low pulley = upper chest',
+        'Constant tension milti hai — cables ka advantage',
+        'Peak contraction on 1 sec hold',
+        'Ek foot aage rakh ke stability badha sakte ho',
+      ],
+      tipsUr: const [
         'Pulley height change karke different chest areas target karo',
         'High pulley = lower chest, Low pulley = upper chest',
         'Constant tension milti hai — cables ka advantage',
         'Peak contraction pe 1 sec hold karo',
         'Ek foot aage rakh ke stability badha sakte ho',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Don\'t go too heavy — form will break down',
+        '❌ Don\'t swing your body — stay stable',
+        '❌ Arms straight rakhna — slight elbow bend needed',
+        '❌ Fast reps — slow & controlled',
+      ],
+      commonMistakesUr: const [
         '❌ Bahut heavy weight — form compromise hota hai',
         '❌ Body swing karna — stable khade raho',
         '❌ Arms straight rakhna — slight elbow bend chahiye',
         '❌ Fast reps — slow & controlled karo',
       ],
+      caloriesPerMin: 6,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'chest_6',
@@ -251,12 +377,21 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Haath shoulder width, push karo',
-      musclesWorked: ['Chest', 'Triceps', 'Core'],
+      instructionsEn: 'Haath shoulder width, press',
+      instructionsUr: 'Haath shoulder width, push karo',
+      musclesWorked: const ['Chest', 'Triceps', 'Core'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif',
-      caloriesPerMin: 7,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Floor on haath keep — shoulder-width apart',
+        'Legs peeche extend — toes on balance',
+        'Body ek straight line in honi needed (plank position)',
+        'Core tight keep — hips don\'t girne do',
+        'Slowly go down — chest floor ke paas to',
+        'Elbows 45° angle on keep (flare don\'t )',
+        'Press back up — arms fully extend',
+        'Top on 1 sec hold, repeat',
+      ],
+      detailedStepsUr: const [
         'Floor pe haath rakho — shoulder-width apart',
         'Legs peeche extend karo — toes pe balance',
         'Body ek straight line mein honi chahiye (plank position)',
@@ -266,7 +401,15 @@ class ExerciseData {
         'Push back up — arms fully extend karo',
         'Top pe 1 sec hold karo, repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Beginner ho toh knees on (modified push-up)',
+        'Hands placement target change hota hai',
+        'Wide = more chest, Narrow = more triceps',
+        'Head neutral keep — floor don\'t dekho',
+        'Glutes squeeze — body straight rahegi',
+        'Har rep count — consistency matters',
+      ],
+      tipsUr: const [
         'Beginner ho toh knees pe karo (modified push-up)',
         'Hands placement se target change hota hai',
         'Wide = more chest, Narrow = more triceps',
@@ -274,13 +417,22 @@ class ExerciseData {
         'Glutes squeeze karo — body straight rahegi',
         'Har rep count karo — consistency matters',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Hips upar uthana (tent position) — body straight keep',
+        '❌ Hips down girna (sagging) — core tight',
+        '❌ Half reps — chest floor ke paas to jao',
+        '❌ Elbows 90° flare — 45° angle on keep',
+        '❌ Neck extend karna — neutral head position',
+      ],
+      commonMistakesUr: const [
         '❌ Hips upar uthana (tent position) — body straight rakho',
         '❌ Hips neeche girna (sagging) — core tight karo',
         '❌ Half reps — chest floor ke paas tak jao',
         '❌ Elbows 90° flare — 45° angle pe rakho',
         '❌ Neck extend karna — neutral head position',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'chest_7',
@@ -288,12 +440,19 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Hands elevated surface pe',
-      musclesWorked: ['Lower Chest', 'Triceps'],
+      instructionsEn: 'Hands elevated surface on',
+      instructionsUr: 'Hands elevated surface pe',
+      musclesWorked: const ['Lower Chest', 'Triceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Incline-Push-Up.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bench or elevated surface dhundho (knee height)',
+        'Hands surface on keep — shoulder-width apart',
+        'Feet peeche — body straight line in',
+        'Go down — chest surface ke paas to',
+        'Press back up — arms extend',
+        'Core tight keep throughout',
+      ],
+      detailedStepsUr: const [
         'Bench ya elevated surface dhundho (knee height)',
         'Hands surface pe rakho — shoulder-width apart',
         'Feet peeche — body straight line mein',
@@ -301,17 +460,30 @@ class ExerciseData {
         'Push back up — arms extend karo',
         'Core tight rakho throughout',
       ],
-      tips: [
+      tipsEn: const [
+        'Beginner for perfect starting exercise hai',
+        'Jaise strength aaye — surface height kam',
+        'Wall → Counter → Bench → Floor (progression)',
+        'Lower chest target karta hai',
+      ],
+      tipsUr: const [
         'Beginner ke liye perfect starting exercise hai',
         'Jaise strength aaye — surface height kam karo',
         'Wall → Counter → Bench → Floor (progression)',
         'Lower chest ko target karta hai',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Surface very high — challenge kam ho jata hai',
+        '❌ Hips sagging — core engage keep',
+        '❌ Fast reps — controlled movement',
+      ],
+      commonMistakesUr: const [
         '❌ Surface bahut high — challenge kam ho jata hai',
         '❌ Hips sagging — core engage rakho',
         '❌ Fast reps — controlled movement karo',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'chest_8',
@@ -319,12 +491,19 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Bodyweight',
       difficulty: 'Intermediate',
-      instructions: 'Feet elevated, upper chest target',
-      musclesWorked: ['Upper Chest', 'Shoulders'],
+      instructionsEn: 'Feet elevated, upper chest target',
+      instructionsUr: 'Feet elevated, upper chest target',
+      musclesWorked: const ['Upper Chest', 'Shoulders'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Decline-Push-Up.gif',
-      caloriesPerMin: 7,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bench or box on feet keep (elevated position)',
+        'Hands floor on — shoulder-width apart',
+        'Body straight line in — core tight',
+        'Go down slowly — chest floor ke paas',
+        'Press back up explosively',
+        'Elbows 45° angle maintain',
+      ],
+      detailedStepsUr: const [
         'Bench ya box pe feet rakho (elevated position)',
         'Hands floor pe — shoulder-width apart',
         'Body straight line mein — core tight',
@@ -332,17 +511,30 @@ class ExerciseData {
         'Push back up explosively',
         'Elbows 45° angle maintain karo',
       ],
-      tips: [
+      tipsEn: const [
+        'Upper chest and front shoulders more hit karta hai',
+        'Height badhao for more difficulty',
+        'Weighted vest pehen ke next level on jao',
+        'Balance maintain karna seekho pehle',
+      ],
+      tipsUr: const [
         'Upper chest aur front shoulders ko zyada hit karta hai',
         'Height badhao for more difficulty',
         'Weighted vest pehen ke next level pe jao',
         'Balance maintain karna seekho pehle',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Feet slip hona — stable surface use',
+        '❌ Head down jhukana — neck neutral keep',
+        '❌ Hips pike karna — straight body maintain',
+      ],
+      commonMistakesUr: const [
         '❌ Feet slip hona — stable surface use karo',
         '❌ Head neeche jhukana — neck neutral rakho',
         '❌ Hips pike karna — straight body maintain karo',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'chest_9',
@@ -350,12 +542,20 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Dip Bars',
       difficulty: 'Intermediate',
-      instructions: 'Lean forward, chest stretch',
-      musclesWorked: ['Chest', 'Triceps'],
+      instructionsEn: 'Lean forward, chest stretch',
+      instructionsUr: 'Lean forward, chest stretch',
+      musclesWorked: const ['Chest', 'Triceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Chest-Dips.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dip bars on mount ho jao — arms extended',
+        'Body AAGE lean (30° forward lean)',
+        'Elbows slightly flare (outward)',
+        'Slowly go down — shoulder level to or slightly down',
+        'Feel a deep stretch in the chest',
+        'Press back up — squeeze chest at top',
+        'Forward lean maintain poore movement in',
+      ],
+      detailedStepsUr: const [
         'Dip bars pe mount ho jao — arms extended',
         'Body ko AAGE lean karo (30° forward lean)',
         'Elbows ko slightly flare karo (outward)',
@@ -364,19 +564,34 @@ class ExerciseData {
         'Push back up — squeeze chest at top',
         'Forward lean maintain karo poore movement mein',
       ],
-      tips: [
+      tipsEn: const [
+        'Forward lean = chest focus, Upright = triceps focus',
+        'Knees bend karke cross — stability for',
+        'Weighted belt use progression for',
+        'Beginner: assisted dip machine or bands use',
+        'Elbows lock out don\'t top on — tension maintain',
+      ],
+      tipsUr: const [
         'Forward lean = chest focus, Upright = triceps focus',
         'Knees bend karke cross karo — stability ke liye',
         'Weighted belt use karo progression ke liye',
         'Beginner: assisted dip machine ya bands use karo',
         'Elbows lock out mat karo top pe — tension maintain karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Body upright rakhna — forward lean needed chest for',
+        '❌ Very deep jaana — shoulder injury ka risk',
+        '❌ Swinging / kipping — controlled movement',
+        '❌ Elbows tight rakhna — slight flare needed chest for',
+      ],
+      commonMistakesUr: const [
         '❌ Body upright rakhna — forward lean chahiye chest ke liye',
         '❌ Bahut deep jaana — shoulder injury ka risk',
         '❌ Swinging / kipping — controlled movement karo',
         '❌ Elbows tight rakhna — slight flare chahiye chest ke liye',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'chest_10',
@@ -384,12 +599,20 @@ class ExerciseData {
       bodyPart: 'Chest',
       equipment: 'Machine',
       difficulty: 'Beginner',
-      instructions: 'Arms center mein lao, squeeze',
-      musclesWorked: ['Chest'],
+      instructionsEn: 'Arms center in bring, squeeze',
+      instructionsUr: 'Arms center mein lao, squeeze',
+      musclesWorked: const ['Chest'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pec-Deck-Fly.gif',
-      caloriesPerMin: 5,
-      tempo: '2-2-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Machine sit on — back pad lagao',
+        'Seat height adjust — handles chest level on',
+        'Arms handles on keep — elbows slightly bent',
+        'Handles center in bring — chest squeeze',
+        'Peak contraction on 2 sec hold',
+        'Slowly wapas open — stretch feel',
+        'Repeat — controlled reps',
+      ],
+      detailedStepsUr: const [
         'Machine pe baitho — back pad se lagao',
         'Seat height adjust karo — handles chest level pe',
         'Arms ko handles pe rakho — elbows slightly bent',
@@ -398,25 +621,38 @@ class ExerciseData {
         'Slowly wapas open karo — stretch feel karo',
         'Repeat — controlled reps',
       ],
-      tips: [
+      tipsEn: const [
+        'Machine hai toh form easy hai — beginners for perfect',
+        'Seat height important hai — experiment',
+        'Light weight start — feel the muscle',
+        'Peak contraction on squeeze maximum',
+        'Finishing exercise ke taur on use chest day in',
+      ],
+      tipsUr: const [
         'Machine hai toh form easy hai — beginners ke liye perfect',
         'Seat height important hai — experiment karo',
         'Light weight se start karo — feel the muscle',
         'Peak contraction pe squeeze karo maximum',
         'Finishing exercise ke taur pe use karo chest day mein',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Very heavy weight — jerky movement hota hai',
+        '❌ Seat height galat — shoulders engage ho jaate hain',
+        '❌ Arms fully straight — slight bend needed',
+        '❌ Fast reps — slow & controlled',
+      ],
+      commonMistakesUr: const [
         '❌ Bahut heavy weight — jerky movement hota hai',
         '❌ Seat height galat — shoulders engage ho jaate hain',
         '❌ Arms fully straight — slight bend chahiye',
         '❌ Fast reps — slow & controlled karo',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-2-2',
     ),
   ];
 
-  // ==========================================
-  // 💪 BACK EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== BACK ==========
   static const List<Exercise> back = [
     Exercise(
       id: 'back_1',
@@ -424,12 +660,20 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Pull-up Bar',
       difficulty: 'Intermediate',
-      instructions: 'Bar grip, body pull karo chin tak',
-      musclesWorked: ['Lats', 'Biceps', 'Rear Delts'],
+      instructionsEn: 'Bar grip, body pull chin to',
+      instructionsUr: 'Bar grip, body pull karo chin tak',
+      musclesWorked: const ['Lats', 'Biceps', 'Rear Delts'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-Up.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bar overhand grip hold — shoulder-width or wider',
+        'Dead hang position in aao — arms fully extended',
+        'Shoulder blades down and peeche pull (retract)',
+        'Body pull upar — chin bar ke upar bring',
+        'Lats squeeze top on',
+        'Slowly down aao — full extension to (3 sec down)',
+        'Dead hang in pause 1 sec — fir repeat',
+      ],
+      detailedStepsUr: const [
         'Bar ko overhand grip se pakdo — shoulder-width ya wider',
         'Dead hang position mein aao — arms fully extended',
         'Shoulder blades ko neeche aur peeche pull karo (retract)',
@@ -438,19 +682,34 @@ class ExerciseData {
         'Slowly neeche aao — full extension tak (3 sec down)',
         'Dead hang mein ruko 1 sec — fir repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Nahi hota? Band assisted pull-ups start',
+        'Negative pull-ups (sirf down aana slowly) bhi effective hai',
+        'Grip width change for variation',
+        'Wide grip = more lats, Close grip = more biceps',
+        'Chest bar ki taraf le jao — don\'t chin tuck',
+      ],
+      tipsUr: const [
         'Nahi hota? Band assisted pull-ups se start karo',
         'Negative pull-ups (sirf neeche aana slowly) bhi effective hai',
         'Grip width change karo for variation',
         'Wide grip = more lats, Close grip = more biceps',
         'Chest bar ki taraf le jao — mat karo chin tuck',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Kipping / swinging — strict form keep',
+        '❌ Half reps — full range of motion use',
+        '❌ Chin tucking — chest bar ki taraf le jao',
+        '❌ Legs cross karke swing — core tight keep',
+      ],
+      commonMistakesUr: const [
         '❌ Kipping / swinging — strict form rakho',
         '❌ Half reps — full range of motion use karo',
         '❌ Chin tucking — chest ko bar ki taraf le jao',
         '❌ Legs cross karke swing — core tight rakho',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'back_2',
@@ -458,12 +717,21 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Cable',
       difficulty: 'Beginner',
-      instructions: 'Wide grip, bar chest tak pull',
-      musclesWorked: ['Lats', 'Biceps'],
+      instructionsEn: 'Wide grip, bar chest to pull',
+      instructionsUr: 'Wide grip, bar chest tak pull',
+      musclesWorked: const ['Lats', 'Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif',
-      caloriesPerMin: 6,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Lat pulldown machine sit on',
+        'Thigh pads adjust — firmly fit hone needed',
+        'Bar wide overhand grip hold',
+        'Chest slightly upar lift — slight lean back',
+        'Bar upper chest to pull',
+        'Elbows down and peeche drive',
+        'Lats squeeze bottom on',
+        'Slowly wapas upar jao — arms fully extend',
+      ],
+      detailedStepsUr: const [
         'Lat pulldown machine pe baitho',
         'Thigh pads adjust karo — firmly fit hone chahiye',
         'Bar ko wide overhand grip se pakdo',
@@ -473,19 +741,34 @@ class ExerciseData {
         'Lats ko squeeze karo bottom pe',
         'Slowly wapas upar jao — arms fully extend',
       ],
-      tips: [
+      tipsEn: const [
+        'Pull-up ka machine version — beginners for perfect',
+        'Behind neck don\'t — shoulder injury ka risk',
+        'Grip variations try — wide, close, reverse',
+        'Body lean 10-15° more don\'t',
+        'Feel the lats — biceps don\'t khicho',
+      ],
+      tipsUr: const [
         'Pull-up ka machine version — beginners ke liye perfect',
         'Behind neck mat karo — shoulder injury ka risk',
         'Grip variations try karo — wide, close, reverse',
         'Body lean 10-15° se zyada mat karo',
         'Feel the lats — biceps se mat khicho',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Very peeche lean karna — row ban jata hai',
+        '❌ Behind neck pull karna — dangerous for shoulders',
+        '❌ Momentum use karna — controlled movement',
+        '❌ Arms kheenchna — lats pull feel',
+      ],
+      commonMistakesUr: const [
         '❌ Bahut peeche lean karna — row ban jata hai',
         '❌ Behind neck pull karna — dangerous for shoulders',
         '❌ Momentum use karna — controlled movement',
         '❌ Arms se kheenchna — lats se pull feel karo',
       ],
+      caloriesPerMin: 6,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'back_3',
@@ -493,12 +776,20 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Bent over, bar belly tak pull',
-      musclesWorked: ['Middle Back', 'Lats', 'Biceps'],
+      instructionsEn: 'Bent over, bar belly to pull',
+      instructionsUr: 'Bent over, bar belly tak pull',
+      musclesWorked: const ['Middle Back', 'Lats', 'Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bent-Over-Row.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bar floor on, shoulder-width grip hold',
+        'Hips hinge — back flat, chest up',
+        'Body 45° angle on — knees slightly bent',
+        'Bar belly button ki taraf pull',
+        'Elbows body ke saath peeche drive',
+        'Shoulder blades squeeze top on',
+        'Slowly lower — arms extend, repeat',
+      ],
+      detailedStepsUr: const [
         'Bar floor pe, shoulder-width grip pakdo',
         'Hips hinge karo — back flat, chest up',
         'Body 45° angle pe — knees slightly bent',
@@ -507,19 +798,34 @@ class ExerciseData {
         'Shoulder blades squeeze karo top pe',
         'Slowly lower karo — arms extend, repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Back FLAT rakhna most important hai',
+        'Mirror in form check or record',
+        'Underhand grip biceps more engage karta hai',
+        'Overhand grip rear delts and traps for better',
+        'Core tight keep — lower back protect hoga',
+      ],
+      tipsUr: const [
         'Back FLAT rakhna most important hai',
         'Mirror mein form check karo ya record karo',
         'Underhand grip biceps ko zyada engage karta hai',
         'Overhand grip rear delts aur traps ke liye better',
         'Core tight rakho — lower back protect hoga',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Back round karna — flat back mandatory hai',
+        '❌ Body uthana har rep on — angle maintain',
+        '❌ Ego lifting — form > weight',
+        '❌ Jerky movement — smooth & controlled',
+      ],
+      commonMistakesUr: const [
         '❌ Back round karna — flat back mandatory hai',
         '❌ Body uthana har rep pe — angle maintain karo',
         '❌ Ego lifting — form > weight',
         '❌ Jerky movement — smooth & controlled karo',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'back_4',
@@ -527,12 +833,21 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'One arm row, bench support',
-      musclesWorked: ['Lats', 'Biceps'],
+      instructionsEn: 'One arm row, bench support',
+      instructionsUr: 'One arm row, bench support',
+      musclesWorked: const ['Lats', 'Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Row.gif',
-      caloriesPerMin: 6,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Ek haath and ek knee bench on keep',
+        'Doosre haath in dumbbell hold',
+        'Back flat keep — floor ke parallel',
+        'Dumbbell hip ki taraf pull',
+        'Elbow body ke saath peeche drive',
+        'Lat squeeze top on — 1 sec hold',
+        'Slowly down lower — full stretch',
+        'All reps, fir doosri side',
+      ],
+      detailedStepsUr: const [
         'Ek haath aur ek knee bench pe rakho',
         'Doosre haath mein dumbbell pakdo',
         'Back flat rakhho — floor ke parallel',
@@ -542,19 +857,34 @@ class ExerciseData {
         'Slowly neeche lower karo — full stretch',
         'All reps karo, fir doosri side',
       ],
-      tips: [
+      tipsEn: const [
+        'Unilateral exercise — imbalances fix karta hai',
+        'Weak side pehle start',
+        'Row to hip, not to chest — lat engagement better',
+        'Slight rotation ok hai top on — extra squeeze',
+        'Bench support hone lower back safe hai',
+      ],
+      tipsUr: const [
         'Unilateral exercise — imbalances fix karta hai',
         'Weak side se pehle start karo',
         'Row to hip, not to chest — lat engagement better',
         'Slight rotation ok hai top pe — extra squeeze',
         'Bench support hone se lower back safe hai',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Shoulder kheenchna — elbow drive',
+        '❌ Body rotate very more — minimal rotation',
+        '❌ Fast reps — slow & controlled',
+        '❌ Half range of motion — full stretch and full squeeze',
+      ],
+      commonMistakesUr: const [
         '❌ Shoulder se kheenchna — elbow drive karo',
         '❌ Body rotate bahut zyada — minimal rotation',
         '❌ Fast reps — slow & controlled',
         '❌ Half range of motion — full stretch aur full squeeze',
       ],
+      caloriesPerMin: 6,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'back_5',
@@ -562,12 +892,20 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Cable',
       difficulty: 'Beginner',
-      instructions: 'Chest out, handle belly tak pull',
-      musclesWorked: ['Middle Back', 'Lats'],
+      instructionsEn: 'Chest out, handle belly to pull',
+      instructionsUr: 'Chest out, handle belly tak pull',
+      musclesWorked: const ['Middle Back', 'Lats'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif',
-      caloriesPerMin: 6,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Cable row machine sit on — feet plates on',
+        'V-handle or straight bar hold',
+        'Knees slightly bent, back straight, chest up',
+        'Handle belly button ki taraf pull',
+        'Shoulder blades squeeze — elbows peeche',
+        'Slowly extend — stretch feel lats in',
+        'Body forward lean slightly ok hai stretch for',
+      ],
+      detailedStepsUr: const [
         'Cable row machine pe baitho — feet plates pe',
         'V-handle ya straight bar pakdo',
         'Knees slightly bent, back straight, chest up',
@@ -576,18 +914,32 @@ class ExerciseData {
         'Slowly extend karo — stretch feel karo lats mein',
         'Body forward lean thoda ok hai stretch ke liye',
       ],
-      tips: [
+      tipsEn: const [
+        'Different attachments try — V-bar, wide bar, rope',
+        'Constant tension — cables ka advantage',
+        'Mind-muscle connection on focus',
+        'Chest up rakhna important hai — slouch don\'t',
+      ],
+      tipsUr: const [
         'Different attachments try karo — V-bar, wide bar, rope',
         'Constant tension — cables ka advantage',
         'Mind-muscle connection pe focus karo',
         'Chest up rakhna important hai — slouch mat karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Body swing karna aage peeche — torso stable keep',
+        '❌ Arms kheenchna — back pull feel',
+        '❌ Round back — chest up, shoulders back',
+        '❌ Incomplete ROM — full stretch and squeeze',
+      ],
+      commonMistakesUr: const [
         '❌ Body swing karna aage peeche — torso stable rakho',
         '❌ Arms se kheenchna — back se pull feel karo',
         '❌ Round back — chest up, shoulders back',
         '❌ Incomplete ROM — full stretch aur squeeze karo',
       ],
+      caloriesPerMin: 6,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'back_6',
@@ -595,12 +947,19 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'T-Bar',
       difficulty: 'Intermediate',
-      instructions: 'Bent over, bar chest tak pull',
-      musclesWorked: ['Middle Back', 'Lats'],
+      instructionsEn: 'Bent over, bar chest to pull',
+      instructionsUr: 'Bent over, bar chest tak pull',
+      musclesWorked: const ['Middle Back', 'Lats'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/T-Bar-Row.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'T-Bar machine on stand or landmine setup',
+        'V-handle or close grip handle lagao',
+        'Bent over position — back flat, chest up',
+        'Bar chest ki taraf pull',
+        'Squeeze shoulder blades at top',
+        'Lower slowly — full extension',
+      ],
+      detailedStepsUr: const [
         'T-Bar machine pe khade ho jao ya landmine setup karo',
         'V-handle ya close grip handle lagao',
         'Bent over position — back flat, chest up',
@@ -608,18 +967,32 @@ class ExerciseData {
         'Squeeze shoulder blades at top',
         'Lower slowly — full extension',
       ],
-      tips: [
+      tipsEn: const [
+        'Chest supported T-Bar rows lower back for safer hain',
+        'Close grip middle back, wide grip upper back target karta hai',
+        'Heavy jaa sakte ho — compound movement hai',
+        'Feet position experiment — stability for',
+      ],
+      tipsUr: const [
         'Chest supported T-Bar rows lower back ke liye safer hain',
         'Close grip middle back, wide grip upper back target karta hai',
         'Heavy jaa sakte ho — compound movement hai',
         'Feet position experiment karo — stability ke liye',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Back round karna — flat back essential',
+        '❌ Standing too upright — proper hip hinge',
+        '❌ Momentum use karna — strict form',
+        '❌ Grip too wide on close-grip handle',
+      ],
+      commonMistakesUr: const [
         '❌ Back round karna — flat back essential',
         '❌ Standing too upright — proper hip hinge karo',
         '❌ Momentum use karna — strict form',
         '❌ Grip too wide on close-grip handle',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'back_7',
@@ -627,12 +1000,22 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Barbell',
       difficulty: 'Advanced',
-      instructions: 'Hip hinge, bar floor se lift',
-      musclesWorked: ['Lower Back', 'Glutes', 'Hamstrings'],
+      instructionsEn: 'Hip hinge, bar floor lift',
+      instructionsUr: 'Hip hinge, bar floor se lift',
+      musclesWorked: const ['Lower Back', 'Glutes', 'Hamstrings'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Deadlift.gif',
-      caloriesPerMin: 10,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bar floor on, feet hip-width apart — bar mid-foot ke upar',
+        'Hip hinge — bend at hips, then knees',
+        'Hold the bar at shoulder-width grip hold (overhand or mixed)',
+        'Chest up, back flat, shoulders bar ke upar',
+        'Deep breath lo — brace core',
+        'Stand up — hips and knees simultaneously extend',
+        'Bar body ke saath close keep (scrape your shins)',
+        'Top on lockout — hips forward, shoulders back',
+        'Reverse motion — hips hinge first, then bend knees',
+      ],
+      detailedStepsUr: const [
         'Bar floor pe, feet hip-width apart — bar mid-foot ke upar',
         'Hip hinge karo — bend at hips, then knees',
         'Bar ko shoulder-width grip pakdo (overhand ya mixed)',
@@ -643,7 +1026,15 @@ class ExerciseData {
         'Top pe lockout — hips forward, shoulders back',
         'Reverse motion — hips hinge first, then bend knees',
       ],
-      tips: [
+      tipsEn: const [
+        'KING of exercises — full body strength builder',
+        'Form PERFECT should be — ego lift bilkul don\'t',
+        'Belt use heavy sets in — core support',
+        'Mixed grip or hook grip for heavy weights',
+        'Warm up properly — light sets start',
+        'Record karke form check or coach feedback lo',
+      ],
+      tipsUr: const [
         'KING of exercises — full body strength builder',
         'Form PERFECT hona chahiye — ego lift bilkul mat karo',
         'Belt use karo heavy sets mein — core support',
@@ -651,7 +1042,15 @@ class ExerciseData {
         'Warm up properly — light sets se start karo',
         'Record karke form check karo ya coach se feedback lo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Round back — MOST DANGEROUS mistake, back flat keep',
+        '❌ Bar body door — shins ke saath close keep',
+        '❌ Squat position — deadlift hip hinge hai, not squat',
+        '❌ Jerking the bar — smooth pull',
+        '❌ Hyperextending at top — neutral spine on stop',
+        '❌ Looking up — neck neutral, floor 6 feet aage dekho',
+      ],
+      commonMistakesUr: const [
         '❌ Round back — MOST DANGEROUS mistake, back flat rakho',
         '❌ Bar body se door — shins ke saath close rakhho',
         '❌ Squat position — deadlift hip hinge hai, not squat',
@@ -659,6 +1058,8 @@ class ExerciseData {
         '❌ Hyperextending at top — neutral spine pe stop karo',
         '❌ Looking up — neck neutral, floor 6 feet aage dekho',
       ],
+      caloriesPerMin: 10,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'back_8',
@@ -666,12 +1067,21 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Cable',
       difficulty: 'Beginner',
-      instructions: 'Rope face tak pull, rear delts',
-      musclesWorked: ['Rear Delts', 'Traps'],
+      instructionsEn: 'Rope face to pull, rear delts',
+      instructionsUr: 'Rope face tak pull, rear delts',
+      musclesWorked: const ['Rear Delts', 'Traps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif',
-      caloriesPerMin: 4,
-      tempo: '2-2-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Cable machine on rope attachment lagao — eye level on',
+        'Rope overhand grip hold',
+        'Step back — arms extended, tension feel',
+        'Rope face ki taraf pull',
+        'Elbows high keep — shoulder level or upar',
+        'Rope ears ke paas bring — external rotate',
+        'Squeeze rear delts — 2 sec hold',
+        'Slowly wapas extend',
+      ],
+      detailedStepsUr: const [
         'Cable machine pe rope attachment lagao — eye level pe',
         'Rope ko overhand grip se pakdo',
         'Step back karo — arms extended, tension feel karo',
@@ -681,19 +1091,34 @@ class ExerciseData {
         'Squeeze rear delts — 2 sec hold',
         'Slowly wapas extend karo',
       ],
-      tips: [
+      tipsEn: const [
+        'Shoulder health for BEST exercise — har workout in',
+        'Light weight — yeh isolation hai, heavy don\'t jao',
+        'External rotation important hai — sirf pull don\'t',
+        'Posture improve karta hai — desk job walon for must',
+        'Warm up in bhi use kar sakte ho',
+      ],
+      tipsUr: const [
         'Shoulder health ke liye BEST exercise — har workout mein karo',
         'Light weight — yeh isolation hai, heavy mat jao',
         'External rotation important hai — sirf pull mat karo',
         'Posture improve karta hai — desk job walon ke liye must',
         'Warm up mein bhi use kar sakte ho',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Heavy weight — form break ho jata hai',
+        '❌ Elbows low rakhna — high elbows needed',
+        '❌ External rotation skip karna — most important part',
+        '❌ Body lean back — upright raho',
+      ],
+      commonMistakesUr: const [
         '❌ Heavy weight — form break ho jata hai',
         '❌ Elbows low rakhna — high elbows chahiye',
         '❌ External rotation skip karna — most important part',
         '❌ Body lean back — upright raho',
       ],
+      caloriesPerMin: 4,
+      tempo: '2-2-2',
     ),
     Exercise(
       id: 'back_9',
@@ -701,12 +1126,20 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Pull-up Bar',
       difficulty: 'Intermediate',
-      instructions: 'Underhand grip, biceps engage',
-      musclesWorked: ['Lats', 'Biceps'],
+      instructionsEn: 'Underhand grip, biceps engage',
+      instructionsUr: 'Underhand grip, biceps engage',
+      musclesWorked: const ['Lats', 'Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Chin-Up.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bar UNDERHAND (supinated) grip hold',
+        'Grip shoulder-width or slightly narrow',
+        'Dead hang in start — arms fully extended',
+        'Pull upar — chin bar ke upar',
+        'Biceps and lats dono feel honge',
+        'Slowly down aao — full extension (3 sec)',
+        'Dead hang — then repeat',
+      ],
+      detailedStepsUr: const [
         'Bar ko UNDERHAND (supinated) grip se pakdo',
         'Grip shoulder-width ya thoda narrow',
         'Dead hang mein start karo — arms fully extended',
@@ -715,17 +1148,30 @@ class ExerciseData {
         'Slowly neeche aao — full extension (3 sec)',
         'Dead hang — then repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Pull-up easier hai — biceps help karti hain',
+        'Pull-ups nahi hote? Chin-ups start',
+        'Lower lats more hit karta hai',
+        'Weighted chin-ups — advanced for',
+      ],
+      tipsUr: const [
         'Pull-up se easier hai — biceps help karti hain',
         'Pull-ups nahi hote? Chin-ups se start karo',
         'Lower lats ko zyada hit karta hai',
         'Weighted chin-ups — advanced ke liye',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Half reps — full ROM use',
+        '❌ Kipping — strict form keep',
+        '❌ Grip too wide — shoulder-width best hai chin-ups for',
+      ],
+      commonMistakesUr: const [
         '❌ Half reps — full ROM use karo',
         '❌ Kipping — strict form rakho',
         '❌ Grip too wide — shoulder-width best hai chin-ups ke liye',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'back_10',
@@ -733,12 +1179,20 @@ class ExerciseData {
       bodyPart: 'Back',
       equipment: 'Machine',
       difficulty: 'Beginner',
-      instructions: 'Lower back extend, squeeze',
-      musclesWorked: ['Lower Back', 'Glutes'],
+      instructionsEn: 'Lower back extend, squeeze',
+      instructionsUr: 'Lower back extend, squeeze',
+      musclesWorked: const ['Lower Back', 'Glutes'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/45-degree-Hyperextension.gif',
-      caloriesPerMin: 5,
-      tempo: '2-2-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Hyperextension bench on position lo',
+        'Hips pad ke edge on — upper body free',
+        'Arms chest on cross or head ke peeche',
+        'Upper body down lower — controlled',
+        'Lower back extend — body straight line in bring',
+        'Glutes and lower back squeeze top on',
+        'Hyperextend don\'t — neutral spine to aao',
+      ],
+      detailedStepsUr: const [
         'Hyperextension bench pe position lo',
         'Hips pad ke edge pe — upper body free',
         'Arms chest pe cross karo ya head ke peeche',
@@ -747,24 +1201,36 @@ class ExerciseData {
         'Glutes aur lower back squeeze karo top pe',
         'Hyperextend mat karo — neutral spine tak aao',
       ],
-      tips: [
+      tipsEn: const [
+        'Lower back strengthening for excellent',
+        'Weight plate chest on hold progression for',
+        'Warm up exercise ke taur on bhi use kar sakte ho',
+        'Glutes bhi engage — sirf lower back nahi',
+      ],
+      tipsUr: const [
         'Lower back strengthening ke liye excellent',
         'Weight plate chest pe hold karo progression ke liye',
         'Warm up exercise ke taur pe bhi use kar sakte ho',
         'Glutes ko bhi engage karo — sirf lower back nahi',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Hyperextending (very upar jaana) — neutral spine on pause',
+        '❌ Fast reps — slow & controlled',
+        '❌ Neck extension — neutral head position',
+        '❌ Momentum use karna — muscle engagement feel',
+      ],
+      commonMistakesUr: const [
         '❌ Hyperextending (bahut upar jaana) — neutral spine pe ruko',
         '❌ Fast reps — slow & controlled',
         '❌ Neck extension — neutral head position',
         '❌ Momentum use karna — muscle engagement feel karo',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-2-2',
     ),
   ];
 
-  // ==========================================
-  // 🦵 LEGS EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== LEGS ==========
   static const List<Exercise> legs = [
     Exercise(
       id: 'legs_1',
@@ -772,12 +1238,21 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Bar shoulders pe, squat down',
-      musclesWorked: ['Quads', 'Glutes', 'Hamstrings'],
+      instructionsEn: 'Bar shoulders on, squat down',
+      instructionsUr: 'Bar shoulders pe, squat down',
+      musclesWorked: const ['Quads', 'Glutes', 'Hamstrings'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Squat.gif',
-      caloriesPerMin: 10,
-      tempo: '3-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bar upper back / traps on keep (high bar) or rear delts on (low bar)',
+        'Feet shoulder-width apart, toes slightly bahar (15-30°)',
+        'Chest up, core tight, deep breath lo',
+        'Hip hinge — hips peeche press',
+        'Knees toes ki direction in track karein',
+        'Parallel or below parallel to jao (hip crease below knee)',
+        'Drive up through heels — stand up explosively',
+        'Top on lockout — glutes squeeze',
+      ],
+      detailedStepsUr: const [
         'Bar ko upper back / traps pe rakho (high bar) ya rear delts pe (low bar)',
         'Feet shoulder-width apart, toes thoda bahar (15-30°)',
         'Chest up, core tight, deep breath lo',
@@ -787,7 +1262,15 @@ class ExerciseData {
         'Drive up through heels — stand up explosively',
         'Top pe lockout — glutes squeeze',
       ],
-      tips: [
+      tipsEn: const [
+        'KING of leg exercises — must do',
+        'Ankle mobility important hai — heeled shoes help karte hain',
+        'Belt use heavy sets in',
+        'Warm up with bodyweight squats pehle',
+        'Depth matters — parallel or below for maximum gains',
+        'Knees out press — cave in don\'t hone do',
+      ],
+      tipsUr: const [
         'KING of leg exercises — must do',
         'Ankle mobility important hai — heeled shoes help karte hain',
         'Belt use karo heavy sets mein',
@@ -795,13 +1278,22 @@ class ExerciseData {
         'Depth matters — parallel ya below for maximum gains',
         'Knees out push karo — cave in mat hone do',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Knees caving in — knees out press',
+        '❌ Heels uthna — flat feet or squat shoes pehno',
+        '❌ Forward lean more — chest up keep',
+        '❌ Half squats — full depth jao',
+        '❌ Butt wink (pelvis tuck) — mobility work',
+      ],
+      commonMistakesUr: const [
         '❌ Knees caving in — knees out push karo',
         '❌ Heels uthna — flat feet ya squat shoes pehno',
         '❌ Forward lean zyada — chest up rakho',
         '❌ Half squats — full depth jao',
         '❌ Butt wink (pelvis tuck) — mobility work karo',
       ],
+      caloriesPerMin: 10,
+      tempo: '3-1-2',
     ),
     Exercise(
       id: 'legs_2',
@@ -809,12 +1301,20 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Machine',
       difficulty: 'Beginner',
-      instructions: 'Feet shoulder width, push',
-      musclesWorked: ['Quads', 'Glutes'],
+      instructionsEn: 'Feet shoulder width, push',
+      instructionsUr: 'Feet shoulder width, push',
+      musclesWorked: const ['Quads', 'Glutes'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Press.gif',
-      caloriesPerMin: 7,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Machine sit on — back pad lagao firmly',
+        'Feet platform on shoulder-width apart keep',
+        'Safety handles release',
+        'Platform press — legs extend (lock out don\'t )',
+        'Slowly down bring — knees 90° bend to',
+        'Press back up — through heels drive',
+        'Repeat — controlled reps',
+      ],
+      detailedStepsUr: const [
         'Machine pe baitho — back pad se lagao firmly',
         'Feet platform pe shoulder-width apart rakho',
         'Safety handles release karo',
@@ -823,19 +1323,34 @@ class ExerciseData {
         'Push back up — through heels drive karo',
         'Repeat — controlled reps',
       ],
-      tips: [
+      tipsEn: const [
+        'Feet placement target change hota hai:',
+        'High & wide = more glutes/hams, Low & narrow = more quads',
+        'Knees lock out don\'t — dangerous hai',
+        'Heavy jaa sakte ho — back supported hai',
+        'Lower back pad uthna nahi needed',
+      ],
+      tipsUr: const [
         'Feet placement se target change hota hai:',
         'High & wide = more glutes/hams, Low & narrow = more quads',
         'Knees lock out mat karo — dangerous hai',
         'Heavy jaa sakte ho — back supported hai',
         'Lower back pad se uthna nahi chahiye',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Knees lock out karna — injury risk',
+        '❌ Hips uthna seat — ROM kam',
+        '❌ Toes push karna — heels through drive',
+        '❌ Very heavy — full ROM maintain',
+      ],
+      commonMistakesUr: const [
         '❌ Knees lock out karna — injury risk',
         '❌ Hips uthna seat se — ROM kam karo',
         '❌ Toes se push karna — heels through drive karo',
         '❌ Bahut heavy — full ROM maintain karo',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'legs_3',
@@ -843,12 +1358,21 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Hip hinge, hamstring stretch',
-      musclesWorked: ['Hamstrings', 'Glutes'],
+      instructionsEn: 'Hip hinge, hamstring stretch',
+      instructionsUr: 'Hip hinge, hamstring stretch',
+      musclesWorked: const ['Hamstrings', 'Glutes'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Romanian-Deadlift.gif',
-      caloriesPerMin: 8,
-      tempo: '3-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Hold the bar at shoulder-width grip hold — standing position',
+        'Knees SLIGHTLY bent (5-15°) — locked angle',
+        'Hip hinge — hips peeche press',
+        'Back FLAT keep — bar legs ke saath slide karao',
+        'Bar mid-shin or below knees to jao (hamstring flexibility on depend)',
+        'Hamstrings in DEEP stretch feel',
+        'Hip hinge reverse — hips forward drive',
+        'Glutes squeeze top on',
+      ],
+      detailedStepsUr: const [
         'Bar ko shoulder-width grip se pakdo — standing position',
         'Knees SLIGHTLY bent (5-15°) — locked angle',
         'Hip hinge karo — hips peeche push karo',
@@ -858,19 +1382,34 @@ class ExerciseData {
         'Hip hinge reverse karo — hips forward drive karo',
         'Glutes squeeze karo top pe',
       ],
-      tips: [
+      tipsEn: const [
+        'Yeh deadlift DIFFERENT hai — knees bend fixed rehta hai',
+        'Hamstring stretch feel karna goal hai',
+        'Bar body ke close keep — legs ke saath slide',
+        'Think "push hips back" not "bend forward"',
+        'Dumbbell version bhi try',
+      ],
+      tipsUr: const [
         'Yeh deadlift se DIFFERENT hai — knees bend fixed rehta hai',
         'Hamstring stretch feel karna goal hai',
         'Bar body ke close rakhho — legs ke saath slide',
         'Think "push hips back" not "bend forward"',
         'Dumbbell version bhi try karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Knees very bend karna — yeh squat nahi hai',
+        '❌ Back round karna — FLAT back mandatory',
+        '❌ Bar body door — close keep',
+        '❌ Very down jaana — flexibility on depend, force don\'t',
+      ],
+      commonMistakesUr: const [
         '❌ Knees bahut bend karna — yeh squat nahi hai',
         '❌ Back round karna — FLAT back mandatory',
         '❌ Bar body se door — close rakhho',
         '❌ Bahut neeche jaana — flexibility pe depend, force mat karo',
       ],
+      caloriesPerMin: 8,
+      tempo: '3-1-2',
     ),
     Exercise(
       id: 'legs_4',
@@ -878,12 +1417,20 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Step forward, knee down',
-      musclesWorked: ['Quads', 'Glutes'],
+      instructionsEn: 'Step forward, knee down',
+      instructionsUr: 'Step forward, knee down',
+      musclesWorked: const ['Quads', 'Glutes'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunges.gif',
-      caloriesPerMin: 7,
-      tempo: '2-0-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Straight stand — feet hip-width apart',
+        'Ek bada step aage lo',
+        'Dono knees 90° bend — back knee floor ke paas',
+        'Front knee toes ke peeche or directly upar',
+        'Front heel press — stand up',
+        'Doosra leg aage step — walking motion',
+        'Alternate legs — walk forward',
+      ],
+      detailedStepsUr: const [
         'Straight khade ho jao — feet hip-width apart',
         'Ek bada step aage lo',
         'Dono knees 90° bend karo — back knee floor ke paas',
@@ -892,19 +1439,34 @@ class ExerciseData {
         'Doosra leg aage step karo — walking motion',
         'Alternate legs — walk forward',
       ],
-      tips: [
+      tipsEn: const [
+        'Dumbbells hold hands in for added resistance',
+        'Step length important — too short = knee stress',
+        'Upright torso maintain',
+        'Great for functional fitness & balance',
+        'Reverse lunges easier hain knees on',
+      ],
+      tipsUr: const [
         'Dumbbells hold karo hands mein for added resistance',
         'Step length important — too short = knee stress',
         'Upright torso maintain karo',
         'Great for functional fitness & balance',
         'Reverse lunges easier hain knees pe',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Front knee toes ke aage jaana',
+        '❌ Leaning forward very more',
+        '❌ Steps too narrow — balance issues',
+        '❌ Back knee slam karna floor on — gentle touch',
+      ],
+      commonMistakesUr: const [
         '❌ Front knee toes ke aage jaana',
         '❌ Leaning forward bahut zyada',
         '❌ Steps too narrow — balance issues',
         '❌ Back knee slam karna floor pe — gentle touch',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-0-2',
     ),
     Exercise(
       id: 'legs_5',
@@ -912,12 +1474,20 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Machine',
       difficulty: 'Beginner',
-      instructions: 'Heels glutes tak curl',
-      musclesWorked: ['Hamstrings'],
+      instructionsEn: 'Heels glutes to curl',
+      instructionsUr: 'Heels glutes tak curl',
+      musclesWorked: const ['Hamstrings'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Curl.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Leg curl machine lie on (face down)',
+        'Pad ankles ke just upar should be',
+        'Handles hold or bench ke sides hold',
+        'Heels glutes ki taraf curl',
+        'Hamstrings squeeze top on — 1 sec hold',
+        'Slowly lower — full extension (3 sec down)',
+        'Hips bench uthne don\'t do',
+      ],
+      detailedStepsUr: const [
         'Leg curl machine pe let jao (face down)',
         'Pad ankles ke just upar hona chahiye',
         'Handles pakdo ya bench ke sides pakdo',
@@ -926,19 +1496,34 @@ class ExerciseData {
         'Slowly lower karo — full extension (3 sec down)',
         'Hips bench se uthne mat do',
       ],
-      tips: [
+      tipsEn: const [
+        'Hamstring isolation for best machine',
+        'Toes point apni taraf (dorsiflexion) for more hamstring',
+        'Slow negatives (lowering phase) bohot effective',
+        'Light start — hamstrings cramp ho sakte hain',
+        'Seated leg curls bhi try — different angle',
+      ],
+      tipsUr: const [
         'Hamstring isolation ke liye best machine',
         'Toes point karo apni taraf (dorsiflexion) for more hamstring',
         'Slow negatives (lowering phase) bohot effective',
         'Light se start karo — hamstrings cramp ho sakte hain',
         'Seated leg curls bhi try karo — different angle',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Hips uthna bench — body flat keep',
+        '❌ Momentum / jerky reps — controlled movement',
+        '❌ Partial reps — full ROM',
+        '❌ Too heavy — hamstring strain ka risk',
+      ],
+      commonMistakesUr: const [
         '❌ Hips uthna bench se — body flat rakhho',
         '❌ Momentum / jerky reps — controlled movement',
         '❌ Partial reps — full ROM karo',
         '❌ Too heavy — hamstring strain ka risk',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'legs_6',
@@ -946,12 +1531,20 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Machine',
       difficulty: 'Beginner',
-      instructions: 'Legs extend, quads squeeze',
-      musclesWorked: ['Quads'],
+      instructionsEn: 'Legs extend, quads squeeze',
+      instructionsUr: 'Legs extend, quads squeeze',
+      musclesWorked: const ['Quads'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif',
-      caloriesPerMin: 5,
-      tempo: '2-2-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Leg extension machine sit on',
+        'Back pad lagao — firmly seated',
+        'Pad shins ke lower part on should be',
+        'Legs extend — fully straighten',
+        'Quads SQUEEZE top on — 2 sec hold',
+        'Slowly lower — 90° bend to',
+        'Repeat — controlled reps',
+      ],
+      detailedStepsUr: const [
         'Leg extension machine pe baitho',
         'Back pad se lagao — firmly seated',
         'Pad shins ke lower part pe hona chahiye',
@@ -960,19 +1553,34 @@ class ExerciseData {
         'Slowly lower karo — 90° bend tak',
         'Repeat — controlled reps',
       ],
-      tips: [
+      tipsEn: const [
+        'Quad isolation for perfect machine',
+        'Peak contraction on hold — quad definition for',
+        'Warm up exercise ke taur on bhi use leg day in',
+        'Single leg bhi try — imbalance fix',
+        'Light to moderate weight best hai — heavy risky for knees',
+      ],
+      tipsUr: const [
         'Quad isolation ke liye perfect machine',
         'Peak contraction pe hold karo — quad definition ke liye',
         'Warm up exercise ke taur pe bhi use karo leg day mein',
         'Single leg bhi try karo — imbalance fix',
         'Light to moderate weight best hai — heavy risky for knees',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Momentum / swinging — controlled extension',
+        '❌ Very heavy — knee stress hota hai',
+        '❌ Seat position galat — knee joint pivot point on should be',
+        '❌ Incomplete extension — full lockout (briefly)',
+      ],
+      commonMistakesUr: const [
         '❌ Momentum / swinging — controlled extension',
         '❌ Bahut heavy — knee stress hota hai',
         '❌ Seat position galat — knee joint pivot point pe hona chahiye',
         '❌ Incomplete extension — full lockout karo (briefly)',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-2-2',
     ),
     Exercise(
       id: 'legs_7',
@@ -980,12 +1588,20 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Machine',
       difficulty: 'Beginner',
-      instructions: 'Heels raise, calves squeeze',
-      musclesWorked: ['Calves'],
+      instructionsEn: 'Heels raise, calves squeeze',
+      instructionsUr: 'Heels raise, calves squeeze',
+      musclesWorked: const ['Calves'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Standing-Calf-Raise.gif',
-      caloriesPerMin: 4,
-      tempo: '2-2-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Calf raise machine on stand',
+        'Shoulders pads ke down — or Smith machine use',
+        'Toes platform ke edge on — heels free hanging',
+        'Heels down drop — deep calf stretch',
+        'Toes press — heels upar lift maximum',
+        'Calves squeeze top on — 2 sec hold',
+        'Slowly down aao — 3 sec stretch',
+      ],
+      detailedStepsUr: const [
         'Calf raise machine pe khade ho jao',
         'Shoulders pads ke neeche — ya Smith machine use karo',
         'Toes platform ke edge pe — heels free hanging',
@@ -994,7 +1610,15 @@ class ExerciseData {
         'Calves squeeze karo top pe — 2 sec hold',
         'Slowly neeche aao — 3 sec stretch',
       ],
-      tips: [
+      tipsEn: const [
+        'Calves stubborn hain — high reps (15-25)',
+        'Full ROM important hai — stretch and squeeze dono',
+        'Seated calf raises — soleus target karta hai',
+        'Standing calf raises — gastrocnemius target',
+        'Dono for complete calf development',
+        'Toe position: straight, inward, outward — different areas target',
+      ],
+      tipsUr: const [
         'Calves stubborn hain — high reps karo (15-25)',
         'Full ROM important hai — stretch aur squeeze dono',
         'Seated calf raises — soleus target karta hai',
@@ -1002,12 +1626,20 @@ class ExerciseData {
         'Dono karo for complete calf development',
         'Toe position: straight, inward, outward — different areas target',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Bouncing reps — controlled movement needed',
+        '❌ Half reps — full stretch and full squeeze',
+        '❌ Too heavy — ROM sacrifice hota hai',
+        '❌ Knees bend karna — legs straight keep',
+      ],
+      commonMistakesUr: const [
         '❌ Bouncing reps — controlled movement chahiye',
         '❌ Half reps — full stretch aur full squeeze',
         '❌ Too heavy — ROM sacrifice hota hai',
         '❌ Knees bend karna — legs straight rakhho',
       ],
+      caloriesPerMin: 4,
+      tempo: '2-2-3',
     ),
     Exercise(
       id: 'legs_8',
@@ -1015,12 +1647,20 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Dumbbell',
       difficulty: 'Beginner',
-      instructions: 'Weight chest pe, squat',
-      musclesWorked: ['Quads', 'Glutes'],
+      instructionsEn: 'Weight chest on, squat',
+      instructionsUr: 'Weight chest pe, squat',
+      musclesWorked: const ['Quads', 'Glutes'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Goblet-Squat.gif',
-      caloriesPerMin: 7,
-      tempo: '3-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbell vertically chest ke paas hold',
+        'Elbows down point karein — dumbbell ke end on haath',
+        'Feet shoulder-width, toes slightly out',
+        'Squat — hips down, chest up',
+        'Elbows knees ke andar touch karein (deep squat)',
+        'Below parallel jao if possible',
+        'Stand up — drive through heels',
+      ],
+      detailedStepsUr: const [
         'Dumbbell ko vertically chest ke paas hold karo',
         'Elbows neeche point karein — dumbbell ke end pe haath',
         'Feet shoulder-width, toes slightly out',
@@ -1029,19 +1669,34 @@ class ExerciseData {
         'Below parallel jao if possible',
         'Stand up — drive through heels',
       ],
-      tips: [
+      tipsEn: const [
+        'Squat seekhne for BEST exercise — beginners must do',
+        'Front load hone upright position force hota hai',
+        'Ankle mobility improve karta hai naturally',
+        'Kettlebell bhi kar sakte ho',
+        'Warm up in use barbell squats pehle',
+      ],
+      tipsUr: const [
         'Squat seekhne ke liye BEST exercise — beginners must do',
         'Front load hone se upright position force hota hai',
         'Ankle mobility improve karta hai naturally',
         'Kettlebell se bhi kar sakte ho',
         'Warm up mein use karo barbell squats se pehle',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Dumbbell door rakhna body — chest ke paas hold',
+        '❌ Heels uthna — flat feet or elevated heels',
+        '❌ Forward lean — chest up, proud chest',
+        '❌ Not going deep enough — depth important hai',
+      ],
+      commonMistakesUr: const [
         '❌ Dumbbell door rakhna body se — chest ke paas pakdo',
         '❌ Heels uthna — flat feet or elevated heels',
         '❌ Forward lean — chest up, proud chest',
         '❌ Not going deep enough — depth important hai',
       ],
+      caloriesPerMin: 7,
+      tempo: '3-1-2',
     ),
     Exercise(
       id: 'legs_9',
@@ -1049,12 +1704,20 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Dumbbells',
       difficulty: 'Intermediate',
-      instructions: 'Rear foot elevated, squat',
-      musclesWorked: ['Quads', 'Glutes'],
+      instructionsEn: 'Rear foot elevated, squat',
+      instructionsUr: 'Rear foot elevated, squat',
+      musclesWorked: const ['Quads', 'Glutes'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bulgarian-Split-Squat.gif',
-      caloriesPerMin: 7,
-      tempo: '3-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bench ke saamne stand — 2 feet distance',
+        'Ek foot peeche bench on keep (laces down)',
+        'Dumbbells dono haathon in hold',
+        'Front leg on squat — knee 90° bend',
+        'Back knee down jaaye — floor ke paas',
+        'Front heel press — stand up',
+        'All reps ek leg on, fir switch',
+      ],
+      detailedStepsUr: const [
         'Bench ke saamne khade ho jao — 2 feet distance',
         'Ek foot peeche bench pe rakho (laces down)',
         'Dumbbells dono haathon mein pakdo',
@@ -1063,19 +1726,34 @@ class ExerciseData {
         'Front heel se push karo — stand up',
         'All reps ek leg pe, fir switch karo',
       ],
-      tips: [
+      tipsEn: const [
+        'Single leg strength ka king — imbalances fix karta hai',
+        'Balance mushkil hoga pehle — practice needed',
+        'Front foot placement experiment',
+        'Closer = more quad, Farther = more glute',
+        'Bodyweight start pehle',
+      ],
+      tipsUr: const [
         'Single leg strength ka king — imbalances fix karta hai',
         'Balance mushkil hoga pehle — practice chahiye',
         'Front foot placement experiment karo',
         'Closer = more quad, Farther = more glute',
         'Bodyweight se start karo pehle',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Too close to bench — front knee toes ke aage jaata hai',
+        '❌ Too far from bench — hip flexor strain',
+        '❌ Leaning forward — upright torso keep',
+        '❌ Back foot on weight — front leg on focus',
+      ],
+      commonMistakesUr: const [
         '❌ Too close to bench — front knee toes ke aage jaata hai',
         '❌ Too far from bench — hip flexor strain',
         '❌ Leaning forward — upright torso rakhho',
         '❌ Back foot pe weight — front leg pe focus karo',
       ],
+      caloriesPerMin: 7,
+      tempo: '3-1-2',
     ),
     Exercise(
       id: 'legs_10',
@@ -1083,12 +1761,21 @@ class ExerciseData {
       bodyPart: 'Legs',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Back bench pe, hips thrust',
-      musclesWorked: ['Glutes', 'Hamstrings'],
+      instructionsEn: 'Back bench on, hips thrust',
+      instructionsUr: 'Back bench pe, hips thrust',
+      musclesWorked: const ['Glutes', 'Hamstrings'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Hip-Thrust.gif',
-      caloriesPerMin: 7,
-      tempo: '2-2-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bench ke saamne floor sit on',
+        'Upper back (shoulder blade area) bench ke edge on keep',
+        'Barbell hips on keep — pad use comfort for',
+        'Feet floor on flat — hip-width apart, knees 90°',
+        'Hips upar thrust — body tabletop position in',
+        'Glutes HARD squeeze top on — 2 sec hold',
+        'Slowly hips down lower',
+        'Repeat — controlled reps',
+      ],
+      detailedStepsUr: const [
         'Bench ke saamne floor pe baitho',
         'Upper back (shoulder blade area) bench ke edge pe rakho',
         'Barbell hips pe rakho — pad use karo comfort ke liye',
@@ -1098,7 +1785,15 @@ class ExerciseData {
         'Slowly hips neeche lower karo',
         'Repeat — controlled reps',
       ],
-      tips: [
+      tipsEn: const [
+        'GLUTE builder #1 — must do exercise',
+        'Heavy jaa sakte ho — glutes strongest muscle hai',
+        'Bar pad use — without pad painful hai',
+        'Feet position: closer = more glute, farther = more hamstring',
+        'Single leg variation bhi try',
+        'Chin tuck top on — spinal alignment for',
+      ],
+      tipsUr: const [
         'GLUTE builder #1 — must do exercise',
         'Heavy jaa sakte ho — glutes strongest muscle hai',
         'Bar pad use karo — without pad painful hai',
@@ -1106,19 +1801,26 @@ class ExerciseData {
         'Single leg variation bhi try karo',
         'Chin tuck karo top pe — spinal alignment ke liye',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Hyperextending lower back — neutral spine on pause',
+        '❌ Feet too far — knees 90° on hone needed top on',
+        '❌ Not squeezing glutes — peak contraction most important hai',
+        '❌ Using lower back — glute drive',
+        '❌ Head looking up — chin tuck',
+      ],
+      commonMistakesUr: const [
         '❌ Hyperextending lower back — neutral spine pe ruko',
         '❌ Feet too far — knees 90° pe hone chahiye top pe',
         '❌ Not squeezing glutes — peak contraction most important hai',
         '❌ Using lower back — glute drive karo',
         '❌ Head looking up — chin tuck karo',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-2-2',
     ),
   ];
 
-  // ==========================================
-  // 🎯 SHOULDERS EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== SHOULDERS ==========
   static const List<Exercise> shoulders = [
     Exercise(
       id: 'shoulders_1',
@@ -1126,12 +1828,20 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Bar overhead push karo',
-      musclesWorked: ['Front Delts', 'Side Delts'],
+      instructionsEn: 'Bar overhead press',
+      instructionsUr: 'Bar overhead push karo',
+      musclesWorked: const ['Front Delts', 'Side Delts'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Overhead-Press.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Bar front rack position in lo — shoulders on',
+        'Grip shoulder-width slightly wider',
+        'Feet shoulder-width, core braced',
+        'Bar HEAD ke aage press upar',
+        'Jaise bar forehead cross kare — head slightly aage bring (bar path straight)',
+        'Arms fully lockout overhead',
+        'Slowly lower — chin level or shoulders to',
+      ],
+      detailedStepsUr: const [
         'Bar ko front rack position mein lo — shoulders pe',
         'Grip shoulder-width se thoda wider',
         'Feet shoulder-width, core braced',
@@ -1140,19 +1850,34 @@ class ExerciseData {
         'Arms fully lockout karo overhead',
         'Slowly lower karo — chin level ya shoulders tak',
       ],
-      tips: [
+      tipsEn: const [
+        'Strict press — legs push don\'t',
+        'Bar path straight should be — head move, bar nahi',
+        'Core TIGHT keep — lower back arch don\'t',
+        'Belt use heavy sets in',
+        'Standing > seated for core engagement',
+      ],
+      tipsUr: const [
         'Strict press karo — legs se push mat karo',
         'Bar path straight hona chahiye — head move karo, bar nahi',
         'Core TIGHT rakhho — lower back arch mat karo',
         'Belt use karo heavy sets mein',
         'Standing > seated for core engagement',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Excessive back arch — core tight, ribs down',
+        '❌ Bar face ke saamne curve karna — straight path',
+        '❌ Flaring elbows very more — slightly in front',
+        '❌ Not locking out — full extension',
+      ],
+      commonMistakesUr: const [
         '❌ Excessive back arch — core tight, ribs down',
         '❌ Bar face ke saamne se curve karna — straight path',
         '❌ Flaring elbows bahut zyada — slightly in front',
         '❌ Not locking out — full extension karo',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'shoulders_2',
@@ -1160,12 +1885,20 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Dumbbells overhead push',
-      musclesWorked: ['Front Delts', 'Triceps'],
+      instructionsEn: 'Dumbbells overhead push',
+      instructionsUr: 'Dumbbells overhead push',
+      musclesWorked: const ['Front Delts', 'Triceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
-      caloriesPerMin: 7,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells dono haathon in hold',
+        'Seated or standing — bench on or khade hokar',
+        'Dumbbells shoulder level on — palms forward',
+        'Press upar — arms fully extend',
+        'Dumbbells slightly andar aayein top on (not touching)',
+        'Lower slowly — ear level or shoulder level to',
+        'Repeat',
+      ],
+      detailedStepsUr: const [
         'Dumbbells dono haathon mein pakdo',
         'Seated ya standing — bench pe ya khade hokar',
         'Dumbbells shoulder level pe — palms forward',
@@ -1174,18 +1907,32 @@ class ExerciseData {
         'Lower slowly — ear level ya shoulder level tak',
         'Repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Seated = more strict, Standing = more core engagement',
+        'Dumbbells independent hone stabilizers engage hote hain',
+        'Neutral grip (palms facing) shoulder-friendly hai',
+        'Each arm independently work karta hai — imbalance fix',
+      ],
+      tipsUr: const [
         'Seated = more strict, Standing = more core engagement',
         'Dumbbells independent hone se stabilizers engage hote hain',
         'Neutral grip (palms facing) shoulder-friendly hai',
         'Each arm independently work karta hai — imbalance fix',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Using momentum — strict press',
+        '❌ Dumbbells very down lana — ear level sufficient',
+        '❌ Back arch — core tight, back pad lagao (seated)',
+        '❌ Elbows flare — slightly forward angle ok',
+      ],
+      commonMistakesUr: const [
         '❌ Using momentum — strict press karo',
         '❌ Dumbbells bahut neeche lana — ear level sufficient',
         '❌ Back arch — core tight, back pad se lagao (seated)',
         '❌ Elbows flare — slightly forward angle ok',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'shoulders_3',
@@ -1193,21 +1940,37 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Arms side mein raise',
-      musclesWorked: ['Side Delts'],
+      instructionsEn: 'Arms side in raise',
+      instructionsUr: 'Arms side mein raise',
+      musclesWorked: const ['Side Delts'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells sides on hold — standing position',
+        'Slight bend elbows in (10-15°) — fixed keep',
+        'Arms side in raise — shoulder level to',
+        'Imagine you\\\'re pouring water from a jug (pinky slightly up)',
+        'Shoulder level on 1 sec hold',
+        'Slowly lower — 3 sec down (control!)',
+        'Sides on wapas — repeat',
+      ],
+      detailedStepsUr: const [
         'Dumbbells sides pe pakdo — standing position',
         'Slight bend elbows mein (10-15°) — fixed rakhho',
         'Arms ko side mein raise karo — shoulder level tak',
-        'Imagine you\'re pouring water from a jug (pinky slightly up)',
+        'Imagine you\\\'re pouring water from a jug (pinky slightly up)',
         'Shoulder level pe 1 sec hold karo',
         'Slowly lower karo — 3 sec down (control!)',
         'Sides pe wapas — repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Side delts for #1 exercise — shoulder width banata hai',
+        'LIGHT weight use — form > weight',
+        'Pinky slightly upar = better side delt activation',
+        'Cable lateral raises bhi try — constant tension',
+        'Leaning lateral raises = more stretch at bottom',
+        'High reps best hain (12-20 reps)',
+      ],
+      tipsUr: const [
         'Side delts ke liye #1 exercise — shoulder width banata hai',
         'LIGHT weight use karo — form > weight',
         'Pinky thoda upar = better side delt activation',
@@ -1215,13 +1978,22 @@ class ExerciseData {
         'Leaning lateral raises = more stretch at bottom',
         'High reps best hain (12-20 reps)',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Too heavy — momentum use hota hai',
+        '❌ Traps shrug karna — shoulders DOWN keep',
+        '❌ Swinging body — strict isolated movement',
+        '❌ Going above shoulder level — impingement risk',
+        '❌ Straight arms — slight elbow bend needed',
+      ],
+      commonMistakesUr: const [
         '❌ Too heavy — momentum use hota hai',
         '❌ Traps shrug karna — shoulders DOWN rakho',
         '❌ Swinging body — strict isolated movement',
         '❌ Going above shoulder level — impingement risk',
         '❌ Straight arms — slight elbow bend chahiye',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'shoulders_4',
@@ -1229,12 +2001,20 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Arms front mein raise',
-      musclesWorked: ['Front Delts'],
+      instructionsEn: 'Arms front in raise',
+      instructionsUr: 'Arms front mein raise',
+      musclesWorked: const ['Front Delts'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Front-Raise.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells thighs ke saamne hold — palms body ki taraf',
+        'Slight elbow bend — fixed angle',
+        'Ek or dono arms aage raise — eye level to',
+        'Front delts lift feel',
+        'Hold 1 sec at top',
+        'Slowly lower — 3 sec down',
+        'Alternate or together — both options ok',
+      ],
+      detailedStepsUr: const [
         'Dumbbells thighs ke saamne pakdo — palms body ki taraf',
         'Slight elbow bend — fixed angle',
         'Ek ya dono arms aage raise karo — eye level tak',
@@ -1243,19 +2023,34 @@ class ExerciseData {
         'Slowly lower karo — 3 sec down',
         'Alternate ya together — both options ok',
       ],
-      tips: [
+      tipsEn: const [
+        'Front delts already pressing exercises in hit hote hain',
+        'Isolation for — light weight',
+        'Plate front raise bhi try — variation',
+        'Cable front raise — constant tension version',
+        'Overtraining front delts common hai — balance keep',
+      ],
+      tipsUr: const [
         'Front delts already pressing exercises mein hit hote hain',
         'Isolation ke liye karo — light weight',
         'Plate front raise bhi try karo — variation',
         'Cable front raise — constant tension version',
         'Overtraining front delts common hai — balance rakho',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
         '❌ Swinging — strict movement',
         '❌ Going too high — eye/shoulder level enough',
         '❌ Too heavy — front delts small muscle hai',
         '❌ Shrugging shoulders up — relaxed shoulders',
       ],
+      commonMistakesUr: const [
+        '❌ Swinging — strict movement',
+        '❌ Going too high — eye/shoulder level enough',
+        '❌ Too heavy — front delts small muscle hai',
+        '❌ Shrugging shoulders up — relaxed shoulders',
+      ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'shoulders_5',
@@ -1263,12 +2058,20 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Bent over, arms back raise',
-      musclesWorked: ['Rear Delts'],
+      instructionsEn: 'Bent over, arms back raise',
+      instructionsUr: 'Bent over, arms back raise',
+      musclesWorked: const ['Rear Delts'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Rear-Delt-Fly.gif',
-      caloriesPerMin: 5,
-      tempo: '2-2-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells hold, hip hinge — bent over position',
+        'Back flat, chest down — almost parallel to floor',
+        'Arms down hanging — palms facing each other',
+        'Arms side in raise — squeeze rear delts',
+        'Elbows slightly bent — fixed angle',
+        'Top on 2 sec squeeze',
+        'Slowly lower — 3 sec down',
+      ],
+      detailedStepsUr: const [
         'Dumbbells pakdo, hip hinge karo — bent over position',
         'Back flat, chest down — almost parallel to floor',
         'Arms neeche hanging — palms facing each other',
@@ -1277,19 +2080,34 @@ class ExerciseData {
         'Top pe 2 sec squeeze karo',
         'Slowly lower karo — 3 sec down',
       ],
-      tips: [
+      tipsEn: const [
+        'Rear delts most neglected muscle hai — prioritize',
+        'Light weight — feel the squeeze',
+        'On an incline bench, chest lagake bhi kar sakte ho — more strict',
+        'Face pulls ke saath combine for complete rear delt work',
+        'Reverse pec deck machine on bhi kar sakte ho',
+      ],
+      tipsUr: const [
         'Rear delts most neglected muscle hai — prioritize karo',
         'Light weight — feel the squeeze',
         'Incline bench pe chest lagake bhi kar sakte ho — more strict',
         'Face pulls ke saath combine karo for complete rear delt work',
         'Reverse pec deck machine pe bhi kar sakte ho',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Using momentum / swinging',
+        '❌ Traps kheenchna — rear delts isolate',
+        '❌ Not bending over enough — parallel to floor jao',
+        '❌ Arms straight — slight elbow bend needed',
+      ],
+      commonMistakesUr: const [
         '❌ Using momentum / swinging',
         '❌ Traps se kheenchna — rear delts isolate karo',
         '❌ Not bending over enough — parallel to floor jao',
         '❌ Arms straight — slight elbow bend chahiye',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-2-3',
     ),
     Exercise(
       id: 'shoulders_6',
@@ -1297,12 +2115,20 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Dumbbells',
       difficulty: 'Intermediate',
-      instructions: 'Rotate karte hue press',
-      musclesWorked: ['All Delts'],
+      instructionsEn: 'Rotate karte hue press',
+      instructionsUr: 'Rotate karte hue press',
+      musclesWorked: const ['All Delts'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Arnold-Press.gif',
-      caloriesPerMin: 7,
-      tempo: '3-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells chest ke saamne hold — palms FACING YOU',
+        'Seated or standing position',
+        'Press upar — simultaneously ROTATE',
+        'Top on palms FORWARD facing hone needed',
+        'Arms fully extend overhead',
+        'Reverse motion — rotate back, lower to start position',
+        'Smooth rotation throughout — jerky don\'t',
+      ],
+      detailedStepsUr: const [
         'Dumbbells chest ke saamne pakdo — palms FACING YOU',
         'Seated ya standing position',
         'Press karo upar — simultaneously ROTATE karo',
@@ -1311,19 +2137,34 @@ class ExerciseData {
         'Reverse motion — rotate back, lower to start position',
         'Smooth rotation throughout — jerky mat karo',
       ],
-      tips: [
+      tipsEn: const [
+        'Arnold Schwarzenegger ne invent kiya — all 3 delt heads hit',
+        'Rotation more muscle fibers engage hote hain',
+        'Regular shoulder press better for hypertrophy',
+        'Lighter weight use vs regular press',
+        'Slow & smooth — rotation quality important hai',
+      ],
+      tipsUr: const [
         'Arnold Schwarzenegger ne invent kiya — all 3 delt heads hit',
         'Rotation se more muscle fibers engage hote hain',
         'Regular shoulder press se better for hypertrophy',
         'Lighter weight use karo vs regular press',
         'Slow & smooth — rotation quality important hai',
       ],
-      commonMistakes: [
-        '❌ Rotation skip karna — that\'s just a regular press then',
+      commonMistakesEn: const [
+        '❌ Rotation skip karna — that\\\'s just a regular press then',
+        '❌ Too fast rotation — smooth transition',
+        '❌ Heavy weight — form compromise',
+        '❌ Incomplete rotation — full 180° rotate',
+      ],
+      commonMistakesUr: const [
+        '❌ Rotation skip karna — that\\\'s just a regular press then',
         '❌ Too fast rotation — smooth transition',
         '❌ Heavy weight — form compromise',
         '❌ Incomplete rotation — full 180° rotate karo',
       ],
+      caloriesPerMin: 7,
+      tempo: '3-1-2',
     ),
     Exercise(
       id: 'shoulders_7',
@@ -1331,12 +2172,19 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Bar chin tak pull',
-      musclesWorked: ['Side Delts', 'Traps'],
+      instructionsEn: 'Bar chin to pull',
+      instructionsUr: 'Bar chin tak pull',
+      musclesWorked: const ['Side Delts', 'Traps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Upright-Row.gif',
-      caloriesPerMin: 6,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Hold the bar at shoulder-width or narrow grip hold',
+        'Standing position — bar thighs ke saamne',
+        'Elbows LEAD — elbows upar drive',
+        'Bar chin or chest level to bring',
+        'Elbows shoulder level upar jaayein',
+        'Slowly lower — full extension',
+      ],
+      detailedStepsUr: const [
         'Bar ko shoulder-width ya narrow grip pakdo',
         'Standing position — bar thighs ke saamne',
         'Elbows ko LEAD karo — elbows upar drive karo',
@@ -1344,19 +2192,34 @@ class ExerciseData {
         'Elbows shoulder level se upar jaayein',
         'Slowly lower karo — full extension',
       ],
-      tips: [
+      tipsEn: const [
+        'WIDER grip = more side delts, safer for shoulders',
+        'Narrow grip = more traps but shoulder impingement risk',
+        'Dumbbells or cable bhi kar sakte ho — safer options',
+        'Elbows lead the movement — hands follow',
+        'Shoulder issues hain toh AVOID — lateral raises instead',
+      ],
+      tipsUr: const [
         'WIDER grip = more side delts, safer for shoulders',
         'Narrow grip = more traps but shoulder impingement risk',
         'Dumbbells ya cable se bhi kar sakte ho — safer options',
         'Elbows lead the movement — hands follow',
         'Shoulder issues hain toh AVOID karo — lateral raises karo instead',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Narrow grip — shoulder impingement ka risk',
+        '❌ Bar body door — close keep',
+        '❌ Shrugging instead of rowing — elbows out drive',
+        '❌ Wrists bend — straight wrists',
+      ],
+      commonMistakesUr: const [
         '❌ Narrow grip — shoulder impingement ka risk',
         '❌ Bar body se door — close rakhho',
         '❌ Shrugging instead of rowing — elbows out drive karo',
         '❌ Wrists bend — straight wrists',
       ],
+      caloriesPerMin: 6,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'shoulders_8',
@@ -1364,12 +2227,19 @@ class ExerciseData {
       bodyPart: 'Shoulders',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Shoulders upar shrug',
-      musclesWorked: ['Traps'],
+      instructionsEn: 'Shoulders upar shrug',
+      instructionsUr: 'Shoulders upar shrug',
+      musclesWorked: const ['Traps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shrug.gif',
-      caloriesPerMin: 4,
-      tempo: '2-2-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells or barbell hold — sides on or front in',
+        'Standing straight — shoulders relaxed, arms extended',
+        'Shoulders UPAR shrug — ears ki taraf',
+        'Top on SQUEEZE — 2 sec hold',
+        'Slowly lower — full stretch feel bottom on',
+        'Circular motion don\'t — straight up & down',
+      ],
+      detailedStepsUr: const [
         'Dumbbells ya barbell pakdo — sides pe ya front mein',
         'Standing straight — shoulders relaxed, arms extended',
         'Shoulders ko UPAR shrug karo — ears ki taraf',
@@ -1377,25 +2247,38 @@ class ExerciseData {
         'Slowly lower karo — full stretch feel karo bottom pe',
         'Circular motion mat karo — straight up & down',
       ],
-      tips: [
+      tipsEn: const [
+        'Traps for primary exercise',
+        'Heavy jaa sakte ho — traps strong muscle hai',
+        'Barbell, dumbbells, Smith machine — sab options',
+        'Behind back barbell shrugs bhi try',
+        'Farmer walks bhi traps build karte hain',
+      ],
+      tipsUr: const [
         'Traps ke liye primary exercise',
         'Heavy jaa sakte ho — traps strong muscle hai',
         'Barbell, dumbbells, Smith machine — sab options',
         'Behind back barbell shrugs bhi try karo',
         'Farmer walks bhi traps build karte hain',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Circular / rolling motion — straight up & down',
+        '❌ Arms bend karna — straight arms, only shoulders move',
+        '❌ Momentum — controlled movement',
+        '❌ No hold at top — squeeze 2 sec',
+      ],
+      commonMistakesUr: const [
         '❌ Circular / rolling motion — straight up & down karo',
         '❌ Arms bend karna — straight arms, only shoulders move',
         '❌ Momentum — controlled movement',
         '❌ No hold at top — squeeze karo 2 sec',
       ],
+      caloriesPerMin: 4,
+      tempo: '2-2-2',
     ),
   ];
 
-  // ==========================================
-  // 💪 BICEPS EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== BICEPS ==========
   static const List<Exercise> biceps = [
     Exercise(
       id: 'biceps_1',
@@ -1403,12 +2286,19 @@ class ExerciseData {
       bodyPart: 'Biceps',
       equipment: 'Barbell',
       difficulty: 'Beginner',
-      instructions: 'Standing, bar curl chest tak',
-      musclesWorked: ['Biceps'],
+      instructionsEn: 'Standing, bar curl chest to',
+      instructionsUr: 'Standing, bar curl chest tak',
+      musclesWorked: const ['Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Curl.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Hold the bar at shoulder-width underhand grip hold',
+        'Standing straight — elbows sides on locked',
+        'Bar curl upar — biceps contract',
+        'Squeeze biceps top on — bar chin level',
+        'Slowly lower — 3 sec down, full extension',
+        'Elbows position change don\'t — fixed sides on',
+      ],
+      detailedStepsUr: const [
         'Bar ko shoulder-width underhand grip se pakdo',
         'Standing straight — elbows sides pe locked',
         'Bar ko curl karo upar — biceps contract',
@@ -1416,19 +2306,34 @@ class ExerciseData {
         'Slowly lower karo — 3 sec down, full extension',
         'Elbows position change mat karo — fixed sides pe',
       ],
-      tips: [
+      tipsEn: const [
+        'Bicep mass builder #1',
+        'EZ bar version wrists on easier hai',
+        'Elbows body ke saath GLUED keep',
+        'Cheat curls (last 1-2 reps) ok hain advanced for',
+        'Wide grip = short head, Narrow grip = long head',
+      ],
+      tipsUr: const [
         'Bicep mass builder #1',
         'EZ bar version wrists pe easier hai',
         'Elbows body ke saath GLUED rakhho',
         'Cheat curls (last 1-2 reps) ok hain advanced ke liye',
         'Wide grip = short head, Narrow grip = long head',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Swinging body — strict curl',
+        '❌ Elbows move karna — sides on fixed',
+        '❌ Half reps — full ROM (stretch to squeeze)',
+        '❌ Too heavy — ego curl don\'t',
+      ],
+      commonMistakesUr: const [
         '❌ Swinging body — strict curl karo',
         '❌ Elbows move karna — sides pe fixed',
         '❌ Half reps — full ROM (stretch to squeeze)',
         '❌ Too heavy — ego curl mat karo',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'biceps_2',
@@ -1436,12 +2341,20 @@ class ExerciseData {
       bodyPart: 'Biceps',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Alternate ya together curl',
-      musclesWorked: ['Biceps'],
+      instructionsEn: 'Alternate or together curl',
+      instructionsUr: 'Alternate ya together curl',
+      musclesWorked: const ['Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells sides on hold — palms forward (supinated)',
+        'Standing straight — feet shoulder-width',
+        'Curl upar — ek ek (alternate) or dono saath',
+        'Supinate (rotate) agar neutral start kiya',
+        'Squeeze biceps top on — peak contraction',
+        'Slowly lower — full extension',
+        'Alternate: L-R-L-R or Together: both at same time',
+      ],
+      detailedStepsUr: const [
         'Dumbbells sides pe pakdo — palms forward (supinated)',
         'Standing straight — feet shoulder-width',
         'Curl karo upar — ek ek (alternate) ya dono saath',
@@ -1450,18 +2363,32 @@ class ExerciseData {
         'Slowly lower karo — full extension',
         'Alternate: L-R-L-R ya Together: both at same time',
       ],
-      tips: [
+      tipsEn: const [
+        'Dumbbell advantage: supination movement — more bicep activation',
+        'Alternate karna more reps allow karta hai (rest between)',
+        'Seated incline curls — different angle, more stretch',
+        'Mirror in form check',
+      ],
+      tipsUr: const [
         'Dumbbell advantage: supination movement — more bicep activation',
         'Alternate karna zyada reps allow karta hai (rest between)',
         'Seated incline curls — different angle, more stretch',
         'Mirror mein form check karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
         '❌ Swinging — strict movement',
         '❌ Shoulder raising — relaxed shoulders',
         '❌ Not supinating (rotating) — rotation adds peak contraction',
         '❌ Fast lowering — slow negatives important',
       ],
+      commonMistakesUr: const [
+        '❌ Swinging — strict movement',
+        '❌ Shoulder raising — relaxed shoulders',
+        '❌ Not supinating (rotating) — rotation adds peak contraction',
+        '❌ Fast lowering — slow negatives important',
+      ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'biceps_3',
@@ -1469,12 +2396,19 @@ class ExerciseData {
       bodyPart: 'Biceps',
       equipment: 'Dumbbells',
       difficulty: 'Beginner',
-      instructions: 'Neutral grip curl',
-      musclesWorked: ['Biceps', 'Forearms'],
+      instructionsEn: 'Neutral grip curl',
+      instructionsUr: 'Neutral grip curl',
+      musclesWorked: const ['Biceps', 'Forearms'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbells sides on hold — NEUTRAL grip (palms facing body)',
+        'Grip position poore movement in SAME rehna needed',
+        'Curl upar — neutral grip maintain',
+        'Squeeze top on — brachialis and forearms feel honge',
+        'Slowly lower — full extension',
+        'Alternate or together — both ok',
+      ],
+      detailedStepsUr: const [
         'Dumbbells sides pe pakdo — NEUTRAL grip (palms facing body)',
         'Grip position poore movement mein SAME rehna chahiye',
         'Curl karo upar — neutral grip maintain',
@@ -1482,19 +2416,34 @@ class ExerciseData {
         'Slowly lower karo — full extension',
         'Alternate ya together — both ok',
       ],
-      tips: [
+      tipsEn: const [
+        'Brachialis target karta hai — arm thickness badhata hai',
+        'Forearms bhi strengthen hote hain',
+        'Regular curls ke saath pair for complete arm development',
+        'Cross body hammer curls bhi try — long head emphasis',
+        'Rope cable curls — hammer curl ka cable version',
+      ],
+      tipsUr: const [
         'Brachialis target karta hai — arm thickness badhata hai',
         'Forearms bhi strengthen hote hain',
         'Regular curls ke saath pair karo for complete arm development',
         'Cross body hammer curls bhi try karo — long head emphasis',
         'Rope cable curls — hammer curl ka cable version',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Wrist rotate karna — neutral grip FIXED keep',
+        '❌ Elbows flare — sides on keep',
+        '❌ Swinging — strict form',
+        '❌ Incomplete ROM — full stretch and squeeze',
+      ],
+      commonMistakesUr: const [
         '❌ Wrist rotate karna — neutral grip FIXED rakhho',
         '❌ Elbows flare — sides pe rakhho',
         '❌ Swinging — strict form',
         '❌ Incomplete ROM — full stretch and squeeze',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'biceps_4',
@@ -1502,12 +2451,20 @@ class ExerciseData {
       bodyPart: 'Biceps',
       equipment: 'EZ Bar',
       difficulty: 'Intermediate',
-      instructions: 'Preacher bench pe curl',
-      musclesWorked: ['Biceps'],
+      instructionsEn: 'Preacher bench on curl',
+      instructionsUr: 'Preacher bench pe curl',
+      musclesWorked: const ['Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Preacher-Curl.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Preacher bench sit on — armpit pad ke top on',
+        'EZ bar or dumbbell hold — underhand grip',
+        'Arms pad on flat — elbows set',
+        'Curl upar — squeeze biceps',
+        'Slowly lower — CAREFUL full extension on (injury risk)',
+        'Full stretch feel bottom on — but control maintain',
+        'Repeat — no momentum',
+      ],
+      detailedStepsUr: const [
         'Preacher bench pe baitho — armpit pad ke top pe',
         'EZ bar ya dumbbell pakdo — underhand grip',
         'Arms pad pe flat — elbows set',
@@ -1516,19 +2473,34 @@ class ExerciseData {
         'Full stretch feel karo bottom pe — but control maintain karo',
         'Repeat — no momentum',
       ],
-      tips: [
+      tipsEn: const [
+        'Cheating impossible hai — pure bicep isolation',
+        'Short head (inner bicep) more target karta hai',
+        'Dumbbell version single arm for — concentration type',
+        'Bottom on carefully jao — bicep tear ka risk agar jerky',
+        'EZ bar > straight bar for wrist comfort',
+      ],
+      tipsUr: const [
         'Cheating impossible hai — pure bicep isolation',
         'Short head (inner bicep) ko zyada target karta hai',
         'Dumbbell version single arm ke liye — concentration type',
         'Bottom pe carefully jao — bicep tear ka risk agar jerky',
         'EZ bar > straight bar for wrist comfort',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Jerky reps bottom on — bicep tear ka risk!',
+        '❌ Lifting off the pad — arms pad on flat keep',
+        '❌ Too heavy — strict isolation exercise hai',
+        '❌ Partial reps — controlled full ROM',
+      ],
+      commonMistakesUr: const [
         '❌ Jerky reps bottom pe — bicep tear ka risk!',
         '❌ Lifting off the pad — arms pad pe flat rakhho',
         '❌ Too heavy — strict isolation exercise hai',
         '❌ Partial reps — controlled full ROM',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'biceps_5',
@@ -1536,33 +2508,56 @@ class ExerciseData {
       bodyPart: 'Biceps',
       equipment: 'Dumbbells',
       difficulty: 'Intermediate',
-      instructions: 'Incline bench pe curl',
-      musclesWorked: ['Biceps Long Head'],
+      instructionsEn: 'On an incline bench, curl',
+      instructionsUr: 'Incline bench pe curl',
+      musclesWorked: const ['Biceps Long Head'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Curl.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Incline bench 45-60° on set',
+        'Bench lie on — dumbbells arms extended down',
+        'Arms straight down hanging — biceps stretched position',
+        'Curl upar — elbows move don\'t',
+        'Squeeze biceps top on',
+        'Slowly lower — full stretch feel (amazing stretch!)',
+        'This stretch is KEY — don\\\'t rush',
+      ],
+      detailedStepsUr: const [
         'Incline bench 45-60° pe set karo',
         'Bench pe let jao — dumbbells arms extended neeche',
         'Arms straight down hanging — biceps stretched position',
         'Curl karo upar — elbows move mat karo',
         'Squeeze biceps top pe',
         'Slowly lower — full stretch feel karo (amazing stretch!)',
-        'This stretch is KEY — don\'t rush',
+        'This stretch is KEY — don\\\'t rush',
       ],
-      tips: [
+      tipsEn: const [
+        'Long head bicep for BEST exercise',
+        'Bicep peak banata hai — stretch position amazing hai',
+        'Light weight use — stretch intense hoti hai',
+        'Bench angle kam = more stretch, more = less stretch',
+        '45° angle best balance hai',
+      ],
+      tipsUr: const [
         'Long head bicep ke liye BEST exercise',
         'Bicep peak banata hai — stretch position amazing hai',
         'Light weight use karo — stretch intense hoti hai',
         'Bench angle kam = more stretch, zyada = less stretch',
         '45° angle best balance hai',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Elbows forward move karna — fixed position',
+        '❌ Too heavy — stretch position in injury risk',
+        '❌ Bench too flat — 45° minimum',
+        '❌ Rushing the stretch — slow lowering important',
+      ],
+      commonMistakesUr: const [
         '❌ Elbows forward move karna — fixed position',
         '❌ Too heavy — stretch position mein injury risk',
         '❌ Bench too flat — 45° minimum',
         '❌ Rushing the stretch — slow lowering important',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'biceps_6',
@@ -1570,12 +2565,21 @@ class ExerciseData {
       bodyPart: 'Biceps',
       equipment: 'Dumbbell',
       difficulty: 'Beginner',
-      instructions: 'Elbow thigh pe, curl',
-      musclesWorked: ['Biceps Peak'],
+      instructionsEn: 'Elbow thigh on, curl',
+      instructionsUr: 'Elbow thigh pe, curl',
+      musclesWorked: const ['Biceps Peak'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Concentration-Curl.gif',
-      caloriesPerMin: 4,
-      tempo: '2-2-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Sit on the bench — legs wide spread',
+        'Ek haath in dumbbell hold',
+        'Elbow same side ki inner thigh on set',
+        'Arm extended down — dumbbell floor ke paas',
+        'Curl upar — ONLY forearm moves',
+        'Peak contraction on SQUEEZE — 2 sec hold',
+        'Slowly lower — 3 sec down',
+        'All reps ek arm, fir switch',
+      ],
+      detailedStepsUr: const [
         'Bench pe baitho — legs wide spread',
         'Ek haath mein dumbbell pakdo',
         'Elbow same side ki inner thigh pe set karo',
@@ -1585,19 +2589,34 @@ class ExerciseData {
         'Slowly lower — 3 sec down',
         'All reps ek arm, fir switch',
       ],
-      tips: [
+      tipsEn: const [
+        'Peak contraction / squeeze for best exercise',
+        'Bicep peak shape improve karta hai',
+        'Arnold ka favorite exercise tha',
+        'Mind-muscle connection practice for perfect',
+        'Finishing exercise ke taur on — arm day end in',
+      ],
+      tipsUr: const [
         'Peak contraction / squeeze ke liye best exercise',
         'Bicep peak shape improve karta hai',
         'Arnold ka favorite exercise tha',
         'Mind-muscle connection practice ke liye perfect',
         'Finishing exercise ke taur pe karo — arm day end mein',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Elbow move karna — thigh on LOCKED',
+        '❌ Body swing — seated strict position',
+        '❌ No squeeze at top — peak contraction is the point',
+        '❌ Fast reps — slow & deliberate',
+      ],
+      commonMistakesUr: const [
         '❌ Elbow move karna — thigh pe LOCKED',
         '❌ Body swing — seated strict position',
         '❌ No squeeze at top — peak contraction is the point',
         '❌ Fast reps — slow & deliberate',
       ],
+      caloriesPerMin: 4,
+      tempo: '2-2-3',
     ),
     Exercise(
       id: 'biceps_7',
@@ -1605,12 +2624,20 @@ class ExerciseData {
       bodyPart: 'Biceps',
       equipment: 'Cable',
       difficulty: 'Beginner',
-      instructions: 'Constant tension curl',
-      musclesWorked: ['Biceps'],
+      instructionsEn: 'Constant tension curl',
+      instructionsUr: 'Constant tension curl',
+      musclesWorked: const ['Biceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Curl.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Low pulley on straight bar or EZ bar lagao',
+        'Face cable machine — grip underhand',
+        'Standing straight — elbows sides on',
+        'Curl upar — constant tension feel',
+        'Squeeze top on',
+        'Slowly lower — tension maintained throughout',
+        'No dead spot — cable advantage',
+      ],
+      detailedStepsUr: const [
         'Low pulley pe straight bar ya EZ bar lagao',
         'Face cable machine — grip underhand',
         'Standing straight — elbows sides pe',
@@ -1619,25 +2646,38 @@ class ExerciseData {
         'Slowly lower — tension maintained throughout',
         'No dead spot — cable advantage',
       ],
-      tips: [
+      tipsEn: const [
+        'Constant tension = cables ka biggest advantage',
+        'Dumbbells in bottom on tension kam hoti hai — cables in nahi',
+        'Different attachments try — rope, EZ bar, straight bar',
+        'High pulley overhead curls bhi try — different angle',
+        'Drop sets easy hain cables on — pin change bas',
+      ],
+      tipsUr: const [
         'Constant tension = cables ka biggest advantage',
         'Dumbbells mein bottom pe tension kam hoti hai — cables mein nahi',
         'Different attachments try karo — rope, EZ bar, straight bar',
         'High pulley overhead curls bhi try karo — different angle',
         'Drop sets easy hain cables pe — pin change karo bas',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Standing too close — step back for proper arc',
+        '❌ Elbows forward — sides on fixed',
+        '❌ Momentum — controlled reps',
+        '❌ Letting weight slam — controlled lowering',
+      ],
+      commonMistakesUr: const [
         '❌ Standing too close — step back karo for proper arc',
         '❌ Elbows forward — sides pe fixed',
         '❌ Momentum — controlled reps',
         '❌ Letting weight slam — controlled lowering',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
   ];
 
-  // ==========================================
-  // 💪 TRICEPS EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== TRICEPS ==========
   static const List<Exercise> triceps = [
     Exercise(
       id: 'triceps_1',
@@ -1645,12 +2685,20 @@ class ExerciseData {
       bodyPart: 'Triceps',
       equipment: 'Cable',
       difficulty: 'Beginner',
-      instructions: 'Bar push down, elbows fixed',
-      musclesWorked: ['Triceps'],
+      instructionsEn: 'Bar push down, elbows fixed',
+      instructionsUr: 'Bar push down, elbows fixed',
+      musclesWorked: const ['Triceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pushdown.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'High pulley on straight bar or V-bar lagao',
+        'Overhand grip hold — shoulder-width or narrow',
+        'Elbows sides on lock — upper arms fixed',
+        'Bar push down — arms fully extend',
+        'Triceps squeeze bottom on',
+        'Slowly upar aao — 90° elbow bend to',
+        'Elbows position FIXED keep throughout',
+      ],
+      detailedStepsUr: const [
         'High pulley pe straight bar ya V-bar lagao',
         'Overhand grip pakdo — shoulder-width ya narrow',
         'Elbows sides pe lock karo — upper arms fixed',
@@ -1659,19 +2707,34 @@ class ExerciseData {
         'Slowly upar aao — 90° elbow bend tak',
         'Elbows position FIXED rakhho throughout',
       ],
-      tips: [
+      tipsEn: const [
+        'Tricep isolation for go-to exercise',
+        'Straight bar, V-bar, rope — sab try',
+        'Rope attachment extra squeeze allow karta hai (split at bottom)',
+        'Light-medium weight — feel the triceps',
+        'Warm up exercise bhi ban sakta hai',
+      ],
+      tipsUr: const [
         'Tricep isolation ke liye go-to exercise',
         'Straight bar, V-bar, rope — sab try karo',
         'Rope attachment extra squeeze allow karta hai (split at bottom)',
         'Light-medium weight — feel the triceps',
         'Warm up exercise bhi ban sakta hai',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Elbows move karna — LOCKED position',
+        '❌ Leaning over — upright raho',
+        '❌ Using shoulders — only triceps',
+        '❌ Half reps — full extension',
+      ],
+      commonMistakesUr: const [
         '❌ Elbows move karna — LOCKED position',
         '❌ Leaning over — upright raho',
         '❌ Using shoulders — only triceps',
         '❌ Half reps — full extension karo',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'triceps_2',
@@ -1679,12 +2742,20 @@ class ExerciseData {
       bodyPart: 'Triceps',
       equipment: 'EZ Bar',
       difficulty: 'Intermediate',
-      instructions: 'Lying, bar forehead tak',
-      musclesWorked: ['Triceps Long Head'],
+      instructionsEn: 'Lying, bar forehead to',
+      instructionsUr: 'Lying, bar forehead tak',
+      musclesWorked: const ['Triceps Long Head'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Skull-Crusher.gif',
-      caloriesPerMin: 6,
-      tempo: '3-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Lie on a flat bench — EZ bar or straight bar hold',
+        'Arms extended upar — bar ceiling ki taraf',
+        'ONLY forearms move karein — upper arms FIXED',
+        'Bar forehead or forehead ke just peeche bring',
+        'Elbows 90° bend — tricep stretch feel',
+        'Press back up — arms extend, triceps squeeze',
+        'Elbows flare don\'t — parallel keep',
+      ],
+      detailedStepsUr: const [
         'Flat bench pe let jao — EZ bar ya straight bar pakdo',
         'Arms extended upar — bar ceiling ki taraf',
         'ONLY forearms move karein — upper arms FIXED',
@@ -1693,7 +2764,15 @@ class ExerciseData {
         'Press back up — arms extend, triceps squeeze',
         'Elbows flare mat karo — parallel rakhho',
       ],
-      tips: [
+      tipsEn: const [
+        'Long head tricep for excellent — arm size builder',
+        'EZ bar wrists on easier hai vs straight bar',
+        'Bar forehead ke PEECHE bring for better long head stretch',
+        'Dumbbell version bhi try — single arm or both',
+        'Spotter helpful hai heavy sets in',
+        'On an incline bench, bhi kar sakte ho — more stretch',
+      ],
+      tipsUr: const [
         'Long head tricep ke liye excellent — arm size builder',
         'EZ bar wrists pe easier hai vs straight bar',
         'Bar forehead ke PEECHE lao for better long head stretch',
@@ -1701,12 +2780,20 @@ class ExerciseData {
         'Spotter helpful hai heavy sets mein',
         'Incline bench pe bhi kar sakte ho — more stretch',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Elbows flare karna — parallel keep, tight',
+        '❌ Upper arms move — ONLY forearms hinge',
+        '❌ Too heavy — control needed (bar face ke paas hai!)',
+        '❌ Bouncing at bottom — controlled movement',
+      ],
+      commonMistakesUr: const [
         '❌ Elbows flare karna — parallel rakhho, tight',
         '❌ Upper arms move — ONLY forearms hinge',
         '❌ Too heavy — control chahiye (bar face ke paas hai!)',
         '❌ Bouncing at bottom — controlled movement',
       ],
+      caloriesPerMin: 6,
+      tempo: '3-1-2',
     ),
     Exercise(
       id: 'triceps_3',
@@ -1714,12 +2801,20 @@ class ExerciseData {
       bodyPart: 'Triceps',
       equipment: 'Dumbbell',
       difficulty: 'Beginner',
-      instructions: 'Arms overhead, extend',
-      musclesWorked: ['Triceps Long Head'],
+      instructionsEn: 'Arms overhead, extend',
+      instructionsUr: 'Arms overhead, extend',
+      musclesWorked: const ['Triceps Long Head'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Triceps-Extension.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dumbbell dono haathon hold — diamond grip (one end hold)',
+        'Seated or standing — dumbbell overhead lift',
+        'Arms extended upar — elbows ears ke paas',
+        'Forearms peeche lower — dumbbell head ke peeche',
+        'Tricep long head in DEEP stretch feel',
+        'Extend back up — arms straight, squeeze triceps',
+        'Elbows forward don\'t jaane do — ears ke paas fixed',
+      ],
+      detailedStepsUr: const [
         'Dumbbell dono haathon se pakdo — diamond grip (one end hold)',
         'Seated ya standing — dumbbell overhead uthao',
         'Arms extended upar — elbows ears ke paas',
@@ -1728,19 +2823,34 @@ class ExerciseData {
         'Extend back up — arms straight, squeeze triceps',
         'Elbows forward mat jaane do — ears ke paas fixed',
       ],
-      tips: [
+      tipsEn: const [
+        'Long head stretch for BEST position — overhead',
+        'Seated version more strict — standing in cheating easy',
+        'Cable version (rope overhead extension) bhi try',
+        'Single arm dumbbell extension bhi kar sakte ho',
+        'Core tight keep — lower back arch don\'t',
+      ],
+      tipsUr: const [
         'Long head stretch ke liye BEST position — overhead',
         'Seated version more strict — standing mein cheating easy',
         'Cable version (rope overhead extension) bhi try karo',
         'Single arm dumbbell extension bhi kar sakte ho',
         'Core tight rakho — lower back arch mat karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Elbows flare wide — ears ke paas keep',
+        '❌ Lower back arch — core tight, seated safer',
+        '❌ Partial ROM — full stretch is key',
+        '❌ Too heavy — dangerous position overhead in',
+      ],
+      commonMistakesUr: const [
         '❌ Elbows flare wide — ears ke paas rakhho',
         '❌ Lower back arch — core tight, seated safer',
         '❌ Partial ROM — full stretch is key',
         '❌ Too heavy — dangerous position overhead mein',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'triceps_4',
@@ -1748,12 +2858,20 @@ class ExerciseData {
       bodyPart: 'Triceps',
       equipment: 'Barbell',
       difficulty: 'Intermediate',
-      instructions: 'Narrow grip bench',
-      musclesWorked: ['Triceps', 'Chest'],
+      instructionsEn: 'Narrow grip bench',
+      instructionsUr: 'Narrow grip bench',
+      musclesWorked: const ['Triceps', 'Chest'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Close-Grip-Bench-Press.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Lie on a flat bench — regular bench press position',
+        'Bar NARROW grip hold — shoulder-width or slightly narrower',
+        'Unrack the bar — arms extended',
+        'Bar lower chest to bring — elbows body ke saath',
+        'Elbows flare don\'t — body ke close keep',
+        'Press up — triceps drive the movement',
+        'Lockout — squeeze triceps',
+      ],
+      detailedStepsUr: const [
         'Flat bench pe let jao — regular bench press position',
         'Bar ko NARROW grip pakdo — shoulder-width ya thoda narrower',
         'Bar rack se uthao — arms extended',
@@ -1762,19 +2880,34 @@ class ExerciseData {
         'Press up — triceps drive the movement',
         'Lockout — squeeze triceps',
       ],
-      tips: [
+      tipsEn: const [
+        'Compound tricep exercise — heavy jaa sakte ho',
+        'Tricep mass builder — isolation ke baad best',
+        'Grip too narrow don\'t — wrist strain hota hai',
+        'Shoulder-width grip optimal hai — too close risky',
+        'Regular bench press ke baad — pre-exhausted triceps',
+      ],
+      tipsUr: const [
         'Compound tricep exercise — heavy jaa sakte ho',
         'Tricep mass builder — isolation ke baad best',
         'Grip too narrow mat karo — wrist strain hota hai',
         'Shoulder-width grip optimal hai — too close risky',
         'Regular bench press ke baad karo — pre-exhausted triceps',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Grip too narrow — shoulder-width is enough',
+        '❌ Elbows flare — body ke close keep',
+        '❌ Bouncing bar — controlled reps',
+        '❌ Treating it like regular bench — tricep focus keep',
+      ],
+      commonMistakesUr: const [
         '❌ Grip too narrow — shoulder-width is enough',
         '❌ Elbows flare — body ke close rakhho',
         '❌ Bouncing bar — controlled reps',
         '❌ Treating it like regular bench — tricep focus rakhho',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'triceps_5',
@@ -1782,12 +2915,20 @@ class ExerciseData {
       bodyPart: 'Triceps',
       equipment: 'Dip Bars',
       difficulty: 'Intermediate',
-      instructions: 'Body upright, dips',
-      musclesWorked: ['Triceps'],
+      instructionsEn: 'Body upright, dips',
+      instructionsUr: 'Body upright, dips',
+      musclesWorked: const ['Triceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Triceps-Dips.gif',
-      caloriesPerMin: 8,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Dip bars on mount — arms extended',
+        'Body UPRIGHT keep (chest dips in forward lean tha)',
+        'Elbows PEECHE point karein — body ke saath',
+        'Go down — elbows 90° bend',
+        'Push up — arms extend, triceps squeeze',
+        'Upright body throughout — forward lean don\'t',
+        'Legs straight or crossed — stable keep',
+      ],
+      detailedStepsUr: const [
         'Dip bars pe mount karo — arms extended',
         'Body UPRIGHT rakhho (chest dips mein forward lean tha)',
         'Elbows PEECHE point karein — body ke saath',
@@ -1796,19 +2937,34 @@ class ExerciseData {
         'Upright body throughout — forward lean mat karo',
         'Legs straight ya crossed — stable rakhho',
       ],
-      tips: [
+      tipsEn: const [
+        'Upright = triceps, Forward lean = chest',
+        'Body position target muscle change hota hai',
+        'Weighted dips — belt or vest ke saath progression',
+        'Bench dips — easier version for beginners',
+        'Bodyweight master pehle — fir weight add',
+      ],
+      tipsUr: const [
         'Upright = triceps, Forward lean = chest',
         'Body position se target muscle change hota hai',
         'Weighted dips — belt ya vest ke saath progression',
         'Bench dips — easier version for beginners',
         'Bodyweight master karo pehle — fir weight add karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Forward lean — triceps for UPRIGHT raho',
+        '❌ Elbows flare — peeche point karein',
+        '❌ Going too deep — 90° sufficient, deeper = shoulder strain',
+        '❌ Swinging — controlled movement',
+      ],
+      commonMistakesUr: const [
         '❌ Forward lean — triceps ke liye UPRIGHT raho',
         '❌ Elbows flare — peeche point karein',
         '❌ Going too deep — 90° sufficient, deeper = shoulder strain',
         '❌ Swinging — controlled movement',
       ],
+      caloriesPerMin: 8,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'triceps_6',
@@ -1816,12 +2972,21 @@ class ExerciseData {
       bodyPart: 'Triceps',
       equipment: 'Bodyweight',
       difficulty: 'Intermediate',
-      instructions: 'Hands diamond shape',
-      musclesWorked: ['Triceps', 'Chest'],
+      instructionsEn: 'Hands diamond shape',
+      instructionsUr: 'Hands diamond shape',
+      musclesWorked: const ['Triceps', 'Chest'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Diamond-Push-Up.gif',
-      caloriesPerMin: 7,
-      tempo: '2-1-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Push-up position in aao',
+        'Hands CLOSE bring — thumbs and index fingers touch',
+        'Diamond / triangle shape bana — fingers',
+        'Hands chest ke down center in',
+        'Go down — chest hands ke paas to',
+        'Elbows body ke saath — flare don\'t',
+        'Push up — triceps drive the movement',
+        'Core tight keep — body straight',
+      ],
+      detailedStepsUr: const [
         'Push-up position mein aao',
         'Hands ko CLOSE lao — thumbs aur index fingers touch',
         'Diamond / triangle shape bana — fingers se',
@@ -1831,19 +2996,34 @@ class ExerciseData {
         'Push up — triceps drive the movement',
         'Core tight rakhho — body straight',
       ],
-      tips: [
+      tipsEn: const [
+        'Bodyweight tricep exercise in #1',
+        'Regular push-ups harder — progression hai',
+        'EMG studies show highest tricep activation in diamond push-ups',
+        'Nahi hota? Knees on or incline version',
+        'Chest bhi hit hota hai — bonus',
+      ],
+      tipsUr: const [
         'Bodyweight tricep exercise mein #1',
         'Regular push-ups se harder — progression hai',
         'EMG studies show highest tricep activation in diamond push-ups',
         'Nahi hota? Knees pe karo ya incline version',
         'Chest bhi hit hota hai — bonus',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Hands too far apart — true diamond shape banao',
+        '❌ Elbows flare — body ke saath keep',
+        '❌ Hips sagging — core tight, body straight',
+        '❌ Half reps — full ROM important',
+      ],
+      commonMistakesUr: const [
         '❌ Hands too far apart — true diamond shape banao',
         '❌ Elbows flare — body ke saath rakhho',
         '❌ Hips sagging — core tight, body straight',
         '❌ Half reps — full ROM important',
       ],
+      caloriesPerMin: 7,
+      tempo: '2-1-2',
     ),
     Exercise(
       id: 'triceps_7',
@@ -1851,12 +3031,21 @@ class ExerciseData {
       bodyPart: 'Triceps',
       equipment: 'Cable',
       difficulty: 'Beginner',
-      instructions: 'Rope spread at bottom',
-      musclesWorked: ['Triceps'],
+      instructionsEn: 'Rope spread at bottom',
+      instructionsUr: 'Rope spread at bottom',
+      musclesWorked: const ['Triceps'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Rope-Pushdown.gif',
-      caloriesPerMin: 5,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'High pulley on rope attachment lagao',
+        'Rope palms facing each other hold',
+        'Elbows sides on lock',
+        'Rope push down — arms extend',
+        'Bottom on rope SPREAD — hands apart pull',
+        'Extra tricep squeeze milti hai split on',
+        'Slowly upar aao — 90° bend',
+        'Elbows fixed — only forearms move',
+      ],
+      detailedStepsUr: const [
         'High pulley pe rope attachment lagao',
         'Rope ko palms facing each other se pakdo',
         'Elbows sides pe lock karo',
@@ -1866,25 +3055,38 @@ class ExerciseData {
         'Slowly upar aao — 90° bend',
         'Elbows fixed — only forearms move',
       ],
-      tips: [
+      tipsEn: const [
+        'Rope split at bottom — extra peak contraction',
+        'Straight bar more range of motion milta hai',
+        'Lateral head tricep more target karta hai',
+        'Light weight — feel the squeeze at the split',
+        'Drop sets easy hain — great finisher',
+      ],
+      tipsUr: const [
         'Rope split at bottom — extra peak contraction',
         'Straight bar se zyada range of motion milta hai',
         'Lateral head tricep ko zyada target karta hai',
         'Light weight — feel the squeeze at the split',
         'Drop sets easy hain — great finisher',
       ],
-      commonMistakes: [
-        '❌ Not splitting rope at bottom — that\'s the key part!',
+      commonMistakesEn: const [
+        '❌ Not splitting rope at bottom — that\\\'s the key part!',
+        '❌ Elbows moving — locked sides on',
+        '❌ Leaning over — stand upright',
+        '❌ Using momentum — strict slow reps',
+      ],
+      commonMistakesUr: const [
+        '❌ Not splitting rope at bottom — that\\\'s the key part!',
         '❌ Elbows moving — locked sides pe',
         '❌ Leaning over — stand upright',
         '❌ Using momentum — strict slow reps',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-1-3',
     ),
   ];
 
-  // ==========================================
-  // 🔥 CORE EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== CORE ==========
   static const List<Exercise> core = [
     Exercise(
       id: 'core_1',
@@ -1892,12 +3094,21 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Forearms pe, body straight',
-      musclesWorked: ['Abs', 'Obliques'],
+      instructionsEn: 'Forearms on, body straight',
+      instructionsUr: 'Forearms pe, body straight',
+      musclesWorked: const ['Abs', 'Obliques'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Front-Plank.gif',
-      caloriesPerMin: 4,
-      tempo: 'Hold',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Floor on forearms keep — elbows shoulders ke down',
+        'Toes on balance — legs extended',
+        'Body ek STRAIGHT LINE in — head to heels',
+        'Core TIGHT — belly button spine ki taraf pull',
+        'Glutes squeeze — hips don\'t girne do',
+        'Neck neutral — floor dekho (not forward)',
+        'HOLD position — time based (30sec, 45sec, 60sec, etc.)',
+        'Breathe normally — breath hold don\'t',
+      ],
+      detailedStepsUr: const [
         'Floor pe forearms rakho — elbows shoulders ke neeche',
         'Toes pe balance — legs extended',
         'Body ek STRAIGHT LINE mein — head to heels',
@@ -1907,7 +3118,15 @@ class ExerciseData {
         'HOLD position — time based (30sec, 45sec, 60sec, etc.)',
         'Breathe normally — breath hold mat karo',
       ],
-      tips: [
+      tipsEn: const [
+        'Core stability ka KING exercise',
+        'Quality > Duration — 30 sec perfect form > 2 min sloppy',
+        'Progression: forearm → high plank → weighted → single arm/leg',
+        'Har workout in kar sakte ho — low impact hai',
+        'Side planks bhi for obliques',
+        'Timer lagao and har week increase',
+      ],
+      tipsUr: const [
         'Core stability ka KING exercise',
         'Quality > Duration — 30 sec perfect form > 2 min sloppy',
         'Progression: forearm → high plank → weighted → single arm/leg',
@@ -1915,13 +3134,22 @@ class ExerciseData {
         'Side planks bhi karo for obliques',
         'Timer lagao aur har week increase karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
         '❌ Hips too high (pike/tent) — flat body line',
         '❌ Hips sagging (drooping) — core tight, glutes squeeze',
         '❌ Holding breath — breathe normally',
         '❌ Looking forward — neck neutral, floor dekho',
         '❌ Shoulders shrugging — relax shoulders, elbows under',
       ],
+      commonMistakesUr: const [
+        '❌ Hips too high (pike/tent) — flat body line',
+        '❌ Hips sagging (drooping) — core tight, glutes squeeze',
+        '❌ Holding breath — breathe normally',
+        '❌ Looking forward — neck neutral, floor dekho',
+        '❌ Shoulders shrugging — relax shoulders, elbows under',
+      ],
+      caloriesPerMin: 4,
+      tempo: 'Hold',
     ),
     Exercise(
       id: 'core_2',
@@ -1929,12 +3157,21 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Upper body curl, abs squeeze',
-      musclesWorked: ['Upper Abs'],
+      instructionsEn: 'Upper body curl, abs squeeze',
+      instructionsUr: 'Upper body curl, abs squeeze',
+      musclesWorked: const ['Upper Abs'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Crunch.gif',
-      caloriesPerMin: 5,
-      tempo: '2-2-2',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Floor lie on — knees bent, feet flat',
+        'Hands chest on cross or ears ke paas (not behind head)',
+        'Lower back floor on pressed keep',
+        'Upper body curl — shoulders floor lift',
+        'Abs squeeze — navel ki taraf crunch',
+        'Hold 2 sec top on — feel the contraction',
+        'Slowly lower back down — shoulders touch floor',
+        'Repeat — controlled reps',
+      ],
+      detailedStepsUr: const [
         'Floor pe let jao — knees bent, feet flat',
         'Hands chest pe cross karo ya ears ke paas (not behind head)',
         'Lower back floor pe pressed rakhho',
@@ -1944,20 +3181,36 @@ class ExerciseData {
         'Slowly lower back down — shoulders touch floor',
         'Repeat — controlled reps',
       ],
-      tips: [
+      tipsEn: const [
+        'Small movement — sirf shoulders uthne needed',
+        'Full sit-up don\'t — crunch is partial curl only',
+        'Hands behind head? Neck pull don\'t',
+        'Exhale while crunching up — better contraction',
+        'Weighted crunches — plate chest on hold ke',
+      ],
+      tipsUr: const [
         'Small movement — sirf shoulders uthne chahiye',
         'Full sit-up mat karo — crunch is partial curl only',
         'Hands behind head? Neck pull mat karo',
         'Exhale while crunching up — better contraction',
         'Weighted crunches — plate chest pe hold ke karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Pulling neck with hands — neck injury risk',
+        '❌ Full sit-up karna — crunch is small movement',
+        '❌ Hip flexors use karna — abs isolate',
+        '❌ Fast bouncy reps — slow & controlled',
+        '❌ Feet anchored — abs engagement kam hota hai',
+      ],
+      commonMistakesUr: const [
         '❌ Pulling neck with hands — neck injury risk',
         '❌ Full sit-up karna — crunch is small movement',
         '❌ Hip flexors use karna — abs isolate karo',
         '❌ Fast bouncy reps — slow & controlled',
         '❌ Feet anchored — abs engagement kam hota hai',
       ],
+      caloriesPerMin: 5,
+      tempo: '2-2-2',
     ),
     Exercise(
       id: 'core_3',
@@ -1965,33 +3218,56 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Bodyweight',
       difficulty: 'Intermediate',
-      instructions: 'Lying, legs raise 90°',
-      musclesWorked: ['Lower Abs'],
+      instructionsEn: 'Lying, legs raise 90°',
+      instructionsUr: 'Lying, legs raise 90°',
+      musclesWorked: const ['Lower Abs'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lying-Leg-Raise.gif',
-      caloriesPerMin: 6,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Floor lie on — legs extended, arms sides on',
+        'Lower back floor on PRESS — arch don\'t',
+        'Legs together lift — 90° to (perpendicular)',
+        'Lower abs control — hip flexors minimize',
+        'Slowly lower — 3 sec down',
+        'Legs floor 2-3 inch upar HOLD (don\\\'t touch)',
+        'Fir raise — repeat',
+      ],
+      detailedStepsUr: const [
         'Floor pe let jao — legs extended, arms sides pe',
         'Lower back floor pe PRESS karo — arch mat karo',
         'Legs ko together uthao — 90° tak (perpendicular)',
         'Lower abs se control karo — hip flexors minimize',
         'Slowly lower karo — 3 sec down',
-        'Legs floor se 2-3 inch upar HOLD karo (don\'t touch)',
+        'Legs floor se 2-3 inch upar HOLD karo (don\\\'t touch)',
         'Fir raise karo — repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Lower abs for best exercise',
+        'Hands hips ke down rakh sakte ho support for',
+        'Bend knees agar straight legs mushkil ho',
+        'Lower back MUST stay pressed to floor',
+        'Hanging leg raises — advanced version',
+      ],
+      tipsUr: const [
         'Lower abs ke liye best exercise',
         'Hands hips ke neeche rakh sakte ho support ke liye',
         'Bend knees agar straight legs mushkil ho',
         'Lower back MUST stay pressed to floor',
         'Hanging leg raises — advanced version',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Lower back arch karna — PRESSED to floor',
+        '❌ Momentum / swinging — controlled movement',
+        '❌ Legs slam karna floor on — hover above',
+        '❌ Hip flexors dominant — abs lift feel',
+      ],
+      commonMistakesUr: const [
         '❌ Lower back arch karna — PRESSED to floor',
         '❌ Momentum / swinging — controlled movement',
         '❌ Legs slam karna floor pe — hover above',
         '❌ Hip flexors dominant — abs se lift feel karo',
       ],
+      caloriesPerMin: 6,
+      tempo: '2-1-3',
     ),
     Exercise(
       id: 'core_4',
@@ -1999,12 +3275,21 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Seated, twist side to side',
-      musclesWorked: ['Obliques'],
+      instructionsEn: 'Seated, twist side to side',
+      instructionsUr: 'Seated, twist side to side',
+      musclesWorked: const ['Obliques'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Russian-Twist.gif',
-      caloriesPerMin: 6,
-      tempo: '1-0-1',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Floor sit on — knees bent, feet flat (or elevated)',
+        'Upper body peeche lean — 45° angle',
+        'Hands together or weight hold (dumbbell/plate)',
+        'Core tight — balance bana',
+        'Torso LEFT twist — hands floor ke paas',
+        'Fir RIGHT twist — hands doosri side',
+        'L-R = 1 rep — alternate continuously',
+        'Feet elevated = harder, feet down = easier',
+      ],
+      detailedStepsUr: const [
         'Floor pe baitho — knees bent, feet flat (or elevated)',
         'Upper body peeche lean karo — 45° angle',
         'Hands together ya weight pakdo (dumbbell/plate)',
@@ -2014,19 +3299,34 @@ class ExerciseData {
         'L-R = 1 rep — alternate continuously',
         'Feet elevated = harder, feet down = easier',
       ],
-      tips: [
+      tipsEn: const [
+        'Obliques for excellent exercise',
+        'Weight add progression for — plate or dumbbell',
+        'Feet elevated for more difficulty & core engagement',
+        'Don\\\'t just move hands — ROTATE your torso',
+        'Look where your hands go — full rotation',
+      ],
+      tipsUr: const [
         'Obliques ke liye excellent exercise',
         'Weight add karo progression ke liye — plate ya dumbbell',
         'Feet elevated for more difficulty & core engagement',
-        'Don\'t just move hands — ROTATE your torso',
+        'Don\\\'t just move hands — ROTATE your torso',
         'Look where your hands go — full rotation',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Just hands move karna — TORSO rotate',
+        '❌ Rounding back — chest up, slight lean back',
+        '❌ Too fast — controlled rotation, feel the obliques',
+        '❌ Not breathing — breathe continuously',
+      ],
+      commonMistakesUr: const [
         '❌ Just hands move karna — TORSO rotate karo',
         '❌ Rounding back — chest up, slight lean back',
         '❌ Too fast — controlled rotation, feel the obliques',
         '❌ Not breathing — breathe continuously',
       ],
+      caloriesPerMin: 6,
+      tempo: '1-0-1',
     ),
     Exercise(
       id: 'core_5',
@@ -2034,12 +3334,21 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Plank, knees alternate',
-      musclesWorked: ['Core', 'Cardio'],
+      instructionsEn: 'Plank, knees alternate',
+      instructionsUr: 'Plank, knees alternate',
+      musclesWorked: const ['Core', 'Cardio'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Mountain-Climber.gif',
-      caloriesPerMin: 10,
-      tempo: 'Fast',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'High plank position in aao — arms extended',
+        'Hands shoulders ke down — body straight',
+        'Right knee chest ki taraf drive',
+        'Right foot wapas — simultaneously left knee drive',
+        'Alternate rapidly — running motion in plank',
+        'Hips level keep — bounce don\'t',
+        'Core tight — throughout the movement',
+        'Speed control — form maintain',
+      ],
+      detailedStepsUr: const [
         'High plank position mein aao — arms extended',
         'Hands shoulders ke neeche — body straight',
         'Right knee chest ki taraf drive karo',
@@ -2049,7 +3358,15 @@ class ExerciseData {
         'Core tight — throughout the movement',
         'Speed control karo — form maintain karo',
       ],
-      tips: [
+      tipsEn: const [
+        'Cardio + core combo exercise — calorie burner',
+        'HIIT workouts in use — great for circuits',
+        'Slow mountain climbers — more core focused',
+        'Fast mountain climbers — more cardio focused',
+        'Cross body mountain climbers — obliques target',
+        'Warm up in bhi use kar sakte ho',
+      ],
+      tipsUr: const [
         'Cardio + core combo exercise — calorie burner',
         'HIIT workouts mein use karo — great for circuits',
         'Slow mountain climbers — more core focused',
@@ -2057,12 +3374,20 @@ class ExerciseData {
         'Cross body mountain climbers — obliques target',
         'Warm up mein bhi use kar sakte ho',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Hips bouncing up and down — level keep',
+        '❌ Hands shift karna — fixed position',
+        '❌ Not engaging core — tight keep',
+        '❌ Looking forward — neutral neck',
+      ],
+      commonMistakesUr: const [
         '❌ Hips bouncing up and down — level rakhho',
         '❌ Hands shift karna — fixed position',
         '❌ Not engaging core — tight rakhho',
         '❌ Looking forward — neutral neck',
       ],
+      caloriesPerMin: 10,
+      tempo: 'Fast',
     ),
     Exercise(
       id: 'core_6',
@@ -2070,12 +3395,21 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Lying, opposite arm/leg',
-      musclesWorked: ['Core'],
+      instructionsEn: 'Lying, opposite arm/leg',
+      instructionsUr: 'Lying, opposite arm/leg',
+      musclesWorked: const ['Core'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Dead-Bug.gif',
-      caloriesPerMin: 4,
-      tempo: '3-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Floor lie on — face up',
+        'Arms ceiling ki taraf extend',
+        'Knees 90° bend — shins parallel to floor (tabletop legs)',
+        'Lower back floor on PRESS — gap nahi should be',
+        'Opposite arm and opposite leg simultaneously extend',
+        'Right arm overhead + left leg extend (straight, floor ke paas)',
+        'Return to start — switch sides',
+        'LEFT arm + RIGHT leg extend — alternate',
+      ],
+      detailedStepsUr: const [
         'Floor pe let jao — face up',
         'Arms ceiling ki taraf extend karo',
         'Knees 90° bend — shins parallel to floor (tabletop legs)',
@@ -2085,7 +3419,15 @@ class ExerciseData {
         'Return to start — switch sides',
         'LEFT arm + RIGHT leg extend — alternate',
       ],
-      tips: [
+      tipsEn: const [
+        'Core stability ka BEST exercise — rehab in bhi use hota hai',
+        'Lower back MUST stay pressed to floor — non-negotiable',
+        'Slow movement — quality > speed',
+        'Breathing important — exhale while extending',
+        'Progression: add ankle weights or hold dumbbell',
+        'Physio recommended for back pain patients',
+      ],
+      tipsUr: const [
         'Core stability ka BEST exercise — rehab mein bhi use hota hai',
         'Lower back MUST stay pressed to floor — non-negotiable',
         'Slow movement — quality > speed',
@@ -2093,12 +3435,20 @@ class ExerciseData {
         'Progression: add ankle weights or hold dumbbell',
         'Physio recommended for back pain patients',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Lower back arch karna — floor on pressed keep',
+        '❌ Moving too fast — slow controlled movement',
+        '❌ Same side arm-leg — OPPOSITE side',
+        '❌ Holding breath — breathe continuously',
+      ],
+      commonMistakesUr: const [
         '❌ Lower back arch karna — floor pe pressed rakhho',
         '❌ Moving too fast — slow controlled movement',
         '❌ Same side arm-leg — OPPOSITE side karo',
         '❌ Holding breath — breathe continuously',
       ],
+      caloriesPerMin: 4,
+      tempo: '3-1-3',
     ),
     Exercise(
       id: 'core_7',
@@ -2106,12 +3456,21 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Elbow to opposite knee',
-      musclesWorked: ['Abs', 'Obliques'],
+      instructionsEn: 'Elbow to opposite knee',
+      instructionsUr: 'Elbow to opposite knee',
+      musclesWorked: const ['Abs', 'Obliques'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bicycle-Crunch.gif',
-      caloriesPerMin: 7,
-      tempo: '1-0-1',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Floor lie on — hands ears ke paas (not behind head)',
+        'Legs lift — knees 90° bend',
+        'Right elbow LEFT knee ki taraf bring — crunch + rotate',
+        'Simultaneously right leg extend straight',
+        'Switch — left elbow RIGHT knee',
+        'Cycling motion — continuous alternating',
+        'Both shoulders off the ground throughout',
+        'Core engaged — lower back pressed',
+      ],
+      detailedStepsUr: const [
         'Floor pe let jao — hands ears ke paas (not behind head)',
         'Legs uthao — knees 90° bend',
         'Right elbow LEFT knee ki taraf lao — crunch + rotate',
@@ -2121,19 +3480,34 @@ class ExerciseData {
         'Both shoulders off the ground throughout',
         'Core engaged — lower back pressed',
       ],
-      tips: [
+      tipsEn: const [
+        'Abs + obliques — complete core exercise',
+        'ACE study in most effective ab exercise rank kiya gaya',
+        'Slow bicycle crunches — more effective than fast',
+        'Elbow touch don\'t forcefully — rotation feel',
+        'Exhale during crunch, inhale during switch',
+      ],
+      tipsUr: const [
         'Abs + obliques — complete core exercise',
         'ACE study mein most effective ab exercise rank kiya gaya',
         'Slow bicycle crunches — more effective than fast',
         'Elbow touch mat karo forcefully — rotation feel karo',
         'Exhale during crunch, inhale during switch',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Pulling neck — rotation is from core not neck',
+        '❌ Too fast — slow & controlled for max engagement',
+        '❌ Legs too high — extended leg floor ke paas should be',
+        '❌ Not rotating torso — just elbow move karna = wrong',
+      ],
+      commonMistakesUr: const [
         '❌ Pulling neck — rotation is from core not neck',
         '❌ Too fast — slow & controlled for max engagement',
         '❌ Legs too high — extended leg floor ke paas hona chahiye',
         '❌ Not rotating torso — just elbow move karna = wrong',
       ],
+      caloriesPerMin: 7,
+      tempo: '1-0-1',
     ),
     Exercise(
       id: 'core_8',
@@ -2141,12 +3515,20 @@ class ExerciseData {
       bodyPart: 'Core',
       equipment: 'Pull-up Bar',
       difficulty: 'Advanced',
-      instructions: 'Hanging, legs raise',
-      musclesWorked: ['Lower Abs'],
+      instructionsEn: 'Hanging, legs raise',
+      instructionsUr: 'Hanging, legs raise',
+      musclesWorked: const ['Lower Abs'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hanging-Leg-Raise.gif',
-      caloriesPerMin: 7,
-      tempo: '2-1-3',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Pull-up bar hang — overhand grip',
+        'Dead hang — body completely still, no swinging',
+        'Legs straight — toes pointed',
+        'Abs legs raise — parallel or above parallel',
+        'Pelvis TILT top on — abs extra squeeze',
+        'Slowly lower — 3 sec down, controlled',
+        'Dead hang on wapas — no swing, then repeat',
+      ],
+      detailedStepsUr: const [
         'Pull-up bar se hang karo — overhand grip',
         'Dead hang — body completely still, no swinging',
         'Legs straight — toes pointed',
@@ -2155,7 +3537,15 @@ class ExerciseData {
         'Slowly lower karo — 3 sec down, controlled',
         'Dead hang pe wapas — no swing, then repeat',
       ],
-      tips: [
+      tipsEn: const [
+        'Lower abs for ADVANCED & BEST exercise',
+        'Pelvis tilt is KEY — without it hip flexors dominate',
+        'Bent knee version easier hai — progression for',
+        'Grip issue? Ab straps or gloves use',
+        'Toes to bar — ultimate progression',
+        'Hanging knee raises — beginner version',
+      ],
+      tipsUr: const [
         'Lower abs ke liye ADVANCED & BEST exercise',
         'Pelvis tilt is KEY — without it hip flexors dominate',
         'Bent knee version easier hai — progression ke liye',
@@ -2163,19 +3553,26 @@ class ExerciseData {
         'Toes to bar — ultimate progression',
         'Hanging knee raises — beginner version',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
         '❌ Swinging / kipping — STRICT dead hang',
         '❌ No pelvis tilt — abs engage nahi hote without it',
         '❌ Using momentum — every rep from dead hang',
         '❌ Hip flexors dominant — focus on abs curling pelvis',
         '❌ Letting legs drop — controlled lowering (3 sec)',
       ],
+      commonMistakesUr: const [
+        '❌ Swinging / kipping — STRICT dead hang',
+        '❌ No pelvis tilt — abs engage nahi hote without it',
+        '❌ Using momentum — every rep from dead hang',
+        '❌ Hip flexors dominant — focus on abs curling pelvis',
+        '❌ Letting legs drop — controlled lowering (3 sec)',
+      ],
+      caloriesPerMin: 7,
+      tempo: '2-1-3',
     ),
   ];
 
-  // ==========================================
-  // 🏃 CARDIO EXERCISES (WITH ANIMATIONS)
-  // ==========================================
+  // ========== CARDIO ==========
   static const List<Exercise> cardio = [
     Exercise(
       id: 'cardio_1',
@@ -2183,12 +3580,20 @@ class ExerciseData {
       bodyPart: 'Cardio',
       equipment: 'Treadmill',
       difficulty: 'Beginner',
-      instructions: 'Steady pace running',
-      musclesWorked: ['Heart', 'Legs'],
+      instructionsEn: 'Steady pace running',
+      instructionsUr: 'Steady pace running',
+      musclesWorked: const ['Heart', 'Legs'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Run.gif',
-      caloriesPerMin: 10,
-      tempo: 'Steady',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Treadmill on stand — safety clip lagao',
+        'Walking speed start (warm up 3-5 min)',
+        'Gradually speed badhao — comfortable running pace',
+        'Upright posture — lean forward slightly',
+        'Arms 90° bend, swing naturally',
+        'Midfoot strike — heel strike avoid',
+        'Cool down — last 3-5 min walk',
+      ],
+      detailedStepsUr: const [
         'Treadmill pe khade ho jao — safety clip lagao',
         'Walking speed se start karo (warm up 3-5 min)',
         'Gradually speed badhao — comfortable running pace',
@@ -2197,19 +3602,34 @@ class ExerciseData {
         'Midfoot strike — heel strike avoid karo',
         'Cool down — last 3-5 min walk karo',
       ],
-      tips: [
+      tipsEn: const [
+        'Incline add for more calorie burn',
+        'Interval training: 30 sec sprint, 60 sec jog — HIIT',
+        'Heart rate monitor use — zone 2 for fat burn',
+        'Music or podcast lagao — time fast jaata hai',
+        'Hydrate before and during — water bottle keep',
+      ],
+      tipsUr: const [
         'Incline add karo for more calorie burn',
         'Interval training: 30 sec sprint, 60 sec jog — HIIT',
         'Heart rate monitor use karo — zone 2 for fat burn',
         'Music ya podcast lagao — time fast jaata hai',
         'Hydrate before aur during — water bottle rakhho',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Holding handles — naturally run',
+        '❌ No warm up — injury risk',
+        '❌ Too fast start — gradually build',
+        '❌ Heel striking — midfoot landing',
+      ],
+      commonMistakesUr: const [
         '❌ Holding handles — naturally run karo',
         '❌ No warm up — injury risk',
         '❌ Too fast start — gradually build karo',
         '❌ Heel striking — midfoot landing',
       ],
+      caloriesPerMin: 10,
+      tempo: 'Steady',
     ),
     Exercise(
       id: 'cardio_2',
@@ -2217,12 +3637,20 @@ class ExerciseData {
       bodyPart: 'Cardio',
       equipment: 'Bike',
       difficulty: 'Beginner',
-      instructions: 'Steady or interval',
-      musclesWorked: ['Heart', 'Legs'],
+      instructionsEn: 'Steady or interval',
+      instructionsUr: 'Steady or interval',
+      musclesWorked: const ['Heart', 'Legs'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2022/02/Stationary-Bike-Walk.gif',
-      caloriesPerMin: 8,
-      tempo: 'Steady/Interval',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Seat height adjust — leg slightly bent at bottom',
+        'Handlebar comfortable position on',
+        'Start pedaling — easy resistance (warm up)',
+        'Gradually resistance badhao',
+        'Steady state: maintain consistent pace 20-30 min',
+        'Interval: 30 sec high resistance, 60 sec low — repeat',
+        'Cool down — easy pedaling 5 min',
+      ],
+      detailedStepsUr: const [
         'Seat height adjust karo — leg slightly bent at bottom',
         'Handlebar comfortable position pe',
         'Start pedaling — easy resistance (warm up)',
@@ -2231,19 +3659,34 @@ class ExerciseData {
         'Interval: 30 sec high resistance, 60 sec low — repeat',
         'Cool down — easy pedaling 5 min',
       ],
-      tips: [
+      tipsEn: const [
+        'Low impact — joints for safe, knees for great',
+        'Seat height CORRECT should be — knee issues avoid',
+        'Resistance use — free spinning more effective',
+        'Spin classes motivating hote hain — try',
+        'Track distance & time — progress measure',
+      ],
+      tipsUr: const [
         'Low impact — joints ke liye safe, knees ke liye great',
         'Seat height CORRECT hona chahiye — knee issues avoid',
         'Resistance use karo — free spinning se zyada effective',
         'Spin classes motivating hote hain — try karo',
         'Track distance & time — progress measure karo',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
         '❌ Seat too low — knee pain hota hai',
         '❌ No resistance — pedaling aimlessly',
         '❌ Upper body tense — relax shoulders',
         '❌ No warm up / cool down',
       ],
+      commonMistakesUr: const [
+        '❌ Seat too low — knee pain hota hai',
+        '❌ No resistance — pedaling aimlessly',
+        '❌ Upper body tense — relax shoulders',
+        '❌ No warm up / cool down',
+      ],
+      caloriesPerMin: 8,
+      tempo: 'Steady/Interval',
     ),
     Exercise(
       id: 'cardio_3',
@@ -2251,12 +3694,21 @@ class ExerciseData {
       bodyPart: 'Cardio',
       equipment: 'Rope',
       difficulty: 'Intermediate',
-      instructions: 'Steady pace jump',
-      musclesWorked: ['Heart', 'Calves'],
+      instructionsEn: 'Steady pace jump',
+      instructionsUr: 'Steady pace jump',
+      musclesWorked: const ['Heart', 'Calves'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jump-Rope.gif',
-      caloriesPerMin: 12,
-      tempo: 'Rhythmic',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Rope handles hold — rope peeche start',
+        'Wrists rotate — full arm don\'t ghumao',
+        'Small jumps — 1-2 inch off ground',
+        'Land on balls of feet — heels touch don\'t',
+        'Knees slightly bent — soft landing',
+        'Eyes forward — rope don\'t dekho',
+        'Rhythm maintain — consistent pace',
+        'Start 30 sec on, 30 sec rest — build up',
+      ],
+      detailedStepsUr: const [
         'Rope handles pakdo — rope peeche se start',
         'Wrists se rotate karo — full arm mat ghumao',
         'Small jumps — 1-2 inch off ground',
@@ -2266,7 +3718,15 @@ class ExerciseData {
         'Rhythm maintain karo — consistent pace',
         'Start 30 sec on, 30 sec rest — build up',
       ],
-      tips: [
+      tipsEn: const [
+        'BEST calorie burner — 12+ calories per minute!',
+        'Boxers ka favorite cardio — coordination improve karta hai',
+        'Speed rope get — PVC or wire rope',
+        'Rope length: stand on middle, handles chest/armpits to',
+        'Variations: high knees, double unders, cross overs',
+        'Surface matters — rubber don\'t or wood floor best',
+      ],
+      tipsUr: const [
         'BEST calorie burner — 12+ calories per minute!',
         'Boxers ka favorite cardio — coordination improve karta hai',
         'Speed rope get karo — PVC ya wire rope',
@@ -2274,12 +3734,20 @@ class ExerciseData {
         'Variations: high knees, double unders, cross overs',
         'Surface matters — rubber mat ya wood floor best',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Full arm rotation — WRISTS ghumao',
+        '❌ Jumping too high — 1-2 inch enough',
+        '❌ Heel landing — balls of feet on land',
+        '❌ Hard surface (concrete) — joint impact',
+      ],
+      commonMistakesUr: const [
         '❌ Full arm rotation — WRISTS se ghumao',
         '❌ Jumping too high — 1-2 inch enough',
         '❌ Heel landing — balls of feet pe land',
         '❌ Hard surface (concrete) — joint impact',
       ],
+      caloriesPerMin: 12,
+      tempo: 'Rhythmic',
     ),
     Exercise(
       id: 'cardio_4',
@@ -2287,12 +3755,21 @@ class ExerciseData {
       bodyPart: 'Cardio',
       equipment: 'Bodyweight',
       difficulty: 'Advanced',
-      instructions: 'Squat, push-up, jump',
-      musclesWorked: ['Full Body'],
+      instructionsEn: 'Squat, push-up, jump',
+      instructionsUr: 'Squat, push-up, jump',
+      musclesWorked: const ['Full Body'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Burpee.gif',
-      caloriesPerMin: 12,
-      tempo: 'Explosive',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Standing position start',
+        'Squat down — hands floor on',
+        'Feet peeche jump — plank/push-up position',
+        'Push-up (optional but recommended)',
+        'Feet wapas hands ke paas jump — squat position',
+        'EXPLOSIVE jump upar — arms overhead',
+        'Land softly — immediately next rep',
+        'That\\\'s 1 rep — repeat for time or reps',
+      ],
+      detailedStepsUr: const [
         'Standing position se start karo',
         'Squat down karo — hands floor pe',
         'Feet peeche jump karo — plank/push-up position',
@@ -2300,9 +3777,17 @@ class ExerciseData {
         'Feet wapas hands ke paas jump karo — squat position',
         'EXPLOSIVE jump karo upar — arms overhead',
         'Land softly — immediately next rep',
-        'That\'s 1 rep — repeat for time or reps',
+        'That\\\'s 1 rep — repeat for time or reps',
       ],
-      tips: [
+      tipsEn: const [
+        'Full body + cardio = ultimate calorie burner',
+        'HIIT in best exercise — metabolic conditioning',
+        'Modifications: step back instead of jump, skip push-up',
+        'Quality over speed — form maintain',
+        'Start with 5 reps, build up gradually',
+        'Chest to floor burpees — hardest variation',
+      ],
+      tipsUr: const [
         'Full body + cardio = ultimate calorie burner',
         'HIIT mein best exercise — metabolic conditioning',
         'Modifications: step back instead of jump, skip push-up',
@@ -2310,13 +3795,22 @@ class ExerciseData {
         'Start with 5 reps, build up gradually',
         'Chest to floor burpees — hardest variation',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
         '❌ No push-up — full burpee includes push-up',
         '❌ Worm-like push-up — proper push-up form',
         '❌ No jump at top — explosive jump is key',
         '❌ Landing hard — soft knees, absorb impact',
         '❌ Going too fast with bad form — form > speed',
       ],
+      commonMistakesUr: const [
+        '❌ No push-up — full burpee includes push-up',
+        '❌ Worm-like push-up — proper push-up form',
+        '❌ No jump at top — explosive jump is key',
+        '❌ Landing hard — soft knees, absorb impact',
+        '❌ Going too fast with bad form — form > speed',
+      ],
+      caloriesPerMin: 12,
+      tempo: 'Explosive',
     ),
     Exercise(
       id: 'cardio_5',
@@ -2324,33 +3818,56 @@ class ExerciseData {
       bodyPart: 'Cardio',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Jump, arms legs spread',
-      musclesWorked: ['Full Body'],
+      instructionsEn: 'Jump, arms legs spread',
+      instructionsUr: 'Jump, arms legs spread',
+      musclesWorked: const ['Full Body'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jumping-Jack.gif',
-      caloriesPerMin: 8,
-      tempo: 'Rhythmic',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Standing — feet together, arms sides on',
+        'Jump — simultaneously legs spread + arms overhead',
+        'Land — feet wide, hands clap or touch overhead',
+        'Jump again — feet together + arms down',
+        'Rhythm maintain — continuous motion',
+        'Soft landing — knees slightly bent',
+        'Breathe rhythmically — don\\\'t hold breath',
+      ],
+      detailedStepsUr: const [
         'Standing — feet together, arms sides pe',
         'Jump karo — simultaneously legs spread + arms overhead',
         'Land — feet wide, hands clap ya touch overhead',
         'Jump again — feet together + arms down',
         'Rhythm maintain karo — continuous motion',
         'Soft landing — knees slightly bent',
-        'Breathe rhythmically — don\'t hold breath',
+        'Breathe rhythmically — don\\\'t hold breath',
       ],
-      tips: [
+      tipsEn: const [
+        'Perfect warm-up exercise — heart rate badhata hai',
+        'Low impact version: step out instead of jump',
+        'Time based : 30 sec, 45 sec, 60 sec',
+        'Anywhere, anytime — no equipment needed',
+        'Power jacks (squat + jump) — harder variation',
+      ],
+      tipsUr: const [
         'Perfect warm-up exercise — heart rate badhata hai',
         'Low impact version: step out instead of jump',
         'Time based karo: 30 sec, 45 sec, 60 sec',
         'Anywhere, anytime — no equipment needed',
         'Power jacks (squat + jump) — harder variation',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
+        '❌ Arms not fully extending overhead',
+        '❌ Hard landing — soft knees',
+        '❌ Uncoordinated — arms-legs sync',
+        '❌ Upper body stiff — fluid movement',
+      ],
+      commonMistakesUr: const [
         '❌ Arms not fully extending overhead',
         '❌ Hard landing — soft knees',
         '❌ Uncoordinated — arms-legs sync karo',
         '❌ Upper body stiff — fluid movement',
       ],
+      caloriesPerMin: 8,
+      tempo: 'Rhythmic',
     ),
     Exercise(
       id: 'cardio_6',
@@ -2358,12 +3875,21 @@ class ExerciseData {
       bodyPart: 'Cardio',
       equipment: 'Bodyweight',
       difficulty: 'Beginner',
-      instructions: 'Knees chest level',
-      musclesWorked: ['Heart', 'Legs'],
+      instructionsEn: 'Knees chest level',
+      instructionsUr: 'Knees chest level',
+      musclesWorked: const ['Heart', 'Legs'],
       gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/High-Knee-Run.gif',
-      caloriesPerMin: 9,
-      tempo: 'Fast',
-      detailedSteps: [
+      detailedStepsEn: const [
+        'Standing tall — feet hip-width apart',
+        'Run in place — knees upar lift',
+        'Knees HIP LEVEL or higher bring — har rep on',
+        'Arms pump naturally — opposite arm opposite knee',
+        'Land on balls of feet — soft landing',
+        'Quick tempo — but controlled',
+        'Core tight keep — upright posture',
+        'Continue for time (20-60 seconds)',
+      ],
+      detailedStepsUr: const [
         'Standing tall — feet hip-width apart',
         'Run in place — knees upar uthao',
         'Knees HIP LEVEL ya higher lao — har rep pe',
@@ -2373,25 +3899,37 @@ class ExerciseData {
         'Core tight rakhho — upright posture',
         'Continue for time (20-60 seconds)',
       ],
-      tips: [
+      tipsEn: const [
+        'Great cardio warm-up exercise',
+        'HIIT circuits in use',
+        'Hands hip level on keep — knees touch karein',
+        'Sprint-like — running form practice bhi hoti hai',
+        'Marching (slow) version — beginner friendly',
+      ],
+      tipsUr: const [
         'Great cardio warm-up exercise',
         'HIIT circuits mein use karo',
         'Hands hip level pe rakhho — knees touch karein',
         'Sprint-like — running form practice bhi hoti hai',
         'Marching (slow) version — beginner friendly',
       ],
-      commonMistakes: [
+      commonMistakesEn: const [
         '❌ Knees not high enough — hip level target',
         '❌ Leaning back — upright posture',
         '❌ Heel landing — toes/balls of feet',
         '❌ Arms not moving — opposite arm-leg coordination',
       ],
+      commonMistakesUr: const [
+        '❌ Knees not high enough — hip level target',
+        '❌ Leaning back — upright posture',
+        '❌ Heel landing — toes/balls of feet',
+        '❌ Arms not moving — opposite arm-leg coordination',
+      ],
+      caloriesPerMin: 9,
+      tempo: 'Fast',
     ),
   ];
 
-  // ==========================================
-  // 📋 GET EXERCISES BY BODY PART
-  // ==========================================
   static List<Exercise> getByBodyPart(String bodyPart) {
     switch (bodyPart.toLowerCase()) {
       case 'chest':
@@ -2419,7 +3957,6 @@ class ExerciseData {
     }
   }
 
-  // Get all exercises
   static List<Exercise> getAllExercises() {
     return [
       ...chest,
@@ -2433,13 +3970,13 @@ class ExerciseData {
     ];
   }
 
-  // Search exercises
   static List<Exercise> search(String query) {
     final q = query.toLowerCase();
     return getAllExercises().where((e) {
       return e.name.toLowerCase().contains(q) ||
           e.bodyPart.toLowerCase().contains(q) ||
-          e.equipment.toLowerCase().contains(q);
+          e.equipment.toLowerCase().contains(q) ||
+          e.instructions.toLowerCase().contains(q);
     }).toList();
   }
 }

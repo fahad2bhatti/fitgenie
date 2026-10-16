@@ -6,31 +6,21 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 
-    <!-- ✅ SENSOR PERMISSIONS -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"/>
-    <uses-permission android:name="android.permission.BODY_SENSORS"/>
 
-    <!-- ✅ CAMERA & STORAGE -->
     <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <!-- ✅ HEALTH CONNECT PERMISSIONS (Google Fit) -->
-    <uses-permission android:name="android.permission.health.READ_STEPS"/>
-    <uses-permission android:name="android.permission.health.WRITE_STEPS"/>
-    <uses-permission android:name="android.permission.health.READ_TOTAL_CALORIES_BURNED"/>
-    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED"/>
-    <uses-permission android:name="android.permission.health.READ_DISTANCE"/>
-    <uses-permission android:name="android.permission.health.READ_EXERCISE"/>
 
     <application
         android:label="FitGenie"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Disable Impeller (Vulkan) to avoid ErrorDeviceLost on some devices -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
+
 
         <!-- ✅ MAIN ACTIVITY -->
         <activity
@@ -52,23 +42,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- ✅ HEALTH CONNECT INTENT FILTER — Ye zaroori hai! -->
-            <intent-filter>
-                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
-            </intent-filter>
         </activity>
 
-        <!-- ✅ HEALTH CONNECT PERMISSIONS ACTIVITY (Android 14+) -->
-        <activity-alias
-            android:name="ViewPermissionUsageActivity"
-            android:exported="true"
-            android:targetActivity=".MainActivity"
-            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
-                <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
-            </intent-filter>
-        </activity-alias>
 
         <!-- ✅ NOTIFICATION RECEIVERS -->
         <receiver
@@ -92,6 +67,10 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-8397637614188934~5329346664"/>
 
+        <meta-data
+            android:name="fitgenie.notification_icon"
+            android:resource="@drawable/ic_stat_fitgenie"/>
+
     </application>
 
     <queries>
@@ -108,8 +87,6 @@
         <data android:mimeType="text/plain"/>
     </intent>
 
-    <!-- ✅ HEALTH CONNECT AVAILABILITY CHECK -->
-    <package android:name="com.google.android.apps.healthdata"/>
 </queries>
 
 </manifest>

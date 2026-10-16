@@ -167,6 +167,7 @@ All numbers should be integers. isHealthy should be boolean.''';
     // 1) Groq via proxy (fast + free), 2) Gemini fallback
     final proxied = await _callProxy(task: 'scan', prompt: prompt, imageBase64: base64Image);
     if (proxied != null) return MealAnalysis.fromJson(proxied);
+    if (_apiKey.isEmpty) return _getDefaultMealAnalysis();
 
     final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
     const maxRetries = 2;
@@ -312,7 +313,8 @@ Max 150 words:''';
   }
 
   Future<String?> _callGeminiAPI(String modelName, String prompt) async {
-    if (!isConfigured) return null;
+    if (_apiKey.isEmpty) return null;
+
 
     final url = 'https://generativelanguage.googleapis.com/v1beta/$modelName:generateContent?key=$_apiKey';
     const maxRetries = 2;

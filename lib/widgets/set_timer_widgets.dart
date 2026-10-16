@@ -10,6 +10,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../core/app_strings.dart';
 import '../app/fitgenie_theme.dart';
 
 // ============================================================
@@ -131,7 +132,7 @@ class CircularStopwatchState extends State<CircularStopwatch> {
               ),
               const SizedBox(height: 4),
               Text(
-                _running ? 'SET IN PROGRESS' : 'READY',
+                _running ? AppStrings.get('timer_in_progress') : AppStrings.get('timer_ready'),
                 style: TextStyle(
                   fontSize: 12,
                   letterSpacing: 1.2,
@@ -258,7 +259,7 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _remaining == 0 ? 'GO! NEXT SET' : 'REST',
+                    _remaining == 0 ? AppStrings.get('timer_go_next') : AppStrings.get('timer_rest'),
                     style: TextStyle(
                       fontSize: 12,
                       letterSpacing: 1.2,
@@ -279,7 +280,7 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
             const SizedBox(width: 10),
             _pillButton('+15s', () => _addTime(15)),
             const SizedBox(width: 10),
-            _pillButton('Skip Rest', () {
+            _pillButton(AppStrings.get('timer_skip_rest'), () {
               _timer?.cancel();
               widget.onSkip?.call();
             }, filled: true),

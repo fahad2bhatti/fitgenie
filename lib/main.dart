@@ -1,6 +1,7 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
+import 'core/app_strings.dart';
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -341,16 +342,14 @@ class _AuthGateState extends State<AuthGate> {
                         children: [
                           const Icon(Icons.email, color: Colors.blue, size: 64),
                           const SizedBox(height: 16),
-                          const Text(
-                            'Email Verify Karo!',
+                          Text(AppStrings.get('auth_verify_email'),
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Email pe verification link bheja hai. Verify karo phir login karo.',
+                          Text(AppStrings.get('auth_verify_sub'),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.grey),
                           ),
@@ -359,13 +358,13 @@ class _AuthGateState extends State<AuthGate> {
                             onPressed: () async {
                               await user.reload();
                             },
-                            child: const Text('Check karo'),
+                            child: Text(AppStrings.get('auth_check_again')),
                           ),
                           TextButton(
                             onPressed: () async {
                               await FirebaseAuth.instance.signOut();
                             },
-                            child: const Text('Logout'),
+                            child: Text(AppStrings.get('auth_logout')),
                           ),
                         ],
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/app_strings.dart';
 import '../app/fitgenie_theme.dart';
 import '../services/connectivity_service.dart';
 
@@ -19,14 +20,14 @@ class OfflineIndicator extends StatelessWidget {
           color: FitGenieTheme.hot,
           child: isOnline
               ? const SizedBox.shrink()
-              : const Row(
+              : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.wifi_off, color: Colors.white, size: 16),
               SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  'You are offline',
+                  AppStrings.get('offline_banner'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -87,9 +88,9 @@ class OfflineBanner extends StatelessWidget {
                       size: 18,
                     ),
                     const SizedBox(width: 8),
-                      const Flexible(
+                      Flexible(
                         child: Text(
-                          'Offline Mode',
+                          AppStrings.get('offline_mode'),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 13,
@@ -110,8 +111,7 @@ class OfflineBanner extends StatelessWidget {
                             color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Text(
-                            'data will sync when online',
+                          child: Text(AppStrings.get('offline_sync_hint'),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,

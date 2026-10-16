@@ -762,7 +762,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.greenAccent.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text('LIVE', style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.bold)),
+                    child: Text(AppStrings.get('profile_live_label'), style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -1486,7 +1486,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ]),
         content: Text(AppStrings.get('profile_about_version')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(AppStrings.get('ok'))),
         ],
       ),
     );

@@ -6,6 +6,7 @@
 // ready for the next set.
 
 import 'package:flutter/material.dart';
+import '../core/app_strings.dart';
 import '../app/fitgenie_theme.dart';
 import '../data/exercise_data.dart';
 import 'set_timer_widgets.dart';
@@ -80,7 +81,7 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Set save nahi hua, dobara try karo')),
+          SnackBar(content: Text(AppStrings.get('set_save_error'))),
         );
       }
     }
@@ -171,7 +172,7 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
 
             // Weight stepper
             _stepperRow(
-              label: 'Weight',
+              label: AppStrings.get('set_weight'),
               value: '${_weight.toStringAsFixed(_weight % 1 == 0 ? 0 : 1)} kg',
               onMinus: () => _adjustWeight(-2.5),
               onPlus: () => _adjustWeight(2.5),
@@ -180,7 +181,7 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
 
             // Reps stepper
             _stepperRow(
-              label: 'Reps',
+              label: AppStrings.get('set_reps'),
               value: _reps,
               onMinus: () => _adjustReps(-1),
               onPlus: () => _adjustReps(1),
@@ -197,7 +198,7 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Went to failure?',
+                  AppStrings.get('set_failure'),
                   style: TextStyle(color: FitGenieTheme.muted, fontSize: 13),
                 ),
               ],
@@ -212,8 +213,7 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
                   backgroundColor: FitGenieTheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text(
-                  'Finish Set ✅',
+                child: Text(AppStrings.get('set_finish'),
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

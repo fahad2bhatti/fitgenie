@@ -75,3 +75,6 @@ key.properties
 
 android/app/google-services*.json
 app/google-services*.json
+.dart_tool/
+.idea/
+.flutter-plugins-dependencies

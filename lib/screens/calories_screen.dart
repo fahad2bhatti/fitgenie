@@ -121,13 +121,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     if (_selectedDate.year == now.year &&
         _selectedDate.month == now.month &&
         _selectedDate.day == now.day) {
-      return 'Today';
+      return AppStrings.get('calories_today');
     }
 
     if (_selectedDate.year == yesterday.year &&
         _selectedDate.month == yesterday.month &&
         _selectedDate.day == yesterday.day) {
-      return 'Yesterday';
+      return AppStrings.get('calories_yesterday');
     }
 
     return '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}';
@@ -285,8 +285,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Kis meal mein add karein? 🍽️',
+            Text(AppStrings.get('calories_which_meal'),
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             const SizedBox(height: 16),
@@ -294,10 +293,10 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
               spacing: 10,
               runSpacing: 10,
               children: {
-                'breakfast': '🍳 Breakfast',
-                'lunch': '🍲 Lunch',
-                'dinner': '🍛 Dinner',
-                'snacks': '🍪 Snacks',
+                'breakfast': AppStrings.get('meal_breakfast'),
+                'lunch': AppStrings.get('meal_lunch'),
+                'dinner': AppStrings.get('meal_dinner'),
+                'snacks': AppStrings.get('meal_snacks'),
               }.entries.map((entry) {
                 return GestureDetector(
                   onTap: () => Navigator.pop(context, entry.key),
@@ -392,13 +391,12 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Save Meal Template 💾',
+            Text(AppStrings.get('calories_save_template'),
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             const SizedBox(height: 8),
             Text(
-              'Current ${mealType.toUpperCase()} ko saved meal bana do.',
+              AppStrings.get('calories_save_template_desc', params: {'mealType': mealType.toUpperCase()}),
               style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
             ),
             const SizedBox(height: 14),
@@ -406,7 +404,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
               controller: controller,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'e.g. My Breakfast',
+                hintText: AppStrings.get('calories_template_name_hint'),
                 hintStyle: const TextStyle(color: FitGenieTheme.muted),
                 filled: true,
                 fillColor: FitGenieTheme.background,
@@ -427,8 +425,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: FitGenieTheme.primary,
                 ),
-                child: const Text(
-                  'Save Meal',
+                child: Text(AppStrings.get('calories_save_meal'),
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -499,20 +496,19 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Nutrition Goals 🎯',
+              Text(AppStrings.get('calories_goals_title'),
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const SizedBox(height: 16),
-              _goalField(caloriesCtrl, 'Calories Goal', 'kcal'),
+              _goalField(caloriesCtrl, AppStrings.get('calories_goal_calories'), 'kcal'),
               const SizedBox(height: 12),
-              _goalField(proteinCtrl, 'Protein Goal', 'g'),
+              _goalField(proteinCtrl, AppStrings.get('calories_goal_protein'), 'g'),
               const SizedBox(height: 12),
-              _goalField(carbsCtrl, 'Carbs Goal', 'g'),
+              _goalField(carbsCtrl, AppStrings.get('calories_goal_carbs'), 'g'),
               const SizedBox(height: 12),
-              _goalField(fatsCtrl, 'Fats Goal', 'g'),
+              _goalField(fatsCtrl, AppStrings.get('calories_goal_fats'), 'g'),
               const SizedBox(height: 12),
-              _goalField(waterCtrl, 'Water Goal', 'glasses'),
+              _goalField(waterCtrl, AppStrings.get('calories_goal_water'), 'glasses'),
               const SizedBox(height: 18),
               SizedBox(
                 width: double.infinity,
@@ -594,8 +590,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 children: [
                   Text(
                     entryId == null
-                        ? 'Custom Food Entry ✍️'
-                        : 'Edit Food ✏️',
+                        ? AppStrings.get('calories_custom_entry')
+                        : AppStrings.get('calories_edit_food'),
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -603,7 +599,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Ye fallback option hai. Better experience ke liye Search Food use karo.',
+                    AppStrings.get('calories_custom_hint'),
                     style: TextStyle(
                       color: FitGenieTheme.muted,
                       fontSize: 12,
@@ -613,13 +609,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   TextField(
                     controller: nameCtrl,
                     style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration('Food Name'),
+                    decoration: _inputDecoration(AppStrings.get('calories_food_name')),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: quantityCtrl,
                     style: const TextStyle(color: Colors.white),
-                    decoration: _inputDecoration('Quantity / Serving'),
+                    decoration: _inputDecoration(AppStrings.get('calories_quantity')),
                   ),
                   const SizedBox(height: 12),
                   Text(AppStrings.get('food_search_meal_type'), style: TextStyle(fontWeight: FontWeight.w600)),
@@ -628,10 +624,10 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     spacing: 8,
                     runSpacing: 8,
                     children: {
-                      'breakfast': '🍳 Breakfast',
-                      'lunch': '🍲 Lunch',
-                      'dinner': '🍛 Dinner',
-                      'snacks': '🍪 Snacks',
+                      'breakfast': AppStrings.get('meal_breakfast'),
+                      'lunch': AppStrings.get('meal_lunch'),
+                      'dinner': AppStrings.get('meal_dinner'),
+                      'snacks': AppStrings.get('meal_snacks'),
                     }.entries.map((entry) {
                       final selected = selectedMeal == entry.key;
                       return GestureDetector(
@@ -751,7 +747,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                         backgroundColor: FitGenieTheme.primary,
                       ),
                       child: Text(
-                        entryId == null ? 'Add Food' : 'Update Food',
+                        entryId == null ? AppStrings.get('calories_add_food') : AppStrings.get('calories_update_food'),
                         style: const TextStyle(color: Colors.white),
                       ),
                     ),

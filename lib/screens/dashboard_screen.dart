@@ -848,14 +848,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                   icon: const Icon(Icons.warning_amber,
                       color: FitGenieTheme.warning, size: 22),
                   onPressed: _requestStepPermission,
-                  tooltip: 'Enable Step Tracking',
+                  tooltip: AppStrings.get('dashboard_enable_step_tracking'),
                 )
               else
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline,
                       color: FitGenieTheme.primary, size: 22),
                   onPressed: _showAddStepsDialog,
-                  tooltip: 'Add Steps Manually',
+                  tooltip: AppStrings.get('dashboard_add_steps_manually'),
                 ),
             ],
           ),
@@ -1310,7 +1310,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             Expanded(
               child: QuickActionTile(
                 icon: Icons.fitness_center,
-                title: 'Exercises',
+                title: AppStrings.get('label_exercises'),
                 color: Colors.blue,
                 onTap: () {
                   Navigator.push(

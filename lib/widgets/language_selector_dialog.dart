@@ -78,7 +78,7 @@ class LanguageSelectorDialog {
               context: context,
               icon: '🇬🇧',
               title: AppStrings.get('language_english'),
-              subtitle: 'Everything in English',
+              subtitle: AppStrings.get('lang_desc_english'),
               isSelected: isEnglish,
               onTap: () {
                 if (!isEnglish) {
@@ -96,7 +96,7 @@ class LanguageSelectorDialog {
               context: context,
               icon: '🇵🇰',
               title: AppStrings.get('language_urdu'),
-              subtitle: 'Roman Urdu mein',
+              subtitle: AppStrings.get('lang_desc_urdu'),
               isSelected: !isEnglish,
               onTap: () {
                 if (isEnglish) {

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../core/app_strings.dart';
 import '../app/fitgenie_theme.dart';
 import '../services/step_counter_service.dart';
 
@@ -142,8 +143,8 @@ class _StepCounterCardState extends State<StepCounterCard>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Step Counter',
+                    Text(
+                      AppStrings.get('steps_title'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -175,7 +176,7 @@ class _StepCounterCardState extends State<StepCounterCard>
                 IconButton(
                   icon: const Icon(Icons.warning, color: FitGenieTheme.warning),
                   onPressed: _requestPermission,
-                  tooltip: 'Enable Permission',
+                  tooltip: AppStrings.get('steps_enable_permission'),
                 ),
             ],
           ),
@@ -235,7 +236,7 @@ class _StepCounterCardState extends State<StepCounterCard>
                         ),
                       ),
                       Text(
-                        'of ${_formatNumber(widget.stepsGoal)}',
+                        AppStrings.get('steps_of_goal', params: {'goal': _formatNumber(widget.stepsGoal)}),
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[400],
@@ -257,21 +258,21 @@ class _StepCounterCardState extends State<StepCounterCard>
               _buildStatItem(
                 icon: Icons.local_fire_department,
                 value: '${_calories.round()}',
-                label: 'kcal',
+                label: AppStrings.get('label_kcal'),
                 color: FitGenieTheme.warning,
               ),
               _buildDivider(),
               _buildStatItem(
                 icon: Icons.straighten,
                 value: _distance.toStringAsFixed(1),
-                label: 'km',
+                label: AppStrings.get('label_km'),
                 color: Colors.blue,
               ),
               _buildDivider(),
               _buildStatItem(
                 icon: Icons.timer,
                 value: '$_activeMinutes',
-                label: 'min',
+                label: AppStrings.get('label_min'),
                 color: Colors.purple,
               ),
             ],
@@ -289,8 +290,8 @@ class _StepCounterCardState extends State<StepCounterCard>
             ),
             child: Text(
               progress >= 1.0
-                  ? '🎉 Goal Achieved! Great job!'
-                  : '${(progress * 100).toInt()}% of daily goal',
+                  ? AppStrings.get('steps_goal_achieved')
+                  : AppStrings.get('steps_percent_goal', params: {'percent': '${(progress * 100).toInt()}'}),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -324,16 +325,16 @@ class _StepCounterCardState extends State<StepCounterCard>
   }
 
   String _getStatusText() {
-    if (!_hasPermission) return 'Permission needed';
-    if (!_isInitialized) return 'Initializing...';
+    if (!_hasPermission) return AppStrings.get('steps_permission_needed');
+    if (!_isInitialized) return AppStrings.get('steps_initializing');
 
     switch (_status) {
       case 'walking':
-        return 'Walking';
+        return AppStrings.get('steps_walking');
       case 'stopped':
-        return 'Idle';
+        return AppStrings.get('steps_idle');
       default:
-        return 'Tracking';
+        return AppStrings.get('steps_tracking');
     }
   }
 
