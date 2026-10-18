@@ -78,3 +78,8 @@ app/google-services*.json
 .dart_tool/
 .idea/
 .flutter-plugins-dependencies
+
+*.backup*
+*.bak
+*.r8bak
+*.new
