@@ -92,7 +92,7 @@ Future<void> main() async {
 
   try {
     await NotificationService().initialize();
-    await NotificationService().scheduleAllDailyNotifications();
+    await NotificationService().scheduleFromSavedOrDefault();
     debugPrint('Notifications initialized');
   } catch (e) {
     debugPrint('Notification error: $e');

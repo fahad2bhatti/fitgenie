@@ -8,6 +8,7 @@ import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../core/app_strings.dart';
+import '../core/hive_boxes.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -22,6 +23,7 @@ class NotificationService {
   static const int _quoteCount = 10;
   static const int _motivationBaseId = 100; // IDs 100 .. 100+_motivationDays-1
   static const int _motivationDays = 30; // pre-schedule 30 days ahead
+  static const String _customPrefsKey = 'notif_custom_settings';
 
   // ============ INITIALIZE ============
   Future<void> initialize() async {
@@ -255,6 +257,36 @@ class NotificationService {
     }
   }
 
+  // ============ SCHEDULE FROM SAVED SETTINGS (OR DEFAULTS) ============
+  Future<void> scheduleFromSavedOrDefault() async {
+    try {
+      final raw = HiveBoxes.settingsBox.get(_customPrefsKey);
+      if (raw is Map) {
+        final m = Map<String, dynamic>.from(raw);
+        await scheduleCustomNotifications(
+          workoutEnabled: m['workoutEnabled'] ?? true,
+          workoutHour: m['workoutHour'] ?? 7,
+          workoutMinute: m['workoutMinute'] ?? 0,
+          waterEnabled: m['waterEnabled'] ?? true,
+          waterIntervalHours: m['waterIntervalHours'] ?? 2,
+          lunchEnabled: m['lunchEnabled'] ?? true,
+          lunchHour: m['lunchHour'] ?? 14,
+          lunchMinute: m['lunchMinute'] ?? 0,
+          motivationEnabled: m['motivationEnabled'] ?? true,
+          motivationHour: m['motivationHour'] ?? 18,
+          motivationMinute: m['motivationMinute'] ?? 0,
+          eveningEnabled: m['eveningEnabled'] ?? true,
+          eveningHour: m['eveningHour'] ?? 20,
+          eveningMinute: m['eveningMinute'] ?? 0,
+        );
+        return;
+      }
+    } catch (e) {
+      debugPrint('Saved notification prefs unavailable, using defaults: $e');
+    }
+    await scheduleAllDailyNotifications();
+  }
+
   // ============ SHOW INSTANT NOTIFICATION ============
   Future<void> showInstantNotification({
     required String title,
@@ -321,6 +353,28 @@ class NotificationService {
     required int eveningHour,
     required int eveningMinute,
   }) async {
+    // Persist locally so app launch can re-apply the user's custom settings
+    try {
+      await HiveBoxes.settingsBox.put(_customPrefsKey, {
+        'workoutEnabled': workoutEnabled,
+        'workoutHour': workoutHour,
+        'workoutMinute': workoutMinute,
+        'waterEnabled': waterEnabled,
+        'waterIntervalHours': waterIntervalHours,
+        'lunchEnabled': lunchEnabled,
+        'lunchHour': lunchHour,
+        'lunchMinute': lunchMinute,
+        'motivationEnabled': motivationEnabled,
+        'motivationHour': motivationHour,
+        'motivationMinute': motivationMinute,
+        'eveningEnabled': eveningEnabled,
+        'eveningHour': eveningHour,
+        'eveningMinute': eveningMinute,
+      });
+    } catch (e) {
+      debugPrint('Could not save notification prefs locally: $e');
+    }
+
     // Cancel all existing notifications first
     await cancelAllNotifications();
 
