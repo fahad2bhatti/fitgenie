@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../core/app_strings.dart';
 
@@ -14,21 +15,28 @@ class NotificationService {
   NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin _notifications =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   // Motivation quotes live in AppStrings as push_quote_1 .. push_quote_10
   // (English + Roman Urdu). Each day gets a DIFFERENT quote.
   static const int _quoteCount = 10;
   static const int _motivationBaseId = 100; // IDs 100 .. 100+_motivationDays-1
-  static const int _motivationDays = 30;    // pre-schedule 30 days ahead
+  static const int _motivationDays = 30; // pre-schedule 30 days ahead
 
   // ============ INITIALIZE ============
   Future<void> initialize() async {
     // Initialize timezone
     tz_data.initializeTimeZones();
+    try {
+      final tzName = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(tzName));
+    } catch (_) {
+      tz.setLocalLocation(tz.getLocation('Asia/Karachi'));
+    }
 
     // Android settings
-    const androidSettings = AndroidInitializationSettings('@drawable/ic_stat_fitgenie');
+    const androidSettings =
+        AndroidInitializationSettings('@drawable/ic_stat_fitgenie');
 
     // iOS settings
     const iosSettings = DarwinInitializationSettings(
@@ -58,7 +66,6 @@ class NotificationService {
     if (await Permission.notification.isDenied) {
       await Permission.notification.request();
     }
-
   }
 
   // ============ ON NOTIFICATION TAPPED ============
@@ -236,9 +243,10 @@ class NotificationService {
         ),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents:
-        repeatDaily ? DateTimeComponents.time : null, // Repeat daily or one-off
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: repeatDaily
+            ? DateTimeComponents.time
+            : null, // Repeat daily or one-off
       );
 
       debugPrint('📅 Scheduled: $title at $hour:$minute');
