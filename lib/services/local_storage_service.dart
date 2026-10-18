@@ -568,8 +568,9 @@ class LocalStorageService {
       if (Hive.isBoxOpen(_userBox)) await Hive.box(_userBox).clear();
       if (Hive.isBoxOpen(_nutritionBox)) await Hive.box(_nutritionBox).clear();
       if (Hive.isBoxOpen(_workoutBox)) await Hive.box(_workoutBox).clear();
-      if (Hive.isBoxOpen(_pendingSyncBox))
+      if (Hive.isBoxOpen(_pendingSyncBox)) {
         await Hive.box(_pendingSyncBox).clear();
+      }
       if (Hive.isBoxOpen(_chatBox)) await Hive.box(_chatBox).clear();
       debugPrint('🧹 All local data cleared');
     } catch (e) {

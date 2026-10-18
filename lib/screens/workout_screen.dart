@@ -1291,9 +1291,10 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     IconButton(
                       onPressed: () {
                         final c = double.tryParse(weightController.text) ?? 0;
-                        if (c > 0)
+                        if (c > 0) {
                           weightController.text =
                               (c - 2.5).clamp(0, 500).toString();
+                        }
                       },
                       icon: Container(
                         padding: const EdgeInsets.all(8),

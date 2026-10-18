@@ -95,14 +95,18 @@ class AuthService {
   String? _validatePassword(String password) {
     if (password.isEmpty) return AppStrings.get('authsvc_enter_password');
     if (password.length < 8) return AppStrings.get('authsvc_pw_min');
-    if (!password.contains(RegExp(r'[A-Z]')))
+    if (!password.contains(RegExp(r'[A-Z]'))) {
       return AppStrings.get('authsvc_pw_upper');
-    if (!password.contains(RegExp(r'[a-z]')))
+    }
+    if (!password.contains(RegExp(r'[a-z]'))) {
       return AppStrings.get('authsvc_pw_lower');
-    if (!password.contains(RegExp(r'[0-9]')))
+    }
+    if (!password.contains(RegExp(r'[0-9]'))) {
       return AppStrings.get('authsvc_pw_number');
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]')))
+    }
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]'))) {
       return AppStrings.get('authsvc_pw_special');
+    }
     return null;
   }
 
@@ -263,15 +267,18 @@ class AuthService {
 
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty)
+      if (cleanEmail.isEmpty) {
         return AuthResult(
             success: false, message: AppStrings.get('authsvc_enter_email'));
-      if (!_isValidEmail(cleanEmail))
+      }
+      if (!_isValidEmail(cleanEmail)) {
         return AuthResult(
             success: false, message: AppStrings.get('authsvc_invalid_email'));
-      if (password.isEmpty)
+      }
+      if (password.isEmpty) {
         return AuthResult(
             success: false, message: AppStrings.get('authsvc_enter_password'));
+      }
 
       debugPrint('🔄 Attempting login for: $cleanEmail');
 
@@ -320,19 +327,23 @@ class AuthService {
       final cleanName = _sanitizeName(name);
 
       final nameError = _validateName(cleanName);
-      if (nameError != null)
+      if (nameError != null) {
         return AuthResult(success: false, message: nameError);
+      }
 
-      if (cleanEmail.isEmpty)
+      if (cleanEmail.isEmpty) {
         return AuthResult(
             success: false, message: AppStrings.get('authsvc_enter_email'));
-      if (!_isValidEmail(cleanEmail))
+      }
+      if (!_isValidEmail(cleanEmail)) {
         return AuthResult(
             success: false, message: AppStrings.get('authsvc_invalid_email'));
+      }
 
       final passwordError = _validatePassword(password);
-      if (passwordError != null)
+      if (passwordError != null) {
         return AuthResult(success: false, message: passwordError);
+      }
 
       if (confirmPassword != null && password != confirmPassword) {
         return AuthResult(
@@ -397,12 +408,14 @@ class AuthService {
     try {
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty)
+      if (cleanEmail.isEmpty) {
         return AuthResult(
             success: false, message: AppStrings.get('authsvc_enter_email'));
-      if (!_isValidEmail(cleanEmail))
+      }
+      if (!_isValidEmail(cleanEmail)) {
         return AuthResult(
             success: false, message: AppStrings.get('authsvc_invalid_email'));
+      }
 
       await _auth.sendPasswordResetEmail(email: cleanEmail);
 
@@ -482,14 +495,16 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateUserName(String name) async {
     final user = currentUser;
-    if (user == null)
+    if (user == null) {
       return AuthResult(
           success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    }
 
     final cleanName = _sanitizeName(name);
     final nameError = _validateName(cleanName);
-    if (nameError != null)
+    if (nameError != null) {
       return AuthResult(success: false, message: nameError);
+    }
 
     try {
       await user.updateDisplayName(cleanName);
@@ -511,14 +526,16 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateEmail(String newEmail) async {
     final user = currentUser;
-    if (user == null)
+    if (user == null) {
       return AuthResult(
           success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    }
 
     final cleanEmail = _sanitizeEmail(newEmail);
-    if (!_isValidEmail(cleanEmail))
+    if (!_isValidEmail(cleanEmail)) {
       return AuthResult(
           success: false, message: AppStrings.get('authsvc_invalid_email'));
+    }
 
     try {
       await user.verifyBeforeUpdateEmail(cleanEmail);
@@ -536,13 +553,15 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updatePassword(String newPassword) async {
     final user = currentUser;
-    if (user == null)
+    if (user == null) {
       return AuthResult(
           success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    }
 
     final passwordError = _validatePassword(newPassword);
-    if (passwordError != null)
+    if (passwordError != null) {
       return AuthResult(success: false, message: passwordError);
+    }
 
     try {
       await user.updatePassword(newPassword);
@@ -572,9 +591,10 @@ class AuthService {
 
   Future<AuthResult> deleteAccount() async {
     final user = currentUser;
-    if (user == null)
+    if (user == null) {
       return AuthResult(
           success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    }
 
     try {
       final userRef = _firestore.collection('users').doc(user.uid);

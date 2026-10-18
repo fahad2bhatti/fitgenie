@@ -34,8 +34,9 @@ class AIService {
 
   static bool get isConfigured {
     // Proxy ready hai to Gemini key optional
-    if (!_proxyUrl.contains('YOUR-SUBDOMAIN') && _proxyUrl.isNotEmpty)
+    if (!_proxyUrl.contains('YOUR-SUBDOMAIN') && _proxyUrl.isNotEmpty) {
       return true;
+    }
     return _apiKey.isNotEmpty && _apiKey.length > 20;
   }
 
@@ -238,13 +239,15 @@ All numbers should be integers. isHealthy should be boolean.''';
           final data = jsonDecode(response.body);
           final candidates = data['candidates'] as List?;
           if (candidates != null && candidates.isNotEmpty) {
-            if (candidates[0]['finishReason'] == 'SAFETY')
+            if (candidates[0]['finishReason'] == 'SAFETY') {
               return _getDefaultMealAnalysis();
+            }
             final parts = candidates[0]['content']?['parts'] as List?;
             if (parts != null && parts.isNotEmpty) {
               final text = parts[0]['text'] as String?;
-              if (text != null && text.isNotEmpty)
+              if (text != null && text.isNotEmpty) {
                 return MealAnalysis.fromJson(text);
+              }
             }
           }
           return _getDefaultMealAnalysis();
@@ -298,8 +301,9 @@ All numbers should be integers. isHealthy should be boolean.''';
     final cleanMessage = _sanitizeInput(userMessage);
     if (cleanMessage.isEmpty) return 'Kuch toh likh bhai! 😄';
     if (!isConfigured) return '❌ API Key set nahi hai! .env file check kar.';
-    if (cleanMessage.length > 500)
+    if (cleanMessage.length > 500) {
       return 'Bhai message thoda chhota rakh — 500 characters max! ✂️';
+    }
 
     try {
       final userContext = await _getUserContext(uid);
@@ -486,8 +490,9 @@ Max 150 words:''';
             .collection('dailyLogs')
             .doc(dateStr)
             .get();
-        if (todayLogDoc.exists)
+        if (todayLogDoc.exists) {
           todayLog = {...todayLog, ...?todayLogDoc.data()};
+        }
       } catch (_) {}
 
       int todayWorkouts = 0;
@@ -668,8 +673,9 @@ class MealAnalysis {
           .trim();
       final start = cleaned.indexOf('{');
       final end = cleaned.lastIndexOf('}');
-      if (start == -1 || end == -1 || end <= start)
+      if (start == -1 || end == -1 || end <= start) {
         throw Exception('No valid JSON found');
+      }
 
       final Map<String, dynamic> json =
           jsonDecode(cleaned.substring(start, end + 1));
@@ -719,10 +725,11 @@ class MealAnalysis {
     if (value == null) return 0;
     if (value is int) return value;
     if (value is double) return value.toInt();
-    if (value is String)
+    if (value is String) {
       return double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), ''))
               ?.toInt() ??
           0;
+    }
     return 0;
   }
 

@@ -996,8 +996,9 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     .roundToDouble(),
                 getTitlesWidget: (value, meta) {
                   final i = value.toInt();
-                  if (i < 0 || i >= _weightHistory.length)
+                  if (i < 0 || i >= _weightHistory.length) {
                     return const SizedBox();
+                  }
                   return Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(

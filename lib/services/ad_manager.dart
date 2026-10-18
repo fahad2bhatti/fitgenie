@@ -225,8 +225,9 @@ class AdManager with WidgetsBindingObserver {
         _markFullScreenEnded();
         shown.dispose();
         _loadRewarded(k);
-        if (!completer.isCompleted)
+        if (!completer.isCompleted) {
           completer.complete(RewardResult.unavailable);
+        }
       },
     );
 
