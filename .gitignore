@@ -83,3 +83,5 @@ app/google-services*.json
 *.bak
 *.r8bak
 *.new
+
+.kotlin/
