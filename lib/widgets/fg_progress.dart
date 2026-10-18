@@ -26,7 +26,10 @@ class FGLinearProgress extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [color, FitGenieTheme.primary.withValues(alpha: 0.95)],
+                  colors: [
+                    color,
+                    FitGenieTheme.primary.withValues(alpha: 0.95)
+                  ],
                 ),
               ),
             ),

@@ -7,7 +7,7 @@ class QuickActionTile extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback? onTap;
-  final Color? color;  // Optional color parameter
+  final Color? color; // Optional color parameter
 
   const QuickActionTile({
     super.key,

@@ -28,8 +28,7 @@ class ConnectivityService extends ChangeNotifier {
   void _updateStatus(List<ConnectivityResult> result) {
     final wasOnline = _isOnline;
 
-    _isOnline = result.isNotEmpty &&
-        !result.contains(ConnectivityResult.none);
+    _isOnline = result.isNotEmpty && !result.contains(ConnectivityResult.none);
 
     // Notify only if status changed
     if (wasOnline != _isOnline) {

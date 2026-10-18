@@ -89,7 +89,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: FitGenieTheme.warning.withValues(alpha: 0.15),
+                            color:
+                                FitGenieTheme.warning.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -114,13 +115,11 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 18),
-
                   Text(
                     AppStrings.get('food_search_quantity'),
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 10),
-
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -152,24 +151,20 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               color: selected
                                   ? FitGenieTheme.primary
                                   : FitGenieTheme.muted,
-                              fontWeight: selected
-                                  ? FontWeight.bold
-                                  : FontWeight.w500,
+                              fontWeight:
+                                  selected ? FontWeight.bold : FontWeight.w500,
                             ),
                           ),
                         ),
                       );
                     }).toList(),
                   ),
-
                   const SizedBox(height: 18),
-
                   Text(
                     AppStrings.get('food_search_meal_type'),
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 10),
-
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -200,9 +195,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                               color: selected
                                   ? FitGenieTheme.teal
                                   : FitGenieTheme.muted,
-                              fontWeight: selected
-                                  ? FontWeight.bold
-                                  : FontWeight.w500,
+                              fontWeight:
+                                  selected ? FontWeight.bold : FontWeight.w500,
                               fontSize: 12,
                             ),
                           ),
@@ -210,9 +204,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       );
                     }).toList(),
                   ),
-
                   const SizedBox(height: 20),
-
                   FGCard(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,24 +217,26 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           ),
                         ),
                         const SizedBox(height: 14),
-                        _macroRow(AppStrings.get('calories_field_calories'), '${portion.calories} kcal',
-                            FitGenieTheme.hot),
+                        _macroRow(AppStrings.get('calories_field_calories'),
+                            '${portion.calories} kcal', FitGenieTheme.hot),
                         const SizedBox(height: 10),
-                        _macroRow(AppStrings.get('calories_field_protein'), '${portion.protein} g',
-                            FitGenieTheme.teal),
+                        _macroRow(AppStrings.get('calories_field_protein'),
+                            '${portion.protein} g', FitGenieTheme.teal),
                         const SizedBox(height: 10),
-                        _macroRow(
-                            AppStrings.get('calories_field_carbs'), '${portion.carbs} g', FitGenieTheme.warning),
+                        _macroRow(AppStrings.get('calories_field_carbs'),
+                            '${portion.carbs} g', FitGenieTheme.warning),
                         const SizedBox(height: 10),
-                        _macroRow(AppStrings.get('calories_field_fats'), '${portion.fats} g', Colors.purple),
+                        _macroRow(AppStrings.get('calories_field_fats'),
+                            '${portion.fats} g', Colors.purple),
                         if (portion.fiber > 0) ...[
                           const SizedBox(height: 10),
-                          _macroRow(AppStrings.get('food_search_fiber'), '${portion.fiber} g',
-                              FitGenieTheme.success),
+                          _macroRow(AppStrings.get('food_search_fiber'),
+                              '${portion.fiber} g', FitGenieTheme.success),
                         ],
                         const SizedBox(height: 12),
                         Text(
-                          AppStrings.get('food_search_serving_label', params: {'qty': portion.quantityLabel}),
+                          AppStrings.get('food_search_serving_label',
+                              params: {'qty': portion.quantityLabel}),
                           style: const TextStyle(
                             color: FitGenieTheme.muted,
                             fontSize: 12,
@@ -251,9 +245,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -438,7 +430,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 hintText: AppStrings.get('food_search_hint'),
                 hintStyle: const TextStyle(color: FitGenieTheme.muted),
                 prefixIcon:
-                const Icon(Icons.search, color: FitGenieTheme.muted),
+                    const Icon(Icons.search, color: FitGenieTheme.muted),
                 filled: true,
                 fillColor: FitGenieTheme.card,
                 border: OutlineInputBorder(
@@ -447,18 +439,17 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 ),
                 suffixIcon: _query.isNotEmpty
                     ? IconButton(
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() => _query = '');
-                  },
-                  icon: const Icon(Icons.clear,
-                      color: FitGenieTheme.muted),
-                )
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _query = '');
+                        },
+                        icon:
+                            const Icon(Icons.clear, color: FitGenieTheme.muted),
+                      )
                     : null,
               ),
             ),
           ),
-
           SizedBox(
             height: 42,
             child: ListView(
@@ -472,8 +463,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: GestureDetector(
-                    onTap: () =>
-                        setState(() => _selectedCategory = category),
+                    onTap: () => setState(() => _selectedCategory = category),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 10),
@@ -495,9 +485,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                           color: selected
                               ? FitGenieTheme.primary
                               : FitGenieTheme.muted,
-                          fontWeight: selected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                          fontWeight:
+                              selected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                     ),
@@ -506,9 +495,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               }).toList(),
             ),
           ),
-
           const SizedBox(height: 12),
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18),
             child: Row(
@@ -524,45 +511,43 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
               ],
             ),
           ),
-
           const SizedBox(height: 8),
-
           Expanded(
             child: _results.isEmpty
                 ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.search_off,
-                    size: 46,
-                    color: FitGenieTheme.muted,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    AppStrings.get('food_search_empty'),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 46,
+                          color: FitGenieTheme.muted,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          AppStrings.get('food_search_empty'),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          AppStrings.get('food_search_empty_sub'),
+                          style: TextStyle(
+                            color: FitGenieTheme.muted,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    AppStrings.get('food_search_empty_sub'),
-                    style: TextStyle(
-                      color: FitGenieTheme.muted,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            )
+                  )
                 : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(18, 0, 18, 24),
-              itemCount: _results.length,
-              itemBuilder: (context, index) {
-                return _foodTile(_results[index]);
-              },
-            ),
+                    padding: const EdgeInsets.fromLTRB(18, 0, 18, 24),
+                    itemCount: _results.length,
+                    itemBuilder: (context, index) {
+                      return _foodTile(_results[index]);
+                    },
+                  ),
           ),
         ],
       ),

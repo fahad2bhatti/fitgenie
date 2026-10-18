@@ -146,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen>
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
                     child: ConstrainedBox(
                       constraints:
-                      BoxConstraints(minHeight: constraints.maxHeight),
+                          BoxConstraints(minHeight: constraints.maxHeight),
                       child: IntrinsicHeight(
                         child: Column(
                           children: [
@@ -220,7 +220,7 @@ class _SignupScreenState extends State<SignupScreen>
                                   size: 20,
                                 ),
                                 onPressed: () => setState(
-                                        () => _showPassword = !_showPassword),
+                                    () => _showPassword = !_showPassword),
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -240,8 +240,8 @@ class _SignupScreenState extends State<SignupScreen>
                                   size: 20,
                                 ),
                                 onPressed: () => setState(() =>
-                                _showConfirmPassword =
-                                !_showConfirmPassword),
+                                    _showConfirmPassword =
+                                        !_showConfirmPassword),
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -259,14 +259,14 @@ class _SignupScreenState extends State<SignupScreen>
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     onChanged: (v) => setState(
-                                            () => _agreeToTerms = v ?? false),
+                                        () => _agreeToTerms = v ?? false),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () => setState(
-                                            () => _agreeToTerms = !_agreeToTerms),
+                                        () => _agreeToTerms = !_agreeToTerms),
                                     child: RichText(
                                       text: TextSpan(
                                         style: const TextStyle(
@@ -308,30 +308,30 @@ class _SignupScreenState extends State<SignupScreen>
                                 onPressed: _loading ? null : _signUp,
                                 style: FilledButton.styleFrom(
                                   backgroundColor: FitGenieTheme.primary,
-                                  disabledBackgroundColor:
-                                  FitGenieTheme.primary.withValues(alpha: 0.5),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 16),
+                                  disabledBackgroundColor: FitGenieTheme.primary
+                                      .withValues(alpha: 0.5),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                 ),
                                 child: _loading
                                     ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
                                     : Text(
-                                  AppStrings.get('signup_button'),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                        AppStrings.get('signup_button'),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 16,
+                                        ),
+                                      ),
                               ),
                             ),
 
@@ -362,7 +362,8 @@ class _SignupScreenState extends State<SignupScreen>
                                 Text(
                                   AppStrings.get('signup_google_hint'),
                                   style: TextStyle(
-                                    color: FitGenieTheme.muted.withValues(alpha: 0.5),
+                                    color: FitGenieTheme.muted
+                                        .withValues(alpha: 0.5),
                                     fontSize: 11,
                                   ),
                                   textAlign: TextAlign.center,

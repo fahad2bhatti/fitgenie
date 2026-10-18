@@ -1128,10 +1128,10 @@ class FoodDatabase {
   // 🔎 SEARCH
   // ==========================================================
   static List<FoodItem> search(
-      String query, {
-        String category = 'All',
-        int limit = 50,
-      }) {
+    String query, {
+    String category = 'All',
+    int limit = 50,
+  }) {
     List<FoodItem> filtered = category == 'All'
         ? allFoods
         : allFoods.where((f) => f.category == category).toList();
@@ -1151,8 +1151,10 @@ class FoodDatabase {
 
       if (aStarts != bStarts) return bStarts.compareTo(aStarts);
 
-      final aAlias = a.aliases.any((x) => x.toLowerCase().startsWith(q)) ? 1 : 0;
-      final bAlias = b.aliases.any((x) => x.toLowerCase().startsWith(q)) ? 1 : 0;
+      final aAlias =
+          a.aliases.any((x) => x.toLowerCase().startsWith(q)) ? 1 : 0;
+      final bAlias =
+          b.aliases.any((x) => x.toLowerCase().startsWith(q)) ? 1 : 0;
 
       if (aAlias != bAlias) return bAlias.compareTo(aAlias);
 

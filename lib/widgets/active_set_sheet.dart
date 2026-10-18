@@ -27,8 +27,9 @@ class ActiveSetSheet extends StatefulWidget {
 
   /// Called once the set is finished (before rest starts) so the parent
   /// can persist it to Firestore / local state.
-  final Future<void> Function(double weight, String reps, int durationSeconds, bool toFailure)
-  onSetLogged;
+  final Future<void> Function(
+          double weight, String reps, int durationSeconds, bool toFailure)
+      onSetLogged;
 
   const ActiveSetSheet({
     super.key,
@@ -131,7 +132,8 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
                     ),
                     Text(
                       widget.setLabel,
-                      style: TextStyle(color: FitGenieTheme.muted, fontSize: 13),
+                      style:
+                          TextStyle(color: FitGenieTheme.muted, fontSize: 13),
                     ),
                   ],
                 ),
@@ -141,13 +143,12 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     _stopwatchKey.currentState?.stop();
-                    Navigator.pop(context , false);
+                    Navigator.pop(context, false);
                   },
                 ),
             ],
           ),
           const SizedBox(height: 20),
-
           if (_phase == _SetPhase.performing) ...[
             if (widget.exercise != null && widget.exercise!.hasGif)
               ClipRRect(
@@ -213,7 +214,8 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
                   backgroundColor: FitGenieTheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: Text(AppStrings.get('set_finish'),
+                child: Text(
+                  AppStrings.get('set_finish'),
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -226,10 +228,10 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
             CircularRestTimer(
               initialSeconds: _restSeconds,
               onComplete: () {
-                if (mounted) Navigator.pop(context , true);
+                if (mounted) Navigator.pop(context, true);
               },
               onSkip: () {
-                if (mounted) Navigator.pop(context , true);
+                if (mounted) Navigator.pop(context, true);
               },
             ),
           ],

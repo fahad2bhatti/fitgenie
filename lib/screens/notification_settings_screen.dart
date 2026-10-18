@@ -16,10 +16,12 @@ class NotificationSettingsScreen extends StatefulWidget {
   });
 
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  State<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends State<NotificationSettingsScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final NotificationService _notificationService = NotificationService();
 
@@ -64,19 +66,23 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         final data = doc.data()!;
         setState(() {
           _workoutEnabled = data['workoutEnabled'] ?? true;
-          _workoutTime = _parseTime(data['workoutTime']) ?? const TimeOfDay(hour: 7, minute: 0);
+          _workoutTime = _parseTime(data['workoutTime']) ??
+              const TimeOfDay(hour: 7, minute: 0);
 
           _waterEnabled = data['waterEnabled'] ?? true;
           _waterIntervalHours = data['waterIntervalHours'] ?? 2;
 
           _lunchEnabled = data['lunchEnabled'] ?? true;
-          _lunchTime = _parseTime(data['lunchTime']) ?? const TimeOfDay(hour: 14, minute: 0);
+          _lunchTime = _parseTime(data['lunchTime']) ??
+              const TimeOfDay(hour: 14, minute: 0);
 
           _motivationEnabled = data['motivationEnabled'] ?? true;
-          _motivationTime = _parseTime(data['motivationTime']) ?? const TimeOfDay(hour: 18, minute: 0);
+          _motivationTime = _parseTime(data['motivationTime']) ??
+              const TimeOfDay(hour: 18, minute: 0);
 
           _eveningEnabled = data['eveningEnabled'] ?? true;
-          _eveningTime = _parseTime(data['eveningTime']) ?? const TimeOfDay(hour: 20, minute: 0);
+          _eveningTime = _parseTime(data['eveningTime']) ??
+              const TimeOfDay(hour: 20, minute: 0);
         });
       }
     } catch (e) {
@@ -162,7 +168,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
       if (mounted) {
         AppSnackbar.showError(
           context,
-          AppStrings.get('notifications_error', params: {'error': e.toString()}),
+          AppStrings.get('notifications_error',
+              params: {'error': e.toString()}),
         );
       }
     }
@@ -171,7 +178,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
   }
 
   // ============ PICK TIME ============
-  Future<void> _pickTime(TimeOfDay currentTime, Function(TimeOfDay) onPicked) async {
+  Future<void> _pickTime(
+      TimeOfDay currentTime, Function(TimeOfDay) onPicked) async {
     final picked = await showTimePicker(
       context: context,
       initialTime: currentTime,
@@ -207,7 +215,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_active, color: FitGenieTheme.primary),
+            icon: const Icon(Icons.notifications_active,
+                color: FitGenieTheme.primary),
             onPressed: () async {
               await _notificationService.showInstantNotification(
                 title: AppStrings.get('notifications_test'),
@@ -219,109 +228,114 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: FitGenieTheme.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: FitGenieTheme.primary))
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppStrings.get('notifications_sub'),
-              style: const TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-            const SizedBox(height: 20),
-
-            // Workout Reminder
-            _buildNotificationCard(
-              icon: Icons.fitness_center,
-              iconColor: FitGenieTheme.warning,
-              title: AppStrings.get('notifications_workout'),
-              subtitle: AppStrings.get('notifications_workout_sub'),
-              enabled: _workoutEnabled,
-              onToggle: (val) => setState(() => _workoutEnabled = val),
-              time: _workoutTime,
-              onTimeTap: () => _pickTime(_workoutTime, (t) => setState(() => _workoutTime = t)),
-            ),
-            const SizedBox(height: 12),
-
-            // Water Reminder
-            _buildWaterReminderCard(),
-            const SizedBox(height: 12),
-
-            // Lunch Reminder
-            _buildNotificationCard(
-              icon: Icons.restaurant,
-              iconColor: FitGenieTheme.success,
-              title: AppStrings.get('notifications_lunch'),
-              subtitle: AppStrings.get('notifications_lunch_sub'),
-              enabled: _lunchEnabled,
-              onToggle: (val) => setState(() => _lunchEnabled = val),
-              time: _lunchTime,
-              onTimeTap: () => _pickTime(_lunchTime, (t) => setState(() => _lunchTime = t)),
-            ),
-            const SizedBox(height: 12),
-
-            // Motivation
-            _buildNotificationCard(
-              icon: Icons.local_fire_department,
-              iconColor: FitGenieTheme.error,
-              title: AppStrings.get('notifications_motivation'),
-              subtitle: AppStrings.get('notifications_motivation_sub'),
-              enabled: _motivationEnabled,
-              onToggle: (val) => setState(() => _motivationEnabled = val),
-              time: _motivationTime,
-              onTimeTap: () => _pickTime(_motivationTime, (t) => setState(() => _motivationTime = t)),
-            ),
-            const SizedBox(height: 12),
-
-            // Evening Reminder
-            _buildNotificationCard(
-              icon: Icons.nightlight_round,
-              iconColor: Colors.purple,
-              title: AppStrings.get('notifications_evening'),
-              subtitle: AppStrings.get('notifications_evening_sub'),
-              enabled: _eveningEnabled,
-              onToggle: (val) => setState(() => _eveningEnabled = val),
-              time: _eveningTime,
-              onTimeTap: () => _pickTime(_eveningTime, (t) => setState(() => _eveningTime = t)),
-            ),
-            const SizedBox(height: 30),
-
-            // Save Button
-            SizedBox(
-              width: double.infinity,
-              height: 54,
-              child: ElevatedButton(
-                onPressed: _isSaving ? null : _saveSettings,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: FitGenieTheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppStrings.get('notifications_sub'),
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
                   ),
-                ),
-                child: _isSaving
-                    ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
+                  const SizedBox(height: 20),
+
+                  // Workout Reminder
+                  _buildNotificationCard(
+                    icon: Icons.fitness_center,
+                    iconColor: FitGenieTheme.warning,
+                    title: AppStrings.get('notifications_workout'),
+                    subtitle: AppStrings.get('notifications_workout_sub'),
+                    enabled: _workoutEnabled,
+                    onToggle: (val) => setState(() => _workoutEnabled = val),
+                    time: _workoutTime,
+                    onTimeTap: () => _pickTime(
+                        _workoutTime, (t) => setState(() => _workoutTime = t)),
                   ),
-                )
-                    : Text(
-                  AppStrings.get('notifications_save'),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  const SizedBox(height: 12),
+
+                  // Water Reminder
+                  _buildWaterReminderCard(),
+                  const SizedBox(height: 12),
+
+                  // Lunch Reminder
+                  _buildNotificationCard(
+                    icon: Icons.restaurant,
+                    iconColor: FitGenieTheme.success,
+                    title: AppStrings.get('notifications_lunch'),
+                    subtitle: AppStrings.get('notifications_lunch_sub'),
+                    enabled: _lunchEnabled,
+                    onToggle: (val) => setState(() => _lunchEnabled = val),
+                    time: _lunchTime,
+                    onTimeTap: () => _pickTime(
+                        _lunchTime, (t) => setState(() => _lunchTime = t)),
                   ),
-                ),
+                  const SizedBox(height: 12),
+
+                  // Motivation
+                  _buildNotificationCard(
+                    icon: Icons.local_fire_department,
+                    iconColor: FitGenieTheme.error,
+                    title: AppStrings.get('notifications_motivation'),
+                    subtitle: AppStrings.get('notifications_motivation_sub'),
+                    enabled: _motivationEnabled,
+                    onToggle: (val) => setState(() => _motivationEnabled = val),
+                    time: _motivationTime,
+                    onTimeTap: () => _pickTime(_motivationTime,
+                        (t) => setState(() => _motivationTime = t)),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Evening Reminder
+                  _buildNotificationCard(
+                    icon: Icons.nightlight_round,
+                    iconColor: Colors.purple,
+                    title: AppStrings.get('notifications_evening'),
+                    subtitle: AppStrings.get('notifications_evening_sub'),
+                    enabled: _eveningEnabled,
+                    onToggle: (val) => setState(() => _eveningEnabled = val),
+                    time: _eveningTime,
+                    onTimeTap: () => _pickTime(
+                        _eveningTime, (t) => setState(() => _eveningTime = t)),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Save Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: ElevatedButton(
+                      onPressed: _isSaving ? null : _saveSettings,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: FitGenieTheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: _isSaving
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              AppStrings.get('notifications_save'),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
     );
   }
 
@@ -342,7 +356,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: enabled ? FitGenieTheme.primary.withValues(alpha: 0.3) : Colors.transparent,
+          color: enabled
+              ? FitGenieTheme.primary.withValues(alpha: 0.3)
+              : Colors.transparent,
         ),
       ),
       child: Column(
@@ -396,7 +412,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             GestureDetector(
               onTap: onTimeTap,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: FitGenieTheme.background,
                   borderRadius: BorderRadius.circular(12),
@@ -437,7 +454,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _waterEnabled ? FitGenieTheme.primary.withValues(alpha: 0.3) : Colors.transparent,
+          color: _waterEnabled
+              ? FitGenieTheme.primary.withValues(alpha: 0.3)
+              : Colors.transparent,
         ),
       ),
       child: Column(
@@ -450,7 +469,8 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                   color: Colors.blue.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.water_drop, color: Colors.blue, size: 24),
+                child:
+                    const Icon(Icons.water_drop, color: Colors.blue, size: 24),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -512,10 +532,31 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     ),
                     underline: const SizedBox(),
                     items: [
-                      DropdownMenuItem(value: 1, child: Text(AppStrings.get('notifications_hour'), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 2, child: Text(AppStrings.get('notifications_hours', params: {'count': '2'}), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 3, child: Text(AppStrings.get('notifications_hours', params: {'count': '3'}), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      DropdownMenuItem(value: 4, child: Text(AppStrings.get('notifications_hours', params: {'count': '4'}), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(
+                          value: 1,
+                          child: Text(AppStrings.get('notifications_hour'),
+                              maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(
+                          value: 2,
+                          child: Text(
+                              AppStrings.get('notifications_hours',
+                                  params: {'count': '2'}),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(
+                          value: 3,
+                          child: Text(
+                              AppStrings.get('notifications_hours',
+                                  params: {'count': '3'}),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(
+                          value: 4,
+                          child: Text(
+                              AppStrings.get('notifications_hours',
+                                  params: {'count': '4'}),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis)),
                     ],
                     onChanged: (val) {
                       if (val != null) {

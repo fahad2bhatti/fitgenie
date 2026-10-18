@@ -11,7 +11,8 @@ import 'ai_service.dart'; // reuses the existing MealAnalysis model
 // ==========================================
 class OpenFoodFactsService {
   static const Duration _timeout = Duration(seconds: 15);
-  static const String _baseUrl = 'https://world.openfoodfacts.org/api/v2/product';
+  static const String _baseUrl =
+      'https://world.openfoodfacts.org/api/v2/product';
 
   /// Looks up a product by barcode and maps it into the app's MealAnalysis
   /// model, so the existing UI (card / nutrition grid / health tip) works
@@ -25,7 +26,7 @@ class OpenFoodFactsService {
     try {
       final url = Uri.parse(
         '$_baseUrl/$cleanBarcode.json'
-            '?fields=product_name,nutriments,quantity,serving_size,nutriscore_grade,brands',
+        '?fields=product_name,nutriments,quantity,serving_size,nutriscore_grade,brands',
       );
 
       debugPrint('🔍 OpenFoodFacts lookup: $cleanBarcode');
@@ -56,9 +57,10 @@ class OpenFoodFactsService {
       final grade = product['nutriscore_grade']?.toString().toLowerCase();
       final isHealthy = grade == null || grade == 'a' || grade == 'b';
 
-      final quantityLabel = (product['serving_size']?.toString().isNotEmpty ?? false)
-          ? '${product['serving_size']} (per 100g values)'
-          : 'per 100g';
+      final quantityLabel =
+          (product['serving_size']?.toString().isNotEmpty ?? false)
+              ? '${product['serving_size']} (per 100g values)'
+              : 'per 100g';
 
       return MealAnalysis(
         foodName: _truncate(displayName, 100),
@@ -88,5 +90,6 @@ class OpenFoodFactsService {
     return 0;
   }
 
-  String _truncate(String s, int max) => s.length > max ? s.substring(0, max) : s;
+  String _truncate(String s, int max) =>
+      s.length > max ? s.substring(0, max) : s;
 }

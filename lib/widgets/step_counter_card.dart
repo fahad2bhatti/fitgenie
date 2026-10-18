@@ -7,7 +7,6 @@ import '../core/app_strings.dart';
 import '../app/fitgenie_theme.dart';
 import '../services/step_counter_service.dart';
 
-
 class StepCounterCard extends StatefulWidget {
   final String userId;
   final int stepsGoal;
@@ -212,7 +211,10 @@ class _StepCounterCardState extends State<StepCounterCard>
                             offset: Offset(
                               0,
                               _status == 'walking'
-                                  ? math.sin(_animationController.value * 2 * math.pi) * 3
+                                  ? math.sin(_animationController.value *
+                                          2 *
+                                          math.pi) *
+                                      3
                                   : 0,
                             ),
                             child: Icon(
@@ -236,7 +238,8 @@ class _StepCounterCardState extends State<StepCounterCard>
                         ),
                       ),
                       Text(
-                        AppStrings.get('steps_of_goal', params: {'goal': _formatNumber(widget.stepsGoal)}),
+                        AppStrings.get('steps_of_goal',
+                            params: {'goal': _formatNumber(widget.stepsGoal)}),
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[400],
@@ -291,11 +294,14 @@ class _StepCounterCardState extends State<StepCounterCard>
             child: Text(
               progress >= 1.0
                   ? AppStrings.get('steps_goal_achieved')
-                  : AppStrings.get('steps_percent_goal', params: {'percent': '${(progress * 100).toInt()}'}),
+                  : AppStrings.get('steps_percent_goal',
+                      params: {'percent': '${(progress * 100).toInt()}'}),
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: progress >= 1.0 ? FitGenieTheme.success : FitGenieTheme.primary,
+                color: progress >= 1.0
+                    ? FitGenieTheme.success
+                    : FitGenieTheme.primary,
               ),
             ),
           ),

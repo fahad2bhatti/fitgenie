@@ -25,12 +25,12 @@ class NutritionGoals {
   });
 
   Map<String, dynamic> toMap() => {
-    'caloriesGoal': caloriesGoal,
-    'proteinGoal': proteinGoal,
-    'carbsGoal': carbsGoal,
-    'fatsGoal': fatsGoal,
-    'waterGoal': waterGoal,
-  };
+        'caloriesGoal': caloriesGoal,
+        'proteinGoal': proteinGoal,
+        'carbsGoal': carbsGoal,
+        'fatsGoal': fatsGoal,
+        'waterGoal': waterGoal,
+      };
 
   static NutritionGoals fromMap(Map<String, dynamic>? map) {
     return NutritionGoals(
@@ -40,15 +40,12 @@ class NutritionGoals {
       proteinGoal: (map?['proteinGoal'] is num)
           ? (map!['proteinGoal'] as num).toInt()
           : 180,
-      carbsGoal: (map?['carbsGoal'] is num)
-          ? (map!['carbsGoal'] as num).toInt()
-          : 250,
-      fatsGoal: (map?['fatsGoal'] is num)
-          ? (map!['fatsGoal'] as num).toInt()
-          : 70,
-      waterGoal: (map?['waterGoal'] is num)
-          ? (map!['waterGoal'] as num).toInt()
-          : 8,
+      carbsGoal:
+          (map?['carbsGoal'] is num) ? (map!['carbsGoal'] as num).toInt() : 250,
+      fatsGoal:
+          (map?['fatsGoal'] is num) ? (map!['fatsGoal'] as num).toInt() : 70,
+      waterGoal:
+          (map?['waterGoal'] is num) ? (map!['waterGoal'] as num).toInt() : 8,
     );
   }
 }
@@ -69,30 +66,21 @@ class DailyNutritionLog {
   });
 
   Map<String, dynamic> toMap() => {
-    'calories': calories,
-    'protein': protein,
-    'carbs': carbs,
-    'fats': fats,
-    'water': water,
-  };
+        'calories': calories,
+        'protein': protein,
+        'carbs': carbs,
+        'fats': fats,
+        'water': water,
+      };
 
   static DailyNutritionLog fromMap(Map<String, dynamic>? map) {
     return DailyNutritionLog(
-      calories: (map?['calories'] is num)
-          ? (map!['calories'] as num).toInt()
-          : 0,
-      protein: (map?['protein'] is num)
-          ? (map!['protein'] as num).toInt()
-          : 0,
-      carbs: (map?['carbs'] is num)
-          ? (map!['carbs'] as num).toInt()
-          : 0,
-      fats: (map?['fats'] is num)
-          ? (map!['fats'] as num).toInt()
-          : 0,
-      water: (map?['water'] is num)
-          ? (map!['water'] as num).toInt()
-          : 0,
+      calories:
+          (map?['calories'] is num) ? (map!['calories'] as num).toInt() : 0,
+      protein: (map?['protein'] is num) ? (map!['protein'] as num).toInt() : 0,
+      carbs: (map?['carbs'] is num) ? (map!['carbs'] as num).toInt() : 0,
+      fats: (map?['fats'] is num) ? (map!['fats'] as num).toInt() : 0,
+      water: (map?['water'] is num) ? (map!['water'] as num).toInt() : 0,
     );
   }
 }
@@ -148,18 +136,11 @@ class MealEntry {
       name: (data['name'] ?? '').toString(),
       quantity: (data['quantity'] ?? '').toString(),
       mealType: (data['mealType'] ?? 'snacks').toString(),
-      calories: (data['calories'] is num)
-          ? (data['calories'] as num).toInt()
-          : 0,
-      protein: (data['protein'] is num)
-          ? (data['protein'] as num).toInt()
-          : 0,
-      carbs: (data['carbs'] is num)
-          ? (data['carbs'] as num).toInt()
-          : 0,
-      fats: (data['fats'] is num)
-          ? (data['fats'] as num).toInt()
-          : 0,
+      calories:
+          (data['calories'] is num) ? (data['calories'] as num).toInt() : 0,
+      protein: (data['protein'] is num) ? (data['protein'] as num).toInt() : 0,
+      carbs: (data['carbs'] is num) ? (data['carbs'] as num).toInt() : 0,
+      fats: (data['fats'] is num) ? (data['fats'] as num).toInt() : 0,
       source: (data['source'] ?? 'manual').toString(),
     );
   }
@@ -268,12 +249,14 @@ class SavedMeal {
       id: doc.id,
       name: (data['name'] ?? '').toString(),
       mealType: (data['mealType'] ?? 'breakfast').toString(),
-      calories: (data['calories'] is num) ? (data['calories'] as num).toInt() : 0,
+      calories:
+          (data['calories'] is num) ? (data['calories'] as num).toInt() : 0,
       protein: (data['protein'] is num) ? (data['protein'] as num).toInt() : 0,
       carbs: (data['carbs'] is num) ? (data['carbs'] as num).toInt() : 0,
       fats: (data['fats'] is num) ? (data['fats'] as num).toInt() : 0,
       items: rawItems
-          .map((e) => SavedMealItem.fromMap(Map<String, dynamic>.from(e as Map)))
+          .map(
+              (e) => SavedMealItem.fromMap(Map<String, dynamic>.from(e as Map)))
           .toList(),
     );
   }
@@ -302,10 +285,16 @@ class NutritionService {
   DocumentReference<Map<String, dynamic>> _goalsRef(String uid) =>
       _db.collection('users').doc(uid).collection('goals').doc('main');
 
-  DocumentReference<Map<String, dynamic>> _dayRef(String uid, [DateTime? date]) =>
-      _db.collection('users').doc(uid).collection('dailyLogs').doc(_dateKey(date));
+  DocumentReference<Map<String, dynamic>> _dayRef(String uid,
+          [DateTime? date]) =>
+      _db
+          .collection('users')
+          .doc(uid)
+          .collection('dailyLogs')
+          .doc(_dateKey(date));
 
-  CollectionReference<Map<String, dynamic>> _entriesRef(String uid, [DateTime? date]) =>
+  CollectionReference<Map<String, dynamic>> _entriesRef(String uid,
+          [DateTime? date]) =>
       _dayRef(uid, date).collection('entries');
 
   CollectionReference<Map<String, dynamic>> _recentFoodsRef(String uid) =>
@@ -324,7 +313,7 @@ class NutritionService {
         final snap = await _goalsRef(uid).get();
         final goals = NutritionGoals.fromMap(snap.data()).toMap().map(
               (key, value) => MapEntry(key, value as int),
-        );
+            );
 
         await _localStorage.saveNutritionGoals(uid, goals);
         debugPrint('✅ Nutrition goals fetched from Firebase');
@@ -413,7 +402,9 @@ class NutritionService {
     if (savedMealId == null) {
       await _savedMealsRef(uid).add(data);
     } else {
-      await _savedMealsRef(uid).doc(savedMealId).set(data, SetOptions(merge: true));
+      await _savedMealsRef(uid)
+          .doc(savedMealId)
+          .set(data, SetOptions(merge: true));
     }
 
     debugPrint('✅ Saved meal template stored');
@@ -460,9 +451,7 @@ class NutritionService {
     await batch.commit();
 
     for (final item in savedMeal.items) {
-      await _recentFoodsRef(uid)
-          .doc(_normalizeFoodKey(item.name))
-          .set({
+      await _recentFoodsRef(uid).doc(_normalizeFoodKey(item.name)).set({
         'name': item.name,
         'quantity': item.quantity,
         'calories': item.calories,
@@ -515,7 +504,7 @@ class NutritionService {
         final snap = await _dayRef(uid, date).get();
         final log = DailyNutritionLog.fromMap(snap.data()).toMap().map(
               (key, value) => MapEntry(key, value as int),
-        );
+            );
 
         await _localStorage.saveDailyLog(uid, key, log);
         debugPrint('✅ Daily nutrition log fetched from Firebase');
@@ -649,12 +638,12 @@ class NutritionService {
     final key = _dateKey(date);
 
     await _entriesRef(uid, date).doc(entryId).update(
-      entry.toMap(
-        userId: uid,
-        dateKey: key,
-        withCreatedAt: false,
-      ),
-    );
+          entry.toMap(
+            userId: uid,
+            dateKey: key,
+            withCreatedAt: false,
+          ),
+        );
 
     await _upsertRecentFood(uid, entry);
     await recalculateDailyTotals(uid, date: date);
@@ -712,10 +701,10 @@ class NutritionService {
   // ==========================================
 
   Future<void> incrementWater(
-      String uid, {
-        int amount = 1,
-        DateTime? date,
-      }) async {
+    String uid, {
+    int amount = 1,
+    DateTime? date,
+  }) async {
     final current = await getTodayLog(uid, date: date);
     final newWater = (current['water'] ?? 0) + amount;
 
@@ -731,10 +720,10 @@ class NutritionService {
   }
 
   Future<void> decrementWater(
-      String uid, {
-        int amount = 1,
-        DateTime? date,
-      }) async {
+    String uid, {
+    int amount = 1,
+    DateTime? date,
+  }) async {
     final current = await getTodayLog(uid, date: date);
     int newWater = (current['water'] ?? 0) - amount;
     if (newWater < 0) newWater = 0;
@@ -755,9 +744,9 @@ class NutritionService {
   // ==========================================
 
   Future<List<Map<String, dynamic>>> getRecentFoods(
-      String uid, {
-        int limit = 10,
-      }) async {
+    String uid, {
+    int limit = 10,
+  }) async {
     try {
       final snap = await _recentFoodsRef(uid)
           .orderBy('lastUsedAt', descending: true)
@@ -786,9 +775,6 @@ class NutritionService {
   }
 
   String _normalizeFoodKey(String name) {
-    return name
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    return name.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
   }
 }

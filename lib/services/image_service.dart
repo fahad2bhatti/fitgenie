@@ -13,9 +13,9 @@ class ImageService {
     try {
       final XFile? image = await _picker.pickImage(
         source: source,
-        maxWidth: 512,       // Better quality, still small
+        maxWidth: 512, // Better quality, still small
         maxHeight: 512,
-        imageQuality: 85,    // Higher quality compression
+        imageQuality: 85, // Higher quality compression
       );
       return image;
     } catch (e) {
@@ -37,7 +37,8 @@ class ImageService {
       final base64Image = base64Encode(bytes);
       // Create data URL
       final dataUrl = 'data:image/jpeg;base64,$base64Image';
-      debugPrint('? Image size: ${(bytes.length / 1024).toStringAsFixed(1)} KB');
+      debugPrint(
+          '? Image size: ${(bytes.length / 1024).toStringAsFixed(1)} KB');
       // Save to Firestore
       await _firestore.collection('users').doc(userId).set({
         'photoBase64': dataUrl,

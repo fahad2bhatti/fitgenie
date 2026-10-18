@@ -22,12 +22,15 @@ class AdIds {
 
   static String get appOpen =>
       kDebugMode ? 'ca-app-pub-3940256099942544/9257395921' : _appOpenRelease;
-  static String get rewardedScan =>
-      kDebugMode ? 'ca-app-pub-3940256099942544/5224354917' : _rewardedScanRelease;
-  static String get rewardedChat =>
-      kDebugMode ? 'ca-app-pub-3940256099942544/5224354917' : _rewardedChatRelease;
-  static String get bannerScreens =>
-      kDebugMode ? 'ca-app-pub-3940256099942544/6300978111' : _bannerScreensRelease;
+  static String get rewardedScan => kDebugMode
+      ? 'ca-app-pub-3940256099942544/5224354917'
+      : _rewardedScanRelease;
+  static String get rewardedChat => kDebugMode
+      ? 'ca-app-pub-3940256099942544/5224354917'
+      : _rewardedChatRelease;
+  static String get bannerScreens => kDebugMode
+      ? 'ca-app-pub-3940256099942544/6300978111'
+      : _bannerScreensRelease;
 }
 
 enum RewardKind { scan, chat }
@@ -112,8 +115,8 @@ class AdManager with WidgetsBindingObserver {
 
   bool get _appOpenFresh =>
       _appOpenAd != null &&
-          _appOpenLoadedAt != null &&
-          DateTime.now().difference(_appOpenLoadedAt!) < _appOpenMaxAge;
+      _appOpenLoadedAt != null &&
+      DateTime.now().difference(_appOpenLoadedAt!) < _appOpenMaxAge;
 
   /// Cold start (splash ke baad) aur resume dono jagah yehi call hoti hai.
   void showAppOpenIfAvailable() {
@@ -214,14 +217,16 @@ class AdManager with WidgetsBindingObserver {
         shown.dispose();
         _loadRewarded(k);
         if (!completer.isCompleted) {
-          completer.complete(earned ? RewardResult.earned : RewardResult.dismissed);
+          completer
+              .complete(earned ? RewardResult.earned : RewardResult.dismissed);
         }
       },
       onAdFailedToShowFullScreenContent: (shown, e) {
         _markFullScreenEnded();
         shown.dispose();
         _loadRewarded(k);
-        if (!completer.isCompleted) completer.complete(RewardResult.unavailable);
+        if (!completer.isCompleted)
+          completer.complete(RewardResult.unavailable);
       },
     );
 
@@ -235,7 +240,6 @@ class AdManager with WidgetsBindingObserver {
   /// App Open ad uske baad wale "resume" par na aaye.
   void fullScreenStarted() => _isShowingFullScreenAd = true;
   void fullScreenEnded() => _markFullScreenEnded();
-
 }
 
 // ======================= BANNER WIDGET =======================

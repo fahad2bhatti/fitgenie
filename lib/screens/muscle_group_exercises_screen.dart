@@ -101,9 +101,7 @@ class _MuscleGroupExercisesScreenState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            _showGifs
-                                ? Icons.gif_box
-                                : Icons.gif_box_outlined,
+                            _showGifs ? Icons.gif_box : Icons.gif_box_outlined,
                             size: 16,
                             color: _showGifs
                                 ? FitGenieTheme.primary
@@ -136,7 +134,7 @@ class _MuscleGroupExercisesScreenState
             padding: const EdgeInsets.symmetric(horizontal: 18),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                    (context, index) {
+                (context, index) {
                   final exercise = _filteredExercises[index];
                   return _buildExerciseCard(exercise, index);
                 },
@@ -250,21 +248,17 @@ class _MuscleGroupExercisesScreenState
                             : FitGenieTheme.card,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: isSelected
-                              ? widget.color
-                              : Colors.transparent,
+                          color: isSelected ? widget.color : Colors.transparent,
                         ),
                       ),
                       child: Text(
                         eq,
                         style: TextStyle(
                           fontSize: 12,
-                          color: isSelected
-                              ? widget.color
-                              : FitGenieTheme.muted,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                          color:
+                              isSelected ? widget.color : FitGenieTheme.muted,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                     ),
@@ -277,8 +271,8 @@ class _MuscleGroupExercisesScreenState
 
           // Difficulty Filter
           Row(
-            children: ['All', 'Beginner', 'Intermediate', 'Advanced']
-                .map((diff) {
+            children:
+                ['All', 'Beginner', 'Intermediate', 'Advanced'].map((diff) {
               final isSelected = _filterDifficulty == diff;
               Color diffColor;
               switch (diff) {
@@ -297,8 +291,7 @@ class _MuscleGroupExercisesScreenState
 
               return Expanded(
                 child: GestureDetector(
-                  onTap: () =>
-                      setState(() => _filterDifficulty = diff),
+                  onTap: () => setState(() => _filterDifficulty = diff),
                   child: Container(
                     margin: const EdgeInsets.only(right: 6),
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -308,9 +301,7 @@ class _MuscleGroupExercisesScreenState
                           : FitGenieTheme.card,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected
-                            ? diffColor
-                            : Colors.transparent,
+                        color: isSelected ? diffColor : Colors.transparent,
                       ),
                     ),
                     child: Center(
@@ -318,12 +309,9 @@ class _MuscleGroupExercisesScreenState
                         diff,
                         style: TextStyle(
                           fontSize: 11,
-                          color: isSelected
-                              ? diffColor
-                              : FitGenieTheme.muted,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                          color: isSelected ? diffColor : FitGenieTheme.muted,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                     ),
@@ -354,7 +342,7 @@ class _MuscleGroupExercisesScreenState
               if (_showGifs && exercise.hasGif)
                 ClipRRect(
                   borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+                      const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Stack(
                     children: [
                       Image.asset(
@@ -370,17 +358,18 @@ class _MuscleGroupExercisesScreenState
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.fitness_center,
-                                    size: 40, color: widget.color.withValues(alpha: 0.3)),
+                                    size: 40,
+                                    color: widget.color.withValues(alpha: 0.3)),
                                 const SizedBox(height: 8),
                                 Text(
                                   exercise.name,
-                                  style: TextStyle(fontSize: 12, color: FitGenieTheme.muted),
+                                  style: TextStyle(
+                                      fontSize: 12, color: FitGenieTheme.muted),
                                 ),
                               ],
                             ),
                           ),
                         ),
-
                       ),
 
                       // Calories Badge
@@ -402,7 +391,9 @@ class _MuscleGroupExercisesScreenState
                               const SizedBox(width: 2),
                               Text(
                                 AppStrings.get('muscle_exercises_cal_per_min',
-                                    params: {'cal': exercise.caloriesPerMin.toString()}),
+                                    params: {
+                                      'cal': exercise.caloriesPerMin.toString()
+                                    }),
                                 style: const TextStyle(
                                     fontSize: 11,
                                     color: Colors.white,
@@ -417,8 +408,7 @@ class _MuscleGroupExercisesScreenState
                       Positioned(
                         top: 8,
                         left: 8,
-                        child:
-                        _buildDifficultyBadge(exercise.difficulty),
+                        child: _buildDifficultyBadge(exercise.difficulty),
                       ),
 
                       // Number Badge
@@ -495,8 +485,7 @@ class _MuscleGroupExercisesScreenState
                               Text(
                                 exercise.name,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16),
+                                    fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               const SizedBox(height: 4),
                               Row(
@@ -526,17 +515,18 @@ class _MuscleGroupExercisesScreenState
                       runSpacing: 6,
                       children: exercise.musclesWorked
                           .map((muscle) => Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: FitGenieTheme.success.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text('💪 $muscle',
-                            style: const TextStyle(
-                                fontSize: 11,
-                                color: FitGenieTheme.success)),
-                      ))
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: FitGenieTheme.success
+                                      .withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text('💪 $muscle',
+                                    style: const TextStyle(
+                                        fontSize: 11,
+                                        color: FitGenieTheme.success)),
+                              ))
                           .toList(),
                     ),
                     const SizedBox(height: 8),
@@ -611,8 +601,7 @@ class _MuscleGroupExercisesScreenState
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
             color: FitGenieTheme.cardDark,
-            borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: ListView(
             controller: scrollController,
@@ -657,8 +646,8 @@ class _MuscleGroupExercisesScreenState
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                        color: widget.color.withValues(alpha: 0.3)),
+                    border:
+                        Border.all(color: widget.color.withValues(alpha: 0.3)),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
@@ -703,8 +692,7 @@ class _MuscleGroupExercisesScreenState
                     // Name
                     Text(name,
                         style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold)),
+                            fontSize: 24, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),
 
                     // Info Chips
@@ -712,16 +700,18 @@ class _MuscleGroupExercisesScreenState
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _buildInfoChip(Icons.fitness_center,
-                            bodyPart, widget.color),
+                        _buildInfoChip(
+                            Icons.fitness_center, bodyPart, widget.color),
                         _buildInfoChip(
                             Icons.build, equipment, FitGenieTheme.teal),
-                        _buildInfoChip(Icons.local_fire_department,
+                        _buildInfoChip(
+                            Icons.local_fire_department,
                             AppStrings.get('muscle_exercises_cal_per_min',
                                 params: {'cal': calories.toString()}),
                             FitGenieTheme.hot),
                         if (tempo.isNotEmpty)
-                          _buildInfoChip(Icons.speed,
+                          _buildInfoChip(
+                              Icons.speed,
                               AppStrings.get('muscle_exercises_tempo',
                                   params: {'tempo': tempo}),
                               FitGenieTheme.primary),
@@ -735,8 +725,7 @@ class _MuscleGroupExercisesScreenState
 
                     // Muscles
                     if (muscles.isNotEmpty) ...[
-                      Text(
-                          AppStrings.get('muscle_exercises_target'),
+                      Text(AppStrings.get('muscle_exercises_target'),
                           style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -747,22 +736,21 @@ class _MuscleGroupExercisesScreenState
                         runSpacing: 8,
                         children: muscles
                             .map((m) => Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color:
-                            FitGenieTheme.success.withValues(alpha: 0.15),
-                            borderRadius:
-                            BorderRadius.circular(20),
-                            border: Border.all(
-                                color: FitGenieTheme.success
-                                    .withValues(alpha: 0.3)),
-                          ),
-                          child: Text('💪 $m',
-                              style: const TextStyle(
-                                  fontSize: 13,
-                                  color: FitGenieTheme.success)),
-                        ))
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: FitGenieTheme.success
+                                        .withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: FitGenieTheme.success
+                                            .withValues(alpha: 0.3)),
+                                  ),
+                                  child: Text('💪 $m',
+                                      style: const TextStyle(
+                                          fontSize: 13,
+                                          color: FitGenieTheme.success)),
+                                ))
                             .toList(),
                       ),
                       const SizedBox(height: 20),
@@ -777,8 +765,7 @@ class _MuscleGroupExercisesScreenState
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Icon(Icons.description,
                                 size: 18, color: widget.color),
@@ -812,8 +799,8 @@ class _MuscleGroupExercisesScreenState
                           Colors.amber),
                       const SizedBox(height: 14),
                       for (int i = 0; i < tips.length; i++)
-                        _buildBulletItem(tips[i], Colors.amber,
-                            Icons.lightbulb_outline),
+                        _buildBulletItem(
+                            tips[i], Colors.amber, Icons.lightbulb_outline),
                       const SizedBox(height: 24),
                     ],
 
@@ -824,16 +811,13 @@ class _MuscleGroupExercisesScreenState
                           FitGenieTheme.hot),
                       const SizedBox(height: 14),
                       for (int i = 0; i < mistakes.length; i++)
-                        _buildBulletItem(mistakes[i],
-                            FitGenieTheme.hot,
+                        _buildBulletItem(mistakes[i], FitGenieTheme.hot,
                             Icons.warning_amber_outlined),
                       const SizedBox(height: 24),
                     ],
 
                     // No Details
-                    if (steps.isEmpty &&
-                        tips.isEmpty &&
-                        mistakes.isEmpty)
+                    if (steps.isEmpty && tips.isEmpty && mistakes.isEmpty)
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -844,13 +828,12 @@ class _MuscleGroupExercisesScreenState
                           child: Column(
                             children: [
                               Icon(Icons.info_outline,
-                                  size: 40,
-                                  color: FitGenieTheme.muted),
+                                  size: 40, color: FitGenieTheme.muted),
                               const SizedBox(height: 8),
                               Text(
-                                  AppStrings.get('muscle_exercises_coming_soon'),
-                                  style: TextStyle(
-                                      color: FitGenieTheme.muted)),
+                                  AppStrings.get(
+                                      'muscle_exercises_coming_soon'),
+                                  style: TextStyle(color: FitGenieTheme.muted)),
                             ],
                           ),
                         ),
@@ -881,9 +864,7 @@ class _MuscleGroupExercisesScreenState
       ),
       child: Text(title,
           style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: color)),
+              fontSize: 16, fontWeight: FontWeight.bold, color: color)),
     );
   }
 
@@ -917,9 +898,8 @@ class _MuscleGroupExercisesScreenState
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 5),
-              child: Text(text,
-                  style:
-                  const TextStyle(fontSize: 14, height: 1.5)),
+              child:
+                  Text(text, style: const TextStyle(fontSize: 14, height: 1.5)),
             ),
           ),
         ],
@@ -945,9 +925,8 @@ class _MuscleGroupExercisesScreenState
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 3),
-              child: Text(text,
-                  style:
-                  const TextStyle(fontSize: 13, height: 1.5)),
+              child:
+                  Text(text, style: const TextStyle(fontSize: 13, height: 1.5)),
             ),
           ),
         ],
@@ -969,9 +948,7 @@ class _MuscleGroupExercisesScreenState
           const SizedBox(width: 4),
           Text(text,
               style: TextStyle(
-                  fontSize: 11,
-                  color: color,
-                  fontWeight: FontWeight.w600)),
+                  fontSize: 11, color: color, fontWeight: FontWeight.w600)),
         ],
       ),
     );
@@ -986,9 +963,7 @@ class _MuscleGroupExercisesScreenState
       ),
       child: Text(text,
           style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w600)),
+              color: color, fontSize: 11, fontWeight: FontWeight.w600)),
     );
   }
 
@@ -1025,12 +1000,9 @@ class _MuscleGroupExercisesScreenState
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 4),
-          Text(
-              AppStrings.get('muscle_exercises_difficulty'),
+          Text(AppStrings.get('muscle_exercises_difficulty'),
               style: TextStyle(
-                  color: color,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold)),
+                  color: color, fontSize: 11, fontWeight: FontWeight.bold)),
         ],
       ),
     );

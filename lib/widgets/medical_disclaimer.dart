@@ -62,8 +62,7 @@ void showWorkoutInjuryWarningIfNeeded(BuildContext context) {
             Expanded(
               child: Text(
                 AppStrings.get('workout_injury_warning'),
-                style: const TextStyle(
-                    color: FitGenieTheme.text, fontSize: 13),
+                style: const TextStyle(color: FitGenieTheme.text, fontSize: 13),
               ),
             ),
           ],
@@ -73,8 +72,7 @@ void showWorkoutInjuryWarningIfNeeded(BuildContext context) {
         duration: const Duration(seconds: 6),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-              color: FitGenieTheme.warning.withValues(alpha: 0.4)),
+          side: BorderSide(color: FitGenieTheme.warning.withValues(alpha: 0.4)),
         ),
         margin: const EdgeInsets.all(16),
       ),
@@ -179,7 +177,7 @@ class MedicalDisclaimerDialog extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius:
-                          BorderRadius.circular(FitGenieTheme.radiusMD),
+                              BorderRadius.circular(FitGenieTheme.radiusMD),
                         ),
                       ),
                       onPressed: () async {

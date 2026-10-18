@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'fitgeni.firebasestorage.app',
     measurementId: 'G-R25HTMJ2PX',
   );
-
 }

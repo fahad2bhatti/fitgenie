@@ -67,7 +67,8 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _openPrivacyPolicy() async {
     final uri = Uri.parse(_kPrivacyPolicyUrl);
     try {
-      final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!launched && mounted) {
         _showSnackBar(AppStrings.get('login_link_error'), isError: true);
       }
@@ -209,14 +210,15 @@ class _LoginScreenState extends State<LoginScreen>
         return AlertDialog(
           backgroundColor: FitGenieTheme.card,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(AppStrings.get('login_reset_password')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 AppStrings.get('login_reset_instructions'),
-                style: const TextStyle(color: FitGenieTheme.muted, fontSize: 14),
+                style:
+                    const TextStyle(color: FitGenieTheme.muted, fontSize: 14),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -258,7 +260,8 @@ class _LoginScreenState extends State<LoginScreen>
                 } catch (e) {
                   if (context.mounted) {
                     Navigator.pop(context);
-                    _showSnackBar(AppStrings.get('login_reset_failed'), isError: true);
+                    _showSnackBar(AppStrings.get('login_reset_failed'),
+                        isError: true);
                   }
                 }
               },
@@ -298,7 +301,7 @@ class _LoginScreenState extends State<LoginScreen>
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
                     child: ConstrainedBox(
                       constraints:
-                      BoxConstraints(minHeight: constraints.maxHeight),
+                          BoxConstraints(minHeight: constraints.maxHeight),
                       child: IntrinsicHeight(
                         child: Column(
                           children: [
@@ -351,7 +354,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   size: 20,
                                 ),
                                 onPressed: () => setState(
-                                        () => _showPassword = !_showPassword),
+                                    () => _showPassword = !_showPassword),
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -404,15 +407,15 @@ class _LoginScreenState extends State<LoginScreen>
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    onChanged: (v) =>
-                                        setState(() => _agreedToTerms = v ?? false),
+                                    onChanged: (v) => setState(
+                                        () => _agreedToTerms = v ?? false),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () => setState(
-                                            () => _agreedToTerms = !_agreedToTerms),
+                                        () => _agreedToTerms = !_agreedToTerms),
                                     child: RichText(
                                       text: TextSpan(
                                         style: const TextStyle(
@@ -421,18 +424,24 @@ class _LoginScreenState extends State<LoginScreen>
                                           height: 1.4,
                                         ),
                                         children: [
-                                          TextSpan(text: AppStrings.get('login_terms_prefix')),
                                           TextSpan(
-                                            text: AppStrings.get('login_terms_link'),
+                                              text: AppStrings.get(
+                                                  'login_terms_prefix')),
+                                          TextSpan(
+                                            text: AppStrings.get(
+                                                'login_terms_link'),
                                             style: const TextStyle(
                                               color: FitGenieTheme.primary,
                                               fontWeight: FontWeight.w600,
-                                              decoration: TextDecoration.underline,
+                                              decoration:
+                                                  TextDecoration.underline,
                                             ),
                                             recognizer: TapGestureRecognizer()
                                               ..onTap = _openPrivacyPolicy,
                                           ),
-                                          TextSpan(text: AppStrings.get('login_terms_suffix')),
+                                          TextSpan(
+                                              text: AppStrings.get(
+                                                  'login_terms_suffix')),
                                         ],
                                       ),
                                     ),
@@ -447,33 +456,35 @@ class _LoginScreenState extends State<LoginScreen>
                             SizedBox(
                               width: double.infinity,
                               child: FilledButton(
-                                onPressed: (loading || !_agreedToTerms) ? null : _signIn,
+                                onPressed: (loading || !_agreedToTerms)
+                                    ? null
+                                    : _signIn,
                                 style: FilledButton.styleFrom(
                                   backgroundColor: FitGenieTheme.primary,
-                                  disabledBackgroundColor:
-                                  FitGenieTheme.primary.withValues(alpha: 0.35),
+                                  disabledBackgroundColor: FitGenieTheme.primary
+                                      .withValues(alpha: 0.35),
                                   padding:
-                                  const EdgeInsets.symmetric(vertical: 16),
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                 ),
                                 child: loading
                                     ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
                                     : Text(
-                                  AppStrings.get('login_button'),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                        AppStrings.get('login_button'),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 16,
+                                        ),
+                                      ),
                               ),
                             ),
 
@@ -484,9 +495,11 @@ class _LoginScreenState extends State<LoginScreen>
                               children: [
                                 Expanded(
                                     child: Divider(
-                                        color: Colors.white.withValues(alpha: 0.1))),
+                                        color: Colors.white
+                                            .withValues(alpha: 0.1))),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
                                   child: Text(
                                     AppStrings.get('login_or'),
                                     style: const TextStyle(
@@ -496,7 +509,8 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 Expanded(
                                     child: Divider(
-                                        color: Colors.white.withValues(alpha: 0.1))),
+                                        color: Colors.white
+                                            .withValues(alpha: 0.1))),
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -523,8 +537,8 @@ class _LoginScreenState extends State<LoginScreen>
                                   onPressed: _goToSignup,
                                   child: Text(
                                     AppStrings.get('login_signup_free'),
-                                    style:
-                                    const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],

@@ -92,7 +92,7 @@ class WorkoutPlansData {
     difficulty: 'Intermediate',
     estimatedMinutes: 60,
     description:
-    'Complete push workout targeting chest, shoulders aur triceps. Compound movements se start, isolation pe end.',
+        'Complete push workout targeting chest, shoulders aur triceps. Compound movements se start, isolation pe end.',
     category: 'push',
     targetMuscles: ['Chest', 'Front Delts', 'Side Delts', 'Triceps'],
     exercises: [
@@ -167,7 +167,7 @@ class WorkoutPlansData {
     difficulty: 'Intermediate',
     estimatedMinutes: 55,
     description:
-    'Complete pull workout. Back thickness aur width dono ke liye exercises. Biceps aur rear delts bhi covered.',
+        'Complete pull workout. Back thickness aur width dono ke liye exercises. Biceps aur rear delts bhi covered.',
     category: 'pull',
     targetMuscles: ['Lats', 'Middle Back', 'Rear Delts', 'Biceps', 'Traps'],
     exercises: [
@@ -242,7 +242,7 @@ class WorkoutPlansData {
     difficulty: 'Intermediate',
     estimatedMinutes: 60,
     description:
-    'Complete leg workout. Squats se start, isolation pe end. Calves mat bhoolna!',
+        'Complete leg workout. Squats se start, isolation pe end. Calves mat bhoolna!',
     category: 'legs',
     targetMuscles: ['Quads', 'Hamstrings', 'Glutes', 'Calves'],
     exercises: [
@@ -317,15 +317,9 @@ class WorkoutPlansData {
     difficulty: 'Intermediate',
     estimatedMinutes: 65,
     description:
-    'Complete upper body — sab upper muscles ek din mein. Push-pull supersets bhi kar sakte ho.',
+        'Complete upper body — sab upper muscles ek din mein. Push-pull supersets bhi kar sakte ho.',
     category: 'upper',
-    targetMuscles: [
-      'Chest',
-      'Back',
-      'Shoulders',
-      'Biceps',
-      'Triceps'
-    ],
+    targetMuscles: ['Chest', 'Back', 'Shoulders', 'Biceps', 'Triceps'],
     exercises: [
       PlanExercise(
         exerciseId: 'chest_1', // Flat Bench Press
@@ -398,7 +392,7 @@ class WorkoutPlansData {
     difficulty: 'Intermediate',
     estimatedMinutes: 55,
     description:
-    'Lower body complete — legs aur core dono. Functional strength builder.',
+        'Lower body complete — legs aur core dono. Functional strength builder.',
     category: 'lower',
     targetMuscles: ['Quads', 'Hamstrings', 'Glutes', 'Core', 'Calves'],
     exercises: [
@@ -473,7 +467,7 @@ class WorkoutPlansData {
     difficulty: 'Intermediate',
     estimatedMinutes: 70,
     description:
-    'Ek workout mein sab muscles cover. Beginners ke liye 3x/week ya busy schedule ke liye perfect.',
+        'Ek workout mein sab muscles cover. Beginners ke liye 3x/week ya busy schedule ke liye perfect.',
     category: 'full_body',
     targetMuscles: [
       'Chest',
@@ -584,7 +578,7 @@ class WorkoutPlansData {
     difficulty: 'Beginner',
     estimatedMinutes: 40,
     description:
-    'Cardio exercises + core work. Fat burning aur core strengthening combo. Rest day ke baad perfect.',
+        'Cardio exercises + core work. Fat burning aur core strengthening combo. Rest day ke baad perfect.',
     category: 'cardio',
     targetMuscles: ['Heart', 'Abs', 'Obliques', 'Full Body'],
     exercises: [
@@ -666,7 +660,7 @@ class WorkoutPlansData {
     difficulty: 'Beginner',
     estimatedMinutes: 45,
     description:
-    'Complete arm workout. Biceps aur triceps supersets for maximum pump. Gun show ready!',
+        'Complete arm workout. Biceps aur triceps supersets for maximum pump. Gun show ready!',
     category: 'arms',
     targetMuscles: ['Biceps', 'Triceps', 'Forearms'],
     exercises: [

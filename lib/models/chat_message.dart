@@ -11,8 +11,6 @@ class ChatMessage {
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
 
-
-
   // Convert to Map for Firestore
   Map<String, dynamic> toMap() {
     return {

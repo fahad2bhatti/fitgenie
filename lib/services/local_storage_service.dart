@@ -168,9 +168,7 @@ class LocalStorageService {
 
       if (value is String) {
         // Remove HTML and limit length
-        String cleanValue = value
-            .replaceAll(RegExp(r'<[^>]*>'), '')
-            .trim();
+        String cleanValue = value.replaceAll(RegExp(r'<[^>]*>'), '').trim();
         if (cleanValue.length > 10000) {
           cleanValue = cleanValue.substring(0, 10000);
         }
@@ -277,7 +275,8 @@ class LocalStorageService {
     return null;
   }
 
-  Future<void> saveDailyLog(String userId, String date, Map<String, int> log) async {
+  Future<void> saveDailyLog(
+      String userId, String date, Map<String, int> log) async {
     try {
       if (userId.isEmpty || date.isEmpty) return;
 
@@ -321,7 +320,8 @@ class LocalStorageService {
   // ═══════════════════════════════════════════
   // 💪 WORKOUT DATA
   // ═══════════════════════════════════════════
-  Future<void> saveWorkout(String userId, String workoutId, Map<String, dynamic> workout) async {
+  Future<void> saveWorkout(
+      String userId, String workoutId, Map<String, dynamic> workout) async {
     try {
       if (userId.isEmpty || workoutId.isEmpty) return;
 
@@ -401,7 +401,8 @@ class LocalStorageService {
   // ═══════════════════════════════════════════
   // 💬 CHAT HISTORY
   // ═══════════════════════════════════════════
-  Future<void> saveChatMessage(String userId, String userMessage, String aiResponse) async {
+  Future<void> saveChatMessage(
+      String userId, String userMessage, String aiResponse) async {
     try {
       if (userId.isEmpty) return;
 
@@ -412,7 +413,8 @@ class LocalStorageService {
 
       // Add new message
       chats.add({
-        'userMessage': userMessage.substring(0, userMessage.length.clamp(0, 500)),
+        'userMessage':
+            userMessage.substring(0, userMessage.length.clamp(0, 500)),
         'aiResponse': aiResponse.substring(0, aiResponse.length.clamp(0, 2000)),
         'timestamp': DateTime.now().toIso8601String(),
       });
@@ -566,7 +568,8 @@ class LocalStorageService {
       if (Hive.isBoxOpen(_userBox)) await Hive.box(_userBox).clear();
       if (Hive.isBoxOpen(_nutritionBox)) await Hive.box(_nutritionBox).clear();
       if (Hive.isBoxOpen(_workoutBox)) await Hive.box(_workoutBox).clear();
-      if (Hive.isBoxOpen(_pendingSyncBox)) await Hive.box(_pendingSyncBox).clear();
+      if (Hive.isBoxOpen(_pendingSyncBox))
+        await Hive.box(_pendingSyncBox).clear();
       if (Hive.isBoxOpen(_chatBox)) await Hive.box(_chatBox).clear();
       debugPrint('🧹 All local data cleared');
     } catch (e) {

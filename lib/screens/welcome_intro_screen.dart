@@ -190,7 +190,7 @@ class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
                     height: 110,
                     decoration: BoxDecoration(
                       borderRadius:
-                      BorderRadius.circular(FitGenieTheme.radiusXL),
+                          BorderRadius.circular(FitGenieTheme.radiusXL),
                       boxShadow: [
                         BoxShadow(
                           color: FitGenieTheme.primary
@@ -204,7 +204,7 @@ class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
                       children: [
                         ClipRRect(
                           borderRadius:
-                          BorderRadius.circular(FitGenieTheme.radiusXL),
+                              BorderRadius.circular(FitGenieTheme.radiusXL),
                           child: Image.asset(
                             'assets/images/fitgenie_logo.png',
                             fit: BoxFit.contain,
@@ -464,28 +464,28 @@ class _ImageCollage extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: paths
           .map((p) => Padding(
-        padding: const EdgeInsets.all(6),
-        child: Container(
-          width: 118,
-          height: 235,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.08),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.5),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Image.asset(p, fit: BoxFit.cover),
-        ),
-      ))
+                padding: const EdgeInsets.all(6),
+                child: Container(
+                  width: 118,
+                  height: 235,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(p, fit: BoxFit.cover),
+                ),
+              ))
           .toList(),
     );
   }

@@ -62,9 +62,42 @@ class ExerciseData {
   static const List<int> setsOptions = [1, 2, 3, 4, 5];
   static const List<int> repsOptions = [5, 6, 8, 10, 12, 15, 20, 25, 30];
   static const List<double> weightOptions = [
-    0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30,
-    32.5, 35, 37.5, 40, 42.5, 45, 47.5, 50, 55, 60, 65, 70, 75,
-    80, 85, 90, 95, 100, 110, 120, 130, 140, 150
+    0,
+    2.5,
+    5,
+    7.5,
+    10,
+    12.5,
+    15,
+    17.5,
+    20,
+    22.5,
+    25,
+    27.5,
+    30,
+    32.5,
+    35,
+    37.5,
+    40,
+    42.5,
+    45,
+    47.5,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75,
+    80,
+    85,
+    90,
+    95,
+    100,
+    110,
+    120,
+    130,
+    140,
+    150
   ];
 
   static const List<Map<String, dynamic>> bodyParts = [
@@ -89,7 +122,8 @@ class ExerciseData {
       instructionsEn: 'Lie on the bench, bar chest to bring, press',
       instructionsUr: 'Bench pe leto, bar chest tak lao, push karo',
       musclesWorked: const ['Chest', 'Triceps', 'Shoulders'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bench-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bench-Press.gif',
       detailedStepsEn: const [
         'Lie on a flat bench, plant your feet firmly on the floor',
         'Bar use a grip slightly wider than shoulder-width',
@@ -150,7 +184,8 @@ class ExerciseData {
       instructionsEn: 'On an incline bench,, dumbbells press',
       instructionsUr: 'Incline bench pe, dumbbells push karo',
       musclesWorked: const ['Upper Chest', 'Shoulders'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif',
       detailedStepsEn: const [
         'Incline bench 30-45° angle on set',
         'Hold a dumbbell in each hand',
@@ -209,7 +244,8 @@ class ExerciseData {
       instructionsEn: 'Decline bench, lower chest target',
       instructionsUr: 'Decline bench, lower chest target',
       musclesWorked: const ['Lower Chest', 'Triceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Decline-Barbell-Bench-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Decline-Barbell-Bench-Press.gif',
       detailedStepsEn: const [
         'Lie on a decline bench, legs locked',
         'Hold the bar at shoulder-width grip',
@@ -264,7 +300,8 @@ class ExerciseData {
       instructionsEn: 'Arms wide, chest stretch feel',
       instructionsUr: 'Arms wide, chest stretch feel karo',
       musclesWorked: const ['Chest'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Fly.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Fly.gif',
       detailedStepsEn: const [
         'Lie on a flat bench, ek ek dumbbell lift',
         'Extend your arms up with palms facing each other',
@@ -321,7 +358,8 @@ class ExerciseData {
       instructionsEn: 'Cables center in bring',
       instructionsUr: 'Cables center mein bring karo',
       musclesWorked: const ['Chest', 'Shoulders'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crossover.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crossover.gif',
       detailedStepsEn: const [
         'Stand in the middle of the cable machine',
         'Set both pulleys high',
@@ -380,7 +418,8 @@ class ExerciseData {
       instructionsEn: 'Haath shoulder width, press',
       instructionsUr: 'Haath shoulder width, push karo',
       musclesWorked: const ['Chest', 'Triceps', 'Core'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif',
       detailedStepsEn: const [
         'Floor on haath keep — shoulder-width apart',
         'Legs peeche extend — toes on balance',
@@ -443,7 +482,8 @@ class ExerciseData {
       instructionsEn: 'Hands elevated surface on',
       instructionsUr: 'Hands elevated surface pe',
       musclesWorked: const ['Lower Chest', 'Triceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Incline-Push-Up.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/06/Incline-Push-Up.gif',
       detailedStepsEn: const [
         'Bench or elevated surface dhundho (knee height)',
         'Hands surface on keep — shoulder-width apart',
@@ -494,7 +534,8 @@ class ExerciseData {
       instructionsEn: 'Feet elevated, upper chest target',
       instructionsUr: 'Feet elevated, upper chest target',
       musclesWorked: const ['Upper Chest', 'Shoulders'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Decline-Push-Up.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/06/Decline-Push-Up.gif',
       detailedStepsEn: const [
         'Bench or box on feet keep (elevated position)',
         'Hands floor on — shoulder-width apart',
@@ -545,7 +586,8 @@ class ExerciseData {
       instructionsEn: 'Lean forward, chest stretch',
       instructionsUr: 'Lean forward, chest stretch',
       musclesWorked: const ['Chest', 'Triceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Chest-Dips.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/06/Chest-Dips.gif',
       detailedStepsEn: const [
         'Dip bars on mount ho jao — arms extended',
         'Body AAGE lean (30° forward lean)',
@@ -602,7 +644,8 @@ class ExerciseData {
       instructionsEn: 'Arms center in bring, squeeze',
       instructionsUr: 'Arms center mein lao, squeeze',
       musclesWorked: const ['Chest'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pec-Deck-Fly.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pec-Deck-Fly.gif',
       detailedStepsEn: const [
         'Machine sit on — back pad lagao',
         'Seat height adjust — handles chest level on',
@@ -663,7 +706,8 @@ class ExerciseData {
       instructionsEn: 'Bar grip, body pull chin to',
       instructionsUr: 'Bar grip, body pull karo chin tak',
       musclesWorked: const ['Lats', 'Biceps', 'Rear Delts'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-Up.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-Up.gif',
       detailedStepsEn: const [
         'Bar overhand grip hold — shoulder-width or wider',
         'Dead hang position in aao — arms fully extended',
@@ -720,7 +764,8 @@ class ExerciseData {
       instructionsEn: 'Wide grip, bar chest to pull',
       instructionsUr: 'Wide grip, bar chest tak pull',
       musclesWorked: const ['Lats', 'Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif',
       detailedStepsEn: const [
         'Lat pulldown machine sit on',
         'Thigh pads adjust — firmly fit hone needed',
@@ -779,7 +824,8 @@ class ExerciseData {
       instructionsEn: 'Bent over, bar belly to pull',
       instructionsUr: 'Bent over, bar belly tak pull',
       musclesWorked: const ['Middle Back', 'Lats', 'Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bent-Over-Row.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bent-Over-Row.gif',
       detailedStepsEn: const [
         'Bar floor on, shoulder-width grip hold',
         'Hips hinge — back flat, chest up',
@@ -836,7 +882,8 @@ class ExerciseData {
       instructionsEn: 'One arm row, bench support',
       instructionsUr: 'One arm row, bench support',
       musclesWorked: const ['Lats', 'Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Row.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Row.gif',
       detailedStepsEn: const [
         'Ek haath and ek knee bench on keep',
         'Doosre haath in dumbbell hold',
@@ -895,7 +942,8 @@ class ExerciseData {
       instructionsEn: 'Chest out, handle belly to pull',
       instructionsUr: 'Chest out, handle belly tak pull',
       musclesWorked: const ['Middle Back', 'Lats'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif',
       detailedStepsEn: const [
         'Cable row machine sit on — feet plates on',
         'V-handle or straight bar hold',
@@ -950,7 +998,8 @@ class ExerciseData {
       instructionsEn: 'Bent over, bar chest to pull',
       instructionsUr: 'Bent over, bar chest tak pull',
       musclesWorked: const ['Middle Back', 'Lats'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/T-Bar-Row.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/T-Bar-Row.gif',
       detailedStepsEn: const [
         'T-Bar machine on stand or landmine setup',
         'V-handle or close grip handle lagao',
@@ -1003,7 +1052,8 @@ class ExerciseData {
       instructionsEn: 'Hip hinge, bar floor lift',
       instructionsUr: 'Hip hinge, bar floor se lift',
       musclesWorked: const ['Lower Back', 'Glutes', 'Hamstrings'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Deadlift.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Deadlift.gif',
       detailedStepsEn: const [
         'Bar floor on, feet hip-width apart — bar mid-foot ke upar',
         'Hip hinge — bend at hips, then knees',
@@ -1070,7 +1120,8 @@ class ExerciseData {
       instructionsEn: 'Rope face to pull, rear delts',
       instructionsUr: 'Rope face tak pull, rear delts',
       musclesWorked: const ['Rear Delts', 'Traps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif',
       detailedStepsEn: const [
         'Cable machine on rope attachment lagao — eye level on',
         'Rope overhand grip hold',
@@ -1129,7 +1180,8 @@ class ExerciseData {
       instructionsEn: 'Underhand grip, biceps engage',
       instructionsUr: 'Underhand grip, biceps engage',
       musclesWorked: const ['Lats', 'Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Chin-Up.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Chin-Up.gif',
       detailedStepsEn: const [
         'Bar UNDERHAND (supinated) grip hold',
         'Grip shoulder-width or slightly narrow',
@@ -1182,7 +1234,8 @@ class ExerciseData {
       instructionsEn: 'Lower back extend, squeeze',
       instructionsUr: 'Lower back extend, squeeze',
       musclesWorked: const ['Lower Back', 'Glutes'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/45-degree-Hyperextension.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/45-degree-Hyperextension.gif',
       detailedStepsEn: const [
         'Hyperextension bench on position lo',
         'Hips pad ke edge on — upper body free',
@@ -1241,7 +1294,8 @@ class ExerciseData {
       instructionsEn: 'Bar shoulders on, squat down',
       instructionsUr: 'Bar shoulders pe, squat down',
       musclesWorked: const ['Quads', 'Glutes', 'Hamstrings'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Squat.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Squat.gif',
       detailedStepsEn: const [
         'Bar upper back / traps on keep (high bar) or rear delts on (low bar)',
         'Feet shoulder-width apart, toes slightly bahar (15-30°)',
@@ -1304,7 +1358,8 @@ class ExerciseData {
       instructionsEn: 'Feet shoulder width, push',
       instructionsUr: 'Feet shoulder width, push',
       musclesWorked: const ['Quads', 'Glutes'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Press.gif',
       detailedStepsEn: const [
         'Machine sit on — back pad lagao firmly',
         'Feet platform on shoulder-width apart keep',
@@ -1361,7 +1416,8 @@ class ExerciseData {
       instructionsEn: 'Hip hinge, hamstring stretch',
       instructionsUr: 'Hip hinge, hamstring stretch',
       musclesWorked: const ['Hamstrings', 'Glutes'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Romanian-Deadlift.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Romanian-Deadlift.gif',
       detailedStepsEn: const [
         'Hold the bar at shoulder-width grip hold — standing position',
         'Knees SLIGHTLY bent (5-15°) — locked angle',
@@ -1420,7 +1476,8 @@ class ExerciseData {
       instructionsEn: 'Step forward, knee down',
       instructionsUr: 'Step forward, knee down',
       musclesWorked: const ['Quads', 'Glutes'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunges.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunges.gif',
       detailedStepsEn: const [
         'Straight stand — feet hip-width apart',
         'Ek bada step aage lo',
@@ -1477,7 +1534,8 @@ class ExerciseData {
       instructionsEn: 'Heels glutes to curl',
       instructionsUr: 'Heels glutes tak curl',
       musclesWorked: const ['Hamstrings'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Curl.gif',
       detailedStepsEn: const [
         'Leg curl machine lie on (face down)',
         'Pad ankles ke just upar should be',
@@ -1534,7 +1592,8 @@ class ExerciseData {
       instructionsEn: 'Legs extend, quads squeeze',
       instructionsUr: 'Legs extend, quads squeeze',
       musclesWorked: const ['Quads'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif',
       detailedStepsEn: const [
         'Leg extension machine sit on',
         'Back pad lagao — firmly seated',
@@ -1591,7 +1650,8 @@ class ExerciseData {
       instructionsEn: 'Heels raise, calves squeeze',
       instructionsUr: 'Heels raise, calves squeeze',
       musclesWorked: const ['Calves'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Standing-Calf-Raise.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Standing-Calf-Raise.gif',
       detailedStepsEn: const [
         'Calf raise machine on stand',
         'Shoulders pads ke down — or Smith machine use',
@@ -1650,7 +1710,8 @@ class ExerciseData {
       instructionsEn: 'Weight chest on, squat',
       instructionsUr: 'Weight chest pe, squat',
       musclesWorked: const ['Quads', 'Glutes'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Goblet-Squat.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Goblet-Squat.gif',
       detailedStepsEn: const [
         'Dumbbell vertically chest ke paas hold',
         'Elbows down point karein — dumbbell ke end on haath',
@@ -1707,7 +1768,8 @@ class ExerciseData {
       instructionsEn: 'Rear foot elevated, squat',
       instructionsUr: 'Rear foot elevated, squat',
       musclesWorked: const ['Quads', 'Glutes'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bulgarian-Split-Squat.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bulgarian-Split-Squat.gif',
       detailedStepsEn: const [
         'Bench ke saamne stand — 2 feet distance',
         'Ek foot peeche bench on keep (laces down)',
@@ -1764,7 +1826,8 @@ class ExerciseData {
       instructionsEn: 'Back bench on, hips thrust',
       instructionsUr: 'Back bench pe, hips thrust',
       musclesWorked: const ['Glutes', 'Hamstrings'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Hip-Thrust.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Hip-Thrust.gif',
       detailedStepsEn: const [
         'Bench ke saamne floor sit on',
         'Upper back (shoulder blade area) bench ke edge on keep',
@@ -1831,7 +1894,8 @@ class ExerciseData {
       instructionsEn: 'Bar overhead press',
       instructionsUr: 'Bar overhead push karo',
       musclesWorked: const ['Front Delts', 'Side Delts'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Overhead-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Overhead-Press.gif',
       detailedStepsEn: const [
         'Bar front rack position in lo — shoulders on',
         'Grip shoulder-width slightly wider',
@@ -1888,7 +1952,8 @@ class ExerciseData {
       instructionsEn: 'Dumbbells overhead push',
       instructionsUr: 'Dumbbells overhead push',
       musclesWorked: const ['Front Delts', 'Triceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
       detailedStepsEn: const [
         'Dumbbells dono haathon in hold',
         'Seated or standing — bench on or khade hokar',
@@ -1943,7 +2008,8 @@ class ExerciseData {
       instructionsEn: 'Arms side in raise',
       instructionsUr: 'Arms side mein raise',
       musclesWorked: const ['Side Delts'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif',
       detailedStepsEn: const [
         'Dumbbells sides on hold — standing position',
         'Slight bend elbows in (10-15°) — fixed keep',
@@ -2004,7 +2070,8 @@ class ExerciseData {
       instructionsEn: 'Arms front in raise',
       instructionsUr: 'Arms front mein raise',
       musclesWorked: const ['Front Delts'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Front-Raise.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Front-Raise.gif',
       detailedStepsEn: const [
         'Dumbbells thighs ke saamne hold — palms body ki taraf',
         'Slight elbow bend — fixed angle',
@@ -2061,7 +2128,8 @@ class ExerciseData {
       instructionsEn: 'Bent over, arms back raise',
       instructionsUr: 'Bent over, arms back raise',
       musclesWorked: const ['Rear Delts'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Rear-Delt-Fly.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Rear-Delt-Fly.gif',
       detailedStepsEn: const [
         'Dumbbells hold, hip hinge — bent over position',
         'Back flat, chest down — almost parallel to floor',
@@ -2118,7 +2186,8 @@ class ExerciseData {
       instructionsEn: 'Rotate karte hue press',
       instructionsUr: 'Rotate karte hue press',
       musclesWorked: const ['All Delts'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Arnold-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Arnold-Press.gif',
       detailedStepsEn: const [
         'Dumbbells chest ke saamne hold — palms FACING YOU',
         'Seated or standing position',
@@ -2175,7 +2244,8 @@ class ExerciseData {
       instructionsEn: 'Bar chin to pull',
       instructionsUr: 'Bar chin tak pull',
       musclesWorked: const ['Side Delts', 'Traps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Upright-Row.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Upright-Row.gif',
       detailedStepsEn: const [
         'Hold the bar at shoulder-width or narrow grip hold',
         'Standing position — bar thighs ke saamne',
@@ -2230,7 +2300,8 @@ class ExerciseData {
       instructionsEn: 'Shoulders upar shrug',
       instructionsUr: 'Shoulders upar shrug',
       musclesWorked: const ['Traps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shrug.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shrug.gif',
       detailedStepsEn: const [
         'Dumbbells or barbell hold — sides on or front in',
         'Standing straight — shoulders relaxed, arms extended',
@@ -2289,7 +2360,8 @@ class ExerciseData {
       instructionsEn: 'Standing, bar curl chest to',
       instructionsUr: 'Standing, bar curl chest tak',
       musclesWorked: const ['Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Curl.gif',
       detailedStepsEn: const [
         'Hold the bar at shoulder-width underhand grip hold',
         'Standing straight — elbows sides on locked',
@@ -2344,7 +2416,8 @@ class ExerciseData {
       instructionsEn: 'Alternate or together curl',
       instructionsUr: 'Alternate ya together curl',
       musclesWorked: const ['Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif',
       detailedStepsEn: const [
         'Dumbbells sides on hold — palms forward (supinated)',
         'Standing straight — feet shoulder-width',
@@ -2399,7 +2472,8 @@ class ExerciseData {
       instructionsEn: 'Neutral grip curl',
       instructionsUr: 'Neutral grip curl',
       musclesWorked: const ['Biceps', 'Forearms'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif',
       detailedStepsEn: const [
         'Dumbbells sides on hold — NEUTRAL grip (palms facing body)',
         'Grip position poore movement in SAME rehna needed',
@@ -2454,7 +2528,8 @@ class ExerciseData {
       instructionsEn: 'Preacher bench on curl',
       instructionsUr: 'Preacher bench pe curl',
       musclesWorked: const ['Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Preacher-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Preacher-Curl.gif',
       detailedStepsEn: const [
         'Preacher bench sit on — armpit pad ke top on',
         'EZ bar or dumbbell hold — underhand grip',
@@ -2511,7 +2586,8 @@ class ExerciseData {
       instructionsEn: 'On an incline bench, curl',
       instructionsUr: 'Incline bench pe curl',
       musclesWorked: const ['Biceps Long Head'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Curl.gif',
       detailedStepsEn: const [
         'Incline bench 45-60° on set',
         'Bench lie on — dumbbells arms extended down',
@@ -2568,7 +2644,8 @@ class ExerciseData {
       instructionsEn: 'Elbow thigh on, curl',
       instructionsUr: 'Elbow thigh pe, curl',
       musclesWorked: const ['Biceps Peak'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Concentration-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Concentration-Curl.gif',
       detailedStepsEn: const [
         'Sit on the bench — legs wide spread',
         'Ek haath in dumbbell hold',
@@ -2627,7 +2704,8 @@ class ExerciseData {
       instructionsEn: 'Constant tension curl',
       instructionsUr: 'Constant tension curl',
       musclesWorked: const ['Biceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Curl.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Curl.gif',
       detailedStepsEn: const [
         'Low pulley on straight bar or EZ bar lagao',
         'Face cable machine — grip underhand',
@@ -2688,7 +2766,8 @@ class ExerciseData {
       instructionsEn: 'Bar push down, elbows fixed',
       instructionsUr: 'Bar push down, elbows fixed',
       musclesWorked: const ['Triceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pushdown.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pushdown.gif',
       detailedStepsEn: const [
         'High pulley on straight bar or V-bar lagao',
         'Overhand grip hold — shoulder-width or narrow',
@@ -2745,7 +2824,8 @@ class ExerciseData {
       instructionsEn: 'Lying, bar forehead to',
       instructionsUr: 'Lying, bar forehead tak',
       musclesWorked: const ['Triceps Long Head'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Skull-Crusher.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Skull-Crusher.gif',
       detailedStepsEn: const [
         'Lie on a flat bench — EZ bar or straight bar hold',
         'Arms extended upar — bar ceiling ki taraf',
@@ -2804,7 +2884,8 @@ class ExerciseData {
       instructionsEn: 'Arms overhead, extend',
       instructionsUr: 'Arms overhead, extend',
       musclesWorked: const ['Triceps Long Head'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Triceps-Extension.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Triceps-Extension.gif',
       detailedStepsEn: const [
         'Dumbbell dono haathon hold — diamond grip (one end hold)',
         'Seated or standing — dumbbell overhead lift',
@@ -2861,7 +2942,8 @@ class ExerciseData {
       instructionsEn: 'Narrow grip bench',
       instructionsUr: 'Narrow grip bench',
       musclesWorked: const ['Triceps', 'Chest'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Close-Grip-Bench-Press.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Close-Grip-Bench-Press.gif',
       detailedStepsEn: const [
         'Lie on a flat bench — regular bench press position',
         'Bar NARROW grip hold — shoulder-width or slightly narrower',
@@ -2918,7 +3000,8 @@ class ExerciseData {
       instructionsEn: 'Body upright, dips',
       instructionsUr: 'Body upright, dips',
       musclesWorked: const ['Triceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Triceps-Dips.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/06/Triceps-Dips.gif',
       detailedStepsEn: const [
         'Dip bars on mount — arms extended',
         'Body UPRIGHT keep (chest dips in forward lean tha)',
@@ -2975,7 +3058,8 @@ class ExerciseData {
       instructionsEn: 'Hands diamond shape',
       instructionsUr: 'Hands diamond shape',
       musclesWorked: const ['Triceps', 'Chest'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Diamond-Push-Up.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Diamond-Push-Up.gif',
       detailedStepsEn: const [
         'Push-up position in aao',
         'Hands CLOSE bring — thumbs and index fingers touch',
@@ -3034,7 +3118,8 @@ class ExerciseData {
       instructionsEn: 'Rope spread at bottom',
       instructionsUr: 'Rope spread at bottom',
       musclesWorked: const ['Triceps'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Rope-Pushdown.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Rope-Pushdown.gif',
       detailedStepsEn: const [
         'High pulley on rope attachment lagao',
         'Rope palms facing each other hold',
@@ -3097,7 +3182,8 @@ class ExerciseData {
       instructionsEn: 'Forearms on, body straight',
       instructionsUr: 'Forearms pe, body straight',
       musclesWorked: const ['Abs', 'Obliques'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Front-Plank.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Front-Plank.gif',
       detailedStepsEn: const [
         'Floor on forearms keep — elbows shoulders ke down',
         'Toes on balance — legs extended',
@@ -3160,7 +3246,8 @@ class ExerciseData {
       instructionsEn: 'Upper body curl, abs squeeze',
       instructionsUr: 'Upper body curl, abs squeeze',
       musclesWorked: const ['Upper Abs'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Crunch.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Crunch.gif',
       detailedStepsEn: const [
         'Floor lie on — knees bent, feet flat',
         'Hands chest on cross or ears ke paas (not behind head)',
@@ -3221,7 +3308,8 @@ class ExerciseData {
       instructionsEn: 'Lying, legs raise 90°',
       instructionsUr: 'Lying, legs raise 90°',
       musclesWorked: const ['Lower Abs'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lying-Leg-Raise.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lying-Leg-Raise.gif',
       detailedStepsEn: const [
         'Floor lie on — legs extended, arms sides on',
         'Lower back floor on PRESS — arch don\'t',
@@ -3278,7 +3366,8 @@ class ExerciseData {
       instructionsEn: 'Seated, twist side to side',
       instructionsUr: 'Seated, twist side to side',
       musclesWorked: const ['Obliques'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Russian-Twist.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Russian-Twist.gif',
       detailedStepsEn: const [
         'Floor sit on — knees bent, feet flat (or elevated)',
         'Upper body peeche lean — 45° angle',
@@ -3337,7 +3426,8 @@ class ExerciseData {
       instructionsEn: 'Plank, knees alternate',
       instructionsUr: 'Plank, knees alternate',
       musclesWorked: const ['Core', 'Cardio'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Mountain-Climber.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Mountain-Climber.gif',
       detailedStepsEn: const [
         'High plank position in aao — arms extended',
         'Hands shoulders ke down — body straight',
@@ -3398,7 +3488,8 @@ class ExerciseData {
       instructionsEn: 'Lying, opposite arm/leg',
       instructionsUr: 'Lying, opposite arm/leg',
       musclesWorked: const ['Core'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Dead-Bug.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/06/Dead-Bug.gif',
       detailedStepsEn: const [
         'Floor lie on — face up',
         'Arms ceiling ki taraf extend',
@@ -3459,7 +3550,8 @@ class ExerciseData {
       instructionsEn: 'Elbow to opposite knee',
       instructionsUr: 'Elbow to opposite knee',
       musclesWorked: const ['Abs', 'Obliques'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bicycle-Crunch.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bicycle-Crunch.gif',
       detailedStepsEn: const [
         'Floor lie on — hands ears ke paas (not behind head)',
         'Legs lift — knees 90° bend',
@@ -3518,7 +3610,8 @@ class ExerciseData {
       instructionsEn: 'Hanging, legs raise',
       instructionsUr: 'Hanging, legs raise',
       musclesWorked: const ['Lower Abs'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hanging-Leg-Raise.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hanging-Leg-Raise.gif',
       detailedStepsEn: const [
         'Pull-up bar hang — overhand grip',
         'Dead hang — body completely still, no swinging',
@@ -3640,7 +3733,8 @@ class ExerciseData {
       instructionsEn: 'Steady or interval',
       instructionsUr: 'Steady or interval',
       musclesWorked: const ['Heart', 'Legs'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2022/02/Stationary-Bike-Walk.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2022/02/Stationary-Bike-Walk.gif',
       detailedStepsEn: const [
         'Seat height adjust — leg slightly bent at bottom',
         'Handlebar comfortable position on',
@@ -3697,7 +3791,8 @@ class ExerciseData {
       instructionsEn: 'Steady pace jump',
       instructionsUr: 'Steady pace jump',
       musclesWorked: const ['Heart', 'Calves'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jump-Rope.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jump-Rope.gif',
       detailedStepsEn: const [
         'Rope handles hold — rope peeche start',
         'Wrists rotate — full arm don\'t ghumao',
@@ -3758,7 +3853,8 @@ class ExerciseData {
       instructionsEn: 'Squat, push-up, jump',
       instructionsUr: 'Squat, push-up, jump',
       musclesWorked: const ['Full Body'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Burpee.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Burpee.gif',
       detailedStepsEn: const [
         'Standing position start',
         'Squat down — hands floor on',
@@ -3821,7 +3917,8 @@ class ExerciseData {
       instructionsEn: 'Jump, arms legs spread',
       instructionsUr: 'Jump, arms legs spread',
       musclesWorked: const ['Full Body'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jumping-Jack.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jumping-Jack.gif',
       detailedStepsEn: const [
         'Standing — feet together, arms sides on',
         'Jump — simultaneously legs spread + arms overhead',
@@ -3878,7 +3975,8 @@ class ExerciseData {
       instructionsEn: 'Knees chest level',
       instructionsUr: 'Knees chest level',
       musclesWorked: const ['Heart', 'Legs'],
-      gifUrl: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/High-Knee-Run.gif',
+      gifUrl:
+          'https://fitnessprogramer.com/wp-content/uploads/2021/02/High-Knee-Run.gif',
       detailedStepsEn: const [
         'Standing tall — feet hip-width apart',
         'Run in place — knees upar lift',

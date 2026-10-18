@@ -1,6 +1,7 @@
 // lib/widgets/fg_card.dart
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
+
 class FGCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -26,19 +27,23 @@ class FGCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: color ?? FitGenieTheme.card,
-          borderRadius: BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
-          border: border ?? Border.all(
-            color: Colors.white.withValues(alpha: 0.06),
-            width: 1,
-          ),
+          borderRadius:
+              BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
+          border: border ??
+              Border.all(
+                color: Colors.white.withValues(alpha: 0.06),
+                width: 1,
+              ),
           boxShadow: boxShadow,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
+          borderRadius:
+              BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
           child: Material(
             color: Colors.transparent,
             child: Padding(
-              padding: padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
+              padding:
+                  padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
               child: child,
             ),
           ),

@@ -61,7 +61,8 @@ class GoogleFitService {
       // ✅ FIX: If silent sign in fails, user needs to manually connect
       // Don't auto-popup sign in dialog here
       if (_currentUser == null) {
-        debugPrint('🔐 Not authorized: No signed-in user (needs manual connect)');
+        debugPrint(
+            '🔐 Not authorized: No signed-in user (needs manual connect)');
         return false;
       }
 
@@ -92,26 +93,28 @@ class GoogleFitService {
       final startMillis = oneHourAgo.millisecondsSinceEpoch;
       final endMillis = now.millisecondsSinceEpoch;
 
-      final response = await http.post(
-        Uri.parse(
-            'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
-        headers: {
-          'Authorization': 'Bearer $_accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'aggregateBy': [
-            {
-              'dataTypeName': 'com.google.step_count.delta',
-              'dataSourceId':
-              'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
-            }
-          ],
-          'bucketByTime': {'durationMillis': endMillis - startMillis},
-          'startTimeMillis': startMillis,
-          'endTimeMillis': endMillis,
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse(
+                'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
+            headers: {
+              'Authorization': 'Bearer $_accessToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'aggregateBy': [
+                {
+                  'dataTypeName': 'com.google.step_count.delta',
+                  'dataSourceId':
+                      'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
+                }
+              ],
+              'bucketByTime': {'durationMillis': endMillis - startMillis},
+              'startTimeMillis': startMillis,
+              'endTimeMillis': endMillis,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         _consecutiveErrors = 0;
@@ -124,8 +127,6 @@ class GoogleFitService {
       return false;
     }
   }
-
-
 
   // ═══════════════════════════════════════════
   // 🔐 CONNECT TO GOOGLE FIT — FIXED!
@@ -140,7 +141,8 @@ class GoogleFitService {
       // ✅ FIX: If silent fails, DON'T auto popup
       // User should manually tap "Connect Google Fit" button
       if (_currentUser == null) {
-        debugPrint('⚠️ Google Fit: Silent sign-in failed, needs manual connect');
+        debugPrint(
+            '⚠️ Google Fit: Silent sign-in failed, needs manual connect');
         _isConnected = false;
         return false;
       }
@@ -250,26 +252,28 @@ class GoogleFitService {
       final startMillis = startOfDay.millisecondsSinceEpoch;
       final endMillis = now.millisecondsSinceEpoch;
 
-      final response = await http.post(
-        Uri.parse(
-            'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
-        headers: {
-          'Authorization': 'Bearer $_accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'aggregateBy': [
-            {
-              'dataTypeName': 'com.google.step_count.delta',
-              'dataSourceId':
-              'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
-            }
-          ],
-          'bucketByTime': {'durationMillis': endMillis - startMillis},
-          'startTimeMillis': startMillis,
-          'endTimeMillis': endMillis,
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse(
+                'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
+            headers: {
+              'Authorization': 'Bearer $_accessToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'aggregateBy': [
+                {
+                  'dataTypeName': 'com.google.step_count.delta',
+                  'dataSourceId':
+                      'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
+                }
+              ],
+              'bucketByTime': {'durationMillis': endMillis - startMillis},
+              'startTimeMillis': startMillis,
+              'endTimeMillis': endMillis,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -306,26 +310,28 @@ class GoogleFitService {
       final startMillis = startOfDay.millisecondsSinceEpoch;
       final endMillis = now.millisecondsSinceEpoch;
 
-      final response = await http.post(
-        Uri.parse(
-            'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
-        headers: {
-          'Authorization': 'Bearer $_accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'aggregateBy': [
-            {
-              'dataTypeName': 'com.google.step_count.delta',
-              'dataSourceId':
-              'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
-            }
-          ],
-          'bucketByTime': {'durationMillis': endMillis - startMillis},
-          'startTimeMillis': startMillis,
-          'endTimeMillis': endMillis,
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse(
+                'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
+            headers: {
+              'Authorization': 'Bearer $_accessToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'aggregateBy': [
+                {
+                  'dataTypeName': 'com.google.step_count.delta',
+                  'dataSourceId':
+                      'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
+                }
+              ],
+              'bucketByTime': {'durationMillis': endMillis - startMillis},
+              'startTimeMillis': startMillis,
+              'endTimeMillis': endMillis,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -358,26 +364,28 @@ class GoogleFitService {
       final startMillis = sevenDaysAgo.millisecondsSinceEpoch;
       final endMillis = now.millisecondsSinceEpoch;
 
-      final response = await http.post(
-        Uri.parse(
-            'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
-        headers: {
-          'Authorization': 'Bearer $_accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'aggregateBy': [
-            {
-              'dataTypeName': 'com.google.step_count.delta',
-              'dataSourceId':
-              'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
-            }
-          ],
-          'bucketByTime': {'durationMillis': 86400000},
-          'startTimeMillis': startMillis,
-          'endTimeMillis': endMillis,
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse(
+                'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
+            headers: {
+              'Authorization': 'Bearer $_accessToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'aggregateBy': [
+                {
+                  'dataTypeName': 'com.google.step_count.delta',
+                  'dataSourceId':
+                      'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps',
+                }
+              ],
+              'bucketByTime': {'durationMillis': 86400000},
+              'startTimeMillis': startMillis,
+              'endTimeMillis': endMillis,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -413,22 +421,24 @@ class GoogleFitService {
       final startMillis = startOfDay.millisecondsSinceEpoch;
       final endMillis = now.millisecondsSinceEpoch;
 
-      final response = await http.post(
-        Uri.parse(
-            'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
-        headers: {
-          'Authorization': 'Bearer $_accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'aggregateBy': [
-            {'dataTypeName': 'com.google.calories.expended'}
-          ],
-          'bucketByTime': {'durationMillis': endMillis - startMillis},
-          'startTimeMillis': startMillis,
-          'endTimeMillis': endMillis,
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse(
+                'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
+            headers: {
+              'Authorization': 'Bearer $_accessToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'aggregateBy': [
+                {'dataTypeName': 'com.google.calories.expended'}
+              ],
+              'bucketByTime': {'durationMillis': endMillis - startMillis},
+              'startTimeMillis': startMillis,
+              'endTimeMillis': endMillis,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -460,22 +470,24 @@ class GoogleFitService {
       final startMillis = startOfDay.millisecondsSinceEpoch;
       final endMillis = now.millisecondsSinceEpoch;
 
-      final response = await http.post(
-        Uri.parse(
-            'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
-        headers: {
-          'Authorization': 'Bearer $_accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'aggregateBy': [
-            {'dataTypeName': 'com.google.distance.delta'}
-          ],
-          'bucketByTime': {'durationMillis': endMillis - startMillis},
-          'startTimeMillis': startMillis,
-          'endTimeMillis': endMillis,
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse(
+                'https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate'),
+            headers: {
+              'Authorization': 'Bearer $_accessToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'aggregateBy': [
+                {'dataTypeName': 'com.google.distance.delta'}
+              ],
+              'bucketByTime': {'durationMillis': endMillis - startMillis},
+              'startTimeMillis': startMillis,
+              'endTimeMillis': endMillis,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -488,8 +500,6 @@ class GoogleFitService {
       return 0;
     }
   }
-
-
 
   // ═══════════════════════════════════════════
   // 🔧 PARSE HELPERS

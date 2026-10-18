@@ -27,11 +27,7 @@ class AdsService {
       },
     );
 
-
     await completer.future;
-
-
-
 
     if (await ConsentInformation.instance.canRequestAds()) {
       await MobileAds.instance.initialize();

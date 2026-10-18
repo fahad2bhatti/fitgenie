@@ -340,7 +340,8 @@ class _MealScannerScreenState extends State<MealScannerScreen>
                   icon: const Icon(Icons.add),
                   label: Text(
                     AppStrings.get('scanner_add'),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   style: FilledButton.styleFrom(
                     backgroundColor: FitGenieTheme.primary,
@@ -474,7 +475,8 @@ class _MealScannerScreenState extends State<MealScannerScreen>
       decoration: BoxDecoration(
         color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
+        border:
+            Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
@@ -490,7 +492,8 @@ class _MealScannerScreenState extends State<MealScannerScreen>
           Expanded(
             child: Text(
               AppStrings.get('scanner_loading'),
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -542,7 +545,8 @@ class _MealScannerScreenState extends State<MealScannerScreen>
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
+        border:
+            Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
@@ -576,14 +580,18 @@ class _MealScannerScreenState extends State<MealScannerScreen>
                 ),
                 const SizedBox(height: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: FitGenieTheme.primary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     _analysis!.quantity,
-                    style: const TextStyle(color: FitGenieTheme.primary, fontSize: 11, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                        color: FitGenieTheme.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -706,24 +714,33 @@ class _ScanCornersPainter extends CustomPainter {
     const inset = 16.0;
 
     // Top-left
-    canvas.drawLine(const Offset(inset, inset + len), const Offset(inset, inset), paint);
-    canvas.drawLine(const Offset(inset, inset), const Offset(inset + len, inset), paint);
+    canvas.drawLine(
+        const Offset(inset, inset + len), const Offset(inset, inset), paint);
+    canvas.drawLine(
+        const Offset(inset, inset), const Offset(inset + len, inset), paint);
 
     // Top-right
-    canvas.drawLine(Offset(size.width - inset, inset + len), Offset(size.width - inset, inset), paint);
-    canvas.drawLine(Offset(size.width - inset, inset), Offset(size.width - inset - len, inset), paint);
+    canvas.drawLine(Offset(size.width - inset, inset + len),
+        Offset(size.width - inset, inset), paint);
+    canvas.drawLine(Offset(size.width - inset, inset),
+        Offset(size.width - inset - len, inset), paint);
 
     // Bottom-left
-    canvas.drawLine(Offset(inset, size.height - inset - len), Offset(inset, size.height - inset), paint);
-    canvas.drawLine(Offset(inset, size.height - inset), Offset(inset + len, size.height - inset), paint);
+    canvas.drawLine(Offset(inset, size.height - inset - len),
+        Offset(inset, size.height - inset), paint);
+    canvas.drawLine(Offset(inset, size.height - inset),
+        Offset(inset + len, size.height - inset), paint);
 
     // Bottom-right
-    canvas.drawLine(Offset(size.width - inset, size.height - inset - len), Offset(size.width - inset, size.height - inset), paint);
-    canvas.drawLine(Offset(size.width - inset, size.height - inset), Offset(size.width - inset - len, size.height - inset), paint);
+    canvas.drawLine(Offset(size.width - inset, size.height - inset - len),
+        Offset(size.width - inset, size.height - inset), paint);
+    canvas.drawLine(Offset(size.width - inset, size.height - inset),
+        Offset(size.width - inset - len, size.height - inset), paint);
   }
 
   @override
-  bool shouldRepaint(covariant _ScanCornersPainter oldDelegate) => oldDelegate.color != color;
+  bool shouldRepaint(covariant _ScanCornersPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 // ==========================================
@@ -843,7 +860,12 @@ class _BarcodeScannerPage extends StatefulWidget {
 
 class _BarcodeScannerPageState extends State<_BarcodeScannerPage> {
   final MobileScannerController _controller = MobileScannerController(
-    formats: const [BarcodeFormat.ean13, BarcodeFormat.ean8, BarcodeFormat.upcA, BarcodeFormat.upcE],
+    formats: const [
+      BarcodeFormat.ean13,
+      BarcodeFormat.ean8,
+      BarcodeFormat.upcA,
+      BarcodeFormat.upcE
+    ],
   );
   bool _handled = false;
 

@@ -8,7 +8,7 @@ import '../core/app_strings.dart';
 
 class LanguageSelectorDialog {
   static Future<void> show(BuildContext context) async {
-    final provider = LanguageProvider();  // ✅ FIX: Removed .instance
+    final provider = LanguageProvider(); // ✅ FIX: Removed .instance
     final isEnglish = provider.isEnglish;
 
     return showModalBottomSheet(
@@ -132,9 +132,7 @@ class LanguageSelectorDialog {
               : FitGenieTheme.card2,
           borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
           border: Border.all(
-            color: isSelected
-                ? FitGenieTheme.primary
-                : FitGenieTheme.border,
+            color: isSelected ? FitGenieTheme.primary : FitGenieTheme.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -152,9 +150,8 @@ class LanguageSelectorDialog {
                       color: isSelected
                           ? FitGenieTheme.primary
                           : FitGenieTheme.text,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                       fontSize: 16,
                     ),
                     maxLines: 1,

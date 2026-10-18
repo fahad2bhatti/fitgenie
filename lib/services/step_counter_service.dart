@@ -84,7 +84,8 @@ class StepCounterService {
     }
 
     _isInitialized = true;
-    debugPrint('✅ Step counter initialized — Steps: $_todaySteps (Google Fit: $_useGoogleFit)');
+    debugPrint(
+        '✅ Step counter initialized — Steps: $_todaySteps (Google Fit: $_useGoogleFit)');
     return true;
   }
 
@@ -98,7 +99,8 @@ class StepCounterService {
 
     try {
       // Check 1: Health Connect app installed hai?
-      status.healthConnectAvailable = await _googleFit.isHealthConnectAvailable();
+      status.healthConnectAvailable =
+          await _googleFit.isHealthConnectAvailable();
 
       if (!status.healthConnectAvailable) {
         status.errorMessage = 'Health Connect app not installed on this device';
@@ -122,7 +124,8 @@ class StepCounterService {
       status.healthAuthorized = await _googleFit.isAuthorized();
 
       if (!status.healthAuthorized) {
-        status.errorMessage = 'Google Fit not authorized. Tap Connect to sign in.';
+        status.errorMessage =
+            'Google Fit not authorized. Tap Connect to sign in.';
         status.overallStatus = GoogleFitConnectionStatus.notAuthorized;
         onGoogleFitStatusChanged?.call(status.overallStatus);
         return status;
@@ -137,13 +140,13 @@ class StepCounterService {
         status.errorMessage = '';
       } else {
         status.overallStatus = GoogleFitConnectionStatus.connectedNoData;
-        status.errorMessage = 'Connected but no step data yet. Walk a few steps!';
+        status.errorMessage =
+            'Connected but no step data yet. Walk a few steps!';
       }
 
       // Check 5: Last sync time
       status.lastSyncTime = DateTime.now();
       status.isActivelysyncing = _useGoogleFit;
-
     } catch (e) {
       status.errorMessage = 'Error checking status: $e';
       status.overallStatus = GoogleFitConnectionStatus.error;
@@ -154,10 +157,6 @@ class StepCounterService {
     return status;
   }
 
-
-
-
-
   // ═══════════════════════════════════════════
   // 🔄 GOOGLE FIT SYNC (Every 5 min)
   // ═══════════════════════════════════════════
@@ -167,7 +166,7 @@ class StepCounterService {
     _syncTimer?.cancel();
     _syncTimer = Timer.periodic(
       const Duration(minutes: 5),
-          (_) => _syncFromGoogleFit(),
+      (_) => _syncFromGoogleFit(),
     );
     debugPrint('🔄 Google Fit sync started (every 5 min)');
   }
@@ -345,14 +344,16 @@ class StepCounterService {
           .set({
         'steps': _todaySteps,
         'stepsCalories': calculateCaloriesBurned(_todaySteps).round(),
-        'stepsDistance': double.parse(calculateDistance(_todaySteps).toStringAsFixed(2)),
+        'stepsDistance':
+            double.parse(calculateDistance(_todaySteps).toStringAsFixed(2)),
         'stepsActiveMinutes': calculateActiveMinutes(_todaySteps),
         'stepsUpdatedAt': FieldValue.serverTimestamp(),
         'stepsSource': _useGoogleFit ? 'google_fit' : 'pedometer',
         'googleFitEnabled': _useGoogleFit,
       }, SetOptions(merge: true));
 
-      debugPrint('💾 Steps saved: $_todaySteps (source: ${_useGoogleFit ? "Google Fit" : "Pedometer"})');
+      debugPrint(
+          '💾 Steps saved: $_todaySteps (source: ${_useGoogleFit ? "Google Fit" : "Pedometer"})');
     } catch (e) {
       debugPrint('❌ Save steps error: $e');
     }
@@ -520,13 +521,14 @@ class GoogleFitStatus {
   int todaySteps = 0;
   DateTime? lastSyncTime;
   String errorMessage = '';
-  GoogleFitConnectionStatus overallStatus = GoogleFitConnectionStatus.disconnected;
+  GoogleFitConnectionStatus overallStatus =
+      GoogleFitConnectionStatus.disconnected;
 
   bool get isFullyWorking =>
       healthConnectAvailable &&
-          activityPermissionGranted &&
-          healthAuthorized &&
-          dataAccessible;
+      activityPermissionGranted &&
+      healthAuthorized &&
+      dataAccessible;
 
   String get statusIcon {
     switch (overallStatus) {

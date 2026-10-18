@@ -65,7 +65,8 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
+            style:
+                ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: Text(
               AppStrings.get('delete'),
               style: const TextStyle(color: Colors.white),
@@ -175,7 +176,8 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                               width: 52,
                               height: 52,
                               decoration: BoxDecoration(
-                                color: FitGenieTheme.primary.withValues(alpha: 0.15),
+                                color: FitGenieTheme.primary
+                                    .withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Center(
@@ -227,7 +229,6 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                           ],
                         ),
                         const SizedBox(height: 12),
-
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
@@ -235,12 +236,11 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                             _infoTag('${meal.protein}g P', FitGenieTheme.teal),
                             _infoTag('${meal.carbs}g C', FitGenieTheme.warning),
                             _infoTag('${meal.fats}g F', Colors.purple),
-                            _infoTag(meal.mealType.toUpperCase(), FitGenieTheme.primary),
+                            _infoTag(meal.mealType.toUpperCase(),
+                                FitGenieTheme.primary),
                           ],
                         ),
-
                         const SizedBox(height: 12),
-
                         ...meal.items.take(4).map((item) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 6),
@@ -262,7 +262,6 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                             ),
                           );
                         }),
-
                         if (meal.items.length > 4)
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
@@ -274,14 +273,14 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                               ),
                             ),
                           ),
-
                         if (widget.pickerMode) ...[
                           const SizedBox(height: 14),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
-                              color: FitGenieTheme.primary.withValues(alpha: 0.12),
+                              color:
+                                  FitGenieTheme.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(

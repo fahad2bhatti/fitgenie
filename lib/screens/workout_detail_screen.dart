@@ -102,7 +102,7 @@ class WorkoutDetailScreen extends StatelessWidget {
   Exercise? _findExerciseByName(String name) {
     try {
       return ExerciseData.getAllExercises().firstWhere(
-            (e) => e.name.toLowerCase() == name.toLowerCase(),
+        (e) => e.name.toLowerCase() == name.toLowerCase(),
       );
     } catch (_) {
       return null;
@@ -175,23 +175,22 @@ class WorkoutDetailScreen extends StatelessWidget {
           children: [
             _buildHeaderCard(context, color),
             const SizedBox(height: 18),
-
             _buildStatsRow(color),
             const SizedBox(height: 18),
-
             if (plannedExercises.isNotEmpty) ...[
-              _buildSectionTitle(AppStrings.get('workout_detail_planned'), color),
+              _buildSectionTitle(
+                  AppStrings.get('workout_detail_planned'), color),
               const SizedBox(height: 10),
               _buildPlannedExercises(color),
               const SizedBox(height: 18),
             ],
-
-            _buildSectionTitle(AppStrings.get('workout_detail_performed'), color),
+            _buildSectionTitle(
+                AppStrings.get('workout_detail_performed'), color),
             const SizedBox(height: 10),
             _buildPerformedExercises(color),
             const SizedBox(height: 18),
-
-            _buildSectionTitle(AppStrings.get('workout_detail_all_sets'), color),
+            _buildSectionTitle(
+                AppStrings.get('workout_detail_all_sets'), color),
             const SizedBox(height: 10),
             _buildAllLoggedSets(),
             const SizedBox(height: 30),
@@ -267,7 +266,6 @@ class WorkoutDetailScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-
           Row(
             children: [
               _infoPill(
@@ -287,7 +285,6 @@ class WorkoutDetailScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-
           Row(
             children: [
               Expanded(
@@ -479,7 +476,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                 if (exercise != null && exercise.hasGif)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child:Image.asset(
+                    child: Image.asset(
                       exercise.gifAsset,
                       width: 68,
                       height: 68,
@@ -501,8 +498,8 @@ class WorkoutDetailScreen extends StatelessWidget {
                       color: FitGenieTheme.background,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.fitness_center,
-                        color: Colors.white24),
+                    child:
+                        const Icon(Icons.fitness_center, color: Colors.white24),
                   ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -547,8 +544,7 @@ class WorkoutDetailScreen extends StatelessWidget {
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.info_outline,
-                  size: 36, color: FitGenieTheme.muted),
+              Icon(Icons.info_outline, size: 36, color: FitGenieTheme.muted),
               const SizedBox(height: 8),
               Text(
                 AppStrings.get('workout_detail_no_logs'),
@@ -634,7 +630,8 @@ class WorkoutDetailScreen extends StatelessWidget {
                             spacing: 6,
                             runSpacing: 6,
                             children: [
-                              _tinyInfo('Vol ${totalExerciseVolume.toStringAsFixed(0)}'),
+                              _tinyInfo(
+                                  'Vol ${totalExerciseVolume.toStringAsFixed(0)}'),
                               if (exercise != null)
                                 _tinyInfo(exercise.bodyPart),
                             ],
@@ -660,7 +657,8 @@ class WorkoutDetailScreen extends StatelessWidget {
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: FitGenieTheme.primary.withValues(alpha: 0.15),
+                            color:
+                                FitGenieTheme.primary.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Center(

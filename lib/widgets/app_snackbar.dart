@@ -4,16 +4,15 @@
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
 
-
 class AppSnackbar {
   // ──────────────────────────────────────────
   // 🎯 Show Error Snackbar
   // ──────────────────────────────────────────
   static void showError(
-      BuildContext context,
-      String message, {
-        Duration duration = const Duration(seconds: 3),
-      }) {
+    BuildContext context,
+    String message, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     _show(
       context,
       message: message,
@@ -26,10 +25,10 @@ class AppSnackbar {
   // ✅ Show Success Snackbar
   // ──────────────────────────────────────────
   static void showSuccess(
-      BuildContext context,
-      String message, {
-        Duration duration = const Duration(seconds: 3),
-      }) {
+    BuildContext context,
+    String message, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     _show(
       context,
       message: message,
@@ -42,10 +41,10 @@ class AppSnackbar {
   // ℹ️ Show Info Snackbar
   // ──────────────────────────────────────────
   static void showInfo(
-      BuildContext context,
-      String message, {
-        Duration duration = const Duration(seconds: 3),
-      }) {
+    BuildContext context,
+    String message, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     _show(
       context,
       message: message,
@@ -58,10 +57,10 @@ class AppSnackbar {
   // ⚠️ Show Warning Snackbar
   // ──────────────────────────────────────────
   static void showWarning(
-      BuildContext context,
-      String message, {
-        Duration duration = const Duration(seconds: 3),
-      }) {
+    BuildContext context,
+    String message, {
+    Duration duration = const Duration(seconds: 3),
+  }) {
     _show(
       context,
       message: message,
@@ -74,11 +73,11 @@ class AppSnackbar {
   // 🧠 Core Show Method
   // ──────────────────────────────────────────
   static void _show(
-      BuildContext context, {
-        required String message,
-        required SnackbarType type,
-        required Duration duration,
-      }) {
+    BuildContext context, {
+    required String message,
+    required SnackbarType type,
+    required Duration duration,
+  }) {
     // Remove any existing snackbar
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
 
@@ -88,7 +87,7 @@ class AppSnackbar {
     // Show premium snackbar
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: _buildContent(context, message, colors),  // ✅ FIX: Pass context
+        content: _buildContent(context, message, colors), // ✅ FIX: Pass context
         backgroundColor: Colors.transparent,
         elevation: 0,
         duration: duration,
@@ -109,10 +108,10 @@ class AppSnackbar {
   // 🎨 Build Snackbar Content
   // ──────────────────────────────────────────
   static Widget _buildContent(
-      BuildContext context,  // ✅ FIX: Added context parameter
-      String message,
-      _SnackbarColors colors,
-      ) {
+    BuildContext context, // ✅ FIX: Added context parameter
+    String message,
+    _SnackbarColors colors,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -121,7 +120,7 @@ class AppSnackbar {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            colors.backgroundColor.withValues(alpha: 0.92),  // ✅ FIX: withValues
+            colors.backgroundColor.withValues(alpha: 0.92), // ✅ FIX: withValues
             colors.backgroundColor.withValues(alpha: 0.75),
           ],
           begin: Alignment.topLeft,

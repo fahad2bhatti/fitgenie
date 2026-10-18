@@ -95,11 +95,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         _longestStreak = (data['longestStreak'] as num?)?.toInt() ?? 0;
       }
 
-      final workoutsSnap = await _db
-          .collection('users')
-          .doc(_uid)
-          .collection('workouts')
-          .get();
+      final workoutsSnap =
+          await _db.collection('users').doc(_uid).collection('workouts').get();
       _totalWorkouts = workoutsSnap.docs.length;
 
       _currentStreak = await _calculateStreak();
@@ -111,11 +108,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         });
       }
 
-      final logsSnap = await _db
-          .collection('users')
-          .doc(_uid)
-          .collection('dailyLogs')
-          .get();
+      final logsSnap =
+          await _db.collection('users').doc(_uid).collection('dailyLogs').get();
 
       int totalCal = 0;
       int totalPro = 0;
@@ -253,7 +247,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       Challenge(
         id: 'daily_water',
         title: AppStrings.get('challenge_daily_water_title'),
-        description: AppStrings.get('challenge_daily_water_desc', params: {'goal': '$_waterGoal'}),
+        description: AppStrings.get('challenge_daily_water_desc',
+            params: {'goal': '$_waterGoal'}),
         icon: '💧',
         targetValue: _waterGoal,
         currentValue: _todayWater,
@@ -447,8 +442,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         icon: '⭐',
         requirement: 1,
         currentProgress: (_todayCalories >= _caloriesGoal &&
-            _todayProtein >= _proteinGoal &&
-            _todayWorkouts >= 1)
+                _todayProtein >= _proteinGoal &&
+                _todayWorkouts >= 1)
             ? 1
             : 0,
         category: AchievementCategory.special,
@@ -528,20 +523,20 @@ class _ChallengesScreenState extends State<ChallengesScreen>
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
-        children: [
-          _buildStatsHeader(),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
               children: [
-                _buildDailyChallenges(),
-                _buildWeeklyChallenges(),
-                _buildAchievements(),
+                _buildStatsHeader(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildDailyChallenges(),
+                      _buildWeeklyChallenges(),
+                      _buildAchievements(),
+                    ],
+                  ),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -600,7 +595,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppStrings.get('challenges_level', params: {'level': '$_level'}),
+                      AppStrings.get('challenges_level',
+                          params: {'level': '$_level'}),
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -608,7 +604,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      AppStrings.get('challenges_xp', params: {'xp': '$_totalPoints'}),
+                      AppStrings.get('challenges_xp',
+                          params: {'xp': '$_totalPoints'}),
                       style: TextStyle(
                         color: FitGenieTheme.muted,
                         fontSize: 14,
@@ -646,9 +643,12 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildMiniStat('🔥', '$_currentStreak', AppStrings.get('challenges_streak')),
-              _buildMiniStat('🏋️', '$_totalWorkouts', AppStrings.get('challenges_workouts')),
-              _buildMiniStat('🏆', '${_unlockedAchievements.length}', AppStrings.get('challenges_badges_count')),
+              _buildMiniStat(
+                  '🔥', '$_currentStreak', AppStrings.get('challenges_streak')),
+              _buildMiniStat('🏋️', '$_totalWorkouts',
+                  AppStrings.get('challenges_workouts')),
+              _buildMiniStat('🏆', '${_unlockedAchievements.length}',
+                  AppStrings.get('challenges_badges_count')),
             ],
           ),
         ],
@@ -728,7 +728,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     value: completed / total,
                     backgroundColor: Colors.white.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      completed == total ? FitGenieTheme.success : FitGenieTheme.primary,
+                      completed == total
+                          ? FitGenieTheme.success
+                          : FitGenieTheme.primary,
                     ),
                     minHeight: 10,
                   ),
@@ -755,7 +757,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             ),
           ),
           const SizedBox(height: 16),
-          ..._dailyChallenges.map((challenge) => _buildChallengeCard(challenge)),
+          ..._dailyChallenges
+              .map((challenge) => _buildChallengeCard(challenge)),
         ],
       ),
     );
@@ -802,7 +805,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             ),
           ),
           const SizedBox(height: 16),
-          ..._weeklyChallenges.map((challenge) => _buildChallengeCard(challenge)),
+          ..._weeklyChallenges
+              .map((challenge) => _buildChallengeCard(challenge)),
         ],
       ),
     );
@@ -846,7 +850,6 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             ),
             const SizedBox(height: 24),
           ],
-
           if (_lockedAchievements.isNotEmpty) ...[
             Row(
               children: [
@@ -880,7 +883,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
   // 🎯 CHALLENGE CARD
   // ==========================================
   Widget _buildChallengeCard(Challenge challenge) {
-    final progress = (challenge.currentValue / challenge.targetValue).clamp(0.0, 1.0);
+    final progress =
+        (challenge.currentValue / challenge.targetValue).clamp(0.0, 1.0);
     final isCompleted = challenge.currentValue >= challenge.targetValue;
 
     return Container(
@@ -930,7 +934,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
-                              color: isCompleted ? FitGenieTheme.success : Colors.white,
+                              color: isCompleted
+                                  ? FitGenieTheme.success
+                                  : Colors.white,
                             ),
                           ),
                         ),
@@ -948,7 +954,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                           child: Text(
                             '+${challenge.points} XP',
                             style: TextStyle(
-                              color: isCompleted ? FitGenieTheme.success : Colors.amber,
+                              color: isCompleted
+                                  ? FitGenieTheme.success
+                                  : Colors.amber,
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
@@ -979,7 +987,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                     value: progress,
                     backgroundColor: Colors.white.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isCompleted ? FitGenieTheme.success : FitGenieTheme.primary,
+                      isCompleted
+                          ? FitGenieTheme.success
+                          : FitGenieTheme.primary,
                     ),
                     minHeight: 8,
                   ),
@@ -996,7 +1006,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               if (isCompleted)
                 const Padding(
                   padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.check_circle, color: FitGenieTheme.success, size: 20),
+                  child: Icon(Icons.check_circle,
+                      color: FitGenieTheme.success, size: 20),
                 ),
             ],
           ),
@@ -1008,7 +1019,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
   // ==========================================
   // 🏆 ACHIEVEMENT BADGE
   // ==========================================
-  Widget _buildAchievementBadge(Achievement achievement, {bool unlocked = false}) {
+  Widget _buildAchievementBadge(Achievement achievement,
+      {bool unlocked = false}) {
     return GestureDetector(
       onTap: () => _showAchievementDetails(achievement),
       child: Container(
@@ -1027,11 +1039,11 @@ class _ChallengesScreenState extends State<ChallengesScreen>
           ),
           boxShadow: unlocked
               ? [
-            BoxShadow(
-              color: Colors.amber.withValues(alpha: 0.2),
-              blurRadius: 8,
-            ),
-          ]
+                  BoxShadow(
+                    color: Colors.amber.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                  ),
+                ]
               : null,
         ),
         child: Column(
@@ -1061,7 +1073,8 @@ class _ChallengesScreenState extends State<ChallengesScreen>
   // 🔒 LOCKED ACHIEVEMENT CARD
   // ==========================================
   Widget _buildLockedAchievementCard(Achievement achievement) {
-    final progress = (achievement.currentProgress / achievement.requirement).clamp(0.0, 1.0);
+    final progress =
+        (achievement.currentProgress / achievement.requirement).clamp(0.0, 1.0);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -1225,7 +1238,10 @@ class _ChallengesScreenState extends State<ChallengesScreen>
             if (!isUnlocked) ...[
               const SizedBox(height: 12),
               Text(
-                AppStrings.get('challenges_progress_label', params: {'current': '${achievement.currentProgress}', 'required': '${achievement.requirement}'}),
+                AppStrings.get('challenges_progress_label', params: {
+                  'current': '${achievement.currentProgress}',
+                  'required': '${achievement.requirement}'
+                }),
                 style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
               ),
             ],

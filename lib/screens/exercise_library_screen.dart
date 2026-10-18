@@ -19,7 +19,8 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
   List<WgerCategory> _categories = [];
   List<WgerExercise> _exercises = [];
   List<WgerExercise> _filteredExercises = [];
-  final Map<int?, List<WgerExercise>> _cache = {}; // categoryId -> exercises, avoids re-fetching
+  final Map<int?, List<WgerExercise>> _cache =
+      {}; // categoryId -> exercises, avoids re-fetching
 
   int? _selectedCategoryId; // null = "All"
   bool _loadingCategories = true;
@@ -70,7 +71,8 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
 
     setState(() => _loadingExercises = true);
 
-    final exercises = await _service.getExercises(categoryId: categoryId, limit: 25);
+    final exercises =
+        await _service.getExercises(categoryId: categoryId, limit: 25);
 
     if (!mounted) return;
 
@@ -152,7 +154,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
                   ),
                   const SizedBox(width: 8),
                   ..._categories.map(
-                        (cat) => Padding(
+                    (cat) => Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: _CategoryChip(
                         label: cat.name,
@@ -172,34 +174,35 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
             child: _loadingExercises
                 ? const Center(child: CircularProgressIndicator())
                 : _error != null
-                ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  _error!,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: FitGenieTheme.muted),
-                ),
-              ),
-            )
-                : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-              itemCount: _filteredExercises.length,
-              itemBuilder: (context, index) {
-                final exercise = _filteredExercises[index];
-                return _ExerciseTile(
-                  exercise: exercise,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ExerciseDetailScreen(exercise: exercise),
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            _error!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: FitGenieTheme.muted),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                        itemCount: _filteredExercises.length,
+                        itemBuilder: (context, index) {
+                          final exercise = _filteredExercises[index];
+                          return _ExerciseTile(
+                            exercise: exercise,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      ExerciseDetailScreen(exercise: exercise),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                    );
-                  },
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -228,12 +231,12 @@ class _CategoryChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: selected
-              ? FitGenieTheme.primary
-              : FitGenieTheme.card,
+          color: selected ? FitGenieTheme.primary : FitGenieTheme.card,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? FitGenieTheme.primary : FitGenieTheme.muted.withValues(alpha: 0.2),
+            color: selected
+                ? FitGenieTheme.primary
+                : FitGenieTheme.muted.withValues(alpha: 0.2),
           ),
         ),
         child: Text(
@@ -268,7 +271,8 @@ class _ExerciseTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: FitGenieTheme.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
+          border:
+              Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.15)),
         ),
         child: Row(
           children: [
@@ -279,7 +283,8 @@ class _ExerciseTile extends StatelessWidget {
                 color: FitGenieTheme.primary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.fitness_center, color: FitGenieTheme.primary),
+              child: const Icon(Icons.fitness_center,
+                  color: FitGenieTheme.primary),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -288,7 +293,8 @@ class _ExerciseTile extends StatelessWidget {
                 children: [
                   Text(
                     exercise.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -368,7 +374,10 @@ class ExerciseDetailScreen extends StatelessWidget {
               ),
               child: Text(
                 exercise.categoryName,
-                style: const TextStyle(color: FitGenieTheme.primary, fontSize: 12, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: FitGenieTheme.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -397,7 +406,8 @@ class ExerciseDetailScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 exercise.description,
-                style: TextStyle(color: FitGenieTheme.muted, fontSize: 14, height: 1.5),
+                style: TextStyle(
+                    color: FitGenieTheme.muted, fontSize: 14, height: 1.5),
               ),
             ],
           ],
@@ -416,13 +426,15 @@ class ExerciseDetailScreen extends StatelessWidget {
       ),
       child: loading
           ? const Center(
-        child: SizedBox(
-          width: 28,
-          height: 28,
-          child: CircularProgressIndicator(strokeWidth: 2, color: FitGenieTheme.primary),
-        ),
-      )
-          : Icon(Icons.fitness_center, size: 64, color: FitGenieTheme.muted.withValues(alpha: 0.4)),
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: FitGenieTheme.primary),
+              ),
+            )
+          : Icon(Icons.fitness_center,
+              size: 64, color: FitGenieTheme.muted.withValues(alpha: 0.4)),
     );
   }
 
@@ -444,21 +456,23 @@ class ExerciseDetailScreen extends StatelessWidget {
         children: items
             .map(
               (item) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: color.withValues(alpha: 0.3)),
-            ),
-            child: Text(
-              item,
-              style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        )
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: color.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  item,
+                  style: TextStyle(
+                      color: color, fontSize: 12, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            )
             .toList(),
       ),
     );

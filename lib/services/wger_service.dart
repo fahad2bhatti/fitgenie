@@ -65,12 +65,14 @@ class WgerExercise {
     final categoryName = categoryJson?['name']?.toString() ?? 'General';
 
     final muscles = ((json['muscles'] as List?) ?? [])
-        .map((m) => (m is Map ? (m['name_en'] ?? m['name'] ?? '') : '').toString())
+        .map((m) =>
+            (m is Map ? (m['name_en'] ?? m['name'] ?? '') : '').toString())
         .where((s) => s.isNotEmpty)
         .toList();
 
     final secondaryMuscles = ((json['muscles_secondary'] as List?) ?? [])
-        .map((m) => (m is Map ? (m['name_en'] ?? m['name'] ?? '') : '').toString())
+        .map((m) =>
+            (m is Map ? (m['name_en'] ?? m['name'] ?? '') : '').toString())
         .where((s) => s.isNotEmpty)
         .toList();
 
@@ -140,7 +142,8 @@ class WgerService {
   /// Fetches exercises, optionally filtered by category ID.
   /// Uses /exerciseinfo/ which returns the full combined data
   /// (name, description, muscles, equipment, images) in one call.
-  Future<List<WgerExercise>> getExercises({int? categoryId, int limit = 50}) async {
+  Future<List<WgerExercise>> getExercises(
+      {int? categoryId, int limit = 50}) async {
     try {
       final params = {
         'language': '$_englishLanguageId',
@@ -148,7 +151,8 @@ class WgerService {
         if (categoryId != null) 'category': '$categoryId',
       };
 
-      final url = Uri.parse('$_baseUrl/exerciseinfo/').replace(queryParameters: params);
+      final url =
+          Uri.parse('$_baseUrl/exerciseinfo/').replace(queryParameters: params);
       debugPrint('🔍 Wger fetch: $url');
 
       final response = await http.get(url).timeout(_timeout);
@@ -163,7 +167,8 @@ class WgerService {
 
       final exercises = results
           .map((e) => WgerExercise.fromJson(e as Map<String, dynamic>))
-          .where((e) => e.name != 'Unnamed Exercise') // skip untranslated junk entries
+          .where((e) =>
+              e.name != 'Unnamed Exercise') // skip untranslated junk entries
           .toList();
 
       debugPrint('✅ Wger fetched ${exercises.length} exercises');

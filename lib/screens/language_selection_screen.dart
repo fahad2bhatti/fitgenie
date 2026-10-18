@@ -120,11 +120,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     backgroundColor: FitGenieTheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius:
-                      BorderRadius.circular(FitGenieTheme.radiusLG),
+                          BorderRadius.circular(FitGenieTheme.radiusLG),
                     ),
                   ),
                   child: Text(
-                    _selectedEnglish ? AppStrings.get('lang_select_continue_en') : AppStrings.get('lang_select_continue_ur'),
+                    _selectedEnglish
+                        ? AppStrings.get('lang_select_continue_en')
+                        : AppStrings.get('lang_select_continue_ur'),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -172,7 +174,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight:
-                      isSelected ? FontWeight.bold : FontWeight.w600,
+                          isSelected ? FontWeight.bold : FontWeight.w600,
                       color: isSelected
                           ? FitGenieTheme.primary
                           : FitGenieTheme.text,

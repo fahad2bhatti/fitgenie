@@ -161,7 +161,8 @@ class _AICoachScreen extends StatefulWidget {
   State<_AICoachScreen> createState() => _AICoachScreenState();
 }
 
-class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderStateMixin {
+class _AICoachScreenState extends State<_AICoachScreen>
+    with TickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final AIService _aiService = AIService();
@@ -181,7 +182,9 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
   }
 
   void _addWelcomeMessage() {
-    final name = widget.userName.isNotEmpty ? widget.userName : AppStrings.get('shell_champ_fallback');
+    final name = widget.userName.isNotEmpty
+        ? widget.userName
+        : AppStrings.get('shell_champ_fallback');
     _messages.add(_ChatMessage(
       text: AppStrings.get('chat_welcome', params: {'name': name}),
       isUser: false,
@@ -395,7 +398,9 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: _isLoading ? FitGenieTheme.warning : FitGenieTheme.success,
+                        color: _isLoading
+                            ? FitGenieTheme.warning
+                            : FitGenieTheme.success,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -406,7 +411,9 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                           : AppStrings.get('chat_online'),
                       style: TextStyle(
                         fontSize: 11,
-                        color: _isLoading ? FitGenieTheme.warning : FitGenieTheme.success,
+                        color: _isLoading
+                            ? FitGenieTheme.warning
+                            : FitGenieTheme.success,
                       ),
                     ),
                   ],
@@ -425,7 +432,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
         ),
         // Clear Chat Button
         IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.white70, size: 22),
+          icon:
+              const Icon(Icons.delete_outline, color: Colors.white70, size: 22),
           tooltip: AppStrings.get('shell_clear_chat'),
           onPressed: _showClearChatDialog,
         ),
@@ -446,13 +454,20 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         children: [
-          _buildQuickChip('💪', AppStrings.get('chat_workout'), 'Aaj ke liye best workout plan batao'),
-          _buildQuickChip('🍽️', AppStrings.get('chat_diet'), 'Mera diet plan bana do'),
-          _buildQuickChip('🔥', AppStrings.get('chat_motivate'), 'Mujhe motivate karo!'),
-          _buildQuickChip('📉', AppStrings.get('chat_weight_loss'), 'Weight loss tips do'),
-          _buildQuickChip('💪', AppStrings.get('chat_muscle_gain'), 'Muscle kaise banaye?'),
-          _buildQuickChip('💧', AppStrings.get('chat_hydration'), 'Pani kitna peena chahiye?'),
-          _buildQuickChip('😴', AppStrings.get('chat_recovery'), 'Recovery tips batao'),
+          _buildQuickChip('💪', AppStrings.get('chat_workout'),
+              'Aaj ke liye best workout plan batao'),
+          _buildQuickChip(
+              '🍽️', AppStrings.get('chat_diet'), 'Mera diet plan bana do'),
+          _buildQuickChip(
+              '🔥', AppStrings.get('chat_motivate'), 'Mujhe motivate karo!'),
+          _buildQuickChip(
+              '📉', AppStrings.get('chat_weight_loss'), 'Weight loss tips do'),
+          _buildQuickChip(
+              '💪', AppStrings.get('chat_muscle_gain'), 'Muscle kaise banaye?'),
+          _buildQuickChip('💧', AppStrings.get('chat_hydration'),
+              'Pani kitna peena chahiye?'),
+          _buildQuickChip(
+              '😴', AppStrings.get('chat_recovery'), 'Recovery tips batao'),
         ],
       ),
     );
@@ -567,7 +582,10 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                 gradient: LinearGradient(
                   colors: _isLoading
                       ? [Colors.grey, Colors.grey.shade700]
-                      : [FitGenieTheme.primary, FitGenieTheme.primary.withValues(alpha: 0.7)],
+                      : [
+                          FitGenieTheme.primary,
+                          FitGenieTheme.primary.withValues(alpha: 0.7)
+                        ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -575,12 +593,12 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                 boxShadow: _isLoading
                     ? []
                     : [
-                  BoxShadow(
-                    color: FitGenieTheme.primary.withValues(alpha: 0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                        BoxShadow(
+                          color: FitGenieTheme.primary.withValues(alpha: 0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
               ),
               child: Icon(
                 _isLoading ? Icons.hourglass_empty : Icons.send_rounded,
@@ -595,13 +613,15 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
   }
 
   Widget _buildMessageBubble(_ChatMessage message, bool isSmallScreen) {
-    final maxWidth = MediaQuery.of(context).size.width * (isSmallScreen ? 0.85 : 0.78);
+    final maxWidth =
+        MediaQuery.of(context).size.width * (isSmallScreen ? 0.85 : 0.78);
     final isUser = message.isUser;
 
     return Padding(
       padding: EdgeInsets.only(bottom: isSmallScreen ? 12 : 16),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // AI Avatar (left side for AI messages)
@@ -618,7 +638,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.psychology, color: Colors.white, size: 18),
+              child:
+                  const Icon(Icons.psychology, color: Colors.white, size: 18),
             ),
             const SizedBox(width: 8),
           ],
@@ -632,9 +653,7 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                 vertical: isSmallScreen ? 12 : 14,
               ),
               decoration: BoxDecoration(
-                color: isUser
-                    ? FitGenieTheme.primary
-                    : const Color(0xFF1E1E1E),
+                color: isUser ? FitGenieTheme.primary : const Color(0xFF1E1E1E),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
@@ -674,7 +693,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                       ),
                       if (isUser) ...[
                         const SizedBox(width: 4),
-                        const Icon(Icons.done_all, size: 12, color: Colors.white70),
+                        const Icon(Icons.done_all,
+                            size: 12, color: Colors.white70),
                       ],
                     ],
                   ),
@@ -695,7 +715,9 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
               ),
               child: Center(
                 child: Text(
-                  widget.userName.isNotEmpty ? widget.userName[0].toUpperCase() : 'U',
+                  widget.userName.isNotEmpty
+                      ? widget.userName[0].toUpperCase()
+                      : 'U',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -886,7 +908,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
   }
 
   String _formatTime(DateTime time) {
-    final hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+    final hour =
+        time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
     final minute = time.minute.toString().padLeft(2, '0');
     final period = time.hour >= 12 ? 'PM' : 'AM';
     return '$hour:$minute $period';
@@ -906,7 +929,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
                 color: FitGenieTheme.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.psychology, color: FitGenieTheme.primary, size: 24),
+              child: const Icon(Icons.psychology,
+                  color: FitGenieTheme.primary, size: 24),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -987,7 +1011,8 @@ class _AICoachScreenState extends State<_AICoachScreen> with TickerProviderState
               });
               HapticFeedback.lightImpact();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
+            style:
+                ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
             child: Text(
               AppStrings.get('chat_clear'),
               style: const TextStyle(color: Colors.white),

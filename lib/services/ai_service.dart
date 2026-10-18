@@ -19,21 +19,23 @@ class AIService {
   // do NOT rely on .env for release builds (it ships inside the APK).
   // ═══════════════════════════════════════════
   static const String _dartDefineKey =
-  String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
+      String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
 
   static String get _apiKey {
     if (_dartDefineKey.isNotEmpty) return _dartDefineKey;
 
     final key = dotenv.env['GEMINI_API_KEY'] ?? '';
     if (key.isEmpty) {
-      debugPrint('❌ GEMINI_API_KEY not found (checked --dart-define and .env)!');
+      debugPrint(
+          '❌ GEMINI_API_KEY not found (checked --dart-define and .env)!');
     }
     return key;
   }
 
   static bool get isConfigured {
     // Proxy ready hai to Gemini key optional
-    if (!_proxyUrl.contains('YOUR-SUBDOMAIN') && _proxyUrl.isNotEmpty) return true;
+    if (!_proxyUrl.contains('YOUR-SUBDOMAIN') && _proxyUrl.isNotEmpty)
+      return true;
     return _apiKey.isNotEmpty && _apiKey.length > 20;
   }
 
@@ -44,7 +46,8 @@ class AIService {
   // Deploy ke baad apna worker URL yahan paste karo.
   // Jab tak YOUR-SUBDOMAIN hai, proxy skip hoti hai aur Gemini chalta hai.
   // ═══════════════════════════════════════════
-  static const String _proxyUrl = 'https://fitgenie-ai.fahadsaeed2622.workers.dev';
+  static const String _proxyUrl =
+      'https://fitgenie-ai.fahadsaeed2622.workers.dev';
 
   Future<String?> _callProxy({
     required String task, // 'chat' | 'scan'
@@ -58,17 +61,17 @@ class AIService {
       final token = await user.getIdToken();
       final res = await http
           .post(
-        Uri.parse(_proxyUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'task': task,
-          'prompt': prompt,
-          if (imageBase64 != null) 'imageBase64': imageBase64,
-        }),
-      )
+            Uri.parse(_proxyUrl),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              'task': task,
+              'prompt': prompt,
+              if (imageBase64 != null) 'imageBase64': imageBase64,
+            }),
+          )
           .timeout(const Duration(seconds: 45));
       if (res.statusCode == 200) {
         final text = jsonDecode(res.body)['text'];
@@ -89,7 +92,8 @@ class AIService {
     String cleaned = input.trim();
     cleaned = cleaned.replaceAll(RegExp(r'<[^>]*>'), '');
     cleaned = cleaned.replaceAll(
-        RegExp(r'(javascript|script|onclick|onerror)', caseSensitive: false), '');
+        RegExp(r'(javascript|script|onclick|onerror)', caseSensitive: false),
+        '');
     if (cleaned.length > 1000) cleaned = cleaned.substring(0, 1000);
     return cleaned;
   }
@@ -97,7 +101,8 @@ class AIService {
   static String _validateResponse(String response) {
     if (response.isEmpty) return 'Koi response nahi aaya, dobara try kar.';
     String cleaned = response.trim();
-    cleaned = cleaned.replaceAll(RegExp(r'<script[^>]*>.*?</script>', caseSensitive: false), '');
+    cleaned = cleaned.replaceAll(
+        RegExp(r'<script[^>]*>.*?</script>', caseSensitive: false), '');
     cleaned = cleaned.replaceAll(RegExp(r'<[^>]*>'), '');
     return cleaned;
   }
@@ -123,9 +128,15 @@ class AIService {
 
     if (bytes.length > 10 * 1024 * 1024) {
       return MealAnalysis(
-        foodName: 'Image Too Large', foodNameHindi: 'Photo bahut badi hai',
-        calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0,
-        quantity: '0', isHealthy: false,
+        foodName: 'Image Too Large',
+        foodNameHindi: 'Photo bahut badi hai',
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        fiber: 0,
+        quantity: '0',
+        isHealthy: false,
         healthTip: 'Photo 10MB se chhoti honi chahiye. Compress karke bhejo.',
       );
     }
@@ -165,51 +176,84 @@ $tipLanguage
 All numbers should be integers. isHealthy should be boolean.''';
 
     // 1) Groq via proxy (fast + free), 2) Gemini fallback
-    final proxied = await _callProxy(task: 'scan', prompt: prompt, imageBase64: base64Image);
+    final proxied = await _callProxy(
+        task: 'scan', prompt: prompt, imageBase64: base64Image);
     if (proxied != null) return MealAnalysis.fromJson(proxied);
     if (_apiKey.isEmpty) return _getDefaultMealAnalysis();
 
-    final url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
+    final url =
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
     const maxRetries = 2;
 
     for (int attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        final response = await http.post(
-          Uri.parse(url),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'contents': [{'parts': [
-              {'text': prompt},
-              {'inlineData': {'mimeType': 'image/jpeg', 'data': base64Image}}
-            ]}],
-            'generationConfig': {'temperature': 0.1, 'maxOutputTokens': 4096},
-            'safetySettings': [
-              {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
-              {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
-              {'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold': 'BLOCK_NONE'},
-              {'category': 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold': 'BLOCK_NONE'},
-            ],
-          }),
-        ).timeout(const Duration(seconds: 60));
+        final response = await http
+            .post(
+              Uri.parse(url),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({
+                'contents': [
+                  {
+                    'parts': [
+                      {'text': prompt},
+                      {
+                        'inlineData': {
+                          'mimeType': 'image/jpeg',
+                          'data': base64Image
+                        }
+                      }
+                    ]
+                  }
+                ],
+                'generationConfig': {
+                  'temperature': 0.1,
+                  'maxOutputTokens': 4096
+                },
+                'safetySettings': [
+                  {
+                    'category': 'HARM_CATEGORY_HARASSMENT',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                  {
+                    'category': 'HARM_CATEGORY_HATE_SPEECH',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                  {
+                    'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                  {
+                    'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                ],
+              }),
+            )
+            .timeout(const Duration(seconds: 60));
 
-        debugPrint('📡 Response status: ${response.statusCode} (attempt ${attempt + 1})');
+        debugPrint(
+            '📡 Response status: ${response.statusCode} (attempt ${attempt + 1})');
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
           final candidates = data['candidates'] as List?;
           if (candidates != null && candidates.isNotEmpty) {
-            if (candidates[0]['finishReason'] == 'SAFETY') return _getDefaultMealAnalysis();
+            if (candidates[0]['finishReason'] == 'SAFETY')
+              return _getDefaultMealAnalysis();
             final parts = candidates[0]['content']?['parts'] as List?;
             if (parts != null && parts.isNotEmpty) {
               final text = parts[0]['text'] as String?;
-              if (text != null && text.isNotEmpty) return MealAnalysis.fromJson(text);
+              if (text != null && text.isNotEmpty)
+                return MealAnalysis.fromJson(text);
             }
           }
           return _getDefaultMealAnalysis();
         }
 
-        if ((response.statusCode == 503 || response.statusCode == 429) && attempt < maxRetries) {
-          debugPrint('⚠️ Meal scan got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
+        if ((response.statusCode == 503 || response.statusCode == 429) &&
+            attempt < maxRetries) {
+          debugPrint(
+              '⚠️ Meal scan got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
           await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
           continue;
         }
@@ -229,26 +273,33 @@ All numbers should be integers. isHealthy should be boolean.''';
 
   MealAnalysis _getDefaultMealAnalysis() {
     return MealAnalysis(
-      foodName: 'Food Item', foodNameHindi: 'Khana',
-      calories: 200, protein: 8, carbs: 25, fat: 8, fiber: 3,
-      quantity: '1 serving', isHealthy: true,
-      healthTip: 'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
+      foodName: 'Food Item',
+      foodNameHindi: 'Khana',
+      calories: 200,
+      protein: 8,
+      carbs: 25,
+      fat: 8,
+      fiber: 3,
+      quantity: '1 serving',
+      isHealthy: true,
+      healthTip:
+          'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
     );
   }
-
-
 
   // ==========================================
   // 🤖 MAIN CHAT FUNCTION
   // ==========================================
 
-  Future<String> chat({required String uid, required String userMessage}) async {
+  Future<String> chat(
+      {required String uid, required String userMessage}) async {
     debugPrint('🚀 AI Chat Started');
 
     final cleanMessage = _sanitizeInput(userMessage);
     if (cleanMessage.isEmpty) return 'Kuch toh likh bhai! 😄';
     if (!isConfigured) return '❌ API Key set nahi hai! .env file check kar.';
-    if (cleanMessage.length > 500) return 'Bhai message thoda chhota rakh — 500 characters max! ✂️';
+    if (cleanMessage.length > 500)
+      return 'Bhai message thoda chhota rakh — 500 characters max! ✂️';
 
     try {
       final userContext = await _getUserContext(uid);
@@ -315,26 +366,52 @@ Max 150 words:''';
   Future<String?> _callGeminiAPI(String modelName, String prompt) async {
     if (_apiKey.isEmpty) return null;
 
-
-    final url = 'https://generativelanguage.googleapis.com/v1beta/$modelName:generateContent?key=$_apiKey';
+    final url =
+        'https://generativelanguage.googleapis.com/v1beta/$modelName:generateContent?key=$_apiKey';
     const maxRetries = 2;
 
     for (int attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        final response = await http.post(
-          Uri.parse(url),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'contents': [{'role': 'user', 'parts': [{'text': prompt}]}],
-            'generationConfig': {'temperature': 0.7, 'maxOutputTokens': 4096, 'topP': 0.9, 'topK': 40},
-            'safetySettings': [
-              {'category': 'HARM_CATEGORY_HARASSMENT', 'threshold': 'BLOCK_NONE'},
-              {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_NONE'},
-              {'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold': 'BLOCK_NONE'},
-              {'category': 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold': 'BLOCK_NONE'},
-            ],
-          }),
-        ).timeout(_timeout);
+        final response = await http
+            .post(
+              Uri.parse(url),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({
+                'contents': [
+                  {
+                    'role': 'user',
+                    'parts': [
+                      {'text': prompt}
+                    ]
+                  }
+                ],
+                'generationConfig': {
+                  'temperature': 0.7,
+                  'maxOutputTokens': 4096,
+                  'topP': 0.9,
+                  'topK': 40
+                },
+                'safetySettings': [
+                  {
+                    'category': 'HARM_CATEGORY_HARASSMENT',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                  {
+                    'category': 'HARM_CATEGORY_HATE_SPEECH',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                  {
+                    'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                  {
+                    'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                    'threshold': 'BLOCK_NONE'
+                  },
+                ],
+              }),
+            )
+            .timeout(_timeout);
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
@@ -349,13 +426,16 @@ Max 150 words:''';
           return null;
         }
 
-        if ((response.statusCode == 503 || response.statusCode == 429) && attempt < maxRetries) {
-          debugPrint('⚠️ $modelName got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
+        if ((response.statusCode == 503 || response.statusCode == 429) &&
+            attempt < maxRetries) {
+          debugPrint(
+              '⚠️ $modelName got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
           await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
           continue;
         }
 
-        debugPrint('❌ $modelName failed: ${response.statusCode} ${response.body}');
+        debugPrint(
+            '❌ $modelName failed: ${response.statusCode} ${response.body}');
         return null;
       } catch (e) {
         if (attempt < maxRetries) {
@@ -380,18 +460,34 @@ Max 150 words:''';
       final userDoc = await _firestore.collection('users').doc(uid).get();
       final userData = userDoc.data() ?? {};
 
-      Map<String, dynamic> goals = {'caloriesGoal': 2000, 'proteinGoal': 100, 'waterGoal': 8};
+      Map<String, dynamic> goals = {
+        'caloriesGoal': 2000,
+        'proteinGoal': 100,
+        'waterGoal': 8
+      };
       try {
-        final goalsDoc = await _firestore.collection('users').doc(uid).collection('goals').doc('main').get();
+        final goalsDoc = await _firestore
+            .collection('users')
+            .doc(uid)
+            .collection('goals')
+            .doc('main')
+            .get();
         if (goalsDoc.exists) goals = {...goals, ...?goalsDoc.data()};
       } catch (_) {}
 
       Map<String, dynamic> todayLog = {'calories': 0, 'protein': 0, 'water': 0};
       try {
         final today = DateTime.now();
-        final dateStr = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
-        final todayLogDoc = await _firestore.collection('users').doc(uid).collection('dailyLogs').doc(dateStr).get();
-        if (todayLogDoc.exists) todayLog = {...todayLog, ...?todayLogDoc.data()};
+        final dateStr =
+            '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+        final todayLogDoc = await _firestore
+            .collection('users')
+            .doc(uid)
+            .collection('dailyLogs')
+            .doc(dateStr)
+            .get();
+        if (todayLogDoc.exists)
+          todayLog = {...todayLog, ...?todayLogDoc.data()};
       } catch (_) {}
 
       int todayWorkouts = 0;
@@ -399,8 +495,12 @@ Max 150 words:''';
         final today = DateTime.now();
         final startOfDay = DateTime(today.year, today.month, today.day);
         final endOfDay = startOfDay.add(const Duration(days: 1));
-        final q = await _firestore.collection('users').doc(uid).collection('workouts')
-            .where('startedAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+        final q = await _firestore
+            .collection('users')
+            .doc(uid)
+            .collection('workouts')
+            .where('startedAt',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
             .where('startedAt', isLessThan: Timestamp.fromDate(endOfDay))
             .get();
         todayWorkouts = q.docs.length;
@@ -408,7 +508,8 @@ Max 150 words:''';
 
       return {
         'name': _sanitizeInput(userData['name']?.toString() ?? 'Champ'),
-        'fitnessLevel': _sanitizeInput(userData['fitnessLevel']?.toString() ?? 'Intermediate'),
+        'fitnessLevel': _sanitizeInput(
+            userData['fitnessLevel']?.toString() ?? 'Intermediate'),
         'goal': _sanitizeInput(userData['goal']?.toString() ?? 'Stay Fit'),
         'weight': (userData['weight'] as num?)?.toInt() ?? 70,
         'height': (userData['height'] as num?)?.toInt() ?? 170,
@@ -426,36 +527,57 @@ Max 150 words:''';
   }
 
   Map<String, dynamic> _getDefaultContext() => {
-    'name': 'Champ', 'fitnessLevel': 'Intermediate', 'goal': 'Stay Fit',
-    'weight': 70, 'height': 170, 'caloriesGoal': 2000, 'proteinGoal': 100,
-    'waterGoal': 8, 'todayCalories': 0, 'todayProtein': 0, 'todayWater': 0, 'todayWorkouts': 0,
-  };
+        'name': 'Champ',
+        'fitnessLevel': 'Intermediate',
+        'goal': 'Stay Fit',
+        'weight': 70,
+        'height': 170,
+        'caloriesGoal': 2000,
+        'proteinGoal': 100,
+        'waterGoal': 8,
+        'todayCalories': 0,
+        'todayProtein': 0,
+        'todayWater': 0,
+        'todayWorkouts': 0,
+      };
 
-  String _getSmartOfflineResponse(String message, Map<String, dynamic> context) {
+  String _getSmartOfflineResponse(
+      String message, Map<String, dynamic> context) {
     final msg = message.toLowerCase();
     final name = context['name'] ?? 'Champ';
 
-    if (msg.contains('workout') || msg.contains('exercise') || msg.contains('gym')) {
+    if (msg.contains('workout') ||
+        msg.contains('exercise') ||
+        msg.contains('gym')) {
       return '''💪 Hey $name! Workout tips chahiye?\n\n🎯 Quick Tips:\n• Warm-up zaroor karo (5-10 min)\n• Compound exercises pe focus karo\n• Progressive overload important hai\n• Rest days bhi zaroori hain!\n\n🔥 Let's crush it bhai! 💪''';
     }
-    if (msg.contains('diet') || msg.contains('food') || msg.contains('calories') || msg.contains('protein')) {
+    if (msg.contains('diet') ||
+        msg.contains('food') ||
+        msg.contains('calories') ||
+        msg.contains('protein')) {
       return '''🍽️ Hey $name! Diet tips:\n\n• Protein har meal mein include karo\n• Processed food avoid karo\n• Vegetables zyada khao\n• Water 3-4 liters daily\n\n🔥 Consistency is key! 🎯''';
     }
     return '''👋 Hey $name!\n\nMain FitGenie hun - tera AI Fitness Coach! 🤖\n\nKya jaanna hai?\n• 💪 Workouts\n• 🍽️ Nutrition\n• 🔥 Motivation\n\nPooch lo! 🚀''';
   }
 
-  Future<void> _saveChatHistory(String uid, String userMsg, String aiResponse) async {
+  Future<void> _saveChatHistory(
+      String uid, String userMsg, String aiResponse) async {
     if (uid.isEmpty) return;
     try {
       await _firestore.collection('users').doc(uid).collection('aiChats').add({
-        'userMessage': userMsg.substring(0, userMsg.length > 500 ? 500 : userMsg.length),
-        'aiResponse': aiResponse.substring(0, aiResponse.length > 2000 ? 2000 : aiResponse.length),
+        'userMessage':
+            userMsg.substring(0, userMsg.length > 500 ? 500 : userMsg.length),
+        'aiResponse': aiResponse.substring(
+            0, aiResponse.length > 2000 ? 2000 : aiResponse.length),
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (_) {}
   }
 
-  Future<String> generateWorkout({required String uid, required String workoutType, String level = 'intermediate'}) async {
+  Future<String> generateWorkout(
+      {required String uid,
+      required String workoutType,
+      String level = 'intermediate'}) async {
     final cleanType = _sanitizeInput(workoutType);
     if (cleanType.isEmpty) return _getOfflineWorkout('chest');
     // isConfigured check hata diya — proxy se chalega
@@ -498,9 +620,12 @@ Format: 🔥 Name | ⚡ Warm-up | 💪 Main (5-6 exercises sets x reps) | 🧘 C
 
   String _getOfflineWorkout(String type) {
     final workouts = {
-      'chest': '🔥 CHEST WORKOUT\n\n⚡ WARM-UP\n• Arm circles - 30 sec\n• Push-up hold - 30 sec\n\n💪 MAIN\n1. Bench Press - 4x10-12\n2. Incline DB Press - 4x12\n3. Cable Flyes - 3x15\n4. Dips - 3x12\n5. Push-ups - 3xFailure\n\n💡 Mind-muscle connection important hai!\n\n🔥 Chest day is BEST day! 💪',
-      'back': '🔥 BACK WORKOUT\n\n⚡ WARM-UP\n• Band pull-aparts - 15 reps\n• Dead hangs - 30 sec\n\n💪 MAIN\n1. Pull-ups - 4x8-10\n2. Barbell Rows - 4x10\n3. Lat Pulldown - 3x12\n4. DB Rows - 3x12\n5. Face Pulls - 3x15\n\n💡 Squeeze your back at top!\n\n🔥 Strong back = Strong everything! 🎯',
-      'legs': '🔥 LEG WORKOUT\n\n⚡ WARM-UP\n• Bodyweight squats - 15 reps\n• Leg swings - 10 each\n\n💪 MAIN\n1. Squats - 4x8-10\n2. Romanian Deadlift - 4x10\n3. Leg Press - 3x12\n4. Lunges - 3x12 each\n5. Calf Raises - 4x15\n\n💡 Never skip leg day!\n\n🔥 Leg day = Best day! 🦵💪',
+      'chest':
+          '🔥 CHEST WORKOUT\n\n⚡ WARM-UP\n• Arm circles - 30 sec\n• Push-up hold - 30 sec\n\n💪 MAIN\n1. Bench Press - 4x10-12\n2. Incline DB Press - 4x12\n3. Cable Flyes - 3x15\n4. Dips - 3x12\n5. Push-ups - 3xFailure\n\n💡 Mind-muscle connection important hai!\n\n🔥 Chest day is BEST day! 💪',
+      'back':
+          '🔥 BACK WORKOUT\n\n⚡ WARM-UP\n• Band pull-aparts - 15 reps\n• Dead hangs - 30 sec\n\n💪 MAIN\n1. Pull-ups - 4x8-10\n2. Barbell Rows - 4x10\n3. Lat Pulldown - 3x12\n4. DB Rows - 3x12\n5. Face Pulls - 3x15\n\n💡 Squeeze your back at top!\n\n🔥 Strong back = Strong everything! 🎯',
+      'legs':
+          '🔥 LEG WORKOUT\n\n⚡ WARM-UP\n• Bodyweight squats - 15 reps\n• Leg swings - 10 each\n\n💪 MAIN\n1. Squats - 4x8-10\n2. Romanian Deadlift - 4x10\n3. Leg Press - 3x12\n4. Lunges - 3x12 each\n5. Calf Raises - 4x15\n\n💡 Never skip leg day!\n\n🔥 Leg day = Best day! 🦵💪',
     };
     return workouts[type.toLowerCase()] ?? workouts['chest']!;
   }
@@ -522,39 +647,69 @@ class MealAnalysis {
   final String healthTip;
 
   MealAnalysis({
-    required this.foodName, required this.foodNameHindi,
-    required this.calories, required this.protein, required this.carbs,
-    required this.fat, required this.fiber, required this.quantity,
-    required this.isHealthy, required this.healthTip,
+    required this.foodName,
+    required this.foodNameHindi,
+    required this.calories,
+    required this.protein,
+    required this.carbs,
+    required this.fat,
+    required this.fiber,
+    required this.quantity,
+    required this.isHealthy,
+    required this.healthTip,
   });
 
   factory MealAnalysis.fromJson(String jsonString) {
     try {
-      String cleaned = jsonString.replaceAll('```json', '').replaceAll('```', '').replaceAll('`', '').trim();
+      String cleaned = jsonString
+          .replaceAll('```json', '')
+          .replaceAll('```', '')
+          .replaceAll('`', '')
+          .trim();
       final start = cleaned.indexOf('{');
       final end = cleaned.lastIndexOf('}');
-      if (start == -1 || end == -1 || end <= start) throw Exception('No valid JSON found');
+      if (start == -1 || end == -1 || end <= start)
+        throw Exception('No valid JSON found');
 
-      final Map<String, dynamic> json = jsonDecode(cleaned.substring(start, end + 1));
+      final Map<String, dynamic> json =
+          jsonDecode(cleaned.substring(start, end + 1));
 
       return MealAnalysis(
-        foodName: (json['foodName']?.toString() ?? 'Food Item').substring(0, (json['foodName']?.toString() ?? 'Food Item').length.clamp(0, 100)),
-        foodNameHindi: (json['foodNameHindi']?.toString() ?? 'Khana').substring(0, (json['foodNameHindi']?.toString() ?? 'Khana').length.clamp(0, 100)),
+        foodName: (json['foodName']?.toString() ?? 'Food Item').substring(0,
+            (json['foodName']?.toString() ?? 'Food Item').length.clamp(0, 100)),
+        foodNameHindi: (json['foodNameHindi']?.toString() ?? 'Khana').substring(
+            0,
+            (json['foodNameHindi']?.toString() ?? 'Khana')
+                .length
+                .clamp(0, 100)),
         calories: _parseInt(json['calories']).clamp(0, 5000),
         protein: _parseInt(json['protein']).clamp(0, 500),
         carbs: _parseInt(json['carbs']).clamp(0, 1000),
         fat: _parseInt(json['fat']).clamp(0, 500),
         fiber: _parseInt(json['fiber']).clamp(0, 200),
-        quantity: (json['quantity']?.toString() ?? '1 serving').substring(0, (json['quantity']?.toString() ?? '1 serving').length.clamp(0, 50)),
-        isHealthy: json['isHealthy'] == true || json['isHealthy'].toString().toLowerCase() == 'true',
-        healthTip: (json['healthTip']?.toString() ?? 'Enjoy your meal!').substring(0, (json['healthTip']?.toString() ?? 'Enjoy your meal!').length.clamp(0, 200)),
+        quantity: (json['quantity']?.toString() ?? '1 serving').substring(0,
+            (json['quantity']?.toString() ?? '1 serving').length.clamp(0, 50)),
+        isHealthy: json['isHealthy'] == true ||
+            json['isHealthy'].toString().toLowerCase() == 'true',
+        healthTip: (json['healthTip']?.toString() ?? 'Enjoy your meal!')
+            .substring(
+                0,
+                (json['healthTip']?.toString() ?? 'Enjoy your meal!')
+                    .length
+                    .clamp(0, 200)),
       );
     } catch (e) {
       debugPrint('❌ JSON parse error: $e');
       return MealAnalysis(
-        foodName: 'Food Item', foodNameHindi: 'Khana',
-        calories: 200, protein: 10, carbs: 25, fat: 8, fiber: 3,
-        quantity: '1 serving', isHealthy: true,
+        foodName: 'Food Item',
+        foodNameHindi: 'Khana',
+        calories: 200,
+        protein: 10,
+        carbs: 25,
+        fat: 8,
+        fiber: 3,
+        quantity: '1 serving',
+        isHealthy: true,
         healthTip: 'Photo se identify nahi ho paya. Clear photo lo.',
       );
     }
@@ -564,14 +719,23 @@ class MealAnalysis {
     if (value == null) return 0;
     if (value is int) return value;
     if (value is double) return value.toInt();
-    if (value is String) return double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), ''))?.toInt() ?? 0;
+    if (value is String)
+      return double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), ''))
+              ?.toInt() ??
+          0;
     return 0;
   }
 
   Map<String, dynamic> toMap() => {
-    'foodName': foodName, 'foodNameHindi': foodNameHindi,
-    'calories': calories, 'protein': protein, 'carbs': carbs,
-    'fat': fat, 'fiber': fiber, 'quantity': quantity,
-    'isHealthy': isHealthy, 'healthTip': healthTip,
-  };
+        'foodName': foodName,
+        'foodNameHindi': foodNameHindi,
+        'calories': calories,
+        'protein': protein,
+        'carbs': carbs,
+        'fat': fat,
+        'fiber': fiber,
+        'quantity': quantity,
+        'isHealthy': isHealthy,
+        'healthTip': healthTip,
+      };
 }

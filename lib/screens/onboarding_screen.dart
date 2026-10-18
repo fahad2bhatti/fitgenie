@@ -9,7 +9,6 @@ import '../core/language_provider.dart';
 import '../widgets/app_snackbar.dart';
 import 'shell_screen.dart';
 
-
 class OnboardingScreen extends StatefulWidget {
   final String userId;
   final String userName;
@@ -282,9 +281,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   margin: EdgeInsets.only(right: i == _totalPages - 1 ? 0 : 6),
                   height: 6,
                   decoration: BoxDecoration(
-                    color: active
-                        ? FitGenieTheme.primary
-                        : FitGenieTheme.card2,
+                    color: active ? FitGenieTheme.primary : FitGenieTheme.card2,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -330,9 +327,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ==========================================
   Widget _genderPage() {
     final options = [
-      {'label': 'Male', 'display': AppStrings.get('gender_male'), 'icon': Icons.male},
-      {'label': 'Female', 'display': AppStrings.get('gender_female'), 'icon': Icons.female},
-      {'label': 'Other', 'display': AppStrings.get('gender_other'), 'icon': Icons.person},
+      {
+        'label': 'Male',
+        'display': AppStrings.get('gender_male'),
+        'icon': Icons.male
+      },
+      {
+        'label': 'Female',
+        'display': AppStrings.get('gender_female'),
+        'icon': Icons.female
+      },
+      {
+        'label': 'Other',
+        'display': AppStrings.get('gender_other'),
+        'icon': Icons.person
+      },
     ];
 
     return _pageWrapper(
@@ -383,7 +392,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
           ),
-          Text(AppStrings.get('onboarding_years_suffix'), style: TextStyle(color: FitGenieTheme.muted)),
+          Text(AppStrings.get('onboarding_years_suffix'),
+              style: TextStyle(color: FitGenieTheme.muted)),
           const SizedBox(height: 24),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
@@ -517,7 +527,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppStrings.get('onboarding_height_label'), style: TextStyle(color: FitGenieTheme.muted)),
+              Text(AppStrings.get('onboarding_height_label'),
+                  style: TextStyle(color: FitGenieTheme.muted)),
               Text(
                 "$feet' $inches\"",
                 style: const TextStyle(
@@ -535,7 +546,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 child: Column(
                   children: [
                     Text(AppStrings.get('onboarding_feet_label'),
-                        style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
+                        style: TextStyle(
+                            color: FitGenieTheme.muted, fontSize: 12)),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: FitGenieTheme.teal,
@@ -560,7 +572,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 child: Column(
                   children: [
                     Text(AppStrings.get('onboarding_inches_label'),
-                        style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
+                        style: TextStyle(
+                            color: FitGenieTheme.muted, fontSize: 12)),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: FitGenieTheme.teal,
@@ -646,9 +659,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ==========================================
   Widget _fitnessLevelPage() {
     final levels = [
-      {'label': 'Beginner', 'display': AppStrings.get('level_beginner'), 'desc': AppStrings.get('onboarding_level_beginner_desc')},
-      {'label': 'Intermediate', 'display': AppStrings.get('level_intermediate'), 'desc': AppStrings.get('onboarding_level_intermediate_desc')},
-      {'label': 'Advanced', 'display': AppStrings.get('level_advanced'), 'desc': AppStrings.get('onboarding_level_advanced_desc')},
+      {
+        'label': 'Beginner',
+        'display': AppStrings.get('level_beginner'),
+        'desc': AppStrings.get('onboarding_level_beginner_desc')
+      },
+      {
+        'label': 'Intermediate',
+        'display': AppStrings.get('level_intermediate'),
+        'desc': AppStrings.get('onboarding_level_intermediate_desc')
+      },
+      {
+        'label': 'Advanced',
+        'display': AppStrings.get('level_advanced'),
+        'desc': AppStrings.get('onboarding_level_advanced_desc')
+      },
     ];
 
     return _pageWrapper(
@@ -665,8 +690,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               description: l['desc'] as String,
               icon: Icons.fitness_center,
               selected: selected,
-              onTap: () =>
-                  setState(() => _fitnessLevel = l['label'] as String),
+              onTap: () => setState(() => _fitnessLevel = l['label'] as String),
             ),
           );
         }).toList(),
@@ -679,9 +703,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ==========================================
   Widget _goalPage() {
     final goals = [
-      {'label': 'Lose Weight', 'display': AppStrings.get('goal_lose_weight'), 'icon': Icons.trending_down},
-      {'label': 'Build Muscle', 'display': AppStrings.get('goal_build_muscle'), 'icon': Icons.fitness_center},
-      {'label': 'Stay Fit', 'display': AppStrings.get('goal_get_fit'), 'icon': Icons.favorite},
+      {
+        'label': 'Lose Weight',
+        'display': AppStrings.get('goal_lose_weight'),
+        'icon': Icons.trending_down
+      },
+      {
+        'label': 'Build Muscle',
+        'display': AppStrings.get('goal_build_muscle'),
+        'icon': Icons.fitness_center
+      },
+      {
+        'label': 'Stay Fit',
+        'display': AppStrings.get('goal_get_fit'),
+        'icon': Icons.favorite
+      },
       {'label': 'Gain Strength', 'icon': Icons.bolt},
     ];
 
@@ -812,10 +848,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
               child: selected
                   ? const Icon(
-                Icons.check_circle,
-                key: ValueKey('checked'),
-                color: FitGenieTheme.primary,
-              )
+                      Icons.check_circle,
+                      key: ValueKey('checked'),
+                      color: FitGenieTheme.primary,
+                    )
                   : const SizedBox.shrink(key: ValueKey('unchecked')),
             ),
           ],
@@ -843,18 +879,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               onPressed: (!_canContinue || _isSaving) ? null : _next,
               child: _isSaving
                   ? const SizedBox(
-                height: 22,
-                width: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.4,
-                  color: Colors.white,
-                ),
-              )
+                      height: 22,
+                      width: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.4,
+                        color: Colors.white,
+                      ),
+                    )
                   : Text(
-                _pageIndex == _totalPages - 1
-                    ? AppStrings.onboardingStart
-                    : AppStrings.onboardingNext,
-              ),
+                      _pageIndex == _totalPages - 1
+                          ? AppStrings.onboardingStart
+                          : AppStrings.onboardingNext,
+                    ),
             ),
           ),
         ],

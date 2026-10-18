@@ -177,7 +177,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
               .collection('users')
               .doc(widget.userId)
               .collection('workouts')
-              .where('startedAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+              .where('startedAt',
+                  isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
               .where('startedAt', isLessThan: Timestamp.fromDate(endOfDay))
               .get();
           workouts = workoutsQuery.docs.length;
@@ -220,7 +221,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
     if (_weekData.isEmpty) return;
 
     final daysWithData = _weekData.where((d) => d.calories > 0).length;
-    _avgCalories = daysWithData > 0 ? (_totalCaloriesBurned / daysWithData).round() : 0;
+    _avgCalories =
+        daysWithData > 0 ? (_totalCaloriesBurned / daysWithData).round() : 0;
     _avgProtein = daysWithData > 0 ? (_totalProtein / daysWithData).round() : 0;
 
     // Find best day
@@ -251,14 +253,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
         final ts = data['date'] as Timestamp?;
         final w = (data['weight'] as num?)?.toDouble();
         if (w != null) {
-          history.add(WeightEntry(date: ts?.toDate() ?? DateTime.now(), weight: w));
+          history.add(
+              WeightEntry(date: ts?.toDate() ?? DateTime.now(), weight: w));
         }
       }
 
       if (history.isNotEmpty) {
         setState(() {
-          _currentWeight = history.first.weight; // most recent (list is descending)
-          _weightHistory = history.reversed.toList(); // oldest → newest for chart
+          _currentWeight =
+              history.first.weight; // most recent (list is descending)
+          _weightHistory =
+              history.reversed.toList(); // oldest → newest for chart
         });
         return;
       }
@@ -266,7 +271,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
       // Fallback: no weightLogs yet — read the weight saved directly on the
       // user profile (e.g. via Profile screen / onboarding) so the Current
       // Weight card is never stuck on the old default.
-      final userDoc = await _firestore.collection('users').doc(widget.userId).get();
+      final userDoc =
+          await _firestore.collection('users').doc(widget.userId).get();
       final profileWeight = (userDoc.data()?['weight'] as num?)?.toDouble();
       if (profileWeight != null) {
         setState(() {
@@ -387,15 +393,18 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.bar_chart, color: FitGenieTheme.primary, size: 20),
+                      Icon(Icons.bar_chart,
+                          color: FitGenieTheme.primary, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         AppStrings.get('progress_workouts'),
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: FitGenieTheme.primary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -417,7 +426,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     child: BarChart(
                       BarChartData(
                         alignment: BarChartAlignment.spaceAround,
-                        maxY: _weeklyWorkouts.reduce((a, b) => a > b ? a : b) + 2,
+                        maxY:
+                            _weeklyWorkouts.reduce((a, b) => a > b ? a : b) + 2,
                         barTouchData: BarTouchData(enabled: true),
                         titlesData: FlTitlesData(
                           show: true,
@@ -425,7 +435,15 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                             sideTitles: SideTitles(
                               showTitles: true,
                               getTitlesWidget: (value, meta) {
-                                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                                const days = [
+                                  'Mon',
+                                  'Tue',
+                                  'Wed',
+                                  'Thu',
+                                  'Fri',
+                                  'Sat',
+                                  'Sun'
+                                ];
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 8),
                                   child: Text(
@@ -439,9 +457,12 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                               },
                             ),
                           ),
-                          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          leftTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         gridData: const FlGridData(show: false),
                         borderData: FlBorderData(show: false),
@@ -451,12 +472,16 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                             x: index,
                             barRods: [
                               BarChartRodData(
-                                toY: _weeklyWorkouts[index] > 0 ? _weeklyWorkouts[index] : 0.3,
+                                toY: _weeklyWorkouts[index] > 0
+                                    ? _weeklyWorkouts[index]
+                                    : 0.3,
                                 color: hasWorkout
                                     ? FitGenieTheme.primary
-                                    : FitGenieTheme.primary.withValues(alpha: 0.2),
+                                    : FitGenieTheme.primary
+                                        .withValues(alpha: 0.2),
                                 width: 28,
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                                borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(6)),
                               ),
                             ],
                           );
@@ -476,15 +501,18 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.local_fire_department, color: FitGenieTheme.hot, size: 20),
+                      Icon(Icons.local_fire_department,
+                          color: FitGenieTheme.hot, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         AppStrings.get('progress_calories'),
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: FitGenieTheme.hot.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -513,7 +541,9 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                             getTooltipItem: (group, groupIndex, rod, rodIndex) {
                               return BarTooltipItem(
                                 '${rod.toY.toInt()} cal',
-                                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                               );
                             },
                           ),
@@ -524,20 +554,33 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                             sideTitles: SideTitles(
                               showTitles: true,
                               getTitlesWidget: (value, meta) {
-                                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                                const days = [
+                                  'Mon',
+                                  'Tue',
+                                  'Wed',
+                                  'Thu',
+                                  'Fri',
+                                  'Sat',
+                                  'Sun'
+                                ];
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 8),
                                   child: Text(
                                     days[value.toInt()],
-                                    style: TextStyle(color: FitGenieTheme.muted, fontSize: 10),
+                                    style: TextStyle(
+                                        color: FitGenieTheme.muted,
+                                        fontSize: 10),
                                   ),
                                 );
                               },
                             ),
                           ),
-                          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          leftTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         gridData: FlGridData(
                           show: true,
@@ -563,12 +606,14 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                                 color: cals == 0
                                     ? FitGenieTheme.hot.withValues(alpha: 0.2)
                                     : percentage >= 1.0
-                                    ? FitGenieTheme.success
-                                    : percentage >= 0.7
-                                    ? FitGenieTheme.hot
-                                    : FitGenieTheme.hot.withValues(alpha: 0.6),
+                                        ? FitGenieTheme.success
+                                        : percentage >= 0.7
+                                            ? FitGenieTheme.hot
+                                            : FitGenieTheme.hot
+                                                .withValues(alpha: 0.6),
                                 width: 28,
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                                borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(6)),
                               ),
                             ],
                           );
@@ -588,15 +633,18 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.restaurant, color: FitGenieTheme.teal, size: 20),
+                      Icon(Icons.restaurant,
+                          color: FitGenieTheme.teal, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         AppStrings.get('progress_protein'),
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: FitGenieTheme.teal.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -623,7 +671,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           // Actual protein line
                           LineChartBarData(
                             spots: List.generate(7, (index) {
-                              return FlSpot(index.toDouble(), _weeklyProtein[index]);
+                              return FlSpot(
+                                  index.toDouble(), _weeklyProtein[index]);
                             }),
                             isCurved: true,
                             color: FitGenieTheme.teal,
@@ -647,7 +696,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           // Goal line
                           LineChartBarData(
                             spots: List.generate(7, (index) {
-                              return FlSpot(index.toDouble(), _proteinGoal.toDouble());
+                              return FlSpot(
+                                  index.toDouble(), _proteinGoal.toDouble());
                             }),
                             isCurved: false,
                             color: Colors.white.withValues(alpha: 0.3),
@@ -662,20 +712,33 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                             sideTitles: SideTitles(
                               showTitles: true,
                               getTitlesWidget: (value, meta) {
-                                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                                const days = [
+                                  'Mon',
+                                  'Tue',
+                                  'Wed',
+                                  'Thu',
+                                  'Fri',
+                                  'Sat',
+                                  'Sun'
+                                ];
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 8),
                                   child: Text(
                                     days[value.toInt()],
-                                    style: TextStyle(color: FitGenieTheme.muted, fontSize: 10),
+                                    style: TextStyle(
+                                        color: FitGenieTheme.muted,
+                                        fontSize: 10),
                                   ),
                                 );
                               },
                             ),
                           ),
-                          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          leftTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         gridData: FlGridData(
                           show: true,
@@ -698,10 +761,12 @@ Short motivating feedback do (2-3 lines max) with tips.''',
             const SizedBox(height: 16),
 
             // ✅ NEW: Best Day Card
-            if (_bestDay != null && (_bestDay!.calories > 0 || _bestDay!.protein > 0))
+            if (_bestDay != null &&
+                (_bestDay!.calories > 0 || _bestDay!.protein > 0))
               _buildBestDayCard(),
 
-            if (_bestDay != null && (_bestDay!.calories > 0 || _bestDay!.protein > 0))
+            if (_bestDay != null &&
+                (_bestDay!.calories > 0 || _bestDay!.protein > 0))
               const SizedBox(height: 16),
 
             // Weight Card (now includes trend chart)
@@ -714,16 +779,19 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.monitor_weight, color: FitGenieTheme.teal, size: 20),
+                          Icon(Icons.monitor_weight,
+                              color: FitGenieTheme.teal, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.get('progress_weight'),
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
                       ),
                       IconButton(
-                        icon: const Icon(Icons.add_circle_outline, color: FitGenieTheme.primary),
+                        icon: const Icon(Icons.add_circle_outline,
+                            color: FitGenieTheme.primary),
                         onPressed: _showAddWeightDialog,
                         tooltip: AppStrings.get('progress_log_weight'),
                       ),
@@ -749,7 +817,9 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                                 ? _weightTrendColor()
                                 : FitGenieTheme.muted,
                             fontSize: 12,
-                            fontWeight: _weightHistory.length >= 2 ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: _weightHistory.length >= 2
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ],
@@ -782,7 +852,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.get('progress_insight'),
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
                       ),
@@ -790,12 +861,14 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         onPressed: _loadingInsight ? null : _getAIInsight,
                         icon: _loadingInsight
                             ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
+                                width: 16,
+                                height: 16,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
                             : const Icon(Icons.auto_awesome, size: 18),
-                        label: Text(_loadingInsight ? 'Loading...' : 'Get Insight'),
+                        label: Text(
+                            _loadingInsight ? 'Loading...' : 'Get Insight'),
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.purple,
                         ),
@@ -807,7 +880,9 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     Center(
                       child: Column(
                         children: [
-                          Icon(Icons.lightbulb_outline, size: 40, color: Colors.purple.withValues(alpha: 0.5)),
+                          Icon(Icons.lightbulb_outline,
+                              size: 40,
+                              color: Colors.purple.withValues(alpha: 0.5)),
                           const SizedBox(height: 8),
                           Text(
                             AppStrings.get('progress_tap_insight'),
@@ -843,9 +918,11 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 16),
-                  _buildAllTimeRow(Icons.fitness_center, 'Total Workouts', '$_totalWorkouts'),
+                  _buildAllTimeRow(Icons.fitness_center, 'Total Workouts',
+                      '$_totalWorkouts'),
                   const Divider(height: 24, color: Colors.white12),
-                  _buildAllTimeRow(Icons.calendar_today, 'Current Streak', '$_currentStreak days'),
+                  _buildAllTimeRow(Icons.calendar_today, 'Current Streak',
+                      '$_currentStreak days'),
                   const Divider(height: 24, color: Colors.white12),
                   _buildAllTimeRow(Icons.emoji_events, 'Best Streak', '7 days'),
                 ],
@@ -877,7 +954,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               getTooltipItems: (spots) => spots.map((s) {
                 return LineTooltipItem(
                   '${s.y.toStringAsFixed(1)} kg',
-                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 );
               }).toList(),
             ),
@@ -913,10 +991,13 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 26,
-                interval: (_weightHistory.length / 4).clamp(1, double.infinity).roundToDouble(),
+                interval: (_weightHistory.length / 4)
+                    .clamp(1, double.infinity)
+                    .roundToDouble(),
                 getTitlesWidget: (value, meta) {
                   final i = value.toInt();
-                  if (i < 0 || i >= _weightHistory.length) return const SizedBox();
+                  if (i < 0 || i >= _weightHistory.length)
+                    return const SizedBox();
                   return Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
@@ -927,9 +1008,12 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                 },
               ),
             ),
-            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           ),
           gridData: FlGridData(
             show: true,
@@ -976,7 +1060,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.calendar_today, color: FitGenieTheme.primary, size: 18),
+          const Icon(Icons.calendar_today,
+              color: FitGenieTheme.primary, size: 18),
           const SizedBox(width: 10),
           Text(
             '$startDate - $endDate',
@@ -1107,9 +1192,11 @@ Short motivating feedback do (2-3 lines max) with tips.''',
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildMiniStat('🔥', '${_bestDay!.calories}', 'cal ($calPercent%)'),
+                _buildMiniStat(
+                    '🔥', '${_bestDay!.calories}', 'cal ($calPercent%)'),
                 const SizedBox(width: 24),
-                _buildMiniStat('💪', '${_bestDay!.protein}g', 'protein ($proPercent%)'),
+                _buildMiniStat(
+                    '💪', '${_bestDay!.protein}g', 'protein ($proPercent%)'),
                 if (_bestDay!.workouts > 0) ...[
                   const SizedBox(width: 24),
                   _buildMiniStat('🏋️', '${_bestDay!.workouts}', 'workouts'),
@@ -1171,7 +1258,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     : FitGenieTheme.card,
                 borderRadius: BorderRadius.circular(12),
                 border: isToday
-                    ? Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.3))
+                    ? Border.all(
+                        color: FitGenieTheme.primary.withValues(alpha: 0.3))
                     : null,
               ),
               child: Row(
@@ -1184,14 +1272,18 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                           Text(
                             dayName,
                             style: TextStyle(
-                              fontWeight: isToday ? FontWeight.bold : FontWeight.w600,
-                              color: isToday ? FitGenieTheme.primary : Colors.white,
+                              fontWeight:
+                                  isToday ? FontWeight.bold : FontWeight.w600,
+                              color: isToday
+                                  ? FitGenieTheme.primary
+                                  : Colors.white,
                             ),
                           ),
                           if (isToday)
                             Container(
                               margin: const EdgeInsets.only(left: 8),
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
                                 color: FitGenieTheme.primary,
                                 borderRadius: BorderRadius.circular(6),
@@ -1210,9 +1302,11 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: FitGenieTheme.primary.withValues(alpha: 0.2),
+                              color:
+                                  FitGenieTheme.primary.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -1234,14 +1328,18 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         '${data.calories} cal',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: data.calories > 0 ? FitGenieTheme.hot : FitGenieTheme.muted,
+                          color: data.calories > 0
+                              ? FitGenieTheme.hot
+                              : FitGenieTheme.muted,
                         ),
                       ),
                       Text(
                         '${data.protein}g protein',
                         style: TextStyle(
                           fontSize: 12,
-                          color: data.protein > 0 ? FitGenieTheme.teal : FitGenieTheme.muted,
+                          color: data.protein > 0
+                              ? FitGenieTheme.teal
+                              : FitGenieTheme.muted,
                         ),
                       ),
                     ],
@@ -1347,7 +1445,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
             style: ElevatedButton.styleFrom(
               backgroundColor: FitGenieTheme.primary,
             ),
-            child: Text(AppStrings.get('save'), style: TextStyle(color: Colors.white)),
+            child: Text(AppStrings.get('save'),
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

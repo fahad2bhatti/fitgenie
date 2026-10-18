@@ -88,10 +88,9 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 18),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                    (context, index) {
+                (context, index) {
                   final planExercise = widget.plan.exercises[index];
-                  final exercise =
-                  _findExerciseById(planExercise.exerciseId);
+                  final exercise = _findExerciseById(planExercise.exerciseId);
                   return _buildPlanExerciseCard(
                     planExercise: planExercise,
                     exercise: exercise,
@@ -231,8 +230,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           runSpacing: 8,
           children: widget.plan.targetMuscles.map((muscle) {
             return Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
@@ -393,10 +391,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: color.withValues(alpha: 0.2),
-              child: Text('${index + 1}',
-                  style: TextStyle(color: color)),
+              child: Text('${index + 1}', style: TextStyle(color: color)),
             ),
-            title: Text(planExercise.exerciseId, maxLines: 1, overflow: TextOverflow.ellipsis),
+            title: Text(planExercise.exerciseId,
+                maxLines: 1, overflow: TextOverflow.ellipsis),
             subtitle: Text(
               '${planExercise.sets} sets × ${planExercise.reps}',
               style: TextStyle(color: FitGenieTheme.muted),
@@ -420,7 +418,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
               if (_showGifs && exercise.hasGif)
                 ClipRRect(
                   borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+                      const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Stack(
                     children: [
                       Image.asset(
@@ -437,7 +435,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           ),
                         ),
                       ),
-
                       Positioned(
                         top: 8,
                         left: 8,
@@ -458,14 +455,11 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           ),
                         ),
                       ),
-
                       Positioned(
                         top: 8,
                         right: 8,
-                        child:
-                        _buildDifficultyBadge(exercise.difficulty),
+                        child: _buildDifficultyBadge(exercise.difficulty),
                       ),
-
                       Positioned(
                         bottom: 8,
                         right: 8,
@@ -497,7 +491,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     ],
                   ),
                 ),
-
               Padding(
                 padding: const EdgeInsets.all(14),
                 child: Column(
@@ -539,8 +532,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  _buildTag(exercise.equipment,
-                                      FitGenieTheme.teal),
+                                  _buildTag(
+                                      exercise.equipment, FitGenieTheme.teal),
                                   const SizedBox(width: 6),
                                   _buildTag(
                                     '${planExercise.sets} × ${planExercise.reps}',
@@ -556,7 +549,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-
                     Wrap(
                       spacing: 6,
                       runSpacing: 6,
@@ -565,7 +557,8 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: FitGenieTheme.success.withValues(alpha: 0.15),
+                            color:
+                                FitGenieTheme.success.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -579,23 +572,23 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 10),
-
                     Row(
                       children: [
                         _miniChip(
                           Icons.timer_outlined,
-                          AppStrings.get('workout_plan_rest',
-                              params: {'sec': planExercise.restSeconds.toString()}),
+                          AppStrings.get('workout_plan_rest', params: {
+                            'sec': planExercise.restSeconds.toString()
+                          }),
                         ),
                         const SizedBox(width: 8),
                         _miniChip(
                           Icons.local_fire_department,
-                          AppStrings.get('workout_plan_cal_min',
-                              params: {'cal': exercise.caloriesPerMin.toString()}),
+                          AppStrings.get('workout_plan_cal_min', params: {
+                            'cal': exercise.caloriesPerMin.toString()
+                          }),
                         ),
                       ],
                     ),
-
                     if (planExercise.notes != null &&
                         planExercise.notes!.isNotEmpty) ...[
                       const SizedBox(height: 10),
@@ -609,8 +602,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.notes,
-                                size: 16, color: color),
+                            Icon(Icons.notes, size: 16, color: color),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -626,7 +618,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         ),
                       ),
                     ],
-
                     const SizedBox(height: 10),
                     Text(
                       AppStrings.get('workout_plan_tap_guide'),
@@ -650,10 +641,10 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
   // 📖 DETAIL BOTTOM SHEET
   // ============================================================
   void _showExerciseDetail(
-      Exercise exercise,
-      PlanExercise planExercise,
-      Color color,
-      ) {
+    Exercise exercise,
+    PlanExercise planExercise,
+    Color color,
+  ) {
     final steps = exercise.detailedSteps;
     final tips = exercise.tips;
     final mistakes = exercise.commonMistakes;
@@ -669,8 +660,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
             color: FitGenieTheme.cardDark,
-            borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: ListView(
             controller: scrollController,
@@ -705,7 +695,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                   ),
                 ),
               ),
-
               if (exercise.hasGif)
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -734,9 +723,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     ),
                   ),
                 ),
-
               const SizedBox(height: 16),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -750,15 +737,14 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _buildInfoChip(Icons.fitness_center,
-                            exercise.bodyPart, color),
-                        _buildInfoChip(Icons.build,
-                            exercise.equipment, FitGenieTheme.teal),
+                        _buildInfoChip(
+                            Icons.fitness_center, exercise.bodyPart, color),
+                        _buildInfoChip(Icons.build, exercise.equipment,
+                            FitGenieTheme.teal),
                         _buildInfoChip(
                           Icons.repeat,
                           '${planExercise.sets} × ${planExercise.reps}',
@@ -766,14 +752,16 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         ),
                         _buildInfoChip(
                           Icons.timer_outlined,
-                          AppStrings.get('workout_plan_rest',
-                              params: {'sec': planExercise.restSeconds.toString()}),
+                          AppStrings.get('workout_plan_rest', params: {
+                            'sec': planExercise.restSeconds.toString()
+                          }),
                           FitGenieTheme.success,
                         ),
                         _buildInfoChip(
                           Icons.local_fire_department,
-                          AppStrings.get('workout_plan_cal_min',
-                              params: {'cal': exercise.caloriesPerMin.toString()}),
+                          AppStrings.get('workout_plan_cal_min', params: {
+                            'cal': exercise.caloriesPerMin.toString()
+                          }),
                           FitGenieTheme.hot,
                         ),
                       ],
@@ -781,7 +769,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     const SizedBox(height: 10),
                     _buildDifficultyBadge(exercise.difficulty),
                     const SizedBox(height: 16),
-
                     if (exercise.musclesWorked.isNotEmpty) ...[
                       Text(
                         AppStrings.get('muscle_exercises_target'),
@@ -795,16 +782,17 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
-                        children:
-                        exercise.musclesWorked.map((muscle) {
+                        children: exercise.musclesWorked.map((muscle) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: FitGenieTheme.success.withValues(alpha: 0.15),
+                              color:
+                                  FitGenieTheme.success.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: FitGenieTheme.success.withValues(alpha: 0.3),
+                                color: FitGenieTheme.success
+                                    .withValues(alpha: 0.3),
                               ),
                             ),
                             child: Text(
@@ -819,7 +807,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       ),
                       const SizedBox(height: 20),
                     ],
-
                     if (planExercise.notes != null &&
                         planExercise.notes!.isNotEmpty)
                       Container(
@@ -828,12 +815,11 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                              color: color.withValues(alpha: 0.25)),
+                          border:
+                              Border.all(color: color.withValues(alpha: 0.25)),
                         ),
                         child: Row(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Icon(Icons.notes, color: color, size: 18),
                             const SizedBox(width: 10),
@@ -851,9 +837,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                           ],
                         ),
                       ),
-
                     const SizedBox(height: 18),
-
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
@@ -864,8 +848,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.description,
-                              size: 18, color: color),
+                          Icon(Icons.description, size: 18, color: color),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
@@ -879,9 +862,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 24),
-
                     if (steps.isNotEmpty) ...[
                       _buildSectionTitle(
                         AppStrings.get('muscle_exercises_how_to'),
@@ -892,7 +873,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         _buildStepItem(i + 1, steps[i], color),
                       const SizedBox(height: 24),
                     ],
-
                     if (tips.isNotEmpty) ...[
                       _buildSectionTitle(
                         AppStrings.get('muscle_exercises_tips'),
@@ -907,7 +887,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         ),
                       const SizedBox(height: 24),
                     ],
-
                     if (mistakes.isNotEmpty) ...[
                       _buildSectionTitle(
                         AppStrings.get('muscle_exercises_mistakes'),
@@ -922,7 +901,6 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                         ),
                       const SizedBox(height: 24),
                     ],
-
                     const SizedBox(height: 40),
                   ],
                 ),

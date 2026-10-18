@@ -22,8 +22,7 @@ class RetryableExerciseImage extends StatefulWidget {
   });
 
   @override
-  State<RetryableExerciseImage> createState() =>
-      _RetryableExerciseImageState();
+  State<RetryableExerciseImage> createState() => _RetryableExerciseImageState();
 }
 
 class _RetryableExerciseImageState extends State<RetryableExerciseImage> {
@@ -82,8 +81,7 @@ class _RetryableExerciseImageState extends State<RetryableExerciseImage> {
                   const Icon(Icons.fitness_center, color: Colors.white24),
                   if (_retryCount >= _maxAutoRetries) ...[
                     const SizedBox(height: 4),
-                    Icon(Icons.refresh,
-                        size: 14, color: FitGenieTheme.muted),
+                    Icon(Icons.refresh, size: 14, color: FitGenieTheme.muted),
                   ],
                 ],
               ),

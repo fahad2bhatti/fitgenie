@@ -236,17 +236,17 @@ extension SpacingExtension on num {
 
 extension PaddingExtension on Widget {
   Widget padAll(double value) => Padding(
-    padding: EdgeInsets.all(value),
-    child: this,
-  );
+        padding: EdgeInsets.all(value),
+        child: this,
+      );
 
   Widget padH(double value) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: value),
-    child: this,
-  );
+        padding: EdgeInsets.symmetric(horizontal: value),
+        child: this,
+      );
 
   Widget padV(double value) => Padding(
-    padding: EdgeInsets.symmetric(vertical: value),
-    child: this,
-  );
+        padding: EdgeInsets.symmetric(vertical: value),
+        child: this,
+      );
 }

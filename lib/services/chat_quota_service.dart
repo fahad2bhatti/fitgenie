@@ -29,8 +29,8 @@ class ChatQuotaService {
   ({int used, int bonus}) _read(Map<String, dynamic>? d) {
     if (d == null || d['date'] != _today) return (used: 0, bonus: 0);
     return (
-    used: (d['used'] as num?)?.toInt() ?? 0,
-    bonus: (d['bonus'] as num?)?.toInt() ?? 0,
+      used: (d['used'] as num?)?.toInt() ?? 0,
+      bonus: (d['bonus'] as num?)?.toInt() ?? 0,
     );
   }
 

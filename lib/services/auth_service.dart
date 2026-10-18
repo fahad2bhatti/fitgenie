@@ -28,7 +28,8 @@ class AuthService {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    serverClientId: '387230689296-h6ggsbl2jl9tmqcgsanmecc1l5d3rg47.apps.googleusercontent.com',
+    serverClientId:
+        '387230689296-h6ggsbl2jl9tmqcgsanmecc1l5d3rg47.apps.googleusercontent.com',
   );
 
   // ✅ Brute Force Protection
@@ -53,11 +54,13 @@ class AuthService {
     String cleaned = input.trim();
     cleaned = cleaned.replaceAll(RegExp(r'<[^>]*>'), '');
     cleaned = cleaned.replaceAll(
-      RegExp(r'(javascript|script|onclick|onerror|onload)', caseSensitive: false),
+      RegExp(r'(javascript|script|onclick|onerror|onload)',
+          caseSensitive: false),
       '',
     );
     cleaned = cleaned.replaceAll(
-      RegExp(r'\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE)\b', caseSensitive: false),
+      RegExp(r'\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|ALTER|CREATE)\b',
+          caseSensitive: false),
       '',
     );
     cleaned = cleaned.replaceAll(';', '');
@@ -92,10 +95,14 @@ class AuthService {
   String? _validatePassword(String password) {
     if (password.isEmpty) return AppStrings.get('authsvc_enter_password');
     if (password.length < 8) return AppStrings.get('authsvc_pw_min');
-    if (!password.contains(RegExp(r'[A-Z]'))) return AppStrings.get('authsvc_pw_upper');
-    if (!password.contains(RegExp(r'[a-z]'))) return AppStrings.get('authsvc_pw_lower');
-    if (!password.contains(RegExp(r'[0-9]'))) return AppStrings.get('authsvc_pw_number');
-    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]'))) return AppStrings.get('authsvc_pw_special');
+    if (!password.contains(RegExp(r'[A-Z]')))
+      return AppStrings.get('authsvc_pw_upper');
+    if (!password.contains(RegExp(r'[a-z]')))
+      return AppStrings.get('authsvc_pw_lower');
+    if (!password.contains(RegExp(r'[0-9]')))
+      return AppStrings.get('authsvc_pw_number');
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?:{}|<>]')))
+      return AppStrings.get('authsvc_pw_special');
     return null;
   }
 
@@ -112,7 +119,8 @@ class AuthService {
   String? _checkBruteForce() {
     if (_lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!)) {
       final remaining = _lockoutUntil!.difference(DateTime.now()).inSeconds;
-      return AppStrings.get('authsvc_too_many_attempts', params: {'seconds': '$remaining'});
+      return AppStrings.get('authsvc_too_many_attempts',
+          params: {'seconds': '$remaining'});
     }
     return null;
   }
@@ -136,7 +144,6 @@ class AuthService {
   // 🔐 GOOGLE SIGN IN
   // ═══════════════════════════════════════════
   Future<AuthResult> signInWithGoogle() async {
-
     try {
       // Sirf agar already signed in ho tab signOut karo
       if (await _googleSignIn.isSignedIn()) {
@@ -157,7 +164,8 @@ class AuthService {
 
       debugPrint('✅ Google account selected: ${googleUser.email}');
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -174,7 +182,8 @@ class AuthService {
 
         return AuthResult(
           success: true,
-          message: AppStrings.get('authsvc_welcome_user', params: {'name': user.displayName ?? 'User'}),
+          message: AppStrings.get('authsvc_welcome_user',
+              params: {'name': user.displayName ?? 'User'}),
           user: user,
         );
       }
@@ -201,7 +210,8 @@ class AuthService {
   // ═══════════════════════════════════════════
   // 👤 CREATE GOOGLE USER DOC
   // ═══════════════════════════════════════════
-  Future<void> _createGoogleUserDoc(User user, GoogleSignInAccount googleUser) async {
+  Future<void> _createGoogleUserDoc(
+      User user, GoogleSignInAccount googleUser) async {
     final docRef = _firestore.collection('users').doc(user.uid);
     final doc = await docRef.get();
 
@@ -253,9 +263,15 @@ class AuthService {
 
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_email'));
-      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
-      if (password.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_password'));
+      if (cleanEmail.isEmpty)
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_enter_email'));
+      if (!_isValidEmail(cleanEmail))
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_invalid_email'));
+      if (password.isEmpty)
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_enter_password'));
 
       debugPrint('🔄 Attempting login for: $cleanEmail');
 
@@ -280,11 +296,13 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       debugPrint('❌ FirebaseAuthException: ${e.code} - ${e.message}');
       _recordFailedAttempt();
-      return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
+      return AuthResult(
+          success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
       debugPrint('❌ Unknown error: $e');
       _recordFailedAttempt();
-      return AuthResult(success: false, message: AppStrings.get('authsvc_generic_net'));
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_generic_net'));
     }
   }
 
@@ -302,16 +320,23 @@ class AuthService {
       final cleanName = _sanitizeName(name);
 
       final nameError = _validateName(cleanName);
-      if (nameError != null) return AuthResult(success: false, message: nameError);
+      if (nameError != null)
+        return AuthResult(success: false, message: nameError);
 
-      if (cleanEmail.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_email'));
-      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
+      if (cleanEmail.isEmpty)
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_enter_email'));
+      if (!_isValidEmail(cleanEmail))
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_invalid_email'));
 
       final passwordError = _validatePassword(password);
-      if (passwordError != null) return AuthResult(success: false, message: passwordError);
+      if (passwordError != null)
+        return AuthResult(success: false, message: passwordError);
 
       if (confirmPassword != null && password != confirmPassword) {
-        return AuthResult(success: false, message: AppStrings.get('authsvc_pw_mismatch'));
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_pw_mismatch'));
       }
 
       debugPrint('🔄 Attempting signup for: $cleanEmail');
@@ -336,16 +361,18 @@ class AuthService {
         );
       }
 
-      return AuthResult(success: false, message: AppStrings.get('authsvc_signup_failed'));
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_signup_failed'));
     } on FirebaseAuthException catch (e) {
       debugPrint('❌ FirebaseAuthException: ${e.code}');
-      return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
+      return AuthResult(
+          success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
       debugPrint('❌ Unknown error: $e');
-      return AuthResult(success: false, message: AppStrings.get('authsvc_generic_net'));
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_generic_net'));
     }
   }
-
 
   // ═══════════════════════════════════════════
   // 🚪 LOGOUT
@@ -370,8 +397,12 @@ class AuthService {
     try {
       final cleanEmail = _sanitizeEmail(email);
 
-      if (cleanEmail.isEmpty) return AuthResult(success: false, message: AppStrings.get('authsvc_enter_email'));
-      if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
+      if (cleanEmail.isEmpty)
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_enter_email'));
+      if (!_isValidEmail(cleanEmail))
+        return AuthResult(
+            success: false, message: AppStrings.get('authsvc_invalid_email'));
 
       await _auth.sendPasswordResetEmail(email: cleanEmail);
 
@@ -380,9 +411,11 @@ class AuthService {
         message: AppStrings.get('authsvc_reset_sent'),
       );
     } on FirebaseAuthException catch (e) {
-      return AuthResult(success: false, message: _getFirebaseErrorMessage(e.code));
+      return AuthResult(
+          success: false, message: _getFirebaseErrorMessage(e.code));
     } catch (e) {
-      return AuthResult(success: false, message: AppStrings.get('authsvc_generic_retry'));
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_generic_retry'));
     }
   }
 
@@ -419,7 +452,8 @@ class AuthService {
   Future<void> _ensureUserDoc(User user) async {
     final docRef = _firestore.collection('users').doc(user.uid);
     final email = user.email ?? '';
-    final derivedName = (email.contains('@') ? email.split('@').first : '').trim();
+    final derivedName =
+        (email.contains('@') ? email.split('@').first : '').trim();
     final cleanName = _sanitizeName(derivedName);
 
     await docRef.set({
@@ -448,18 +482,27 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateUserName(String name) async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    if (user == null)
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     final cleanName = _sanitizeName(name);
     final nameError = _validateName(cleanName);
-    if (nameError != null) return AuthResult(success: false, message: nameError);
+    if (nameError != null)
+      return AuthResult(success: false, message: nameError);
 
     try {
       await user.updateDisplayName(cleanName);
-      await _firestore.collection('users').doc(user.uid).update({'name': cleanName});
-      return AuthResult(success: true, message: AppStrings.get('authsvc_name_updated'));
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .update({'name': cleanName});
+      return AuthResult(
+          success: true, message: AppStrings.get('authsvc_name_updated'));
     } catch (e) {
-      return AuthResult(success: false, message: AppStrings.get('authsvc_name_update_failed'));
+      return AuthResult(
+          success: false,
+          message: AppStrings.get('authsvc_name_update_failed'));
     }
   }
 
@@ -468,16 +511,23 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updateEmail(String newEmail) async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    if (user == null)
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     final cleanEmail = _sanitizeEmail(newEmail);
-    if (!_isValidEmail(cleanEmail)) return AuthResult(success: false, message: AppStrings.get('authsvc_invalid_email'));
+    if (!_isValidEmail(cleanEmail))
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_invalid_email'));
 
     try {
       await user.verifyBeforeUpdateEmail(cleanEmail);
-      return AuthResult(success: true, message: AppStrings.get('authsvc_verify_sent'));
+      return AuthResult(
+          success: true, message: AppStrings.get('authsvc_verify_sent'));
     } catch (e) {
-      return AuthResult(success: false, message: AppStrings.get('authsvc_email_update_failed'));
+      return AuthResult(
+          success: false,
+          message: AppStrings.get('authsvc_email_update_failed'));
     }
   }
 
@@ -486,23 +536,29 @@ class AuthService {
   // ═══════════════════════════════════════════
   Future<AuthResult> updatePassword(String newPassword) async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    if (user == null)
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     final passwordError = _validatePassword(newPassword);
-    if (passwordError != null) return AuthResult(success: false, message: passwordError);
+    if (passwordError != null)
+      return AuthResult(success: false, message: passwordError);
 
     try {
       await user.updatePassword(newPassword);
-      return AuthResult(success: true, message: AppStrings.get('authsvc_pw_updated'));
+      return AuthResult(
+          success: true, message: AppStrings.get('authsvc_pw_updated'));
     } catch (e) {
-      return AuthResult(success: false, message: AppStrings.get('authsvc_pw_update_failed'));
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_pw_update_failed'));
     }
   }
 
   // ═══════════════════════════════════════════
   // 🗑️ DELETE ACCOUNT
   // ═══════════════════════════════════════════
-  Future<void> _deleteCollection(CollectionReference<Map<String, dynamic>> ref) async {
+  Future<void> _deleteCollection(
+      CollectionReference<Map<String, dynamic>> ref) async {
     while (true) {
       final snap = await ref.limit(300).get();
       if (snap.docs.isEmpty) break;
@@ -516,7 +572,9 @@ class AuthService {
 
   Future<AuthResult> deleteAccount() async {
     final user = currentUser;
-    if (user == null) return AuthResult(success: false, message: AppStrings.get('authsvc_not_logged_in'));
+    if (user == null)
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_not_logged_in'));
 
     try {
       final userRef = _firestore.collection('users').doc(user.uid);
@@ -526,15 +584,27 @@ class AuthService {
       for (final d in logs.docs) {
         await _deleteCollection(d.reference.collection('entries'));
       }
-      for (final name in ['dailyLogs', 'workouts', 'goals', 'weightLogs', 'customWorkouts',
-                          'settings', 'usage', 'savedMeals', 'recentFoods', 'aiChats']) {
+      for (final name in [
+        'dailyLogs',
+        'workouts',
+        'goals',
+        'weightLogs',
+        'customWorkouts',
+        'settings',
+        'usage',
+        'savedMeals',
+        'recentFoods',
+        'aiChats'
+      ]) {
         await _deleteCollection(userRef.collection(name));
       }
       await userRef.delete();
       await user.delete();
-      return AuthResult(success: true, message: AppStrings.get('authsvc_deleted'));
+      return AuthResult(
+          success: true, message: AppStrings.get('authsvc_deleted'));
     } catch (e) {
-      return AuthResult(success: false, message: AppStrings.get('authsvc_delete_failed'));
+      return AuthResult(
+          success: false, message: AppStrings.get('authsvc_delete_failed'));
     }
   }
 

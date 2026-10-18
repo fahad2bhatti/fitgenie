@@ -24,18 +24,18 @@ class AppStrings {
     'welcome_back_generic': 'Welcome back!',
     'welcome_intro_greeting': 'Welcome, {name} 👋',
     'welcome_intro_subtitle':
-    "Let's take a quick look at what FitGenie can do for you.",
+        "Let's take a quick look at what FitGenie can do for you.",
     'welcome_feature_ai_title': 'AI Coach',
     'welcome_feature_ai_sub': 'Get personalized fitness advice, anytime.',
     'welcome_feature_workouts_title': 'Guided Workouts',
     'welcome_feature_workouts_sub':
-    'Follow along with animated exercise demos.',
+        'Follow along with animated exercise demos.',
     'welcome_feature_nutrition_title': 'Nutrition Tracking',
     'welcome_feature_nutrition_sub':
-    'Log meals and hit your calorie & protein goals.',
+        'Log meals and hit your calorie & protein goals.',
     'welcome_feature_progress_title': 'Progress Charts',
     'welcome_feature_progress_sub':
-    'Watch your weight, workouts and streaks over time.',
+        'Watch your weight, workouts and streaks over time.',
     'welcome_get_started': 'Get Started',
 
     // ==========================================
@@ -76,13 +76,15 @@ class AppStrings {
     'login_terms_prefix': 'I agree to the ',
     'login_terms_link': 'Terms of Service & Privacy Policy',
     'login_terms_suffix': '.',
-    'login_terms_required': 'Please accept the Terms & Privacy Policy to continue.',
+    'login_terms_required':
+        'Please accept the Terms & Privacy Policy to continue.',
     'login_email_required': 'Please enter your email',
     'login_password_required': 'Please enter your password',
     'login_generic_error': 'Something went wrong. Please check your internet.',
     'login_google_error': 'Error signing in with Google.',
     'login_link_error': 'Could not open the link.',
-    'login_reset_instructions': "Enter your email address and we'll send you a link to reset your password.",
+    'login_reset_instructions':
+        "Enter your email address and we'll send you a link to reset your password.",
     'login_reset_failed': 'Failed to send reset email',
 
     // ==========================================
@@ -99,23 +101,29 @@ class AppStrings {
     'onboarding_years_suffix': 'years',
     'profile_live_label': 'LIVE',
     'auth_verify_email': 'Verify Your Email!',
-    'auth_verify_sub': 'We sent a verification link to your email. Please verify and then login.',
+    'auth_verify_sub':
+        'We sent a verification link to your email. Please verify and then login.',
     'auth_check_again': 'Check Again',
     'auth_logout': 'Logout',
 
     // ==========================================
     // CHAT / AI COACH
     // ==========================================
-    'chat_welcome': "👋 Hey {name}!\n\n🤖 I'm **FitGenie** — your personal AI Fitness Coach!\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n🎯 **I can help you with:**\n\n💪 **Workouts**\n   Muscle-specific exercises & plans\n\n🍽️ **Nutrition**  \n   Diet plans & calorie guidance\n\n🔥 **Motivation**\n   Daily inspiration & tips\n\n📊 **Progress**\n   Track & improve\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\nUse the quick buttons below or type your question!\n\n**Let's get started! 🚀**",
-    'chat_error': '❌ **Oops! Something went wrong.**\n\nPlease try again or check your internet connection.\n\n💡 Tip: You can also try the quick buttons below!',
+    'chat_welcome':
+        "👋 Hey {name}!\n\n🤖 I'm **FitGenie** — your personal AI Fitness Coach!\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n🎯 **I can help you with:**\n\n💪 **Workouts**\n   Muscle-specific exercises & plans\n\n🍽️ **Nutrition**  \n   Diet plans & calorie guidance\n\n🔥 **Motivation**\n   Daily inspiration & tips\n\n📊 **Progress**\n   Track & improve\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\nUse the quick buttons below or type your question!\n\n**Let's get started! 🚀**",
+    'chat_error':
+        '❌ **Oops! Something went wrong.**\n\nPlease try again or check your internet connection.\n\n💡 Tip: You can also try the quick buttons below!',
     'chat_clear_title': 'Clear Chat?',
-    'chat_clear_sub': 'All messages will be deleted. This action cannot be undone.',
+    'chat_clear_sub':
+        'All messages will be deleted. This action cannot be undone.',
     'chat_clear': 'Clear',
     'chat_cancel': 'Cancel',
     'ad_chat_limit_title': 'Daily limit reached',
-    'ad_chat_limit_body': 'Your free messages for today are used up. Watch a short ad to get {count} more messages.',
+    'ad_chat_limit_body':
+        'Your free messages for today are used up. Watch a short ad to get {count} more messages.',
     'ad_scan_title': 'Watch an ad to scan',
-    'ad_scan_body': 'Meal scanning is free with a short ad. Watch it to continue.',
+    'ad_scan_body':
+        'Meal scanning is free with a short ad. Watch it to continue.',
     'ad_watch': 'Watch ad',
     'ad_not_completed': 'Ad was not completed.',
     'chat_about_title': 'FitGenie AI Coach',
@@ -199,7 +207,8 @@ class AppStrings {
     'dashboard_water_added': '+{count} glass(es) of water added! 💧',
     'dashboard_minutes_added': '{count} active minutes added! ⚡',
     'dashboard_coming_soon': 'Coming Soon',
-    'dashboard_scanner_soon': 'Meal Scanner will be a Premium feature — coming soon!',
+    'dashboard_scanner_soon':
+        'Meal Scanner will be a Premium feature — coming soon!',
     'dashboard_add_steps': 'Add Steps',
     'dashboard_add_water': 'Add Water',
     'dashboard_add_active_minutes': 'Add Active Minutes',
@@ -238,7 +247,8 @@ class AppStrings {
     'workout_no_sets': 'No sets logged yet',
     'workout_tap_to_log': 'Tap + to log a set 💪',
     'workout_details': 'Details →',
-    'workout_injury_warning': 'Exercises with incorrect form can cause injury. Consider consulting a fitness professional before starting.',
+    'workout_injury_warning':
+        'Exercises with incorrect form can cause injury. Consider consulting a fitness professional before starting.',
     // ==========================================
     // LIBRARY SCREEN
     // ==========================================
@@ -313,7 +323,8 @@ class AppStrings {
     'profile_gallery_sub': 'Select from photos',
     'profile_remove_sub': 'Delete current photo',
     'profile_gfit_disconnect_title': 'Disconnect Google Fit?',
-    'profile_gfit_disconnect_body': 'Steps will be tracked using phone sensor only. Background step counting will stop.',
+    'profile_gfit_disconnect_body':
+        'Steps will be tracked using phone sensor only. Background step counting will stop.',
     'profile_gfit_disconnect_action': 'Disconnect',
     'profile_gfit_disconnected': 'Google Fit disconnected',
     'profile_version': 'FitGenie v2.0.0',
@@ -430,11 +441,13 @@ class AppStrings {
     'scanner_health': 'Health Tip',
     'scanner_quantity': 'Quantity',
     'scanner_pick_error': 'Could not pick image: {error}',
-    'scanner_barcode_not_found': 'This product was not found in the Open Food Facts database. Try a photo or add manually.',
+    'scanner_barcode_not_found':
+        'This product was not found in the Open Food Facts database. Try a photo or add manually.',
     'scanner_barcode_error': 'Barcode lookup failed. Try again.',
     'scanner_added': '{food} added! (+{calories} cal)',
     'scanner_barcode_found': 'Product found via barcode',
-    'scanner_placeholder': 'Take a photo of your meal, or scan a packet barcode',
+    'scanner_placeholder':
+        'Take a photo of your meal, or scan a packet barcode',
     'scanner_scan_barcode': 'Scan Barcode (packaged food)',
     'scanner_protein': 'Protein',
     'scanner_carbs': 'Carbs',
@@ -446,12 +459,12 @@ class AppStrings {
     'exercise_library_title': 'Exercise Library',
     'exercise_search_hint': 'Search exercises...',
     'exercise_all': 'All',
-    'exercise_no_results': 'No exercises found in this category. Try another category.',
+    'exercise_no_results':
+        'No exercises found in this category. Try another category.',
     'exercise_primary_muscles': 'Primary Muscles',
     'exercise_secondary_muscles': 'Secondary Muscles',
     'exercise_equipment': 'Equipment',
     'exercise_how_to': 'How to do it',
-
 
     // ==========================================
     // FOOD SEARCH
@@ -674,8 +687,10 @@ class AppStrings {
     'profile_photo_removed': 'Photo removed',
     'profile_disconnect_googlefit': 'Disconnect Google Fit',
     'profile_connect_googlefit': 'Connect Google Fit',
-    'profile_delete_account_warning': 'This will permanently delete your account and ALL data including:\n\n• Workouts & custom plans\n• Nutrition logs & saved meals\n• Profile & goals\n• AI chat history\n\nThis action CANNOT be undone.',
-    'profile_relogin_required': 'Please logout and login again, then try deleting.',
+    'profile_delete_account_warning':
+        'This will permanently delete your account and ALL data including:\n\n• Workouts & custom plans\n• Nutrition logs & saved meals\n• Profile & goals\n• AI chat history\n\nThis action CANNOT be undone.',
+    'profile_relogin_required':
+        'Please logout and login again, then try deleting.',
     'profile_delete_account_error': 'Error deleting account. Please try again.',
     'profile_profile_updated': 'Profile updated!',
     'profile_profile_update_failed': 'Failed to update profile',
@@ -691,22 +706,28 @@ class AppStrings {
     'calories_field_fats': 'Fats',
     'authsvc_enter_password': 'Please enter your password.',
     'authsvc_pw_min': 'Password must be at least 8 characters.',
-    'authsvc_pw_upper': 'Password must contain at least one uppercase letter (A-Z).',
-    'authsvc_pw_lower': 'Password must contain at least one lowercase letter (a-z).',
+    'authsvc_pw_upper':
+        'Password must contain at least one uppercase letter (A-Z).',
+    'authsvc_pw_lower':
+        'Password must contain at least one lowercase letter (a-z).',
     'authsvc_pw_number': 'Password must contain at least one number (0-9).',
-    'authsvc_pw_special': 'Password must contain at least one special character (!@#\$%^&*).',
+    'authsvc_pw_special':
+        'Password must contain at least one special character (!@#\$%^&*).',
     'authsvc_enter_name': 'Please enter your name.',
     'authsvc_name_short': 'Name must be at least 2 characters.',
     'authsvc_name_long': 'Name is too long (max 50 characters).',
-    'authsvc_too_many_attempts': 'Too many attempts. Please try again in {seconds} seconds.',
+    'authsvc_too_many_attempts':
+        'Too many attempts. Please try again in {seconds} seconds.',
     'authsvc_google_cancelled': 'Google Sign-in was cancelled.',
     'authsvc_welcome_user': 'Welcome {name}! 🎉',
     'authsvc_google_failed': 'Google Sign-in failed. Please try again.',
-    'authsvc_google_failed_net': 'Google Sign-in failed. Please check your internet connection.',
+    'authsvc_google_failed_net':
+        'Google Sign-in failed. Please check your internet connection.',
     'authsvc_enter_email': 'Please enter your email.',
     'authsvc_invalid_email': 'Please enter a valid email address.',
     'authsvc_welcome_back': 'Welcome back! 🎉',
-    'authsvc_generic_net': 'Something went wrong. Please check your internet connection.',
+    'authsvc_generic_net':
+        'Something went wrong. Please check your internet connection.',
     'authsvc_pw_mismatch': 'Passwords do not match.',
     'authsvc_signup_ok': 'Account created! Please verify your email. 🎉',
     'authsvc_signup_failed': 'Signup failed. Please try again.',
@@ -715,27 +736,38 @@ class AppStrings {
     'authsvc_not_logged_in': 'User is not logged in.',
     'authsvc_name_updated': 'Name updated successfully! ✅',
     'authsvc_name_update_failed': 'Failed to update name. Please try again.',
-    'authsvc_verify_sent': 'Verification email sent. Please check your inbox! 📧',
+    'authsvc_verify_sent':
+        'Verification email sent. Please check your inbox! 📧',
     'authsvc_email_update_failed': 'Failed to update email. Please try again.',
     'authsvc_pw_updated': 'Password updated successfully! 🔐',
-    'authsvc_pw_update_failed': 'Failed to update password. Please log in again and retry.',
+    'authsvc_pw_update_failed':
+        'Failed to update password. Please log in again and retry.',
     'authsvc_deleted': 'Account deleted successfully.',
-    'authsvc_delete_failed': 'Failed to delete account. Please log in again and retry.',
-    'authsvc_err_email_in_use': 'This email is already registered. Please sign in instead.',
+    'authsvc_delete_failed':
+        'Failed to delete account. Please log in again and retry.',
+    'authsvc_err_email_in_use':
+        'This email is already registered. Please sign in instead.',
     'authsvc_err_invalid_email': 'The email address is not valid.',
-    'authsvc_err_weak_pw': 'Password is too weak. Please choose a stronger password.',
+    'authsvc_err_weak_pw':
+        'Password is too weak. Please choose a stronger password.',
     'authsvc_err_no_user': 'No account found with this email address.',
     'authsvc_err_wrong_pw': 'Incorrect password. Please try again.',
     'authsvc_err_bad_cred': 'Incorrect email or password. Please try again.',
-    'authsvc_err_disabled': 'This account has been disabled. Please contact support.',
-    'authsvc_err_too_many': 'Too many attempts. Please wait a moment and try again.',
-    'authsvc_err_network': 'Network error. Please check your internet connection.',
+    'authsvc_err_disabled':
+        'This account has been disabled. Please contact support.',
+    'authsvc_err_too_many':
+        'Too many attempts. Please wait a moment and try again.',
+    'authsvc_err_network':
+        'Network error. Please check your internet connection.',
     'authsvc_err_recent_login': 'Please log in again to complete this action.',
-    'authsvc_err_not_allowed': 'This sign-in method is not enabled. Please contact support.',
+    'authsvc_err_not_allowed':
+        'This sign-in method is not enabled. Please contact support.',
     'disclaimer_title': 'Health & Nutrition Disclaimer',
-    'disclaimer_body': 'FitGenie provides general fitness and nutrition guidance for informational purposes only. It is not medical or dietary advice and is not a substitute for professional diagnosis or treatment.\n\nCalorie, macro, and nutrition data — including AI Meal Scanner results and food search estimates — are AI-generated or database-sourced estimates and may not be fully accurate. FitGenie does not verify allergen information; if you have food allergies or intolerances, always check ingredients yourself before eating.\n\nPlease consult a qualified healthcare professional or registered dietitian before starting any new workout or nutrition program, especially if you have any existing medical condition, food allergy, or are pregnant.',
+    'disclaimer_body':
+        'FitGenie provides general fitness and nutrition guidance for informational purposes only. It is not medical or dietary advice and is not a substitute for professional diagnosis or treatment.\n\nCalorie, macro, and nutrition data — including AI Meal Scanner results and food search estimates — are AI-generated or database-sourced estimates and may not be fully accurate. FitGenie does not verify allergen information; if you have food allergies or intolerances, always check ingredients yourself before eating.\n\nPlease consult a qualified healthcare professional or registered dietitian before starting any new workout or nutrition program, especially if you have any existing medical condition, food allergy, or are pregnant.',
     'disclaimer_agree': 'I Understand & Agree',
-    'disclaimer_banner': 'For informational purposes only. Not a substitute for professional medical or dietary advice.',
+    'disclaimer_banner':
+        'For informational purposes only. Not a substitute for professional medical or dietary advice.',
     'push_morning_title': '💪 Morning Workout Time!',
     'push_morning_body': 'Good morning! Time to crush your workout!',
     'push_workout_channel': 'Workout Reminders',
@@ -760,12 +792,17 @@ class AppStrings {
     'push_done_title': '💪 Workout Complete!',
     'push_done_body': 'Great job! You crushed your workout today!',
     'push_quote_1': 'The only bad workout is the one that didn\'t happen! 💪',
-    'push_quote_2': 'Your body can do it. It\'s your mind you need to convince! 🧠',
+    'push_quote_2':
+        'Your body can do it. It\'s your mind you need to convince! 🧠',
     'push_quote_3': 'Sore today, strong tomorrow! 🔥',
-    'push_quote_4': 'Don\'t stop when you\'re tired. Stop when you\'re done! 🏆',
-    'push_quote_5': 'Fitness is not about being better than someone else. It\'s about being better than you used to be! ⭐',
-    'push_quote_6': 'The pain you feel today will be the strength you feel tomorrow! 💥',
-    'push_quote_7': 'Push yourself because no one else is going to do it for you! 🚀',
+    'push_quote_4':
+        'Don\'t stop when you\'re tired. Stop when you\'re done! 🏆',
+    'push_quote_5':
+        'Fitness is not about being better than someone else. It\'s about being better than you used to be! ⭐',
+    'push_quote_6':
+        'The pain you feel today will be the strength you feel tomorrow! 💥',
+    'push_quote_7':
+        'Push yourself because no one else is going to do it for you! 🚀',
     'push_quote_8': 'Success starts with self-discipline! 🎯',
     'push_quote_9': 'Make yourself proud! 👏',
     'push_quote_10': 'Believe in yourself and all that you are! ✨',
@@ -854,7 +891,8 @@ class AppStrings {
     'calories_goal_water': 'Water Goal',
     'calories_custom_entry': 'Custom Food Entry ✍️',
     'calories_edit_food': 'Edit Food ✏️',
-    'calories_custom_hint': 'This is a fallback option. For a better experience use Search Food.',
+    'calories_custom_hint':
+        'This is a fallback option. For a better experience use Search Food.',
     'calories_food_name': 'Food Name',
     'calories_quantity': 'Quantity / Serving',
     'calories_add_food': 'Add Food',
@@ -894,18 +932,18 @@ class AppStrings {
     'welcome_back_generic': 'Wapis khush aamdeed!',
     'welcome_intro_greeting': 'Khush amdeed, {name} 👋',
     'welcome_intro_subtitle':
-    'Chalein zara dekhtay hain FitGenie aapke liye kya kar sakta hai.',
+        'Chalein zara dekhtay hain FitGenie aapke liye kya kar sakta hai.',
     'welcome_feature_ai_title': 'AI Coach',
     'welcome_feature_ai_sub': 'Jab bhi chahein, personalized fitness advice.',
     'welcome_feature_workouts_title': 'Guided Workouts',
     'welcome_feature_workouts_sub':
-    'Animated exercise demos ke sath workout karein.',
+        'Animated exercise demos ke sath workout karein.',
     'welcome_feature_nutrition_title': 'Nutrition Tracking',
     'welcome_feature_nutrition_sub':
-    'Meals log karein aur calorie/protein goals hit karein.',
+        'Meals log karein aur calorie/protein goals hit karein.',
     'welcome_feature_progress_title': 'Progress Charts',
     'welcome_feature_progress_sub':
-    'Apna weight, workouts aur streaks time ke sath dekhein.',
+        'Apna weight, workouts aur streaks time ke sath dekhein.',
     'welcome_get_started': 'Shuru Karein',
 
     // ==========================================
@@ -914,7 +952,8 @@ class AppStrings {
     'onboarding_welcome': 'Salam {name} 👋',
     'onboarding_subtitle': "Chalo tumhara FitGenie personalize karte hain",
     'onboarding_gender': 'Tumhara gender kya hai?',
-    'onboarding_gender_sub': 'Isse hum tumhare calorie aur nutrition goals sahi calculate karte hain.',
+    'onboarding_gender_sub':
+        'Isse hum tumhare calorie aur nutrition goals sahi calculate karte hain.',
     'onboarding_age': 'Tumhari age kitni hai?',
     'onboarding_age_sub': 'Slider ghuma ke apni age set karo.',
     'onboarding_height': 'Height aur weight batao',
@@ -922,7 +961,8 @@ class AppStrings {
     'onboarding_level': 'Fitness level kya hai?',
     'onboarding_level_sub': 'Isse workouts tumhari level ke hisab se milenge.',
     'onboarding_goal': 'Tumhara main goal kya hai?',
-    'onboarding_goal_sub': 'Hum isi ke hisab se calorie aur macro targets set karenge.',
+    'onboarding_goal_sub':
+        'Hum isi ke hisab se calorie aur macro targets set karenge.',
     'onboarding_next': 'Agla',
     'onboarding_start': 'Shuru Karo 🚀',
     'onboarding_back': 'Peeche',
@@ -946,13 +986,15 @@ class AppStrings {
     'login_terms_prefix': 'Main ',
     'login_terms_link': 'Terms of Service & Privacy Policy',
     'login_terms_suffix': ' se agree karta hoon.',
-    'login_terms_required': 'Aage badhne ke liye Terms & Privacy Policy accept karo.',
+    'login_terms_required':
+        'Aage badhne ke liye Terms & Privacy Policy accept karo.',
     'login_email_required': 'Email daal bhai',
     'login_password_required': 'Password daal bhai',
     'login_generic_error': 'Kuch gadbad ho gayi. Internet check kar.',
     'login_google_error': 'Google Sign-in mein error aaya.',
     'login_link_error': 'Link nahi khul saka.',
-    'login_reset_instructions': 'Apna email address daalo, hum tumhe password reset karne ka link bhej denge.',
+    'login_reset_instructions':
+        'Apna email address daalo, hum tumhe password reset karne ka link bhej denge.',
     'login_reset_failed': 'Reset email bhejne mein masla hua',
 
     // ==========================================
@@ -969,23 +1011,29 @@ class AppStrings {
     'onboarding_years_suffix': 'saal',
     'profile_live_label': 'LIVE',
     'auth_verify_email': 'Email Verify Karo!',
-    'auth_verify_sub': 'Email pe verification link bheja hai. Verify karo phir login karo.',
+    'auth_verify_sub':
+        'Email pe verification link bheja hai. Verify karo phir login karo.',
     'auth_check_again': 'Check karo',
     'auth_logout': 'Logout',
 
     // ==========================================
     // CHAT / AI COACH
     // ==========================================
-    'chat_welcome': "👋 Hey {name}!\n\n🤖 Main hoon **FitGenie** — tera personal AI Fitness Coach!\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n🎯 **Main help kar sakta hun:**\n\n💪 **Workouts**\n   Muscle-specific exercises & plans\n\n🍽️ **Nutrition**  \n   Diet plans & calorie guidance\n\n🔥 **Motivation**\n   Daily inspiration & tips\n\n📊 **Progress**\n   Track & improve karne mein\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\nNeeche quick buttons use karo ya type karo!\n\n**Let's get started! 🚀**",
-    'chat_error': '❌ **Oops! Kuch gadbad ho gayi.**\n\nDobara try karo ya internet check karo.\n\n💡 Tip: Neeche quick buttons bhi try kar sakte ho!',
+    'chat_welcome':
+        "👋 Hey {name}!\n\n🤖 Main hoon **FitGenie** — tera personal AI Fitness Coach!\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\n🎯 **Main help kar sakta hun:**\n\n💪 **Workouts**\n   Muscle-specific exercises & plans\n\n🍽️ **Nutrition**  \n   Diet plans & calorie guidance\n\n🔥 **Motivation**\n   Daily inspiration & tips\n\n📊 **Progress**\n   Track & improve karne mein\n\n━━━━━━━━━━━━━━━━━━━━━━━━\n\nNeeche quick buttons use karo ya type karo!\n\n**Let's get started! 🚀**",
+    'chat_error':
+        '❌ **Oops! Kuch gadbad ho gayi.**\n\nDobara try karo ya internet check karo.\n\n💡 Tip: Neeche quick buttons bhi try kar sakte ho!',
     'chat_clear_title': 'Chat Clear Karo?',
-    'chat_clear_sub': 'Saari messages delete ho jayengi. Ye action undo nahi hoga.',
+    'chat_clear_sub':
+        'Saari messages delete ho jayengi. Ye action undo nahi hoga.',
     'chat_clear': 'Clear karein',
     'chat_cancel': 'Cancel karein',
     'ad_chat_limit_title': 'Daily limit khatam',
-    'ad_chat_limit_body': 'Aaj ke free messages khatam ho gaye. Ek chhota ad dekho aur {count} aur messages pao.',
+    'ad_chat_limit_body':
+        'Aaj ke free messages khatam ho gaye. Ek chhota ad dekho aur {count} aur messages pao.',
     'ad_scan_title': 'Scan ke liye ad dekho',
-    'ad_scan_body': 'Meal scan ek chhote ad ke saath free hai. Jari rakhne ke liye ad dekho.',
+    'ad_scan_body':
+        'Meal scan ek chhote ad ke saath free hai. Jari rakhne ke liye ad dekho.',
     'ad_watch': 'Ad dekho',
     'ad_not_completed': 'Ad poora nahi hua.',
     'chat_about_title': 'FitGenie AI Coach',
@@ -995,7 +1043,8 @@ class AppStrings {
     'chat_about_nutrition': '• Diet aur nutrition advice',
     'chat_about_motivation': '• Motivation aur tips',
     'chat_about_progress': '• Progress tracking mein madad',
-    'chat_about_data': '💡 Aapka data responses personalize karne ke liye use hota hai.',
+    'chat_about_data':
+        '💡 Aapka data responses personalize karne ke liye use hota hai.',
     'chat_got_it': 'Samajh gaya!',
     'chat_online': 'Online • Madad ke liye tayyar',
     'chat_thinking': 'Soch raha hai...',
@@ -1069,7 +1118,8 @@ class AppStrings {
     'dashboard_water_added': '+{count} glass paani add ho gaya! 💧',
     'dashboard_minutes_added': '{count} active minutes add ho gaye! ⚡',
     'dashboard_coming_soon': 'Jald Aa Raha Hai',
-    'dashboard_scanner_soon': 'Meal Scanner ek Premium feature banega — jald hi available hoga!',
+    'dashboard_scanner_soon':
+        'Meal Scanner ek Premium feature banega — jald hi available hoga!',
     'dashboard_add_steps': 'Steps Add Karo',
     'dashboard_add_water': 'Paani Add Karo',
     'dashboard_add_active_minutes': 'Active Minutes Add Karo',
@@ -1109,7 +1159,8 @@ class AppStrings {
     'workout_tap_to_log': 'Tap + karo set log karne ke liye 💪',
     'workout_details': 'Details →',
 
-    'workout_injury_warning': 'Galat form se exercise karne se chot lag sakti hai. Shuru karne se pehle fitness professional se mashwara karo.',
+    'workout_injury_warning':
+        'Galat form se exercise karne se chot lag sakti hai. Shuru karne se pehle fitness professional se mashwara karo.',
 
     // ==========================================
     // LIBRARY SCREEN
@@ -1185,7 +1236,8 @@ class AppStrings {
     'profile_gallery_sub': 'Photos se chunein',
     'profile_remove_sub': 'Current photo delete karein',
     'profile_gfit_disconnect_title': 'Google Fit Disconnect Karein?',
-    'profile_gfit_disconnect_body': 'Steps ab sirf phone sensor se track honge. Background step counting band ho jayegi.',
+    'profile_gfit_disconnect_body':
+        'Steps ab sirf phone sensor se track honge. Background step counting band ho jayegi.',
     'profile_gfit_disconnect_action': 'Disconnect Karein',
     'profile_gfit_disconnected': 'Google Fit disconnect ho gaya',
     'profile_version': 'FitGenie v2.0.0',
@@ -1303,10 +1355,9 @@ class AppStrings {
     'scanner_health': 'Sehat Ki Tip',
     'scanner_quantity': 'Quantity',
 
-
-
     'scanner_pick_error': 'Image pick nahi ho payi: {error}',
-    'scanner_barcode_not_found': 'Ye product Open Food Facts database mein nahi mila. Photo se try karo ya manually add karo.',
+    'scanner_barcode_not_found':
+        'Ye product Open Food Facts database mein nahi mila. Photo se try karo ya manually add karo.',
     'scanner_barcode_error': 'Barcode lookup fail ho gaya. Dobara try karo.',
     'scanner_added': '{food} add ho gaya! (+{calories} cal)',
     'scanner_barcode_found': 'Barcode se product mil gaya',
@@ -1322,7 +1373,8 @@ class AppStrings {
     'exercise_library_title': 'Exercise Library',
     'exercise_search_hint': 'Exercise search karo...',
     'exercise_all': 'All',
-    'exercise_no_results': 'Is category mein exercises nahi mile. Koi aur category try karo.',
+    'exercise_no_results':
+        'Is category mein exercises nahi mile. Koi aur category try karo.',
     'exercise_primary_muscles': 'Primary Muscles',
     'exercise_secondary_muscles': 'Secondary Muscles',
     'exercise_equipment': 'Equipment',
@@ -1443,7 +1495,8 @@ class AppStrings {
     'error_unknown': 'Kuch gadbad ho gayi. Dobara try karo.',
     'error_empty': 'Baraye meharbani sare fields bharein.',
     'error_invalid_email': 'Sahi email address darj karein.',
-    'error_invalid_password': 'Password kam az kam 8 characters ka hona chahiye.',
+    'error_invalid_password':
+        'Password kam az kam 8 characters ka hona chahiye.',
     'workout_today': 'Aaj',
     'workout_fallback_type': 'Workout',
     'workout_rest_subtitle': 'Recovery & stretch karo aaj',
@@ -1454,7 +1507,8 @@ class AppStrings {
     'workout_recently': 'Abhi Abhi',
     'workout_yesterday': 'Kal',
     'workout_days_ago': '{days} din pehle',
-    'workout_plan_fallback': 'Plan generate nahi ho saka. Khud shuru karein! 💪',
+    'workout_plan_fallback':
+        'Plan generate nahi ho saka. Khud shuru karein! 💪',
     'workout_set_label': 'Set {current} / {total}',
     'workout_stat_sets': 'Sets',
     'workout_stat_minutes': 'Minutes',
@@ -1530,7 +1584,8 @@ class AppStrings {
     'dashboard_stat_water': 'Water',
     'dashboard_stat_active': 'Active',
     'onboarding_error': 'Kuch masla ho gaya: {error}',
-    'onboarding_lang_subtitle': 'Ye baad mein Settings mein change kar sakte hain',
+    'onboarding_lang_subtitle':
+        'Ye baad mein Settings mein change kar sakte hain',
     'onboarding_lang_en_desc': 'Everything in English',
     'onboarding_lang_ur_desc': 'Roman Urdu mein',
     'onboarding_height_label': 'Qad',
@@ -1541,7 +1596,8 @@ class AppStrings {
     'onboarding_level_intermediate_desc': 'Kuch mahino se active hoon',
     'onboarding_level_advanced_desc': 'Regular training kar raha/rahi hoon',
     'profile_googlefit_connected': 'Google Fit connect ho gaya!',
-    'profile_connection_failed': 'Connection fail ho gaya. Dobara koshish karein.',
+    'profile_connection_failed':
+        'Connection fail ho gaya. Dobara koshish karein.',
     'profile_generic_error': 'Error: {error}',
     'profile_no_image_selected': 'Koi image select nahi ki gayi',
     'profile_photo_updated': 'Photo update ho gayi!',
@@ -1549,9 +1605,12 @@ class AppStrings {
     'profile_photo_removed': 'Photo remove ho gayi',
     'profile_disconnect_googlefit': 'Google Fit Disconnect Karein',
     'profile_connect_googlefit': 'Google Fit Connect Karein',
-    'profile_delete_account_warning': 'Ye aapka account aur TAMAM data hamesha ke liye delete kar dega, jisme shamil hai:\n\n• Workouts & custom plans\n• Nutrition logs & saved meals\n• Profile & goals\n• AI chat history\n\nYe action wapis NAHI ho sakta.',
-    'profile_relogin_required': 'Please logout karke dobara login karein, phir delete try karein.',
-    'profile_delete_account_error': 'Account delete karne mein error. Dobara koshish karein.',
+    'profile_delete_account_warning':
+        'Ye aapka account aur TAMAM data hamesha ke liye delete kar dega, jisme shamil hai:\n\n• Workouts & custom plans\n• Nutrition logs & saved meals\n• Profile & goals\n• AI chat history\n\nYe action wapis NAHI ho sakta.',
+    'profile_relogin_required':
+        'Please logout karke dobara login karein, phir delete try karein.',
+    'profile_delete_account_error':
+        'Account delete karne mein error. Dobara koshish karein.',
     'profile_profile_updated': 'Profile update ho gaya!',
     'profile_profile_update_failed': 'Profile update nahi ho saka',
     'profile_stats_updated': 'Stats update ho gaye!',
@@ -1566,51 +1625,74 @@ class AppStrings {
     'calories_field_fats': 'Fats',
     'authsvc_enter_password': 'Meherbani karke apna password likhein.',
     'authsvc_pw_min': 'Password kam az kam 8 characters ka hona chahiye.',
-    'authsvc_pw_upper': 'Password mein kam az kam ek bara (uppercase) letter hona chahiye (A-Z).',
-    'authsvc_pw_lower': 'Password mein kam az kam ek chota (lowercase) letter hona chahiye (a-z).',
-    'authsvc_pw_number': 'Password mein kam az kam ek number hona chahiye (0-9).',
-    'authsvc_pw_special': 'Password mein kam az kam ek special character hona chahiye (!@#\$%^&*).',
+    'authsvc_pw_upper':
+        'Password mein kam az kam ek bara (uppercase) letter hona chahiye (A-Z).',
+    'authsvc_pw_lower':
+        'Password mein kam az kam ek chota (lowercase) letter hona chahiye (a-z).',
+    'authsvc_pw_number':
+        'Password mein kam az kam ek number hona chahiye (0-9).',
+    'authsvc_pw_special':
+        'Password mein kam az kam ek special character hona chahiye (!@#\$%^&*).',
     'authsvc_enter_name': 'Meherbani karke apna naam likhein.',
     'authsvc_name_short': 'Naam kam az kam 2 characters ka hona chahiye.',
     'authsvc_name_long': 'Naam bohot lamba hai (zyada se zyada 50 characters).',
-    'authsvc_too_many_attempts': 'Bohot zyada koshishein. Meherbani karke {seconds} seconds baad dobara try karein.',
+    'authsvc_too_many_attempts':
+        'Bohot zyada koshishein. Meherbani karke {seconds} seconds baad dobara try karein.',
     'authsvc_google_cancelled': 'Google Sign-in cancel ho gaya.',
     'authsvc_welcome_user': 'Khush aamdeed {name}! 🎉',
-    'authsvc_google_failed': 'Google Sign-in nakaam ho gaya. Dobara koshish karein.',
-    'authsvc_google_failed_net': 'Google Sign-in nakaam ho gaya. Apna internet check karein.',
+    'authsvc_google_failed':
+        'Google Sign-in nakaam ho gaya. Dobara koshish karein.',
+    'authsvc_google_failed_net':
+        'Google Sign-in nakaam ho gaya. Apna internet check karein.',
     'authsvc_enter_email': 'Meherbani karke apna email likhein.',
     'authsvc_invalid_email': 'Meherbani karke sahi email address likhein.',
     'authsvc_welcome_back': 'Wapas khush aamdeed! 🎉',
     'authsvc_generic_net': 'Kuch ghalat ho gaya. Apna internet check karein.',
     'authsvc_pw_mismatch': 'Passwords match nahi karte.',
-    'authsvc_signup_ok': 'Account ban gaya! Meherbani karke apna email verify karein. 🎉',
+    'authsvc_signup_ok':
+        'Account ban gaya! Meherbani karke apna email verify karein. 🎉',
     'authsvc_signup_failed': 'Signup nakaam ho gaya. Dobara koshish karein.',
-    'authsvc_reset_sent': 'Password reset ka link aapke email pe bhej diya gaya hai! 📧',
+    'authsvc_reset_sent':
+        'Password reset ka link aapke email pe bhej diya gaya hai! 📧',
     'authsvc_generic_retry': 'Kuch ghalat ho gaya. Dobara koshish karein.',
     'authsvc_not_logged_in': 'User login nahi hai.',
     'authsvc_name_updated': 'Naam kamyabi se update ho gaya! ✅',
-    'authsvc_name_update_failed': 'Naam update nahi ho saka. Dobara koshish karein.',
-    'authsvc_verify_sent': 'Verification email bhej di gayi hai. Apna inbox check karein! 📧',
-    'authsvc_email_update_failed': 'Email update nahi ho saka. Dobara koshish karein.',
+    'authsvc_name_update_failed':
+        'Naam update nahi ho saka. Dobara koshish karein.',
+    'authsvc_verify_sent':
+        'Verification email bhej di gayi hai. Apna inbox check karein! 📧',
+    'authsvc_email_update_failed':
+        'Email update nahi ho saka. Dobara koshish karein.',
     'authsvc_pw_updated': 'Password kamyabi se update ho gaya! 🔐',
-    'authsvc_pw_update_failed': 'Password update nahi ho saka. Dobara login karke try karein.',
+    'authsvc_pw_update_failed':
+        'Password update nahi ho saka. Dobara login karke try karein.',
     'authsvc_deleted': 'Account kamyabi se delete ho gaya.',
-    'authsvc_delete_failed': 'Account delete nahi ho saka. Dobara login karke try karein.',
-    'authsvc_err_email_in_use': 'Ye email pehle se registered hai. Meherbani karke login karein.',
+    'authsvc_delete_failed':
+        'Account delete nahi ho saka. Dobara login karke try karein.',
+    'authsvc_err_email_in_use':
+        'Ye email pehle se registered hai. Meherbani karke login karein.',
     'authsvc_err_invalid_email': 'Ye email address sahi nahi hai.',
-    'authsvc_err_weak_pw': 'Password bohot kamzor hai. Mazboot password chunein.',
+    'authsvc_err_weak_pw':
+        'Password bohot kamzor hai. Mazboot password chunein.',
     'authsvc_err_no_user': 'Is email se koi account nahi mila.',
     'authsvc_err_wrong_pw': 'Password ghalat hai. Dobara koshish karein.',
-    'authsvc_err_bad_cred': 'Email ya password ghalat hai. Dobara koshish karein.',
-    'authsvc_err_disabled': 'Ye account disable kar diya gaya hai. Support se rabta karein.',
-    'authsvc_err_too_many': 'Bohot zyada koshishein. Thodi der intezar karke dobara try karein.',
+    'authsvc_err_bad_cred':
+        'Email ya password ghalat hai. Dobara koshish karein.',
+    'authsvc_err_disabled':
+        'Ye account disable kar diya gaya hai. Support se rabta karein.',
+    'authsvc_err_too_many':
+        'Bohot zyada koshishein. Thodi der intezar karke dobara try karein.',
     'authsvc_err_network': 'Network error. Apna internet check karein.',
-    'authsvc_err_recent_login': 'Ye kaam mukammal karne ke liye dobara login karein.',
-    'authsvc_err_not_allowed': 'Ye sign-in tareeqa abhi enable nahi hai. Support se rabta karein.',
+    'authsvc_err_recent_login':
+        'Ye kaam mukammal karne ke liye dobara login karein.',
+    'authsvc_err_not_allowed':
+        'Ye sign-in tareeqa abhi enable nahi hai. Support se rabta karein.',
     'disclaimer_title': 'Sehat aur Nutrition Disclaimer',
-    'disclaimer_body': 'FitGenie sirf maloomat ke liye aam fitness aur nutrition rehnumai deta hai. Ye medical ya dietary mashwara nahi hai aur kisi professional tashkhees ya ilaaj ka badal nahi hai.\n\nCalorie, macro aur nutrition ka data — jisme AI Meal Scanner ke nataij aur food search ke andaze shamil hain — AI ya database se liye gaye andaze hain aur mukammal tor par durust nahi bhi ho sakte. FitGenie allergen ki maloomat verify nahi karta; agar aapko khane se allergy ya intolerance hai to khane se pehle ingredients khud zaroor check karein.\n\nKoi bhi naya workout ya nutrition program shuru karne se pehle kisi qualified healthcare professional ya registered dietitian se mashwara zaroor karein, khaas tor par agar aapko pehle se koi medical condition ya food allergy hai, ya aap hamila hain.',
+    'disclaimer_body':
+        'FitGenie sirf maloomat ke liye aam fitness aur nutrition rehnumai deta hai. Ye medical ya dietary mashwara nahi hai aur kisi professional tashkhees ya ilaaj ka badal nahi hai.\n\nCalorie, macro aur nutrition ka data — jisme AI Meal Scanner ke nataij aur food search ke andaze shamil hain — AI ya database se liye gaye andaze hain aur mukammal tor par durust nahi bhi ho sakte. FitGenie allergen ki maloomat verify nahi karta; agar aapko khane se allergy ya intolerance hai to khane se pehle ingredients khud zaroor check karein.\n\nKoi bhi naya workout ya nutrition program shuru karne se pehle kisi qualified healthcare professional ya registered dietitian se mashwara zaroor karein, khaas tor par agar aapko pehle se koi medical condition ya food allergy hai, ya aap hamila hain.',
     'disclaimer_agree': 'Main samajh gaya/gayi aur agree hoon',
-    'disclaimer_banner': 'Sirf maloomat ke liye. Professional medical ya dietary mashwaray ka badal nahi hai.',
+    'disclaimer_banner':
+        'Sirf maloomat ke liye. Professional medical ya dietary mashwaray ka badal nahi hai.',
     'push_morning_title': '💪 Subah ke Workout ka Waqt!',
     'push_morning_body': 'Subah bakhair! Workout karne ka waqt ho gaya!',
     'push_workout_channel': 'Workout Reminders',
@@ -1623,7 +1705,8 @@ class AppStrings {
     'push_motivation_channel': 'Rozana Motivation',
     'push_motivation_channel_desc': 'Rozana motivational quotes',
     'push_evening_title': '🌙 Shaam ka Check-in',
-    'push_evening_body': 'Raat ka khana log karo aur aaj ki tracking mukammal karo! 📊',
+    'push_evening_body':
+        'Raat ka khana log karo aur aaj ki tracking mukammal karo! 📊',
     'push_water_title': '💧 Pani Peete Raho!',
     'push_water_body': 'Ek glass pani peene ka waqt ho gaya!',
     'push_water_channel': 'Water Reminders',
@@ -1635,17 +1718,22 @@ class AppStrings {
     'push_done_title': '💪 Workout Mukammal!',
     'push_done_body': 'Shabash! Aaj aapne zabardast workout kiya!',
     'push_quote_1': 'Sirf wo workout bura hai jo hua hi nahi! 💪',
-    'push_quote_2': 'Aapka jism ye kar sakta hai. Bas apne dimagh ko manana hai! 🧠',
+    'push_quote_2':
+        'Aapka jism ye kar sakta hai. Bas apne dimagh ko manana hai! 🧠',
     'push_quote_3': 'Aaj dard, kal taqat! 🔥',
     'push_quote_4': 'Thakne par mat ruko. Kaam mukammal hone par ruko! 🏆',
-    'push_quote_5': 'Fitness doosron se behtar hone ka naam nahi. Ye pehle se behtar hone ka naam hai! ⭐',
-    'push_quote_6': 'Aaj jo dard mehsoos ho raha hai wahi kal ki taqat banega! 💥',
-    'push_quote_7': 'Khud ko aage badhao kyunke aapke liye koi aur ye nahi karega! 🚀',
+    'push_quote_5':
+        'Fitness doosron se behtar hone ka naam nahi. Ye pehle se behtar hone ka naam hai! ⭐',
+    'push_quote_6':
+        'Aaj jo dard mehsoos ho raha hai wahi kal ki taqat banega! 💥',
+    'push_quote_7':
+        'Khud ko aage badhao kyunke aapke liye koi aur ye nahi karega! 🚀',
     'push_quote_8': 'Kamyabi self-discipline se shuru hoti hai! 🎯',
     'push_quote_9': 'Khud ko apne aap pe fakhar karne do! 👏',
     'push_quote_10': 'Apne aap pe aur apni salahiyaton pe yaqeen rakho! ✨',
     'food_search_serving_label': 'Serving: {qty}',
-    'scanner_camera_gallery_hint': 'Camera se click karo ya gallery se pick karo',
+    'scanner_camera_gallery_hint':
+        'Camera se click karo ya gallery se pick karo',
     'lang_select_continue_en': 'Continue',
     'lang_select_continue_ur': 'Aagay Barho',
     'shell_nav_home': 'Home',
@@ -1729,7 +1817,8 @@ class AppStrings {
     'calories_goal_water': 'Pani Goal',
     'calories_custom_entry': 'Custom Food Entry ✍️',
     'calories_edit_food': 'Food Edit Karo ✏️',
-    'calories_custom_hint': 'Ye fallback option hai. Better experience ke liye Search Food use karo.',
+    'calories_custom_hint':
+        'Ye fallback option hai. Better experience ke liye Search Food use karo.',
     'calories_food_name': 'Food Ka Naam',
     'calories_quantity': 'Quantity / Serving',
     'calories_add_food': 'Food Add Karo',

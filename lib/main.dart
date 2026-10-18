@@ -20,6 +20,7 @@ import 'services/sync_service.dart';
 import 'services/step_counter_service.dart';
 import 'services/ads_service.dart';
 import 'services/ad_manager.dart';
+import 'services/update_service.dart';
 import 'widgets/offline_indicator.dart';
 
 import 'screens/onboarding_screen.dart';
@@ -130,6 +131,9 @@ class _AppEntryState extends State<AppEntry> {
   void _onSplashComplete() {
     if (mounted) {
       setState(() => _showSplash = false);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) UpdateService.checkAndPrompt(context);
+      });
     }
   }
 
@@ -219,7 +223,7 @@ class _AuthGateState extends State<AuthGate> {
   // page 0 every time setLanguage() fires (e.g. from the onboarding
   // language page's own "Continue" button).
   late final Stream<User?> _authStream =
-  FirebaseAuth.instance.authStateChanges();
+      FirebaseAuth.instance.authStateChanges();
 
   @override
   void initState() {
@@ -328,7 +332,7 @@ class _AuthGateState extends State<AuthGate> {
 
               // Email verification check (only for email/password users)
               final isEmailUser = user.providerData
-                  .any((p) => p.providerId == 'password') &&
+                      .any((p) => p.providerId == 'password') &&
                   !user.providerData.any((p) => p.providerId == 'google.com');
 
               if (!user.emailVerified && isEmailUser) {
@@ -342,14 +346,16 @@ class _AuthGateState extends State<AuthGate> {
                         children: [
                           const Icon(Icons.email, color: Colors.blue, size: 64),
                           const SizedBox(height: 16),
-                          Text(AppStrings.get('auth_verify_email'),
+                          Text(
+                            AppStrings.get('auth_verify_email'),
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(AppStrings.get('auth_verify_sub'),
+                          Text(
+                            AppStrings.get('auth_verify_sub'),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.grey),
                           ),
@@ -379,8 +385,7 @@ class _AuthGateState extends State<AuthGate> {
               return FutureBuilder<_UserGateInfo>(
                 future: _getInfoFutureFor(user),
                 builder: (context, infoSnapshot) {
-                  if (infoSnapshot.connectionState ==
-                      ConnectionState.waiting) {
+                  if (infoSnapshot.connectionState == ConnectionState.waiting) {
                     return const Scaffold(
                       body: Center(child: CircularProgressIndicator()),
                     );

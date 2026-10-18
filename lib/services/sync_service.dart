@@ -90,10 +90,10 @@ class SyncService {
         await _syncWeightLog(data);
         break;
       default:
-      // Previously fell through silently and was then marked "synced"
-      // by the caller, permanently losing the data. Throwing here means
-      // it's retried and, if genuinely unrecognized, eventually dropped
-      // with a loud log instead of vanishing quietly.
+        // Previously fell through silently and was then marked "synced"
+        // by the caller, permanently losing the data. Throwing here means
+        // it's retried and, if genuinely unrecognized, eventually dropped
+        // with a loud log instead of vanishing quietly.
         throw Exception('Unknown pending sync type: "$type"');
     }
   }

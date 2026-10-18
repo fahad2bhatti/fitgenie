@@ -332,7 +332,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           .doc(_userId)
           .collection('workouts')
           .where('startedAt',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(todayStart))
+              isGreaterThanOrEqualTo: Timestamp.fromDate(todayStart))
           .where('startedAt', isLessThan: Timestamp.fromDate(todayEnd))
           .get();
 
@@ -385,7 +385,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           .doc(_userId)
           .collection('workouts')
           .where('startedAt',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(sevenDaysAgo))
+              isGreaterThanOrEqualTo: Timestamp.fromDate(sevenDaysAgo))
           .orderBy('startedAt', descending: true)
           .get();
 
@@ -418,7 +418,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   // 📝 UPDATE DAILY LOG
   // ==========================================
-  Future<void> _updateDailyLog({int? steps, int? water, int? activeMinutes}) async {
+  Future<void> _updateDailyLog(
+      {int? steps, int? water, int? activeMinutes}) async {
     if (_userId.isEmpty) return;
 
     final today = DateTime.now();
@@ -515,7 +516,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                 return GestureDetector(
                   onTap: () => Navigator.pop(context, entry.key),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: FitGenieTheme.primary.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(14),
@@ -545,7 +547,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   @override
   Widget build(BuildContext context) {
-    final name = widget.userName.trim().isEmpty ? 'User' : widget.userName.trim();
+    final name =
+        widget.userName.trim().isEmpty ? 'User' : widget.userName.trim();
 
     return Scaffold(
       backgroundColor: FitGenieTheme.bg,
@@ -624,7 +627,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               const SizedBox(height: 4),
               Text(
                 name,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
               ),
             ],
           ),
@@ -719,7 +723,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  Widget _buildMiniStat(IconData icon, String value, String label, Color color) {
+  Widget _buildMiniStat(
+      IconData icon, String value, String label, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -738,12 +743,11 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   Widget _buildStepsCard() {
     final progress =
-    _stepsGoal > 0 ? (_todaySteps / _stepsGoal).clamp(0.0, 1.0) : 0.0;
+        _stepsGoal > 0 ? (_todaySteps / _stepsGoal).clamp(0.0, 1.0) : 0.0;
     final goalAchieved = progress >= 1.0;
 
-    final dataSource = _stepCounterService.isUsingHealthConnect
-        ? 'Google Fit'
-        : 'Pedometer';
+    final dataSource =
+        _stepCounterService.isUsingHealthConnect ? 'Google Fit' : 'Pedometer';
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -803,7 +807,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: FitGenieTheme.success.withValues(alpha: 0.2),
+                              color:
+                                  FitGenieTheme.success.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Row(
@@ -889,17 +894,26 @@ class _DashboardScreenState extends State<DashboardScreen>
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text(AppStrings.get('dashboard_goal_steps', params: {'value': _formatNumber(_stepsGoal)}),
-                        style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+                    Text(
+                        AppStrings.get('dashboard_goal_steps',
+                            params: {'value': _formatNumber(_stepsGoal)}),
+                        style:
+                            TextStyle(color: Colors.grey[500], fontSize: 12)),
                     const SizedBox(height: 16),
                     Wrap(
                       spacing: 12,
                       runSpacing: 8,
                       children: [
-                        _buildMiniStat(Icons.local_fire_department,
-                            '${_stepsCalories.round()}', 'kcal', FitGenieTheme.warning),
-                        _buildMiniStat(Icons.straighten,
-                            _stepsDistance.toStringAsFixed(1), 'km', Colors.blue),
+                        _buildMiniStat(
+                            Icons.local_fire_department,
+                            '${_stepsCalories.round()}',
+                            'kcal',
+                            FitGenieTheme.warning),
+                        _buildMiniStat(
+                            Icons.straighten,
+                            _stepsDistance.toStringAsFixed(1),
+                            'km',
+                            Colors.blue),
                         _buildMiniStat(Icons.timer, '$_stepsActiveMinutes',
                             'min', Colors.purple),
                       ],
@@ -973,18 +987,21 @@ class _DashboardScreenState extends State<DashboardScreen>
                   child: Text(
                     goalAchieved
                         ? '🎉 ${AppStrings.get('dashboard_goal_achieved')}'
-                        : AppStrings.get('dashboard_steps_to_go',
-                        params: {'count': _formatNumber(_stepsGoal - _todaySteps)}),
+                        : AppStrings.get('dashboard_steps_to_go', params: {
+                            'count': _formatNumber(_stepsGoal - _todaySteps)
+                          }),
                     style: TextStyle(
                       fontSize: 12,
                       color: goalAchieved ? FitGenieTheme.success : Colors.grey,
-                      fontWeight: goalAchieved ? FontWeight.w600 : FontWeight.normal,
+                      fontWeight:
+                          goalAchieved ? FontWeight.w600 : FontWeight.normal,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   decoration: BoxDecoration(
                     color: _stepCounterService.isUsingHealthConnect
                         ? FitGenieTheme.success.withValues(alpha: 0.1)
@@ -1030,10 +1047,13 @@ class _DashboardScreenState extends State<DashboardScreen>
               const SizedBox(width: 8),
               Text(
                 AppStrings.get('dashboard_calories_burned'),
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
               ),
               const Spacer(),
-              Text(AppStrings.get('dashboard_goal_calories', params: {'value': '$caloriesGoal'}),
+              Text(
+                  AppStrings.get('dashboard_goal_calories',
+                      params: {'value': '$caloriesGoal'}),
                   style: TextStyle(color: Colors.grey[400], fontSize: 12)),
             ],
           ),
@@ -1042,7 +1062,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             children: [
               Text(
                 _formatNumber(_todayCaloriesBurned),
-                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
+                style:
+                    const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
               ),
               const SizedBox(width: 6),
               Text(AppStrings.get('dashboard_kcal'),
@@ -1050,7 +1071,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               const Spacer(),
               if (_thisWeekWorkoutCount > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: FitGenieTheme.success.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
@@ -1087,7 +1109,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               const SizedBox(width: 8),
               Text(
                 AppStrings.get('dashboard_daily_goals'),
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
               ),
               const Spacer(),
               if (_isLoading)
@@ -1109,9 +1132,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           _buildGoalRow(
               AppStrings.get('dashboard_water_glasses'),
               '$_todayWater/$_waterGoal',
-              _waterGoal > 0
-                  ? (_todayWater / _waterGoal).clamp(0.0, 1.0)
-                  : 0.0,
+              _waterGoal > 0 ? (_todayWater / _waterGoal).clamp(0.0, 1.0) : 0.0,
               Colors.blue,
               onTap: _showAddWaterDialog),
           const SizedBox(height: 14),
@@ -1135,7 +1156,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildGoalRow(String title, String valueText, double value, Color color,
+  Widget _buildGoalRow(
+      String title, String valueText, double value, Color color,
       {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
@@ -1181,11 +1203,13 @@ class _DashboardScreenState extends State<DashboardScreen>
               const SizedBox(width: 8),
               Text(
                 AppStrings.get('dashboard_weekly_activity'),
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: FitGenieTheme.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -1209,7 +1233,7 @@ class _DashboardScreenState extends State<DashboardScreen>
               children: List.generate(7, (i) {
                 final workoutCount = _weeklyWorkouts[i];
                 final heightPercent =
-                normalizedMax > 0 ? (workoutCount / normalizedMax) : 0.0;
+                    normalizedMax > 0 ? (workoutCount / normalizedMax) : 0.0;
                 final h = heightPercent.clamp(0.08, 1.0);
                 final isToday = i == (DateTime.now().weekday - 1);
 
@@ -1229,19 +1253,18 @@ class _DashboardScreenState extends State<DashboardScreen>
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       width: 28,
-                      height: workoutCount > 0
-                          ? (80 * h).clamp(16.0, 76.0)
-                          : 16,
+                      height:
+                          workoutCount > 0 ? (80 * h).clamp(16.0, 76.0) : 16,
                       decoration: BoxDecoration(
                         gradient: isToday || workoutCount > 0
                             ? LinearGradient(
-                          colors: [
-                            FitGenieTheme.primary,
-                            FitGenieTheme.primary.withValues(alpha: 0.6),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        )
+                                colors: [
+                                  FitGenieTheme.primary,
+                                  FitGenieTheme.primary.withValues(alpha: 0.6),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              )
                             : null,
                         color: workoutCount > 0
                             ? null
@@ -1256,7 +1279,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         color: isToday ? FitGenieTheme.primary : Colors.grey,
                         fontSize: 12,
                         fontWeight:
-                        isToday ? FontWeight.bold : FontWeight.normal,
+                            isToday ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -1330,8 +1353,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (_) => const ChallengesScreen()),
+                    MaterialPageRoute(builder: (_) => const ChallengesScreen()),
                   );
                 },
               ),
@@ -1365,7 +1387,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               const SizedBox(width: 8),
               Text(
                 AppStrings.get('dashboard_quick_log'),
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
               ),
             ],
           ),
@@ -1602,8 +1625,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 );
               }
             },
-            style:
-            ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.hot),
+            style: ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.hot),
             child: Text(AppStrings.get('save'),
                 style: const TextStyle(color: Colors.white)),
           ),
@@ -1649,8 +1671,7 @@ class _StepRingPainter extends CustomPainter {
 
     canvas.drawCircle(center, radius, bg);
 
-    final progressColor =
-    isGoalAchieved ? Colors.amber : FitGenieTheme.primary;
+    final progressColor = isGoalAchieved ? Colors.amber : FitGenieTheme.primary;
     final paint = Paint()
       ..shader = SweepGradient(
         startAngle: -math.pi / 2,

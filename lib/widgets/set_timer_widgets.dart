@@ -132,7 +132,9 @@ class CircularStopwatchState extends State<CircularStopwatch> {
               ),
               const SizedBox(height: 4),
               Text(
-                _running ? AppStrings.get('timer_in_progress') : AppStrings.get('timer_ready'),
+                _running
+                    ? AppStrings.get('timer_in_progress')
+                    : AppStrings.get('timer_ready'),
                 style: TextStyle(
                   fontSize: 12,
                   letterSpacing: 1.2,
@@ -259,7 +261,9 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _remaining == 0 ? AppStrings.get('timer_go_next') : AppStrings.get('timer_rest'),
+                    _remaining == 0
+                        ? AppStrings.get('timer_go_next')
+                        : AppStrings.get('timer_rest'),
                     style: TextStyle(
                       fontSize: 12,
                       letterSpacing: 1.2,
