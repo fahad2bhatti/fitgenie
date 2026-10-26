@@ -1,22 +1,67 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Helper function to check if the user is authenticated and owns the data
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
 
+    // ---------------------------------------------------------
+    // 1. USER PROFILE & NESTED COLLECTIONS (FitGenie Schema)
+    // ---------------------------------------------------------
     match /users/{userId} {
+      // Allow read/write on the main user document only if owner
       allow read, write: if isOwner(userId);
+      
+      // Daily Logs (Nutrition, Steps, Water)
+      match /dailyLogs/{dateKey} {
+        allow read, write: if isOwner(userId);
+        
+        // Entries within a daily log
+        match /entries/{entryId} {
+          allow read, write, delete: if isOwner(userId);
+        }
+      }
 
-      match /{document=**} {
+      // Workout Sessions
+      match /workouts/{workoutId} {
+        allow read, write, delete: if isOwner(userId);
+      }
+
+      // Custom Workouts created by the user
+      match /customWorkouts/{workoutId} {
+        allow read, write, delete: if isOwner(userId);
+      }
+
+      // Recent Foods (for quick add)
+      match /recentFoods/{foodKey} {
+        allow read, write, delete: if isOwner(userId);
+      }
+
+      // Saved Meals (templates)
+      match /savedMeals/{mealId} {
+        allow read, write, delete: if isOwner(userId);
+      }
+
+      // AI Chat History
+      match /aiChats/{chatId} {
+        allow read, write, delete: if isOwner(userId);
+      }
+
+      // App Settings & Preferences
+      match /settings/{settingId} {
         allow read, write: if isOwner(userId);
       }
     }
 
+    // ---------------------------------------------------------
+    // 2. DEFAULT DENY FOR ANYTHING ELSE
+    // ---------------------------------------------------------
+    // This ensures that if you add any other collections later, 
+    // they are locked down by default unless explicitly allowed.
     match /{document=**} {
       allow read, write: if false;
-    }
-
-    function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
     }
   }
 }
