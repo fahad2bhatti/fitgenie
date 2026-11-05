@@ -19,7 +19,7 @@ class FitGenieTheme {
   static const card = Color(0xFF151518);
   static const card2 = Color(0xFF111114);
 
-  static const primary = Color(0xFFD4FF3A); // volt lime
+  static const primary = Color(0xFF6B6BFF); // volt lime
   static const teal = Color(0xFF6EE7D8); // mint (water / steps)
   static const hot = Color(0xFFFF5B3A); // flame (calories / streak)
   static const ai = Color(0xFF9D8CFF); // violet, AI Coach only
@@ -28,14 +28,15 @@ class FitGenieTheme {
   static const muted = Color(0xFF8E8E96);
 
   /// Text/icon colour to place ON top of [primary] (lime needs dark text).
-  static const onPrimary = Color(0xFF0C0C0E);
+  static const onPrimary = Color(0xFFFFFFFF);
+  static const Color buttonBlue = Color(0xFF6B6BFF);
 
   static Color get background => bg;
   static Color get cardDark => card2;
 
   // Additional Colors
-  static const Color primaryLight = Color(0xFFE3FF7A);
-  static const Color primaryDark = Color(0xFFA8D000);
+  static const Color primaryLight = Color(0xFF8B8BFF);
+  static const Color primaryDark = Color(0xFF4B4BDB);
   static const Color success = Color(0xFF4ADE80);
   static const Color warning = Color(0xFFFFB020);
   static const Color error = Color(0xFFFF4D4D);
@@ -132,7 +133,7 @@ class FitGenieTheme {
         surface: card,
         error: error,
         onPrimary: onPrimary,
-        onSecondary: onPrimary,
+        onSecondary: Colors.black,
         onSurface: text,
         outline: border,
       ),
@@ -165,8 +166,8 @@ class FitGenieTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: primary,
-          foregroundColor: onPrimary,
+          backgroundColor: buttonBlue,
+          foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 54),
           shape: RoundedRectangleBorder(borderRadius: radius),
           textStyle: GoogleFonts.dmSans(
@@ -179,8 +180,8 @@ class FitGenieTheme {
 
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: primary,
-          foregroundColor: onPrimary,
+          backgroundColor: buttonBlue,
+          foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 54),
           shape: RoundedRectangleBorder(borderRadius: radius),
           textStyle: GoogleFonts.dmSans(
@@ -206,7 +207,7 @@ class FitGenieTheme {
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: primary,
+          foregroundColor: buttonBlue,
           textStyle: GoogleFonts.dmSans(fontWeight: FontWeight.w700),
         ),
       ),

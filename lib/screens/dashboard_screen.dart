@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../app/fitgenie_theme.dart';
 import '../widgets/fg_card.dart';
-import '../widgets/fg_progress.dart';
-import '../widgets/quick_action_tile.dart';
 import '../services/step_counter_service.dart';
 import '../services/nutrition_service.dart';
 import '../services/ai_service.dart' show MealAnalysis;
@@ -556,32 +554,28 @@ class _DashboardScreenState extends State<DashboardScreen>
           color: FitGenieTheme.primary,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(18, 10, 18, 18),
+            padding: const EdgeInsets.fromLTRB(
+              FitGenieTheme.screenPadding,
+              10,
+              FitGenieTheme.screenPadding,
+              24,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(name),
                 const SizedBox(height: 10),
                 const MedicalDisclaimerBanner(compact: true),
-                const SizedBox(height: 16),
+                const SizedBox(height: 18),
                 _buildStepsCard(),
-                const SizedBox(height: 14),
-                _buildCaloriesBurnedCard(),
-                const SizedBox(height: 14),
-                _buildDailyGoalsCard(),
-                const SizedBox(height: 14),
-                _buildWeeklyActivityCard(),
-                const SizedBox(height: 16),
-                Text(
-                  AppStrings.get('dashboard_quick_actions'),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w800, fontSize: 16),
-                ),
                 const SizedBox(height: 12),
-                _buildQuickActions(),
-                const SizedBox(height: 16),
-                _buildQuickLogSection(),
-                const SizedBox(height: 20),
+                _buildTodayCard(),
+                const SizedBox(height: 12),
+                _buildLogRow(),
+                const SizedBox(height: 12),
+                _buildWeeklyActivityCard(),
+                const SizedBox(height: 12),
+                _buildExploreCard(),
               ],
             ),
           ),
@@ -714,20 +708,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     }
   }
 
-  Widget _buildMiniStat(
-      IconData icon, String value, String label, Color color) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 14),
-        const SizedBox(width: 4),
-        Text(value,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-        const SizedBox(width: 2),
-        Text(label, style: TextStyle(fontSize: 10, color: Colors.grey[500])),
-      ],
-    );
-  }
 
   // ==========================================
   // 👣 STEPS CARD
@@ -865,11 +845,13 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   // 🔥 CALORIES BURNED CARD
   // ==========================================
-  Widget _buildCaloriesBurnedCard() {
-    final caloriesGoal = _caloriesGoal;
-    final progress = caloriesGoal > 0
-        ? (_todayCaloriesBurned / caloriesGoal).clamp(0.0, 1.0)
-        : 0.0;
+  // ==========================================
+  // 📋 AAJ KA HISAAB (burned + goals, ek card)
+  // ==========================================
+  Widget _buildTodayCard() {
+    final t = Theme.of(context).textTheme;
+    double frac(int value, int goal) =>
+        goal > 0 ? (value / goal).clamp(0.0, 1.0).toDouble() : 0.0;
 
     return FGCard(
       child: Column(
@@ -877,124 +859,70 @@ class _DashboardScreenState extends State<DashboardScreen>
         children: [
           Row(
             children: [
-              const Icon(Icons.local_fire_department,
-                  color: FitGenieTheme.hot, size: 20),
-              const SizedBox(width: 8),
               Text(
-                AppStrings.get('dashboard_calories_burned'),
-                style:
-                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                AppStrings.get('dashboard_daily_goals').toUpperCase(),
+                style: t.labelSmall,
               ),
               const Spacer(),
-              Text(
-                  AppStrings.get('dashboard_goal_calories',
-                      params: {'value': '$caloriesGoal'}),
-                  style: TextStyle(color: Colors.grey[400], fontSize: 12)),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Text(
-                _formatNumber(_todayCaloriesBurned),
-                style:
-                    const TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(width: 6),
-              Text(AppStrings.get('dashboard_kcal'),
-                  style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-              const Spacer(),
-              if (_thisWeekWorkoutCount > 0)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: FitGenieTheme.success.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '$_thisWeekWorkoutCount workouts',
-                    style: const TextStyle(
-                        color: FitGenieTheme.success,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600),
-                  ),
+              Tooltip(
+                message: AppStrings.get('dashboard_calories_burned'),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.local_fire_department_rounded,
+                        color: FitGenieTheme.hot, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${_formatNumber(_todayCaloriesBurned)} ${AppStrings.get('dashboard_kcal')}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: FitGenieTheme.hot,
+                      ),
+                    ),
+                  ],
                 ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          FGLinearProgress(value: progress, color: FitGenieTheme.hot),
-        ],
-      ),
-    );
-  }
-
-  // ==========================================
-  // 🎯 DAILY GOALS CARD
-  // ==========================================
-  Widget _buildDailyGoalsCard() {
-    return FGCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.track_changes,
-                  color: FitGenieTheme.primary, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                AppStrings.get('dashboard_daily_goals'),
-                style:
-                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
               ),
-              const Spacer(),
-              if (_isLoading)
-                const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2)),
             ],
           ),
           const SizedBox(height: 16),
-          _buildGoalRow(
-              AppStrings.get('dashboard_protein_intake'),
-              '$_todayProtein/$_proteinGoal g',
-              _proteinGoal > 0
-                  ? (_todayProtein / _proteinGoal).clamp(0.0, 1.0)
-                  : 0.0,
-              FitGenieTheme.teal),
+          _goalLine(
+            AppStrings.get('dashboard_calories_intake'),
+            '$_todayCalories/$_caloriesGoal kcal',
+            frac(_todayCalories, _caloriesGoal),
+            FitGenieTheme.hot,
+          ),
           const SizedBox(height: 14),
-          _buildGoalRow(
-              AppStrings.get('dashboard_water_glasses'),
-              '$_todayWater/$_waterGoal',
-              _waterGoal > 0 ? (_todayWater / _waterGoal).clamp(0.0, 1.0) : 0.0,
-              Colors.blue,
-              onTap: _showAddWaterDialog),
+          _goalLine(
+            AppStrings.get('dashboard_protein_intake'),
+            '$_todayProtein/$_proteinGoal g',
+            frac(_todayProtein, _proteinGoal),
+            FitGenieTheme.primary,
+          ),
           const SizedBox(height: 14),
-          _buildGoalRow(
-              AppStrings.get('dashboard_active_minutes'),
-              '$_todayActiveMinutes/$_activeMinutesGoal',
-              _activeMinutesGoal > 0
-                  ? (_todayActiveMinutes / _activeMinutesGoal).clamp(0.0, 1.0)
-                  : 0.0,
-              FitGenieTheme.hot),
+          _goalLine(
+            AppStrings.get('dashboard_water_glasses'),
+            '$_todayWater/$_waterGoal',
+            frac(_todayWater, _waterGoal),
+            FitGenieTheme.teal,
+            onTap: _showAddWaterDialog,
+          ),
           const SizedBox(height: 14),
-          _buildGoalRow(
-              AppStrings.get('dashboard_calories_intake'),
-              '$_todayCalories/$_caloriesGoal kcal',
-              _caloriesGoal > 0
-                  ? (_todayCalories / _caloriesGoal).clamp(0.0, 1.0)
-                  : 0.0,
-              FitGenieTheme.warning),
+          _goalLine(
+            AppStrings.get('dashboard_active_minutes'),
+            '$_todayActiveMinutes/$_activeMinutesGoal',
+            frac(_todayActiveMinutes, _activeMinutesGoal),
+            FitGenieTheme.warning,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildGoalRow(
-      String title, String valueText, double value, Color color,
+  Widget _goalLine(String title, String valueText, double value, Color color,
       {VoidCallback? onTap}) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1002,30 +930,182 @@ class _DashboardScreenState extends State<DashboardScreen>
           Row(
             children: [
               Expanded(
-                  child: Text(title,
-                      style: TextStyle(color: Colors.grey[400], fontSize: 13))),
-              Text(valueText,
+                child: Text(
+                  title,
                   style: const TextStyle(
-                      fontWeight: FontWeight.w700, fontSize: 13)),
+                      color: FitGenieTheme.textSecondary, fontSize: 13),
+                ),
+              ),
+              Text(
+                valueText,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+              ),
               if (onTap != null) ...[
                 const SizedBox(width: 6),
-                Icon(Icons.add_circle_outline, size: 16, color: color),
+                Icon(Icons.add_circle_outline_rounded, size: 16, color: color),
               ],
             ],
           ),
           const SizedBox(height: 8),
-          FGLinearProgress(value: value, color: color),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: value,
+              minHeight: 6,
+              backgroundColor: FitGenieTheme.border,
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
         ],
       ),
     );
   }
 
   // ==========================================
+  // ⚡ LOG KARO (4 chhote buttons, ek hi rang)
+  // ==========================================
+  Widget _buildLogRow() {
+    final t = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppStrings.get('dashboard_quick_log').toUpperCase(),
+          style: t.labelSmall,
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _logButton(
+                  Icons.water_drop_rounded, 'Water', _showAddWaterDialog),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _logButton(
+                  Icons.directions_walk_rounded, 'Steps', _showAddStepsDialog),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _logButton(
+                  Icons.timer_rounded, 'Active', _showAddActiveMinutesDialog),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _logButton(Icons.document_scanner_rounded, 'Scan',
+                  _openMealScanner),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _logButton(IconData icon, String label, VoidCallback onTap) {
+    return FGCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Column(
+        children: [
+          Icon(icon, color: FitGenieTheme.primary, size: 24),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: FitGenieTheme.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================
+  // 🧭 EXPLORE (AI Coach / Exercises / Challenges)
+  // ==========================================
+  Widget _buildExploreCard() {
+    return FGCard(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        children: [
+          _exploreRow(
+            Icons.auto_awesome_rounded,
+            AppStrings.get('dashboard_ai_coach'),
+            FitGenieTheme.ai,
+            widget.onTapAICoach ?? () {},
+          ),
+          const Divider(height: 1),
+          _exploreRow(
+            Icons.fitness_center_rounded,
+            AppStrings.get('label_exercises'),
+            FitGenieTheme.textSecondary,
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ExerciseLibraryScreen()),
+              );
+            },
+          ),
+          const Divider(height: 1),
+          _exploreRow(
+            Icons.emoji_events_rounded,
+            AppStrings.get('dashboard_challenges'),
+            FitGenieTheme.textSecondary,
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ChallengesScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _exploreRow(
+      IconData icon, String title, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 22),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded,
+                color: FitGenieTheme.muted, size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ==========================================
+  // 🎯 DAILY GOALS CARD
+  // ==========================================
+
+
+  // ==========================================
   // 📅 WEEKLY ACTIVITY CARD
   // ==========================================
   Widget _buildWeeklyActivityCard() {
-    final maxWorkouts = _weeklyWorkouts.reduce((a, b) => a > b ? a : b);
-    final normalizedMax = maxWorkouts > 0 ? maxWorkouts : 1;
+    final t = Theme.of(context).textTheme;
+    final maxW = _weeklyWorkouts.reduce((a, b) => a > b ? a : b);
+    final todayIndex = DateTime.now().weekday - 1;
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     return FGCard(
       child: Column(
@@ -1033,88 +1113,55 @@ class _DashboardScreenState extends State<DashboardScreen>
         children: [
           Row(
             children: [
-              const Icon(Icons.calendar_today,
-                  color: FitGenieTheme.primary, size: 18),
-              const SizedBox(width: 8),
               Text(
-                AppStrings.get('dashboard_weekly_activity'),
-                style:
-                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                AppStrings.get('dashboard_weekly_activity').toUpperCase(),
+                style: t.labelSmall,
               ),
               const Spacer(),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: FitGenieTheme.primary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '$_thisWeekWorkoutCount workouts',
-                  style: const TextStyle(
-                      color: FitGenieTheme.primary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600),
+              Text(
+                '$_thisWeekWorkoutCount workouts',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: FitGenieTheme.text,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           SizedBox(
-            height: 128,
+            height: 76,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(7, (i) {
-                final workoutCount = _weeklyWorkouts[i];
-                final heightPercent =
-                    normalizedMax > 0 ? (workoutCount / normalizedMax) : 0.0;
-                final h = heightPercent.clamp(0.08, 1.0);
-                final isToday = i == (DateTime.now().weekday - 1);
+                final count = _weeklyWorkouts[i];
+                final isToday = i == todayIndex;
+                final double barH =
+                    (count > 0 && maxW > 0) ? 8 + 36 * (count / maxW) : 8.0;
 
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if (workoutCount > 0)
-                      Text(
-                        '${workoutCount.toInt()}',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: isToday ? FitGenieTheme.primary : Colors.grey,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    const SizedBox(height: 4),
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
-                      width: 28,
-                      height:
-                          workoutCount > 0 ? (80 * h).clamp(16.0, 76.0) : 16,
+                      width: 26,
+                      height: barH,
                       decoration: BoxDecoration(
-                        gradient: isToday || workoutCount > 0
-                            ? LinearGradient(
-                                colors: [
-                                  FitGenieTheme.primary,
-                                  FitGenieTheme.primary.withValues(alpha: 0.6),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              )
-                            : null,
-                        color: workoutCount > 0
-                            ? null
-                            : Colors.grey.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(8),
+                        color: count > 0
+                            ? FitGenieTheme.primary
+                            : FitGenieTheme.border,
+                        borderRadius: BorderRadius.circular(6),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      ['M', 'T', 'W', 'T', 'F', 'S', 'S'][i],
+                      days[i],
                       style: TextStyle(
-                        color: isToday ? FitGenieTheme.primary : Colors.grey,
-                        fontSize: 12,
-                        fontWeight:
-                            isToday ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 11,
+                        fontWeight: isToday ? FontWeight.w800 : FontWeight.w500,
+                        color:
+                            isToday ? FitGenieTheme.text : FitGenieTheme.muted,
                       ),
                     ),
                   ],
@@ -1130,162 +1177,11 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   // ⚡ QUICK ACTIONS
   // ==========================================
-  Widget _buildQuickActions() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: QuickActionTile(
-                icon: Icons.fitness_center,
-                title: AppStrings.get('dashboard_workouts'),
-                onTap: widget.onTapWorkout ?? () {},
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: QuickActionTile(
-                icon: Icons.restaurant_menu,
-                title: AppStrings.get('dashboard_nutrition'),
-                color: FitGenieTheme.success,
-                onTap: () {},
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: QuickActionTile(
-                icon: Icons.smart_toy,
-                title: AppStrings.get('dashboard_ai_coach'),
-                color: Colors.purple,
-                onTap: widget.onTapAICoach ?? () {},
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: QuickActionTile(
-                icon: Icons.fitness_center,
-                title: AppStrings.get('label_exercises'),
-                color: Colors.blue,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const ExerciseLibraryScreen()),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: QuickActionTile(
-                icon: Icons.emoji_events,
-                title: AppStrings.get('dashboard_challenges'),
-                color: FitGenieTheme.warning,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ChallengesScreen()),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: QuickActionTile(
-                icon: Icons.document_scanner,
-                title: AppStrings.get('dashboard_scan_meal'),
-                color: Colors.teal,
-                onTap: _openMealScanner,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
   // ==========================================
   // ⚡ QUICK LOG SECTION
   // ==========================================
-  Widget _buildQuickLogSection() {
-    return FGCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.bolt, color: Colors.amber, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                AppStrings.get('dashboard_quick_log'),
-                style:
-                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                  child: _buildQuickLogButton(
-                      Icons.directions_walk,
-                      'Steps',
-                      _formatNumber(_todaySteps),
-                      FitGenieTheme.primary,
-                      _showAddStepsDialog)),
-              const SizedBox(width: 10),
-              Expanded(
-                  child: _buildQuickLogButton(
-                      Icons.water_drop,
-                      'Water',
-                      '$_todayWater glasses',
-                      Colors.blue,
-                      _showAddWaterDialog)),
-              const SizedBox(width: 10),
-              Expanded(
-                  child: _buildQuickLogButton(
-                      Icons.timer,
-                      'Active',
-                      '$_todayActiveMinutes min',
-                      FitGenieTheme.hot,
-                      _showAddActiveMinutesDialog)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildQuickLogButton(IconData icon, String label, String value,
-      Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 26),
-            const SizedBox(height: 8),
-            Text(value,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: color, fontSize: 13)),
-            const SizedBox(height: 2),
-            Text(label,
-                style: TextStyle(color: Colors.grey[500], fontSize: 11)),
-          ],
-        ),
-      ),
-    );
-  }
 
   // ==========================================
   // 🗨️ DIALOGS
@@ -1295,7 +1191,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
@@ -1313,7 +1209,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             hintText: AppStrings.get('dashboard_enter_steps'),
             hintStyle: const TextStyle(color: Colors.grey),
             filled: true,
-            fillColor: const Color(0xFF0D0D0D),
+            fillColor: FitGenieTheme.card2,
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none),
@@ -1350,11 +1246,11 @@ class _DashboardScreenState extends State<DashboardScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const Icon(Icons.water_drop, color: Colors.blue),
+            const Icon(Icons.water_drop, color: FitGenieTheme.teal),
             const SizedBox(width: 8),
             Text(AppStrings.get('dashboard_add_water')),
           ],
@@ -1396,16 +1292,16 @@ class _DashboardScreenState extends State<DashboardScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.blue.withValues(alpha: 0.2),
+          color: FitGenieTheme.teal.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           children: [
-            const Icon(Icons.water_drop, color: Colors.blue, size: 28),
+            const Icon(Icons.water_drop, color: FitGenieTheme.teal, size: 28),
             const SizedBox(height: 4),
             Text('+$glasses',
                 style: const TextStyle(
-                    color: Colors.blue,
+                    color: FitGenieTheme.teal,
                     fontWeight: FontWeight.bold,
                     fontSize: 16)),
           ],
@@ -1419,7 +1315,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
@@ -1437,7 +1333,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             hintText: AppStrings.get('dashboard_enter_minutes'),
             hintStyle: const TextStyle(color: Colors.grey),
             filled: true,
-            fillColor: const Color(0xFF0D0D0D),
+            fillColor: FitGenieTheme.card2,
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none),
@@ -1486,44 +1382,4 @@ class _DashboardScreenState extends State<DashboardScreen>
 // ==========================================
 // 🎯 STEP RING PAINTER
 // ==========================================
-class _StepRingPainter extends CustomPainter {
-  final double progress;
-  final bool isGoalAchieved;
 
-  _StepRingPainter({required this.progress, this.isGoalAchieved = false});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final stroke = size.width * 0.1;
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = (math.min(size.width, size.height) - stroke) / 2;
-
-    final bg = Paint()
-      ..color = Colors.white.withValues(alpha: 0.08)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawCircle(center, radius, bg);
-
-    final progressColor = isGoalAchieved ? Colors.amber : FitGenieTheme.primary;
-    final paint = Paint()
-      ..shader = SweepGradient(
-        startAngle: -math.pi / 2,
-        colors: [progressColor.withValues(alpha: 0.6), progressColor],
-      ).createShader(Rect.fromCircle(center: center, radius: radius))
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke
-      ..strokeCap = StrokeCap.round;
-
-    final sweep = 2 * math.pi * progress.clamp(0.0, 1.0);
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius),
-        -math.pi / 2, sweep, false, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _StepRingPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.isGoalAchieved != isGoalAchieved;
-  }
-}
