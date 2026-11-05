@@ -85,3 +85,8 @@ app/google-services*.json
 *.new
 
 .kotlin/
+
+# local AI tooling
+.agents/
+.claude/
+skills-lock.json
