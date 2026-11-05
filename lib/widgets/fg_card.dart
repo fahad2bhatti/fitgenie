@@ -1,7 +1,12 @@
 // lib/widgets/fg_card.dart
+
 import 'package:flutter/material.dart';
+
 import '../app/fitgenie_theme.dart';
 
+/// FitGenie surface. Flat, solid, thin border. No glass, no glow.
+/// Same constructor as before, so every existing screen keeps working.
+/// Tap now gets a proper ripple (the old GestureDetector had none).
 class FGCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -10,6 +15,7 @@ class FGCard extends StatelessWidget {
   final Border? border;
   final VoidCallback? onTap;
   final List<BoxShadow>? boxShadow;
+
   const FGCard({
     super.key,
     required this.child,
@@ -20,30 +26,30 @@ class FGCard extends StatelessWidget {
     this.onTap,
     this.boxShadow,
   });
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: color ?? FitGenieTheme.card,
-          borderRadius:
-              BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
-          border: border ??
-              Border.all(
-                color: Colors.white.withValues(alpha: 0.06),
-                width: 1,
-              ),
-          boxShadow: boxShadow,
-        ),
-        child: ClipRRect(
-          borderRadius:
-              BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG),
-          child: Material(
-            color: Colors.transparent,
+    final radius =
+    BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: color ?? FitGenieTheme.card,
+        borderRadius: radius,
+        border: border ?? Border.all(color: FitGenieTheme.border),
+        boxShadow: boxShadow,
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            splashColor: FitGenieTheme.primary.withValues(alpha: 0.08),
+            highlightColor: FitGenieTheme.primary.withValues(alpha: 0.04),
             child: Padding(
               padding:
-                  padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
+              padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
               child: child,
             ),
           ),
