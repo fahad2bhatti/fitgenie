@@ -489,9 +489,9 @@ class _DashboardScreenState extends State<DashboardScreen>
   Future<String?> _pickMealTypeForScan() async {
     return showModalBottomSheet<String>(
       context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: FitGenieTheme.card,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(FitGenieTheme.radiusXL)),
       ),
       builder: (context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -519,17 +519,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: FitGenieTheme.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: FitGenieTheme.primary.withValues(alpha: 0.3),
-                      ),
+                      color: FitGenieTheme.card2,
+                  borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+                  border: Border.all(color: FitGenieTheme.border),
                     ),
                     child: Text(
                       entry.value,
                       style: const TextStyle(
-                        color: FitGenieTheme.primary,
-                        fontWeight: FontWeight.bold,
+                        color: FitGenieTheme.text,
+                  fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -597,21 +595,17 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   Widget _buildHeader(String name) {
     final hour = DateTime.now().hour;
-    String greeting;
-    String emoji;
+    final t = Theme.of(context).textTheme;
 
+    String greeting;
     if (hour >= 5 && hour < 12) {
       greeting = AppStrings.get('dashboard_greeting_morning');
-      emoji = '☀️';
     } else if (hour >= 12 && hour < 17) {
       greeting = AppStrings.get('dashboard_greeting_afternoon');
-      emoji = '🌤️';
     } else if (hour >= 17 && hour < 21) {
       greeting = AppStrings.get('dashboard_greeting_evening');
-      emoji = '🌆';
     } else {
       greeting = AppStrings.get('dashboard_greeting_night');
-      emoji = '🌙';
     }
 
     return Row(
@@ -620,16 +614,9 @@ class _DashboardScreenState extends State<DashboardScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '$greeting $emoji',
-                style: TextStyle(color: Colors.grey[400], fontSize: 14),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                name,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
-              ),
+              Text(greeting.toUpperCase(), style: t.labelSmall),
+              const SizedBox(height: 2),
+              Text(name, style: t.displaySmall, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),
@@ -638,20 +625,24 @@ class _DashboardScreenState extends State<DashboardScreen>
             width: 24,
             height: 24,
             child: CircularProgressIndicator(
-                strokeWidth: 2, color: FitGenieTheme.primary),
+              strokeWidth: 2,
+              color: FitGenieTheme.primary,
+            ),
           )
         else
           Container(
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
-              shape: BoxShape.circle,
-              border: Border.all(
-                  color: FitGenieTheme.primary.withValues(alpha: 0.3)),
+              color: FitGenieTheme.card,
+              borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+              border: Border.all(color: FitGenieTheme.border),
             ),
-            child: const Icon(Icons.notifications_outlined,
-                color: FitGenieTheme.primary, size: 22),
+            child: const Icon(
+              Icons.notifications_none_rounded,
+              color: FitGenieTheme.text,
+              size: 22,
+            ),
           ),
       ],
     );
@@ -741,284 +732,128 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   // 👣 STEPS CARD
   // ==========================================
+  Widget _buildStat(String value, String unit, Color color) {
+    final t = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(value, style: t.headlineSmall?.copyWith(color: color)),
+        const SizedBox(height: 2),
+        Text(unit.toUpperCase(), style: t.labelSmall),
+      ],
+    );
+  }
+
   Widget _buildStepsCard() {
-    final progress =
-        _stepsGoal > 0 ? (_todaySteps / _stepsGoal).clamp(0.0, 1.0) : 0.0;
+    final t = Theme.of(context).textTheme;
+    final double progress = _stepsGoal > 0
+        ? (_todaySteps / _stepsGoal).clamp(0.0, 1.0).toDouble()
+        : 0.0;
     final goalAchieved = progress >= 1.0;
+    final int remaining = math.max(0, _stepsGoal - _todaySteps);
 
-    final dataSource =
-        _stepCounterService.isUsingHealthConnect ? 'Google Fit' : 'Pedometer';
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: FitGenieTheme.primary.withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: FitGenieTheme.primary.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
+    return FGCard(
+      padding: const EdgeInsets.fromLTRB(20, 14, 12, 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  _stepCounterService.isUsingHealthConnect
-                      ? Icons.favorite
-                      : Icons.directions_walk,
-                  color: FitGenieTheme.primary,
-                  size: 24,
+              Text(
+                AppStrings.get('dashboard_step_counter').toUpperCase(),
+                style: t.labelSmall,
+              ),
+              const SizedBox(width: 10),
+              _buildStatusDot(),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  _getStepStatusText(),
+                  style: TextStyle(fontSize: 11, color: _getStepStatusColor()),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            AppStrings.get('dashboard_step_counter'),
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        if (_stepCounterService.isUsingHealthConnect)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color:
-                                  FitGenieTheme.success.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.cloud_done,
-                                    size: 10, color: FitGenieTheme.success),
-                                SizedBox(width: 3),
-                                Text(
-                                  'SYNC',
-                                  style: TextStyle(
-                                    fontSize: 8,
-                                    color: FitGenieTheme.success,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        _buildStatusDot(),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            _getStepStatusText(),
-                            style: TextStyle(
-                                fontSize: 11, color: _getStepStatusColor()),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              const Spacer(),
               if (!_stepCounterHasPermission)
                 IconButton(
-                  icon: const Icon(Icons.warning_amber,
+                  icon: const Icon(Icons.warning_amber_rounded,
                       color: FitGenieTheme.warning, size: 22),
                   onPressed: _requestStepPermission,
                   tooltip: AppStrings.get('dashboard_enable_step_tracking'),
                 )
               else
                 IconButton(
-                  icon: const Icon(Icons.add_circle_outline,
-                      color: FitGenieTheme.primary, size: 22),
+                  icon: const Icon(Icons.add_rounded,
+                      color: FitGenieTheme.muted, size: 24),
                   onPressed: _showAddStepsDialog,
                   tooltip: AppStrings.get('dashboard_add_steps_manually'),
                 ),
             ],
           ),
-          const SizedBox(height: 20),
-
-          // Main Content
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            _formatNumber(_todaySteps),
-                            style: const TextStyle(
-                                fontSize: 36, fontWeight: FontWeight.w800),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: Text(AppStrings.get('dashboard_steps_label'),
-                              style: TextStyle(
-                                  fontSize: 14, color: Colors.grey[400])),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                        AppStrings.get('dashboard_goal_steps',
-                            params: {'value': _formatNumber(_stepsGoal)}),
-                        style:
-                            TextStyle(color: Colors.grey[500], fontSize: 12)),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 8,
-                      children: [
-                        _buildMiniStat(
-                            Icons.local_fire_department,
-                            '${_stepsCalories.round()}',
-                            'kcal',
-                            FitGenieTheme.warning),
-                        _buildMiniStat(
-                            Icons.straighten,
-                            _stepsDistance.toStringAsFixed(1),
-                            'km',
-                            Colors.blue),
-                        _buildMiniStat(Icons.timer, '$_stepsActiveMinutes',
-                            'min', Colors.purple),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              SizedBox(
-                width: 90,
-                height: 90,
-                child: Stack(
-                  children: [
-                    CustomPaint(
-                      size: const Size(90, 90),
-                      painter: _StepRingPainter(
-                          progress: progress, isGoalAchieved: goalAchieved),
-                    ),
-                    Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            goalAchieved
-                                ? Icons.emoji_events
-                                : Icons.directions_walk,
-                            color: goalAchieved
-                                ? Colors.amber
-                                : FitGenieTheme.primary,
-                            size: 22,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${(progress * 100).toInt()}%',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: goalAchieved
-                                  ? Colors.amber
-                                  : FitGenieTheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Goal Progress
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: goalAchieved
-                  ? FitGenieTheme.success.withValues(alpha: 0.15)
-                  : Colors.white.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-            ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Icon(
-                  goalAchieved ? Icons.check_circle : Icons.flag,
-                  color: goalAchieved ? FitGenieTheme.success : Colors.grey,
-                  size: 16,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
+                Flexible(
                   child: Text(
-                    goalAchieved
-                        ? '🎉 ${AppStrings.get('dashboard_goal_achieved')}'
-                        : AppStrings.get('dashboard_steps_to_go', params: {
-                            'count': _formatNumber(_stepsGoal - _todaySteps)
-                          }),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: goalAchieved ? FitGenieTheme.success : Colors.grey,
-                      fontWeight:
-                          goalAchieved ? FontWeight.w600 : FontWeight.normal,
+                    _formatNumber(_todaySteps),
+                    style: t.displayLarge?.copyWith(
+                      color: goalAchieved
+                          ? FitGenieTheme.primary
+                          : FitGenieTheme.text,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: _stepCounterService.isUsingHealthConnect
-                        ? FitGenieTheme.success.withValues(alpha: 0.1)
-                        : Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+                const SizedBox(width: 10),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    dataSource,
-                    style: TextStyle(
-                      fontSize: 8,
-                      color: _stepCounterService.isUsingHealthConnect
-                          ? FitGenieTheme.success
-                          : Colors.blue,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    '/ ${_formatNumber(_stepsGoal)}',
+                    style: t.titleMedium?.copyWith(color: FitGenieTheme.muted),
                   ),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 8,
+                backgroundColor: FitGenieTheme.border,
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(FitGenieTheme.primary),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            goalAchieved
+                ? AppStrings.get('dashboard_goal_achieved')
+                : AppStrings.get('dashboard_steps_to_go',
+                    params: {'count': _formatNumber(remaining)}),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: goalAchieved ? FitGenieTheme.primary : FitGenieTheme.muted,
+            ),
+          ),
+          const SizedBox(height: 18),
+          const Divider(),
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildStat('${_stepsCalories.round()}', 'kcal', FitGenieTheme.hot),
+                _buildStat(_stepsDistance.toStringAsFixed(1), 'km', FitGenieTheme.teal),
+                _buildStat('$_stepsActiveMinutes', 'min', FitGenieTheme.text),
               ],
             ),
           ),
