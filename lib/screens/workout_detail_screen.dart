@@ -144,13 +144,13 @@ class WorkoutDetailScreen extends StatelessWidget {
   Color _workoutColor() {
     final t = workoutType.toLowerCase();
     if (t.contains('chest')) return FitGenieTheme.error;
-    if (t.contains('back') || t.contains('pull')) return Colors.blue;
+    if (t.contains('back') || t.contains('pull')) return FitGenieTheme.primary;
     if (t.contains('leg') || t.contains('lower')) return FitGenieTheme.success;
-    if (t.contains('shoulder')) return Colors.purple;
+    if (t.contains('shoulder')) return FitGenieTheme.ai;
     if (t.contains('arm')) return FitGenieTheme.warning;
-    if (t.contains('core')) return Colors.teal;
-    if (t.contains('cardio')) return Colors.pink;
-    if (t.contains('full')) return Colors.amber;
+    if (t.contains('core')) return FitGenieTheme.teal;
+    if (t.contains('cardio')) return FitGenieTheme.hot;
+    if (t.contains('full')) return FitGenieTheme.warning;
     return FitGenieTheme.primary;
   }
 

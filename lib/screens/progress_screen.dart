@@ -848,7 +848,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.smart_toy, color: Colors.purple, size: 20),
+                          Icon(Icons.smart_toy, color: FitGenieTheme.primary, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.get('progress_insight'),
@@ -870,7 +870,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         label: Text(
                             _loadingInsight ? 'Loading...' : 'Get Insight'),
                         style: TextButton.styleFrom(
-                          foregroundColor: Colors.purple,
+                          foregroundColor: FitGenieTheme.primary,
                         ),
                       ),
                     ],
@@ -882,7 +882,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         children: [
                           Icon(Icons.lightbulb_outline,
                               size: 40,
-                              color: Colors.purple.withValues(alpha: 0.5)),
+                              color: FitGenieTheme.primary.withValues(alpha: 0.5)),
                           const SizedBox(height: 8),
                           Text(
                             AppStrings.get('progress_tap_insight'),
@@ -895,7 +895,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.purple.withValues(alpha: 0.1),
+                        color: FitGenieTheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -1158,7 +1158,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.amber.withValues(alpha: 0.1),
+              FitGenieTheme.warning.withValues(alpha: 0.1),
               FitGenieTheme.warning.withValues(alpha: 0.05),
             ],
           ),
@@ -1176,7 +1176,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 16,
-                    color: Colors.amber,
+                    color: FitGenieTheme.warning,
                   ),
                 ),
               ],

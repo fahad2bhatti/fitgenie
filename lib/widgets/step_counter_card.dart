@@ -102,8 +102,8 @@ class _StepCounterCardState extends State<StepCounterCard>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF1A1A2E),
-            const Color(0xFF16213E),
+            FitGenieTheme.card,
+            FitGenieTheme.card,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -269,14 +269,14 @@ class _StepCounterCardState extends State<StepCounterCard>
                 icon: Icons.straighten,
                 value: _distance.toStringAsFixed(1),
                 label: AppStrings.get('label_km'),
-                color: Colors.blue,
+                color: FitGenieTheme.primary,
               ),
               _buildDivider(),
               _buildStatItem(
                 icon: Icons.timer,
                 value: '$_activeMinutes',
                 label: AppStrings.get('label_min'),
-                color: Colors.purple,
+                color: FitGenieTheme.primary,
               ),
             ],
           ),

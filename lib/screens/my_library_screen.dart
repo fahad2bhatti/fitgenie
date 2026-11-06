@@ -135,17 +135,17 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
       case 'chest':
         return FitGenieTheme.error;
       case 'back':
-        return Colors.blue;
+        return FitGenieTheme.primary;
       case 'legs':
         return FitGenieTheme.success;
       case 'arms':
         return FitGenieTheme.warning;
       case 'shoulders':
-        return Colors.purple;
+        return FitGenieTheme.ai;
       case 'core':
-        return Colors.teal;
+        return FitGenieTheme.teal;
       case 'cardio':
-        return Colors.pink;
+        return FitGenieTheme.hot;
       default:
         return FitGenieTheme.primary;
     }

@@ -227,7 +227,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                             '${portion.carbs} g', FitGenieTheme.warning),
                         const SizedBox(height: 10),
                         _macroRow(AppStrings.get('calories_field_fats'),
-                            '${portion.fats} g', Colors.purple),
+                            '${portion.fats} g', FitGenieTheme.primary),
                         if (portion.fiber > 0) ...[
                           const SizedBox(height: 10),
                           _macroRow(AppStrings.get('food_search_fiber'),

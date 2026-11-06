@@ -886,14 +886,14 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             'Fats',
             '$fats / $fatsGoal g',
             _progress(fats, fatsGoal),
-            Colors.purple,
+            FitGenieTheme.primary,
           ),
           const SizedBox(height: 14),
           _macroProgress(
             'Water',
             '$water / $waterGoal glasses',
             _progress(water, waterGoal),
-            Colors.blue,
+            FitGenieTheme.primary,
           ),
         ],
       ),
@@ -948,7 +948,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           child: _actionCard(
             icon: Icons.bookmark_border,
             label: AppStrings.get('calories_saved'),
-            color: Colors.amber,
+            color: FitGenieTheme.warning,
             onTap: () => _openSavedMealsPicker(),
           ),
         ),
@@ -1022,7 +1022,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     return FGCard(
       child: Row(
         children: [
-          const Icon(Icons.water_drop, color: Colors.blue),
+          const Icon(Icons.water_drop, color: FitGenieTheme.teal),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1090,19 +1090,19 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withValues(alpha: 0.12),
+                      color: FitGenieTheme.warning.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(Icons.bookmark_add_outlined,
-                            size: 14, color: Colors.amber),
+                            size: 14, color: FitGenieTheme.warning),
                         const SizedBox(width: 4),
                         Text(
                           AppStrings.get('save'),
                           style: TextStyle(
-                            color: Colors.amber,
+                            color: FitGenieTheme.warning,
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                           ),
@@ -1168,13 +1168,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.bookmark_border,
-                            color: Colors.amber, size: 18),
+                            color: FitGenieTheme.warning, size: 18),
                         const SizedBox(width: 6),
                         Flexible(
                           child: Text(
                             AppStrings.get('calories_saved'),
                             style: TextStyle(
-                              color: Colors.amber,
+                              color: FitGenieTheme.warning,
                               fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -1193,22 +1193,22 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withValues(alpha: 0.12),
+                      color: FitGenieTheme.warning.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.amber.withValues(alpha: 0.2),
+                        color: FitGenieTheme.warning.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.bookmark_border,
-                            color: Colors.amber, size: 18),
+                            color: FitGenieTheme.warning, size: 18),
                         const SizedBox(width: 6),
                         Text(
                           AppStrings.get('calories_saved'),
                           style: TextStyle(
-                            color: Colors.amber,
+                            color: FitGenieTheme.warning,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

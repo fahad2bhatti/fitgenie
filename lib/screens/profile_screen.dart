@@ -194,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         title: Text(AppStrings.get('profile_gfit_disconnect_title')),
         content: Text(AppStrings.get('profile_gfit_disconnect_body')),
         actions: [
@@ -235,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void _showPhotoOptions() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: FitGenieTheme.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -294,10 +294,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 leading: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withValues(alpha: 0.2),
+                    color: FitGenieTheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.photo_library, color: Colors.purple),
+                  child: const Icon(Icons.photo_library, color: FitGenieTheme.primary),
                 ),
                 title: Text(AppStrings.get('profile_gallery')),
                 subtitle: Text(
@@ -497,7 +497,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.fitness_center,
                 _getLevelColor(_fitnessLevel),
               ),
-              _buildBadge(_goal, Icons.flag, Colors.purple),
+              _buildBadge(_goal, Icons.flag, FitGenieTheme.primary),
             ],
           ),
         ],
@@ -716,7 +716,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Icons.water_drop,
             'Water',
             '$_waterGoal glasses',
-            Colors.blue,
+            FitGenieTheme.primary,
           ),
         ],
       ),
@@ -761,7 +761,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E),
+        color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: statusColor.withValues(alpha: 0.5),
@@ -854,17 +854,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.greenAccent.withValues(alpha: 0.1),
+                color: FitGenieTheme.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.greenAccent.withValues(alpha: 0.3),
+                  color: FitGenieTheme.success.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
                 children: [
                   const Icon(
                     Icons.directions_run,
-                    color: Colors.greenAccent,
+                    color: FitGenieTheme.success,
                     size: 28,
                   ),
                   const SizedBox(width: 12),
@@ -880,7 +880,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(
                         '$_googleFitSteps',
                         style: const TextStyle(
-                          color: Colors.greenAccent,
+                          color: FitGenieTheme.success,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -894,13 +894,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.greenAccent.withValues(alpha: 0.2),
+                      color: FitGenieTheme.success.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       AppStrings.get('profile_live_label'),
                       style: TextStyle(
-                        color: Colors.greenAccent,
+                        color: FitGenieTheme.success,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
@@ -955,7 +955,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: isConnected
                     ? FitGenieTheme.error.withValues(alpha: 0.8)
-                    : Colors.greenAccent,
+                    : FitGenieTheme.success,
                 foregroundColor: isConnected ? Colors.white : Colors.black,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
@@ -983,14 +983,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Container(
           padding: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: (isOk ? Colors.greenAccent : Colors.redAccent).withValues(
+            color: (isOk ? FitGenieTheme.success : FitGenieTheme.error).withValues(
               alpha: 0.2,
             ),
             shape: BoxShape.circle,
           ),
           child: Icon(
             isOk ? Icons.check_circle : Icons.cancel,
-            color: isOk ? Colors.greenAccent : Colors.redAccent,
+            color: isOk ? FitGenieTheme.success : FitGenieTheme.error,
             size: 18,
           ),
         ),
@@ -1001,21 +1001,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Color _getStatusColor(GoogleFitConnectionStatus status) {
     switch (status) {
       case GoogleFitConnectionStatus.connected:
-        return Colors.greenAccent;
+        return FitGenieTheme.success;
       case GoogleFitConnectionStatus.connectedNoData:
         return Colors.yellowAccent;
       case GoogleFitConnectionStatus.connecting:
-        return Colors.blueAccent;
+        return FitGenieTheme.info;
       case GoogleFitConnectionStatus.notAuthorized:
-        return Colors.orangeAccent;
+        return FitGenieTheme.warning;
       case GoogleFitConnectionStatus.permissionDenied:
-        return Colors.redAccent;
+        return FitGenieTheme.error;
       case GoogleFitConnectionStatus.unavailable:
         return Colors.grey;
       case GoogleFitConnectionStatus.disconnected:
         return Colors.white54;
       case GoogleFitConnectionStatus.error:
-        return Colors.redAccent;
+        return FitGenieTheme.error;
     }
   }
 
@@ -1130,12 +1130,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.2),
+                color: FitGenieTheme.primary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.info_outline,
-                color: Colors.blue,
+                color: FitGenieTheme.primary,
                 size: 20,
               ),
             ),
@@ -1242,7 +1242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         title: Row(
           children: [
             const Icon(Icons.warning, color: FitGenieTheme.error),
@@ -1317,7 +1317,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         title: const Text('Confirm password'),
         content: TextField(
           controller: controller,
@@ -1382,7 +1382,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         content: Row(
           children: [
             const CircularProgressIndicator(color: FitGenieTheme.error),
@@ -1443,7 +1443,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: FitGenieTheme.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -1559,14 +1559,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0D0D0D),
+        color: FitGenieTheme.card2,
         borderRadius: BorderRadius.circular(12),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: value,
           isExpanded: true,
-          dropdownColor: const Color(0xFF1A1A1A),
+          dropdownColor: FitGenieTheme.card,
           items: items
               .map(
                 (e) => DropdownMenuItem(
@@ -1590,7 +1590,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: FitGenieTheme.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -1697,7 +1697,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: FitGenieTheme.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -1723,7 +1723,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       labelStyle: const TextStyle(color: Colors.grey),
       prefixIcon: Icon(icon, color: FitGenieTheme.primary),
       filled: true,
-      fillColor: const Color(0xFF0D0D0D),
+      fillColor: FitGenieTheme.card2,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -1833,7 +1833,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         title: Text(AppStrings.get('profile_logout_confirm_title')),
         content: Text(AppStrings.get('profile_logout_confirm_body')),
         actions: [
@@ -1863,7 +1863,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         title: const Row(
           children: [
             Icon(Icons.fitness_center, color: FitGenieTheme.primary),

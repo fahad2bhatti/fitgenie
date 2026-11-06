@@ -796,11 +796,11 @@ class _MuscleGroupExercisesScreenState
                     if (tips.isNotEmpty) ...[
                       _buildSectionTitle(
                           AppStrings.get('muscle_exercises_tips'),
-                          Colors.amber),
+                          FitGenieTheme.warning),
                       const SizedBox(height: 14),
                       for (int i = 0; i < tips.length; i++)
                         _buildBulletItem(
-                            tips[i], Colors.amber, Icons.lightbulb_outline),
+                            tips[i], FitGenieTheme.warning, Icons.lightbulb_outline),
                       const SizedBox(height: 24),
                     ],
 
