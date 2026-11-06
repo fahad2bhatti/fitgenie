@@ -572,7 +572,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                 _buildTodayCard(),
                 const SizedBox(height: 12),
                 _buildLogRow(),
-                const SizedBox(height: 12),
+              const SizedBox(height: 12),
+              _buildCoachBar(),
+              const SizedBox(height: 12),
                 _buildWeeklyActivityCard(),
                 const SizedBox(height: 12),
                 _buildExploreCard(),
@@ -975,52 +977,105 @@ class _DashboardScreenState extends State<DashboardScreen>
           style: t.labelSmall,
         ),
         const SizedBox(height: 10),
+        // Main kaam: bara, bhara hua button
+        Material(
+          color: FitGenieTheme.primary,
+          borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+          child: InkWell(
+            onTap: _openMealScanner,
+            borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+            child: SizedBox(
+              height: 54,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.document_scanner_rounded,
+                      color: FitGenieTheme.onPrimary, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    AppStrings.get('dashboard_scan_meal'),
+                    style: t.labelLarge?.copyWith(
+                      color: FitGenieTheme.onPrimary,
+                      fontSize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Baqi: chhote text pills
         Row(
           children: [
-            Expanded(
-              child: _logButton(
-                  Icons.water_drop_rounded, 'Water', _showAddWaterDialog),
-            ),
+            Expanded(child: _logButton('Water', _showAddWaterDialog)),
             const SizedBox(width: 10),
-            Expanded(
-              child: _logButton(
-                  Icons.directions_walk_rounded, 'Steps', _showAddStepsDialog),
-            ),
+            Expanded(child: _logButton('Steps', _showAddStepsDialog)),
             const SizedBox(width: 10),
-            Expanded(
-              child: _logButton(
-                  Icons.timer_rounded, 'Active', _showAddActiveMinutesDialog),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _logButton(Icons.document_scanner_rounded, 'Scan',
-                  _openMealScanner),
-            ),
+            Expanded(child: _logButton('Active', _showAddActiveMinutesDialog)),
           ],
         ),
       ],
     );
   }
 
-  Widget _logButton(IconData icon, String label, VoidCallback onTap) {
+  // Chat-input jaisi bar: dekhte hi samajh aaye ke yahan likhna hai
+  Widget _buildCoachBar() {
     return FGCard(
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: Column(
+      onTap: widget.onTapAICoach ?? () {},
+      padding: const EdgeInsets.fromLTRB(18, 8, 8, 8),
+      child: Row(
         children: [
-          Icon(icon, color: FitGenieTheme.primary, size: 24),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: FitGenieTheme.textSecondary,
+          const Expanded(
+            child: Text(
+              'Ask your coach anything',
+              style: TextStyle(color: FitGenieTheme.muted, fontSize: 14),
             ),
           ),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: FitGenieTheme.primary,
+              borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+            ),
+            child: const Icon(Icons.arrow_upward_rounded,
+                color: FitGenieTheme.onPrimary, size: 20),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _logButton(String label, VoidCallback onTap) {
+    return FGCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(vertical: 13),
+      child: Center(
+        child: Text.rich(
+          TextSpan(
+            children: [
+              const TextSpan(
+                text: '+ ',
+                style: TextStyle(
+                  color: FitGenieTheme.primary,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                ),
+              ),
+              TextSpan(
+                text: label,
+                style: const TextStyle(
+                  color: FitGenieTheme.textSecondary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }
@@ -1030,20 +1085,11 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   Widget _buildExploreCard() {
     return FGCard(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
         children: [
           _exploreRow(
-            Icons.auto_awesome_rounded,
-            AppStrings.get('dashboard_ai_coach'),
-            FitGenieTheme.ai,
-            widget.onTapAICoach ?? () {},
-          ),
-          const Divider(height: 1),
-          _exploreRow(
-            Icons.fitness_center_rounded,
             AppStrings.get('label_exercises'),
-            FitGenieTheme.textSecondary,
             () {
               Navigator.push(
                 context,
@@ -1053,9 +1099,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
           const Divider(height: 1),
           _exploreRow(
-            Icons.emoji_events_rounded,
             AppStrings.get('dashboard_challenges'),
-            FitGenieTheme.textSecondary,
             () {
               Navigator.push(
                 context,
@@ -1068,25 +1112,21 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _exploreRow(
-      IconData icon, String title, Color color, VoidCallback onTap) {
+  Widget _exploreRow(String title, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         child: Row(
           children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(width: 14),
             Expanded(
               child: Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: FitGenieTheme.muted, size: 22),
+            const Icon(Icons.arrow_forward_rounded,
+                color: FitGenieTheme.muted, size: 18),
           ],
         ),
       ),
