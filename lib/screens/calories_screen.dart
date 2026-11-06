@@ -5,7 +5,6 @@ import '../app/fitgenie_theme.dart';
 import '../services/nutrition_service.dart';
 import '../services/ai_service.dart' show MealAnalysis;
 import '../widgets/fg_card.dart';
-import '../widgets/fg_progress.dart';
 import '../widgets/app_snackbar.dart';
 import '../core/app_strings.dart';
 import 'food_search_screen.dart';
@@ -306,17 +305,15 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: FitGenieTheme.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: FitGenieTheme.primary.withValues(alpha: 0.3),
-                      ),
+                      color: FitGenieTheme.card2,
+                      borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+                      border: Border.all(color: FitGenieTheme.border),
                     ),
                     child: Text(
                       entry.value,
                       style: const TextStyle(
-                        color: FitGenieTheme.primary,
-                        fontWeight: FontWeight.bold,
+                        color: FitGenieTheme.text,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -866,81 +863,116 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   // ============================================================
 
   Widget _buildSummaryCard() {
+    final t = Theme.of(context).textTheme;
+    final remaining = caloriesGoal - calories;
+
+    Widget macro(String label, int value, int goal) => Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label.toUpperCase(), style: t.labelSmall),
+              const SizedBox(height: 4),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('$value', style: t.headlineSmall),
+                  const SizedBox(width: 3),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      '/ $goal g',
+                      style: const TextStyle(
+                          color: FitGenieTheme.muted, fontSize: 11),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(3),
+                child: LinearProgressIndicator(
+                  value: _progress(value, goal),
+                  minHeight: 4,
+                  backgroundColor: FitGenieTheme.border,
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(FitGenieTheme.primary),
+                ),
+              ),
+            ],
+          ),
+        );
+
     return FGCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Text(
+                AppStrings.get('calories_summary').toUpperCase(),
+                style: t.labelSmall,
+              ),
+              const Spacer(),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.edit_outlined,
+                    size: 20, color: FitGenieTheme.muted),
+                onPressed: _openGoalsSheet,
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('$calories', style: t.displayLarge),
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  '/ $caloriesGoal kcal',
+                  style: t.titleMedium?.copyWith(color: FitGenieTheme.muted),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: _progress(calories, caloriesGoal),
+              minHeight: 8,
+              backgroundColor: FitGenieTheme.border,
+              valueColor: const AlwaysStoppedAnimation<Color>(FitGenieTheme.hot),
+            ),
+          ),
+          const SizedBox(height: 8),
           Text(
-            AppStrings.get('calories_summary'),
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            remaining >= 0
+                ? '$remaining kcal left'
+                : '${-remaining} kcal over',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: remaining >= 0 ? FitGenieTheme.muted : FitGenieTheme.warning,
+            ),
           ),
+          const SizedBox(height: 18),
+          const Divider(height: 1),
           const SizedBox(height: 14),
-          _macroProgress(
-            'Calories',
-            '$calories / $caloriesGoal kcal',
-            _progress(calories, caloriesGoal),
-            FitGenieTheme.hot,
-          ),
-          const SizedBox(height: 14),
-          _macroProgress(
-            'Protein',
-            '$protein / $proteinGoal g',
-            _progress(protein, proteinGoal),
-            FitGenieTheme.teal,
-          ),
-          const SizedBox(height: 14),
-          _macroProgress(
-            'Carbs',
-            '$carbs / $carbsGoal g',
-            _progress(carbs, carbsGoal),
-            FitGenieTheme.warning,
-          ),
-          const SizedBox(height: 14),
-          _macroProgress(
-            'Fats',
-            '$fats / $fatsGoal g',
-            _progress(fats, fatsGoal),
-            FitGenieTheme.primary,
-          ),
-          const SizedBox(height: 14),
-          _macroProgress(
-            'Water',
-            '$water / $waterGoal glasses',
-            _progress(water, waterGoal),
-            FitGenieTheme.primary,
+          Row(
+            children: [
+              macro('Protein', protein, proteinGoal),
+              const SizedBox(width: 16),
+              macro('Carbs', carbs, carbsGoal),
+              const SizedBox(width: 16),
+              macro('Fats', fats, fatsGoal),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _macroProgress(
-      String title, String value, double progress, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-            ),
-            const Spacer(),
-            Text(
-              value,
-              style: TextStyle(
-                color: FitGenieTheme.muted,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        FGLinearProgress(value: progress, color: color),
-      ],
-    );
-  }
 
   // ============================================================
   // ⚡ QUICK ACTIONS
@@ -950,127 +982,157 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     return Row(
       children: [
         Expanded(
-          child: _actionCard(
-            icon: Icons.search,
-            label: AppStrings.get('calories_search'),
+          flex: 3,
+          child: Material(
             color: FitGenieTheme.primary,
-            onTap: _openFoodSearch,
+            borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+              onTap: _openFoodSearch,
+              child: SizedBox(
+                height: 52,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.search_rounded,
+                        color: FitGenieTheme.onPrimary, size: 20),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        AppStrings.get('calories_search'),
+                        style: const TextStyle(
+                          color: FitGenieTheme.onPrimary,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: _actionCard(
-            icon: Icons.bookmark_border,
-            label: AppStrings.get('calories_saved'),
-            color: FitGenieTheme.warning,
-            onTap: () => _openSavedMealsPicker(),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _actionCard(
-            icon: Icons.document_scanner,
-            label: AppStrings.get('calories_scan'),
-            color: FitGenieTheme.teal,
+          flex: 2,
+          child: FGCard(
             onTap: _openMealScanner,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _actionCard(
-            icon: Icons.flag_outlined,
-            label: AppStrings.get('calories_goals'),
-            color: FitGenieTheme.warning,
-            onTap: _openGoalsSheet,
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.document_scanner_outlined,
+                    size: 18, color: FitGenieTheme.primary),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    AppStrings.get('calories_scan'),
+                    style: const TextStyle(
+                      color: FitGenieTheme.text,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _actionCard({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 92,
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: FitGenieTheme.card,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.25)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(height: 6),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: color,
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   // ============================================================
   // 💧 WATER CONTROLS
   // ============================================================
 
   Widget _buildWaterControls() {
+    final t = Theme.of(context).textTheme;
+    final int segs = waterGoal.clamp(1, 16).toInt();
+    final int filled = waterGoal > 0
+        ? ((water / waterGoal) * segs).round().clamp(0, segs).toInt()
+        : 0;
+
+    Widget circleButton(IconData icon, VoidCallback onTap,
+        {bool filledStyle = false}) {
+      return InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: filledStyle ? FitGenieTheme.teal : Colors.transparent,
+            border: Border.all(
+              color: filledStyle ? FitGenieTheme.teal : FitGenieTheme.border,
+            ),
+          ),
+          child: Icon(
+            icon,
+            size: 20,
+            color: filledStyle ? Colors.black : FitGenieTheme.text,
+          ),
+        ),
+      );
+    }
+
     return FGCard(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.water_drop, color: FitGenieTheme.teal),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              AppStrings.get('calories_water'),
-              style: const TextStyle(fontWeight: FontWeight.w900),
-            ),
-          ),
-          IconButton(
-            onPressed: _removeWater,
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.error.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppStrings.get('calories_water').toUpperCase(),
+                      style: t.labelSmall,
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('$water', style: t.headlineMedium),
+                        const SizedBox(width: 4),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 3),
+                          child: Text(
+                            '/ $waterGoal',
+                            style: const TextStyle(
+                                color: FitGenieTheme.muted, fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              child: const Icon(Icons.remove,
-                  color: FitGenieTheme.error, size: 18),
-            ),
+              circleButton(Icons.remove_rounded, _removeWater),
+              const SizedBox(width: 10),
+              circleButton(Icons.add_rounded, _quickAddWater, filledStyle: true),
+            ],
           ),
-          Text(
-            '$water',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          IconButton(
-            onPressed: _quickAddWater,
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.success.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child:
-                  const Icon(Icons.add, color: FitGenieTheme.success, size: 18),
-            ),
+          const SizedBox(height: 14),
+          Row(
+            children: List.generate(segs, (i) {
+              return Expanded(
+                child: Container(
+                  height: 8,
+                  margin: EdgeInsets.only(right: i == segs - 1 ? 0 : 4),
+                  decoration: BoxDecoration(
+                    color: i < filled ? FitGenieTheme.teal : FitGenieTheme.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              );
+            }),
           ),
         ],
       ),
@@ -1082,71 +1144,87 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   // ============================================================
 
   Widget _buildMealSection(String mealType, String title, String emoji) {
+    final t = Theme.of(context).textTheme;
     final items = _mealEntries(mealType);
+
+    Widget pill(String label, VoidCallback onTap) => Expanded(
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 11),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+                border: Border.all(color: FitGenieTheme.border),
+              ),
+              child: Center(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: '+ ',
+                        style: TextStyle(
+                          color: FitGenieTheme.primary,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                        ),
+                      ),
+                      TextSpan(
+                        text: label,
+                        style: const TextStyle(
+                          color: FitGenieTheme.textSecondary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+        );
 
     return FGCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
           Row(
             children: [
-              Text(
-                '$emoji $title',
-                style:
-                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
-              ),
-              const Spacer(),
-              if (items.isNotEmpty)
-                GestureDetector(
-                  onTap: () => _saveMealAsTemplate(mealType),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.warning.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title.toUpperCase(), style: t.headlineSmall),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${_mealCalories(mealType)} kcal · ${_mealProtein(mealType)}g protein',
+                      style: const TextStyle(
+                          color: FitGenieTheme.muted, fontSize: 12),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.bookmark_add_outlined,
-                            size: 14, color: FitGenieTheme.warning),
-                        const SizedBox(width: 4),
-                        Text(
-                          AppStrings.get('save'),
-                          style: TextStyle(
-                            color: FitGenieTheme.warning,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
-              const SizedBox(width: 8),
-              Text(
-                '${_mealCalories(mealType)} cal • ${_mealProtein(mealType)}g protein',
-                style:
-                    const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
               ),
+              if (items.isNotEmpty)
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  tooltip: AppStrings.get('calories_save_template'),
+                  icon: const Icon(Icons.bookmark_add_outlined,
+                      size: 20, color: FitGenieTheme.muted),
+                  onPressed: () => _saveMealAsTemplate(mealType),
+                ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
-          // Items
           if (items.isEmpty)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.card2,
-                borderRadius: BorderRadius.circular(12),
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
               child: Text(
                 AppStrings.get('calories_empty'),
-                style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
               ),
             )
           else
@@ -1162,104 +1240,30 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             ),
 
           const SizedBox(height: 10),
-
-          // Action Buttons
           Row(
             children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => _openFoodSearchForMeal(mealType),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.bookmark_border,
-                            color: FitGenieTheme.warning, size: 18),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            AppStrings.get('calories_saved'),
-                            style: TextStyle(
-                              color: FitGenieTheme.warning,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () =>
-                      _openSavedMealsPicker(mealTypeOverride: mealType),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.warning.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: FitGenieTheme.warning.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.bookmark_border,
-                            color: FitGenieTheme.warning, size: 18),
-                        const SizedBox(width: 6),
-                        Text(
-                          AppStrings.get('calories_saved'),
-                          style: TextStyle(
-                            color: FitGenieTheme.warning,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+              pill(AppStrings.get('calories_search'),
+                  () => _openFoodSearchForMeal(mealType)),
+              const SizedBox(width: 8),
+              pill(AppStrings.get('calories_saved'),
+                  () => _openSavedMealsPicker(mealTypeOverride: mealType)),
+              const SizedBox(width: 8),
+              pill(
+                AppStrings.get('calories_custom'),
+                () => _openAddFoodSheet(
+                  initialEntry: MealEntry(
+                    name: '',
+                    quantity: '',
+                    mealType: mealType,
+                    calories: 0,
+                    protein: 0,
+                    carbs: 0,
+                    fats: 0,
+                    source: 'manual',
                   ),
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 8),
-
-          // Custom Entry Link
-          GestureDetector(
-            onTap: () => _openAddFoodSheet(
-              initialEntry: MealEntry(
-                name: '',
-                quantity: '',
-                mealType: mealType,
-                calories: 0,
-                protein: 0,
-                carbs: 0,
-                fats: 0,
-                source: 'manual',
-              ),
-            ),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                AppStrings.get('calories_custom'),
-                style: TextStyle(
-                  color: FitGenieTheme.muted,
-                  fontSize: 11,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
           ),
         ],
       ),
@@ -1278,8 +1282,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppStrings.get('calories_recent'),
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
+            AppStrings.get('calories_recent').toUpperCase(),
+            style: Theme.of(context).textTheme.labelSmall,
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -1313,22 +1317,21 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
-                    color: FitGenieTheme.card2,
-                    borderRadius: BorderRadius.circular(12),
-                    border:
-                        Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                    borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+                    border: Border.all(color: FitGenieTheme.border),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         (food['name'] ?? 'Food').toString(),
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12),
+                            fontWeight: FontWeight.w700, fontSize: 12),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 3),
                       Text(
-                        '${food['calories'] ?? 0} cal • ${food['protein'] ?? 0}g P',
+                        '${food['calories'] ?? 0} kcal · ${food['protein'] ?? 0}g P',
                         style: const TextStyle(
                             color: FitGenieTheme.muted, fontSize: 10),
                       ),
@@ -1349,74 +1352,73 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // nutrition-v2
+    final t = Theme.of(context).textTheme;
+
     return _loading
         ? const Center(child: CircularProgressIndicator())
         : RefreshIndicator(
             onRefresh: _load,
+            color: FitGenieTheme.primary,
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(18, 12, 18, 24),
+              padding: const EdgeInsets.fromLTRB(
+                FitGenieTheme.screenPadding,
+                12,
+                FitGenieTheme.screenPadding,
+                24,
+              ),
               children: [
-                Text(
-                  AppStrings.get('calories_title'),
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w900),
-                ),
+                Text(AppStrings.get('calories_title'), style: t.displaySmall),
                 const SizedBox(height: 4),
                 Text(
                   AppStrings.get('calories_sub'),
-                  style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                  style: const TextStyle(
+                      color: FitGenieTheme.muted, fontSize: 13),
                 ),
                 const SizedBox(height: 10),
                 const MedicalDisclaimerBanner(compact: true),
-                const SizedBox(height: 14),
+                const SizedBox(height: 8),
 
-                // Date Switcher
-                FGCard(
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => _changeDate(-1),
-                        icon: const Icon(Icons.chevron_left),
+                // Date switcher: seedhi row, card nahi
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => _changeDate(-1),
+                      icon: const Icon(Icons.chevron_left_rounded),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(_dateLabel(), style: t.titleMedium),
                       ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            _dateLabel(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
+                    ),
+                    IconButton(
+                      onPressed: _isToday ? null : () => _changeDate(1),
+                      icon: Icon(
+                        Icons.chevron_right_rounded,
+                        color: _isToday
+                            ? FitGenieTheme.border
+                            : FitGenieTheme.text,
                       ),
-                      IconButton(
-                        onPressed: _isToday ? null : () => _changeDate(1),
-                        icon: Icon(
-                          Icons.chevron_right,
-                          color: _isToday ? Colors.white24 : Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 8),
 
                 _buildSummaryCard(),
-                const SizedBox(height: 14),
-
+                const SizedBox(height: 12),
                 _buildQuickActions(),
-                const SizedBox(height: 14),
-
+                const SizedBox(height: 12),
                 _buildWaterControls(),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
 
-                _buildMealSection('breakfast', 'Breakfast', '🍳'),
+                _buildMealSection(
+                    'breakfast', AppStrings.get('meal_breakfast'), ''),
                 const SizedBox(height: 12),
-                _buildMealSection('lunch', 'Lunch', '🍲'),
+                _buildMealSection('lunch', AppStrings.get('meal_lunch'), ''),
                 const SizedBox(height: 12),
-                _buildMealSection('dinner', 'Dinner', '🍛'),
+                _buildMealSection('dinner', AppStrings.get('meal_dinner'), ''),
                 const SizedBox(height: 12),
-                _buildMealSection('snacks', 'Snacks', '🍪'),
+                _buildMealSection('snacks', AppStrings.get('meal_snacks'), ''),
                 const SizedBox(height: 12),
 
                 _buildRecentFoods(),
@@ -1443,37 +1445,15 @@ class _MealEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sourceIcon =
-        entry.source == 'scanner' ? Icons.camera_alt : Icons.edit_note;
+    final t = Theme.of(context).textTheme;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: FitGenieTheme.card2,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: FitGenieTheme.border)),
       ),
       child: Row(
         children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: entry.source == 'scanner'
-                  ? FitGenieTheme.primary.withValues(alpha: 0.18)
-                  : FitGenieTheme.teal.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              sourceIcon,
-              color: entry.source == 'scanner'
-                  ? FitGenieTheme.primary
-                  : FitGenieTheme.teal,
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1481,48 +1461,52 @@ class _MealEntryTile extends StatelessWidget {
                 Text(
                   entry.name,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 13),
+                      fontWeight: FontWeight.w700, fontSize: 14),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
-                  entry.quantity,
-                  style:
-                      const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${entry.protein}g P • ${entry.carbs}g C • ${entry.fats}g F',
-                  style:
-                      const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
+                  '${entry.quantity} · ${entry.protein}g P · ${entry.carbs}g C · ${entry.fats}g F',
+                  style: const TextStyle(
+                      color: FitGenieTheme.muted, fontSize: 11),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '${entry.calories} cal',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: FitGenieTheme.hot),
-              ),
-              const SizedBox(height: 4),
-              PopupMenuButton<String>(
-                color: FitGenieTheme.cardDark,
-                onSelected: (value) {
-                  if (value == 'edit') onEdit();
-                  if (value == 'delete') onDelete();
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                      value: 'edit', child: Text(AppStrings.get('edit'))),
-                  PopupMenuItem(
-                      value: 'delete', child: Text(AppStrings.get('delete'))),
-                ],
-                child: const Icon(Icons.more_vert,
-                    size: 18, color: FitGenieTheme.muted),
-              ),
+          const SizedBox(width: 10),
+          Text(
+            '${entry.calories}',
+            style: t.headlineSmall?.copyWith(
+              fontSize: 20,
+              color: FitGenieTheme.hot,
+            ),
+          ),
+          const SizedBox(width: 3),
+          const Text(
+            'kcal',
+            style: TextStyle(color: FitGenieTheme.muted, fontSize: 11),
+          ),
+          PopupMenuButton<String>(
+            color: FitGenieTheme.cardDark,
+            padding: EdgeInsets.zero,
+            onSelected: (value) {
+              if (value == 'edit') onEdit();
+              if (value == 'delete') onDelete();
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                  value: 'edit', child: Text(AppStrings.get('edit'))),
+              PopupMenuItem(
+                  value: 'delete', child: Text(AppStrings.get('delete'))),
             ],
+            child: const Padding(
+              padding: EdgeInsets.only(left: 6),
+              child: Icon(Icons.more_vert,
+                  size: 18, color: FitGenieTheme.muted),
+            ),
           ),
         ],
       ),
