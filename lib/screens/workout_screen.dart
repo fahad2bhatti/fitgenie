@@ -54,7 +54,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
 
   @override
   Widget build(BuildContext context) {
-    // workout-v2
+    // workout-v3
     final t = Theme.of(context).textTheme;
     return FadeTransition(
       opacity: _fadeAnim,
@@ -71,23 +71,28 @@ class _WorkoutScreenState extends State<WorkoutScreen>
             ),
             const SizedBox(height: 12),
             const MedicalDisclaimerBanner(compact: true),
-            const SizedBox(height: 22),
-            _buildSectionLabel('', AppStrings.get('workout_quick'), ''),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+
             _buildQuickStartCard(),
+            const SizedBox(height: 12),
+            _buildWeekStrip(),
             const SizedBox(height: 26),
+
             _buildSectionLabel('', AppStrings.get('workout_muscle'), ''),
             const SizedBox(height: 10),
             _buildMuscleGroupsGrid(),
             const SizedBox(height: 26),
+
             _buildSectionLabel('', AppStrings.get('workout_plans'), ''),
             const SizedBox(height: 10),
             _buildWorkoutPlans(),
             const SizedBox(height: 26),
+
             _buildSectionLabel('', AppStrings.get('workout_library'), ''),
             const SizedBox(height: 10),
             _buildMyLibraryCard(),
             const SizedBox(height: 26),
+
             _buildSectionLabel('', AppStrings.get('workout_recent'), ''),
             const SizedBox(height: 10),
             _buildRecentWorkouts(),
@@ -117,6 +122,9 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     final t = Theme.of(context).textTheme;
     final todayInfo = WorkoutPlansData.getTodayInfo();
     final isRestDay = todayInfo['tag'] == 'rest';
+    final dayLabel =
+        '${todayInfo['day'] ?? AppStrings.get('workout_today')}'.toUpperCase();
+    final ghost = dayLabel.length >= 3 ? dayLabel.substring(0, 3) : dayLabel;
 
     void start() {
       final plan = WorkoutPlansData.getTodaysPlan();
@@ -134,59 +142,212 @@ class _WorkoutScreenState extends State<WorkoutScreen>
       }
     }
 
-    return FGCard(
-      onTap: isRestDay ? null : start,
-      padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${todayInfo['day'] ?? AppStrings.get('workout_today')}'
-                      .toUpperCase(),
-                  style: t.labelSmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '${isRestDay ? AppStrings.get('workout_rest') : (todayInfo['type'] ?? AppStrings.get('workout_fallback_type'))}',
-                  style: t.displaySmall?.copyWith(
-                    color: isRestDay ? FitGenieTheme.muted : FitGenieTheme.text,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  isRestDay
-                      ? AppStrings.get('workout_rest_subtitle')
-                      : AppStrings.get('workout_ai_subtitle'),
-                  style:
-                      const TextStyle(color: FitGenieTheme.muted, fontSize: 13),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          if (!isRestDay) ...[
-            const SizedBox(width: 12),
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: FitGenieTheme.primary,
-                borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+    // Rest day: dark, shaant card
+    if (isRestDay) {
+      return FGCard(
+        padding: const EdgeInsets.all(20),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(dayLabel, style: t.labelSmall),
+              const SizedBox(height: 6),
+              Text(
+                AppStrings.get('workout_rest'),
+                style: t.displaySmall?.copyWith(color: FitGenieTheme.muted),
               ),
-              child: const Icon(Icons.play_arrow_rounded,
-                  color: FitGenieTheme.onPrimary, size: 30),
-            ),
-          ],
-        ],
+              const SizedBox(height: 6),
+              Text(
+                AppStrings.get('workout_rest_subtitle'),
+                style: const TextStyle(color: FitGenieTheme.muted, fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Training day: poster-card
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: FitGenieTheme.primary,
+        borderRadius: BorderRadius.circular(FitGenieTheme.radiusXL),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: start,
+          child: Stack(
+            children: [
+              Positioned(
+                right: -6,
+                bottom: -20,
+                child: Text(
+                  ghost,
+                  style: t.displayLarge?.copyWith(
+                    fontSize: 120,
+                    color: FitGenieTheme.onPrimary.withValues(alpha: 0.14),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      dayLabel,
+                      style: t.labelSmall?.copyWith(
+                        color: FitGenieTheme.onPrimary.withValues(alpha: 0.75),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${todayInfo['type'] ?? AppStrings.get('workout_fallback_type')}',
+                      style: t.displayMedium
+                          ?.copyWith(color: FitGenieTheme.onPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      AppStrings.get('workout_ai_subtitle'),
+                      style: TextStyle(
+                        color: FitGenieTheme.onPrimary.withValues(alpha: 0.85),
+                        fontSize: 13,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: FitGenieTheme.onPrimary,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.play_arrow_rounded,
+                              color: FitGenieTheme.primary, size: 20),
+                          const SizedBox(width: 6),
+                          Text(
+                            AppStrings.get('workout_start').toUpperCase(),
+                            style: const TextStyle(
+                              color: FitGenieTheme.primary,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 13,
+                              letterSpacing: 0.6,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildWeekStrip() {
+    final t = Theme.of(context).textTheme;
+    final now = DateTime.now();
+    final monday = DateTime(now.year, now.month, now.day)
+        .subtract(Duration(days: now.weekday - 1));
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .collection('workouts')
+          .where('startedAt',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(monday))
+          .snapshots(),
+      builder: (context, snapshot) {
+        final done = <int>{};
+        if (snapshot.hasData) {
+          for (final doc in snapshot.data!.docs) {
+            final ts =
+                (doc.data() as Map<String, dynamic>)['startedAt'] as Timestamp?;
+            if (ts != null) done.add(ts.toDate().weekday - 1);
+          }
+        }
+
+        return FGCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    AppStrings.get('dashboard_weekly_activity').toUpperCase(),
+                    style: t.labelSmall,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${done.length}/7',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: FitGenieTheme.text,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(7, (i) {
+                  final isDone = done.contains(i);
+                  final isToday = i == now.weekday - 1;
+                  return Column(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color:
+                              isDone ? FitGenieTheme.primary : Colors.transparent,
+                          border: Border.all(
+                            color: isDone
+                                ? FitGenieTheme.primary
+                                : (isToday
+                                    ? FitGenieTheme.text
+                                    : FitGenieTheme.border),
+                            width: isToday ? 1.5 : 1,
+                          ),
+                        ),
+                        child: isDone
+                            ? const Icon(Icons.check_rounded,
+                                size: 18, color: FitGenieTheme.onPrimary)
+                            : null,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        days[i],
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: isToday ? FontWeight.w800 : FontWeight.w500,
+                          color:
+                              isToday ? FitGenieTheme.text : FitGenieTheme.muted,
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -194,21 +355,17 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   // 2️⃣ MUSCLE GROUPS GRID
   // ============================================================
   Widget _buildMuscleGroupsGrid() {
-    final groups = [
-      {'name': 'Chest', 'emoji': '🏋️', 'count': ExerciseData.chest.length},
-      {'name': 'Back', 'emoji': '🔙', 'count': ExerciseData.back.length},
-      {'name': 'Legs', 'emoji': '🦵', 'count': ExerciseData.legs.length},
+    final groups = <Map<String, Object>>[
+      {'name': 'Chest', 'emoji': '🏋️', 'list': ExerciseData.chest},
+      {'name': 'Back', 'emoji': '🔙', 'list': ExerciseData.back},
+      {'name': 'Legs', 'emoji': '🦵', 'list': ExerciseData.legs},
       {
         'name': 'Arms',
         'emoji': '💪',
-        'count': ExerciseData.biceps.length + ExerciseData.triceps.length
+        'list': [...ExerciseData.biceps, ...ExerciseData.triceps]
       },
-      {
-        'name': 'Shoulders',
-        'emoji': '🎯',
-        'count': ExerciseData.shoulders.length
-      },
-      {'name': 'Core', 'emoji': '🔥', 'count': ExerciseData.core.length},
+      {'name': 'Shoulders', 'emoji': '🎯', 'list': ExerciseData.shoulders},
+      {'name': 'Core', 'emoji': '🔥', 'list': ExerciseData.core},
     ];
 
     return GridView.builder(
@@ -218,7 +375,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        childAspectRatio: 2.1,
+        childAspectRatio: 1.45,
       ),
       itemCount: groups.length,
       itemBuilder: (context, index) {
@@ -226,7 +383,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         return _buildMuscleGroupCard(
           name: group['name'] as String,
           emoji: group['emoji'] as String,
-          count: group['count'] as int,
+          exercises: group['list'] as List<Exercise>,
         );
       },
     );
@@ -235,10 +392,13 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   Widget _buildMuscleGroupCard({
     required String name,
     required String emoji,
-    required int count,
+    required List<Exercise> exercises,
   }) {
     final t = Theme.of(context).textTheme;
-    return FGCard(
+    final withGif = exercises.where((e) => e.hasGif).toList();
+    final imagePath = withGif.isNotEmpty ? withGif.first.gifAsset : null;
+
+    return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
@@ -251,23 +411,66 @@ class _WorkoutScreenState extends State<WorkoutScreen>
           ),
         );
       },
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name.toUpperCase(),
-            style: t.headlineSmall,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+          border: Border.all(color: FitGenieTheme.border),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Container(color: FitGenieTheme.card),
+              if (imagePath != null)
+                Opacity(
+                  opacity: 0.5,
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    cacheWidth: 400,
+                    gaplessPlayback: true,
+                    errorBuilder: (c, e, s) => const SizedBox.shrink(),
+                  ),
+                ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      FitGenieTheme.bg.withValues(alpha: 0.92),
+                    ],
+                    stops: const [0.25, 1.0],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 14,
+                right: 14,
+                bottom: 12,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name.toUpperCase(),
+                      style: t.headlineSmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '${exercises.length} exercises',
+                      style: const TextStyle(
+                          color: FitGenieTheme.textSecondary, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 2),
-          Text(
-            '$count exercises',
-            style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -316,35 +519,62 @@ class _WorkoutScreenState extends State<WorkoutScreen>
           );
         },
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          fit: StackFit.expand,
+          clipBehavior: Clip.none,
           children: [
-            Text(
-              plan.name.toUpperCase(),
-              style: t.headlineSmall,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            Positioned(
+              right: -4,
+              bottom: -26,
+              child: Text(
+                '${plan.totalExercises}',
+                style: t.displayLarge?.copyWith(
+                  fontSize: 96,
+                  color: FitGenieTheme.text.withValues(alpha: 0.06),
+                ),
+              ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              plan.subtitle,
-              style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const Spacer(),
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: FitGenieTheme.border),
+                  ),
                   child: Text(
-                    '${plan.totalExercises} exercises · ~${plan.estimatedMinutes} min',
+                    '~${plan.estimatedMinutes} MIN',
                     style: const TextStyle(
-                        color: FitGenieTheme.muted, fontSize: 11),
-                    overflow: TextOverflow.ellipsis,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.6,
+                      color: FitGenieTheme.textSecondary,
+                    ),
                   ),
                 ),
-                const Icon(Icons.arrow_forward_rounded,
-                    size: 16, color: FitGenieTheme.primary),
+                const SizedBox(height: 10),
+                Text(
+                  plan.name.toUpperCase(),
+                  style: t.headlineSmall,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  plan.subtitle,
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const Spacer(),
+                Text(
+                  '${plan.totalExercises} exercises',
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
+                ),
               ],
             ),
           ],
