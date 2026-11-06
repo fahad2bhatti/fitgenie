@@ -39,6 +39,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   bool _isLoading = true;
   String _aiInsight = '';
   bool _loadingInsight = false;
+  int _trendMode = 0; // 0 = calories, 1 = protein
 
   // Stats data
   int _totalWorkouts = 0;
@@ -60,7 +61,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
   int _totalProtein = 0;
   int _avgCalories = 0;
   int _avgProtein = 0;
-  DailyData? _bestDay;
 
   @override
   void initState() {
@@ -240,12 +240,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
     _avgCalories =
         daysWithData > 0 ? (_totalCaloriesBurned / daysWithData).round() : 0;
     _avgProtein = daysWithData > 0 ? (_totalProtein / daysWithData).round() : 0;
-
-    _bestDay = _weekData.reduce((a, b) {
-      final aScore = a.calories / _caloriesGoal + a.protein / _proteinGoal;
-      final bScore = b.calories / _caloriesGoal + b.protein / _proteinGoal;
-      return aScore > bScore ? a : b;
-    });
   }
 
   Future<void> _loadWeightHistory() async {
@@ -331,6 +325,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
 
   @override
   Widget build(BuildContext context) {
+    // progress-v2
     final t = Theme.of(context).textTheme;
 
     return RefreshIndicator(
@@ -381,42 +376,22 @@ Short motivating feedback do (2-3 lines max) with tips.''',
             _buildWeekHero(),
             const SizedBox(height: 12),
 
-            _buildTotalsRow(),
+            _buildAIInsightCard(),
             const SizedBox(height: 12),
 
-            _buildWorkoutsChart(),
+            _buildTrendChart(),
             const SizedBox(height: 12),
-
-            _buildCaloriesChart(),
-            const SizedBox(height: 12),
-
-            _buildProteinChart(),
-            const SizedBox(height: 12),
-
-            if (_hasBestDay) ...[
-              _buildBestDayCard(),
-              const SizedBox(height: 12),
-            ],
 
             _buildWeightCard(),
             const SizedBox(height: 12),
 
             _buildDailyBreakdown(),
-            const SizedBox(height: 12),
-
-            _buildAIInsightCard(),
-            const SizedBox(height: 12),
-
-            _buildAllTimeCard(),
             const SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
-
-  bool get _hasBestDay =>
-      _bestDay != null && (_bestDay!.calories > 0 || _bestDay!.protein > 0);
 
   // ============================================================
   // 🏷️ SHARED PIECES
@@ -447,30 +422,6 @@ Short motivating feedback do (2-3 lines max) with tips.''',
           fontWeight: FontWeight.w700,
           letterSpacing: 0.3,
         ),
-      ),
-    );
-  }
-
-  Widget _chartCard({
-    required String title,
-    required double height,
-    required Widget chart,
-    String? badge,
-    Color accent = FitGenieTheme.primary,
-  }) {
-    return FGCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(child: _label(title)),
-              if (badge != null) _pill(badge, accent),
-            ],
-          ),
-          const SizedBox(height: 18),
-          SizedBox(height: height, child: chart),
-        ],
       ),
     );
   }
@@ -566,7 +517,11 @@ Short motivating feedback do (2-3 lines max) with tips.''',
 
   Widget _buildWeekHero() {
     final t = Theme.of(context).textTheme;
-    final ghost = DateFormat('MMM').format(DateTime.now()).toUpperCase();
+    final now = DateTime.now();
+    final ghost = DateFormat('MMM').format(now).toUpperCase();
+    final todayIdx = now.weekday - 1;
+    final pct =
+        _caloriesGoal > 0 ? ((_avgCalories / _caloriesGoal) * 100).round() : 0;
 
     return SizedBox(
       width: double.infinity,
@@ -592,42 +547,111 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    AppStrings.get('progress_workouts').toUpperCase(),
-                    style: t.labelSmall?.copyWith(
-                      color: FitGenieTheme.onPrimary.withValues(alpha: 0.75),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          AppStrings.get('progress_workouts').toUpperCase(),
+                          style: t.labelSmall?.copyWith(
+                            color:
+                                FitGenieTheme.onPrimary.withValues(alpha: 0.75),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color:
+                              FitGenieTheme.onPrimary.withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.bolt_rounded,
+                                size: 14, color: FitGenieTheme.onPrimary),
+                            const SizedBox(width: 4),
+                            Text(
+                              '$_currentStreak ${AppStrings.get('progress_days')}',
+                              style: const TextStyle(
+                                color: FitGenieTheme.onPrimary,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
                     '$_thisWeekWorkouts',
                     style: t.displayLarge
                         ?.copyWith(color: FitGenieTheme.onPrimary),
                   ),
                   const SizedBox(height: 14),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.onPrimary.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.bolt_rounded,
-                            size: 16, color: FitGenieTheme.onPrimary),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${AppStrings.get('progress_streak')}: '
-                          '$_currentStreak ${AppStrings.get('progress_days')}',
-                          style: const TextStyle(
-                            color: FitGenieTheme.onPrimary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(7, (i) {
+                      final done = _weeklyWorkouts[i] > 0;
+                      final isToday = i == todayIdx;
+                      return Column(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: done
+                                  ? FitGenieTheme.onPrimary
+                                  : Colors.transparent,
+                              border: Border.all(
+                                color: done
+                                    ? FitGenieTheme.onPrimary
+                                    : FitGenieTheme.onPrimary.withValues(
+                                        alpha: isToday ? 0.9 : 0.35),
+                                width: isToday ? 1.5 : 1,
+                              ),
+                            ),
+                            child: done
+                                ? const Icon(Icons.check_rounded,
+                                    size: 17, color: FitGenieTheme.primary)
+                                : null,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 6),
+                          Text(
+                            _dayLabels[i].substring(0, 1),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight:
+                                  isToday ? FontWeight.w800 : FontWeight.w600,
+                              color: FitGenieTheme.onPrimary
+                                  .withValues(alpha: isToday ? 1.0 : 0.7),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '$_avgCalories kcal ($pct%) · ${_avgProtein}g protein ${AppStrings.get('progress_per_day')}',
+                    style: TextStyle(
+                      color: FitGenieTheme.onPrimary.withValues(alpha: 0.9),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${AppStrings.get('progress_total')}: $_totalWorkouts',
+                    style: TextStyle(
+                      color: FitGenieTheme.onPrimary.withValues(alpha: 0.65),
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -640,285 +664,52 @@ Short motivating feedback do (2-3 lines max) with tips.''',
   }
 
   // ============================================================
-  // 2️⃣ TOTALS (calories + protein, with per-day average)
-  // ============================================================
-
-  Widget _buildTotalsRow() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatTile(
-            label: AppStrings.get('progress_calories'),
-            value: '$_totalCaloriesBurned',
-            sub: '$_avgCalories ${AppStrings.get('progress_per_day')}',
-            color: FitGenieTheme.hot,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildStatTile(
-            label: AppStrings.get('progress_protein'),
-            value: '${_totalProtein}g',
-            sub: '${_avgProtein}g ${AppStrings.get('progress_per_day')}',
-            color: FitGenieTheme.teal,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatTile({
-    required String label,
-    required String value,
-    required String sub,
-    required Color color,
-  }) {
-    final t = Theme.of(context).textTheme;
-
-    return FGCard(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _label(label),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: t.headlineLarge?.copyWith(color: color),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            sub,
-            style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
   // 3️⃣ CHARTS
   // ============================================================
 
-  Widget _buildWorkoutsChart() {
-    final maxVal = _weeklyWorkouts.reduce((a, b) => a > b ? a : b);
+  Widget _buildTrendChart() {
+    final isCal = _trendMode == 0;
+    final accent = isCal ? FitGenieTheme.hot : FitGenieTheme.teal;
+    final goal = (isCal ? _caloriesGoal : _proteinGoal).toDouble();
+    final values = isCal ? _weeklyCalories : _weeklyProtein;
+    final unit = isCal ? 'kcal' : 'g';
 
-    return _chartCard(
-      title: AppStrings.get('progress_workouts'),
-      height: 150,
-      chart: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: maxVal + 2,
-          barTouchData: BarTouchData(
-            enabled: true,
-            touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (group) => FitGenieTheme.card2,
-              getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                return BarTooltipItem(
-                  '${_weeklyWorkouts[group.x].toInt()}',
-                  const TextStyle(
-                    color: FitGenieTheme.text,
-                    fontWeight: FontWeight.w700,
-                  ),
-                );
-              },
+    Widget tab(String label, int mode) {
+      final selected = _trendMode == mode;
+      return Expanded(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => setState(() => _trendMode = mode),
+          child: AnimatedContainer(
+            duration: FitGenieTheme.animFast,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: selected ? FitGenieTheme.border : Colors.transparent,
+              borderRadius: BorderRadius.circular(FitGenieTheme.radiusSM),
             ),
-          ),
-          titlesData: _dayTitles(),
-          gridData: const FlGridData(show: false),
-          borderData: FlBorderData(show: false),
-          barGroups: List.generate(7, (index) {
-            final hasWorkout = _weeklyWorkouts[index] > 0;
-            return BarChartGroupData(
-              x: index,
-              barRods: [
-                BarChartRodData(
-                  toY: hasWorkout ? _weeklyWorkouts[index] : 0.3,
-                  color:
-                      hasWorkout ? FitGenieTheme.primary : FitGenieTheme.border,
-                  width: 22,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(6)),
+            child: Center(
+              child: Text(
+                label.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.6,
+                  color: selected ? FitGenieTheme.text : FitGenieTheme.muted,
                 ),
-              ],
-            );
-          }),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCaloriesChart() {
-    return _chartCard(
-      title: AppStrings.get('progress_calories'),
-      badge: AppStrings.get('progress_goal_calories',
-          params: {'value': '$_caloriesGoal'}),
-      accent: FitGenieTheme.hot,
-      height: 180,
-      chart: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: _caloriesGoal * 1.2,
-          barTouchData: BarTouchData(
-            enabled: true,
-            touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (group) => FitGenieTheme.card2,
-              getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                return BarTooltipItem(
-                  '${_weeklyCalories[group.x].toInt()} cal',
-                  const TextStyle(
-                    color: FitGenieTheme.text,
-                    fontWeight: FontWeight.w700,
-                  ),
-                );
-              },
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
-          titlesData: _dayTitles(),
-          gridData: _grid(_caloriesGoal / 4),
-          borderData: FlBorderData(show: false),
-          extraLinesData: ExtraLinesData(
-            horizontalLines: [
-              HorizontalLine(
-                y: _caloriesGoal.toDouble(),
-                color: FitGenieTheme.text.withValues(alpha: 0.25),
-                strokeWidth: 1,
-                dashArray: [5, 5],
-              ),
-            ],
-          ),
-          barGroups: List.generate(7, (index) {
-            final cals = _weeklyCalories[index];
-            final percentage = cals / _caloriesGoal;
-
-            final Color barColor;
-            if (cals == 0) {
-              barColor = FitGenieTheme.border;
-            } else if (percentage >= 1.0) {
-              barColor = FitGenieTheme.success;
-            } else if (percentage >= 0.7) {
-              barColor = FitGenieTheme.hot;
-            } else {
-              barColor = FitGenieTheme.hot.withValues(alpha: 0.6);
-            }
-
-            return BarChartGroupData(
-              x: index,
-              barRods: [
-                BarChartRodData(
-                  toY: cals > 0 ? cals : 50,
-                  color: barColor,
-                  width: 22,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(6)),
-                ),
-              ],
-            );
-          }),
         ),
-      ),
-    );
-  }
+      );
+    }
 
-  Widget _buildProteinChart() {
-    return _chartCard(
-      title: AppStrings.get('progress_protein'),
-      badge: AppStrings.get('progress_goal_protein',
-          params: {'value': '$_proteinGoal'}),
-      accent: FitGenieTheme.teal,
-      height: 180,
-      chart: LineChart(
-        LineChartData(
-          minX: 0,
-          maxX: 6,
-          minY: 0,
-          maxY: _proteinGoal * 1.3,
-          lineTouchData: LineTouchData(
-            enabled: true,
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (spot) => FitGenieTheme.card2,
-              getTooltipItems: (spots) => spots.map<LineTooltipItem?>((s) {
-                // Hide the tooltip for the dashed goal line (bar index 1)
-                if (s.barIndex == 1) return null;
-                return LineTooltipItem(
-                  '${s.y.toInt()}g',
-                  const TextStyle(
-                    color: FitGenieTheme.text,
-                    fontWeight: FontWeight.w700,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          lineBarsData: [
-            // Actual protein
-            LineChartBarData(
-              spots: List.generate(
-                7,
-                (index) => FlSpot(index.toDouble(), _weeklyProtein[index]),
-              ),
-              isCurved: true,
-              color: FitGenieTheme.teal,
-              barWidth: 3,
-              dotData: FlDotData(
-                show: true,
-                getDotPainter: (spot, percent, barData, index) {
-                  return FlDotCirclePainter(
-                    radius: 4,
-                    color: FitGenieTheme.teal,
-                    strokeWidth: 2,
-                    strokeColor: FitGenieTheme.card,
-                  );
-                },
-              ),
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    FitGenieTheme.teal.withValues(alpha: 0.22),
-                    FitGenieTheme.teal.withValues(alpha: 0.0),
-                  ],
-                ),
-              ),
-            ),
-            // Goal line
-            LineChartBarData(
-              spots: List.generate(
-                7,
-                (index) => FlSpot(index.toDouble(), _proteinGoal.toDouble()),
-              ),
-              isCurved: false,
-              color: FitGenieTheme.text.withValues(alpha: 0.25),
-              barWidth: 1.5,
-              dotData: const FlDotData(show: false),
-              dashArray: [5, 5],
-            ),
-          ],
-          titlesData: _dayTitles(),
-          gridData: _grid(_proteinGoal / 4),
-          borderData: FlBorderData(show: false),
-        ),
-      ),
-    );
-  }
-
-  // ============================================================
-  // 4️⃣ BEST DAY
-  // ============================================================
-
-  Widget _buildBestDayCard() {
-    final t = Theme.of(context).textTheme;
-    final best = _bestDay!;
-    final dayName = DateFormat('EEEE, MMM d').format(best.date).toUpperCase();
-    final calPercent = ((best.calories / _caloriesGoal) * 100).round();
-    final proPercent = ((best.protein / _proteinGoal) * 100).round();
+    final goalLabel = isCal
+        ? AppStrings.get('progress_goal_calories',
+            params: {'value': '$_caloriesGoal'})
+        : AppStrings.get('progress_goal_protein',
+            params: {'value': '$_proteinGoal'});
 
     return FGCard(
       child: Column(
@@ -926,65 +717,94 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         children: [
           Row(
             children: [
-              const Icon(Icons.emoji_events_rounded,
-                  size: 18, color: FitGenieTheme.warning),
-              const SizedBox(width: 8),
               Expanded(
-                child: _label(AppStrings.get('progress_best'),
-                    color: FitGenieTheme.warning),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(dayName, style: t.headlineSmall),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _buildBestStat(
-                  '${best.calories}',
-                  '${AppStrings.get('progress_calories')} · $calPercent%',
-                  FitGenieTheme.hot,
-                ),
-              ),
-              Expanded(
-                child: _buildBestStat(
-                  '${best.protein}g',
-                  '${AppStrings.get('progress_protein')} · $proPercent%',
-                  FitGenieTheme.teal,
-                ),
-              ),
-              if (best.workouts > 0)
-                Expanded(
-                  child: _buildBestStat(
-                    '${best.workouts}',
-                    AppStrings.get('progress_workouts'),
-                    FitGenieTheme.primary,
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(FitGenieTheme.radiusSM + 3),
+                    border: Border.all(color: FitGenieTheme.border),
+                  ),
+                  child: Row(
+                    children: [
+                      tab(AppStrings.get('progress_calories'), 0),
+                      tab(AppStrings.get('progress_protein'), 1),
+                    ],
                   ),
                 ),
+              ),
+              const SizedBox(width: 12),
+              _pill(goalLabel, accent),
             ],
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 170,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: goal * 1.3,
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => FitGenieTheme.card2,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        '${values[group.x].toInt()} $unit',
+                        const TextStyle(
+                          color: FitGenieTheme.text,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                titlesData: _dayTitles(),
+                gridData: _grid(goal / 4),
+                borderData: FlBorderData(show: false),
+                extraLinesData: ExtraLinesData(
+                  horizontalLines: [
+                    HorizontalLine(
+                      y: goal,
+                      color: FitGenieTheme.text.withValues(alpha: 0.25),
+                      strokeWidth: 1,
+                      dashArray: [5, 5],
+                    ),
+                  ],
+                ),
+                barGroups: List.generate(7, (i) {
+                  final v = values[i];
+                  final pct = goal > 0 ? v / goal : 0.0;
+
+                  final Color barColor;
+                  if (v == 0) {
+                    barColor = FitGenieTheme.border;
+                  } else if (pct >= 1.0) {
+                    barColor = FitGenieTheme.success;
+                  } else if (pct >= 0.7) {
+                    barColor = accent;
+                  } else {
+                    barColor = accent.withValues(alpha: 0.6);
+                  }
+
+                  return BarChartGroupData(
+                    x: i,
+                    barRods: [
+                      BarChartRodData(
+                        toY: v > 0 ? v : goal * 0.03,
+                        color: barColor,
+                        width: 22,
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(6)),
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBestStat(String value, String label, Color color) {
-    final t = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(value, style: t.headlineMedium?.copyWith(color: color)),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
     );
   }
 
@@ -1001,8 +821,48 @@ Short motivating feedback do (2-3 lines max) with tips.''',
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _label(AppStrings.get('progress_weight'))),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _label(AppStrings.get('progress_weight')),
+                    const SizedBox(height: 6),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        Text(_currentWeight.toStringAsFixed(1),
+                            style: t.displayMedium),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'kg',
+                          style: TextStyle(
+                            color: FitGenieTheme.muted,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      hasTrend
+                          ? _weightTrendLabel()
+                          : AppStrings.get('progress_tap_log'),
+                      style: TextStyle(
+                        color: hasTrend
+                            ? _weightTrendColor()
+                            : FitGenieTheme.muted,
+                        fontSize: 12,
+                        fontWeight:
+                            hasTrend ? FontWeight.w700 : FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               IconButton(
                 onPressed: _showAddWeightDialog,
                 tooltip: AppStrings.get('progress_log_weight'),
@@ -1016,34 +876,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(_currentWeight.toStringAsFixed(1), style: t.displayMedium),
-              const SizedBox(width: 6),
-              const Text(
-                'kg',
-                style: TextStyle(
-                  color: FitGenieTheme.muted,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            hasTrend ? _weightTrendLabel() : AppStrings.get('progress_tap_log'),
-            style: TextStyle(
-              color: hasTrend ? _weightTrendColor() : FitGenieTheme.muted,
-              fontSize: 12,
-              fontWeight: hasTrend ? FontWeight.w700 : FontWeight.w500,
-            ),
-          ),
           if (hasTrend) ...[
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
             _buildWeightTrendChart(),
           ],
         ],
@@ -1056,104 +890,99 @@ Short motivating feedback do (2-3 lines max) with tips.''',
     final minW = weights.reduce((a, b) => a < b ? a : b);
     final maxW = weights.reduce((a, b) => a > b ? a : b);
     final padding = (maxW - minW).abs() < 2 ? 2.0 : (maxW - minW) * 0.2;
+    final lastIndex = (_weightHistory.length - 1).toDouble();
 
-    return SizedBox(
-      height: 160,
-      child: LineChart(
-        LineChartData(
-          minY: minW - padding,
-          maxY: maxW + padding,
-          lineTouchData: LineTouchData(
-            enabled: true,
-            touchTooltipData: LineTouchTooltipData(
-              getTooltipColor: (spot) => FitGenieTheme.card2,
-              getTooltipItems: (spots) => spots.map((s) {
-                return LineTooltipItem(
-                  '${s.y.toStringAsFixed(1)} kg',
-                  const TextStyle(
-                    color: FitGenieTheme.text,
-                    fontWeight: FontWeight.w700,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          height: 90,
+          child: LineChart(
+            LineChartData(
+              minY: minW - padding,
+              maxY: maxW + padding,
+              lineTouchData: LineTouchData(
+                enabled: true,
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipColor: (spot) => FitGenieTheme.card2,
+                  getTooltipItems: (spots) => spots.map((s) {
+                    return LineTooltipItem(
+                      '${s.y.toStringAsFixed(1)} kg',
+                      const TextStyle(
+                        color: FitGenieTheme.text,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: List.generate(
+                    _weightHistory.length,
+                    (i) => FlSpot(i.toDouble(), _weightHistory[i].weight),
                   ),
-                );
-              }).toList(),
+                  isCurved: true,
+                  color: FitGenieTheme.teal,
+                  barWidth: 3,
+                  dotData: FlDotData(
+                    show: true,
+                    checkToShowDot: (spot, barData) => spot.x == lastIndex,
+                    getDotPainter: (spot, percent, barData, index) {
+                      return FlDotCirclePainter(
+                        radius: 4,
+                        color: FitGenieTheme.teal,
+                        strokeWidth: 2,
+                        strokeColor: FitGenieTheme.card,
+                      );
+                    },
+                  ),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        FitGenieTheme.teal.withValues(alpha: 0.22),
+                        FitGenieTheme.teal.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              titlesData: const FlTitlesData(show: false),
+              gridData: const FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                getDrawingHorizontalLine: _weightGridLine,
+              ),
+              borderData: FlBorderData(show: false),
             ),
           ),
-          lineBarsData: [
-            LineChartBarData(
-              spots: List.generate(
-                _weightHistory.length,
-                (i) => FlSpot(i.toDouble(), _weightHistory[i].weight),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              DateFormat('MMM d').format(_weightHistory.first.date),
+              style: const TextStyle(
+                color: FitGenieTheme.muted,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
               ),
-              isCurved: true,
-              color: FitGenieTheme.teal,
-              barWidth: 3,
-              dotData: FlDotData(
-                show: true,
-                getDotPainter: (spot, percent, barData, index) {
-                  return FlDotCirclePainter(
-                    radius: 4,
-                    color: FitGenieTheme.teal,
-                    strokeWidth: 2,
-                    strokeColor: FitGenieTheme.card,
-                  );
-                },
-              ),
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    FitGenieTheme.teal.withValues(alpha: 0.22),
-                    FitGenieTheme.teal.withValues(alpha: 0.0),
-                  ],
-                ),
+            ),
+            Text(
+              DateFormat('MMM d').format(_weightHistory.last.date),
+              style: const TextStyle(
+                color: FitGenieTheme.muted,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
-          titlesData: FlTitlesData(
-            show: true,
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 26,
-                interval: (_weightHistory.length / 4)
-                    .clamp(1, double.infinity)
-                    .roundToDouble(),
-                getTitlesWidget: (value, meta) {
-                  final i = value.toInt();
-                  if (i < 0 || i >= _weightHistory.length) {
-                    return const SizedBox.shrink();
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      DateFormat('MMM d').format(_weightHistory[i].date),
-                      style: const TextStyle(
-                        color: FitGenieTheme.muted,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            leftTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          ),
-          gridData: const FlGridData(
-            show: true,
-            drawVerticalLine: false,
-            getDrawingHorizontalLine: _weightGridLine,
-          ),
-          borderData: FlBorderData(show: false),
         ),
-      ),
+      ],
     );
   }
 
@@ -1184,19 +1013,25 @@ Short motivating feedback do (2-3 lines max) with tips.''',
     final rows = _weekData.reversed.toList();
 
     return FGCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _label(AppStrings.get('progress_daily_breakdown')),
-          const SizedBox(height: 6),
-          ...List.generate(rows.length, (i) {
+      padding: EdgeInsets.zero,
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+          childrenPadding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
+          iconColor: FitGenieTheme.muted,
+          collapsedIconColor: FitGenieTheme.muted,
+          shape: const Border(),
+          collapsedShape: const Border(),
+          title: _label(AppStrings.get('progress_daily_breakdown')),
+          children: List.generate(rows.length, (i) {
             final data = rows[i];
             final isToday =
                 DateFormat('yyyy-MM-dd').format(data.date) == todayStr;
             return _buildDailyRow(data, isToday,
                 showDivider: i != rows.length - 1);
           }),
-        ],
+        ),
       ),
     );
   }
@@ -1377,63 +1212,6 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                 style: const TextStyle(fontSize: 14, height: 1.5),
               ),
             ),
-        ],
-      ),
-    );
-  }
-
-  // ============================================================
-  // 8️⃣ ALL-TIME STATS
-  // ============================================================
-
-  Widget _buildAllTimeCard() {
-    // The string key still has a trophy emoji in it; strip it here.
-    final title = AppStrings.get('progress_stats').replaceAll('🏆', '').trim();
-
-    return FGCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _label(title),
-          const SizedBox(height: 6),
-          _buildAllTimeRow(
-            AppStrings.get('progress_total'),
-            '$_totalWorkouts',
-            showDivider: true,
-          ),
-          _buildAllTimeRow(
-            AppStrings.get('progress_streak'),
-            '$_currentStreak ${AppStrings.get('progress_days')}',
-            showDivider: false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAllTimeRow(String label, String value,
-      {required bool showDivider}) {
-    final t = Theme.of(context).textTheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      decoration: BoxDecoration(
-        border: showDivider
-            ? const Border(bottom: BorderSide(color: FitGenieTheme.divider))
-            : null,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: FitGenieTheme.textSecondary,
-                fontSize: 14,
-              ),
-            ),
-          ),
-          Text(value, style: t.headlineSmall),
         ],
       ),
     );
