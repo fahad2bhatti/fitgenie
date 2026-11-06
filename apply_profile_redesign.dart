@@ -123,7 +123,8 @@ void main() {
   var src = file.readAsStringSync();
 
   if (src.contains('// profile-v2')) {
-    stdout.writeln('ℹ️  Profile redesign pehle se lagi hui hai, kuch nahi kiya');
+    stdout
+        .writeln('ℹ️  Profile redesign pehle se lagi hui hai, kuch nahi kiya');
     exit(0);
   }
 

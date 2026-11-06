@@ -119,7 +119,8 @@ void main() {
   var src = file.readAsStringSync();
 
   if (src.contains('// workout-v2')) {
-    stdout.writeln('ℹ️  Workout redesign pehle se lagi hui hai, kuch nahi kiya');
+    stdout
+        .writeln('ℹ️  Workout redesign pehle se lagi hui hai, kuch nahi kiya');
     exit(0);
   }
 
@@ -175,7 +176,8 @@ void main() {
   src = rep(src, RegExp(r'Colors\.purple\b'), 'FitGenieTheme.primary');
   src = rep(
     src,
-    RegExp(r'backgroundColor:\s*FitGenieTheme\.success,(\s*)padding:\s*const EdgeInsets\.symmetric\(vertical: 16\)'),
+    RegExp(
+        r'backgroundColor:\s*FitGenieTheme\.success,(\s*)padding:\s*const EdgeInsets\.symmetric\(vertical: 16\)'),
     r'backgroundColor: FitGenieTheme.primary,$1padding: const EdgeInsets.symmetric(vertical: 16)',
   );
   src = rep(src, RegExp(r"Text\('💪 \$m',"), 'Text(m,');

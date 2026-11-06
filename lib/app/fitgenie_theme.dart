@@ -81,12 +81,12 @@ class FitGenieTheme {
     );
 
     TextStyle display(double size) => GoogleFonts.barlowCondensed(
-      fontSize: size,
-      fontWeight: FontWeight.w700,
-      height: 1.0,
-      letterSpacing: -0.5,
-      color: text,
-    );
+          fontSize: size,
+          fontWeight: FontWeight.w700,
+          height: 1.0,
+          letterSpacing: -0.5,
+          color: text,
+        );
 
     return body.copyWith(
       displayLarge: display(60),
@@ -125,7 +125,6 @@ class FitGenieTheme {
 
     return base.copyWith(
       scaffoldBackgroundColor: bg,
-
       colorScheme: base.colorScheme.copyWith(
         primary: primary,
         secondary: teal,
@@ -137,9 +136,7 @@ class FitGenieTheme {
         onSurface: text,
         outline: border,
       ),
-
       textTheme: _textTheme(base.textTheme),
-
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -152,7 +149,6 @@ class FitGenieTheme {
           color: text,
         ),
       ),
-
       cardTheme: const CardThemeData(
         elevation: 0,
         color: card,
@@ -162,7 +158,6 @@ class FitGenieTheme {
         ),
         margin: EdgeInsets.zero,
       ),
-
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
@@ -177,7 +172,6 @@ class FitGenieTheme {
           ),
         ),
       ),
-
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: buttonBlue,
@@ -191,7 +185,6 @@ class FitGenieTheme {
           ),
         ),
       ),
-
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: text,
@@ -204,14 +197,12 @@ class FitGenieTheme {
           ),
         ),
       ),
-
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: buttonBlue,
           textStyle: GoogleFonts.dmSans(fontWeight: FontWeight.w700),
         ),
       ),
-
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: card,
@@ -238,7 +229,6 @@ class FitGenieTheme {
         hintStyle: const TextStyle(color: muted),
         labelStyle: const TextStyle(color: muted),
       ),
-
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: card2,
         selectedItemColor: primary,
@@ -247,7 +237,6 @@ class FitGenieTheme {
         elevation: 0,
         showUnselectedLabels: true,
       ),
-
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: card2,
         indicatorColor: primary.withValues(alpha: 0.16),
@@ -265,9 +254,7 @@ class FitGenieTheme {
           );
         }),
       ),
-
       dividerTheme: const DividerThemeData(color: divider, thickness: 1),
-
       snackBarTheme: SnackBarThemeData(
         backgroundColor: card,
         contentTextStyle: const TextStyle(color: text),
@@ -277,27 +264,23 @@ class FitGenieTheme {
         ),
         behavior: SnackBarBehavior.floating,
       ),
-
       dialogTheme: const DialogThemeData(
         backgroundColor: card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(radiusXL)),
         ),
       ),
-
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(radiusXL)),
         ),
       ),
-
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: primary,
         linearTrackColor: border,
         circularTrackColor: border,
       ),
-
       chipTheme: ChipThemeData(
         backgroundColor: card,
         selectedColor: primary,
@@ -314,15 +297,13 @@ class FitGenieTheme {
           borderRadius: BorderRadius.circular(radiusMD),
         ),
       ),
-
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) =>
-        states.contains(WidgetState.selected) ? onPrimary : muted),
+            states.contains(WidgetState.selected) ? onPrimary : muted),
         trackColor: WidgetStateProperty.resolveWith((states) =>
-        states.contains(WidgetState.selected) ? primary : border),
+            states.contains(WidgetState.selected) ? primary : border),
         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
       ),
-
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) return primary;
@@ -347,17 +328,17 @@ extension SpacingExtension on num {
 
 extension PaddingExtension on Widget {
   Widget padAll(double value) => Padding(
-    padding: EdgeInsets.all(value),
-    child: this,
-  );
+        padding: EdgeInsets.all(value),
+        child: this,
+      );
 
   Widget padH(double value) => Padding(
-    padding: EdgeInsets.symmetric(horizontal: value),
-    child: this,
-  );
+        padding: EdgeInsets.symmetric(horizontal: value),
+        child: this,
+      );
 
   Widget padV(double value) => Padding(
-    padding: EdgeInsets.symmetric(vertical: value),
-    child: this,
-  );
+        padding: EdgeInsets.symmetric(vertical: value),
+        child: this,
+      );
 }

@@ -76,10 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       _email = _auth.currentUser?.email ?? '';
 
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(widget.userId)
-          .get();
+      final userDoc =
+          await _firestore.collection('users').doc(widget.userId).get();
 
       if (!mounted) return;
 
@@ -297,8 +295,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   subtitle: Text(
                     AppStrings.get('profile_remove_sub'),
-                    style:
-                        const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                    style: const TextStyle(
+                        color: FitGenieTheme.muted, fontSize: 12),
                   ),
                 ),
             ],
@@ -437,8 +435,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           height: 88,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border:
-                                Border.all(color: FitGenieTheme.border, width: 2),
+                            border: Border.all(
+                                color: FitGenieTheme.border, width: 2),
                           ),
                           child: ClipOval(child: _buildAvatarContent()),
                         ),
@@ -453,8 +451,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             decoration: BoxDecoration(
                               color: FitGenieTheme.primary,
                               shape: BoxShape.circle,
-                              border:
-                                  Border.all(color: FitGenieTheme.card, width: 2),
+                              border: Border.all(
+                                  color: FitGenieTheme.card, width: 2),
                             ),
                             child: const Icon(
                               Icons.camera_alt_rounded,
@@ -576,10 +574,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-
-
   // ============ BODY STATS ============
-
 
   // ============ GOALS ============
   Widget _buildGoalsCard() {
@@ -599,8 +594,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(value, style: t.headlineSmall),
               const SizedBox(width: 4),
               Text(unit,
-                  style:
-                      const TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
+                  style: const TextStyle(
+                      color: FitGenieTheme.muted, fontSize: 12)),
             ],
           ),
         );
@@ -632,7 +627,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
 
   // ???????????????????????????????????????????
   // ?? GOOGLE FIT STATUS CARD
@@ -718,7 +712,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 10),
             Text(
               _googleFitError,
-              style: const TextStyle(color: FitGenieTheme.warning, fontSize: 12),
+              style:
+                  const TextStyle(color: FitGenieTheme.warning, fontSize: 12),
             ),
           ],
           Theme(
@@ -750,7 +745,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: double.infinity,
             child: isConnected
                 ? OutlinedButton(
-                    onPressed: _isGoogleFitLoading ? null : _disconnectGoogleFit,
+                    onPressed:
+                        _isGoogleFitLoading ? null : _disconnectGoogleFit,
                     child: const Text('Disconnect Google Fit'),
                   )
                 : ElevatedButton(
@@ -1473,9 +1469,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .collection('weightLogs')
           .doc(dateStr)
           .set({
-            'weight': weight,
-            'date': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
+        'weight': weight,
+        'date': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
 
       if (!mounted) return;
       setState(() {
@@ -1503,10 +1499,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .collection('goals')
           .doc('main')
           .set({
-            'caloriesGoal': calories,
-            'proteinGoal': protein,
-            'waterGoal': water,
-          }, SetOptions(merge: true));
+        'caloriesGoal': calories,
+        'proteinGoal': protein,
+        'waterGoal': water,
+      }, SetOptions(merge: true));
       if (!mounted) return;
       setState(() {
         _caloriesGoal = calories;

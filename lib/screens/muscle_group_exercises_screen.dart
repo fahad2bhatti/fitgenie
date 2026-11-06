@@ -799,8 +799,8 @@ class _MuscleGroupExercisesScreenState
                           FitGenieTheme.warning),
                       const SizedBox(height: 14),
                       for (int i = 0; i < tips.length; i++)
-                        _buildBulletItem(
-                            tips[i], FitGenieTheme.warning, Icons.lightbulb_outline),
+                        _buildBulletItem(tips[i], FitGenieTheme.warning,
+                            Icons.lightbulb_outline),
                       const SizedBox(height: 24),
                     ],
 

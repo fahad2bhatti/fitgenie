@@ -469,8 +469,8 @@ class _NotificationSettingsScreenState
                   color: FitGenieTheme.teal.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child:
-                    const Icon(Icons.water_drop, color: FitGenieTheme.teal, size: 24),
+                child: const Icon(Icons.water_drop,
+                    color: FitGenieTheme.teal, size: 24),
               ),
               const SizedBox(width: 14),
               Expanded(

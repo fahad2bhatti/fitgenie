@@ -136,7 +136,9 @@ void main(List<String> args) {
       src = rep(
         src,
         _colorRe('purple'),
-        _categoryFiles.contains(name) ? 'FitGenieTheme.ai' : 'FitGenieTheme.primary',
+        _categoryFiles.contains(name)
+            ? 'FitGenieTheme.ai'
+            : 'FitGenieTheme.primary',
       );
 
       if (count == 0) continue;

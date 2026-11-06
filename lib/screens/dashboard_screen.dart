@@ -489,7 +489,8 @@ class _DashboardScreenState extends State<DashboardScreen>
       context: context,
       backgroundColor: FitGenieTheme.card,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(FitGenieTheme.radiusXL)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(FitGenieTheme.radiusXL)),
       ),
       builder: (context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -518,14 +519,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: FitGenieTheme.card2,
-                  borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
-                  border: Border.all(color: FitGenieTheme.border),
+                      borderRadius:
+                          BorderRadius.circular(FitGenieTheme.radiusMD),
+                      border: Border.all(color: FitGenieTheme.border),
                     ),
                     child: Text(
                       entry.value,
                       style: const TextStyle(
                         color: FitGenieTheme.text,
-                  fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -572,9 +574,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                 _buildTodayCard(),
                 const SizedBox(height: 12),
                 _buildLogRow(),
-              const SizedBox(height: 12),
-              _buildCoachBar(),
-              const SizedBox(height: 12),
+                const SizedBox(height: 12),
+                _buildCoachBar(),
+                const SizedBox(height: 12),
                 _buildWeeklyActivityCard(),
                 const SizedBox(height: 12),
                 _buildExploreCard(),
@@ -612,7 +614,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             children: [
               Text(greeting.toUpperCase(), style: t.labelSmall),
               const SizedBox(height: 2),
-              Text(name, style: t.displaySmall, overflow: TextOverflow.ellipsis),
+              Text(name,
+                  style: t.displaySmall, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),
@@ -709,7 +712,6 @@ class _DashboardScreenState extends State<DashboardScreen>
         return FitGenieTheme.primary;
     }
   }
-
 
   // ==========================================
   // 👣 STEPS CARD
@@ -833,8 +835,10 @@ class _DashboardScreenState extends State<DashboardScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStat('${_stepsCalories.round()}', 'kcal', FitGenieTheme.hot),
-                _buildStat(_stepsDistance.toStringAsFixed(1), 'km', FitGenieTheme.teal),
+                _buildStat(
+                    '${_stepsCalories.round()}', 'kcal', FitGenieTheme.hot),
+                _buildStat(_stepsDistance.toStringAsFixed(1), 'km',
+                    FitGenieTheme.teal),
                 _buildStat('$_stepsActiveMinutes', 'min', FitGenieTheme.text),
               ],
             ),
@@ -1093,7 +1097,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const ExerciseLibraryScreen()),
+                MaterialPageRoute(
+                    builder: (_) => const ExerciseLibraryScreen()),
               );
             },
           ),
@@ -1136,7 +1141,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   // 🎯 DAILY GOALS CARD
   // ==========================================
-
 
   // ==========================================
   // 📅 WEEKLY ACTIVITY CARD
@@ -1221,7 +1225,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   // ⚡ QUICK LOG SECTION
   // ==========================================
-
 
   // ==========================================
   // 🗨️ DIALOGS
@@ -1422,4 +1425,3 @@ class _DashboardScreenState extends State<DashboardScreen>
 // ==========================================
 // 🎯 STEP RING PAINTER
 // ==========================================
-

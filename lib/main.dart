@@ -6,7 +6,6 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'firebase_options.dart';
 import 'app/fitgenie_theme.dart';
@@ -35,11 +34,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await dotenv.load(fileName: ".env");
     debugPrint('Environment loaded');
-
-    final hasKey = dotenv.env['GEMINI_API_KEY']?.isNotEmpty ?? false;
-    debugPrint('GEMINI_API_KEY found: $hasKey');
   } catch (e) {
     debugPrint('.env load error: $e');
   }

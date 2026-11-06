@@ -30,7 +30,7 @@ class FGCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius =
-    BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG);
+        BorderRadius.circular(borderRadius ?? FitGenieTheme.radiusLG);
 
     return Container(
       decoration: BoxDecoration(
@@ -49,7 +49,7 @@ class FGCard extends StatelessWidget {
             highlightColor: FitGenieTheme.primary.withValues(alpha: 0.04),
             child: Padding(
               padding:
-              padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
+                  padding ?? const EdgeInsets.all(FitGenieTheme.cardPadding),
               child: child,
             ),
           ),

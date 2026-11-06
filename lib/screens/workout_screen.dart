@@ -72,27 +72,22 @@ class _WorkoutScreenState extends State<WorkoutScreen>
             const SizedBox(height: 12),
             const MedicalDisclaimerBanner(compact: true),
             const SizedBox(height: 20),
-
             _buildQuickStartCard(),
             const SizedBox(height: 12),
             _buildWeekStrip(),
             const SizedBox(height: 26),
-
             _buildSectionLabel('', AppStrings.get('workout_muscle'), ''),
             const SizedBox(height: 10),
             _buildMuscleGroupsGrid(),
             const SizedBox(height: 26),
-
             _buildSectionLabel('', AppStrings.get('workout_plans'), ''),
             const SizedBox(height: 10),
             _buildWorkoutPlans(),
             const SizedBox(height: 26),
-
             _buildSectionLabel('', AppStrings.get('workout_library'), ''),
             const SizedBox(height: 10),
             _buildMyLibraryCard(),
             const SizedBox(height: 26),
-
             _buildSectionLabel('', AppStrings.get('workout_recent'), ''),
             const SizedBox(height: 10),
             _buildRecentWorkouts(),
@@ -160,7 +155,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               const SizedBox(height: 6),
               Text(
                 AppStrings.get('workout_rest_subtitle'),
-                style: const TextStyle(color: FitGenieTheme.muted, fontSize: 13),
+                style:
+                    const TextStyle(color: FitGenieTheme.muted, fontSize: 13),
               ),
             ],
           ),
@@ -221,8 +217,8 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                     ),
                     const SizedBox(height: 18),
                     Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
                         color: FitGenieTheme.onPrimary,
                         borderRadius: BorderRadius.circular(30),
@@ -314,8 +310,9 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         height: 34,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color:
-                              isDone ? FitGenieTheme.primary : Colors.transparent,
+                          color: isDone
+                              ? FitGenieTheme.primary
+                              : Colors.transparent,
                           border: Border.all(
                             color: isDone
                                 ? FitGenieTheme.primary
@@ -335,9 +332,11 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                         days[i],
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight: isToday ? FontWeight.w800 : FontWeight.w500,
-                          color:
-                              isToday ? FitGenieTheme.text : FitGenieTheme.muted,
+                          fontWeight:
+                              isToday ? FontWeight.w800 : FontWeight.w500,
+                          color: isToday
+                              ? FitGenieTheme.text
+                              : FitGenieTheme.muted,
                         ),
                       ),
                     ],

@@ -1230,7 +1230,9 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               child: Text(
                 isUnlocked ? '✅ Unlocked!' : '+${achievement.points} XP',
                 style: TextStyle(
-                  color: isUnlocked ? FitGenieTheme.success : FitGenieTheme.warning,
+                  color: isUnlocked
+                      ? FitGenieTheme.success
+                      : FitGenieTheme.warning,
                   fontWeight: FontWeight.bold,
                 ),
               ),

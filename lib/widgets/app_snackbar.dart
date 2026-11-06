@@ -24,19 +24,18 @@ class AppSnackbar {
   static OverlayEntry? _current;
 
   static void showSuccess(BuildContext context, String message,
-      {String? title}) =>
+          {String? title}) =>
       _show(context, _ToastKind.success, message, title);
 
   static void showError(BuildContext context, String message,
-      {String? title}) =>
+          {String? title}) =>
       _show(context, _ToastKind.error, _friendly(message), title);
 
   static void showWarning(BuildContext context, String message,
-      {String? title}) =>
+          {String? title}) =>
       _show(context, _ToastKind.warning, message, title);
 
-  static void showInfo(BuildContext context, String message,
-      {String? title}) =>
+  static void showInfo(BuildContext context, String message, {String? title}) =>
       _show(context, _ToastKind.info, message, title);
 
   /// Technical/lamba error (Exception, Firebase code wagera) user ko nahi dikhana.
@@ -54,11 +53,11 @@ class AppSnackbar {
   }
 
   static void _show(
-      BuildContext context,
-      _ToastKind kind,
-      String message,
-      String? title,
-      ) {
+    BuildContext context,
+    _ToastKind kind,
+    String message,
+    String? title,
+  ) {
     final overlay = Overlay.maybeOf(context, rootOverlay: true);
     if (overlay == null) return;
 
@@ -139,25 +138,25 @@ class _ToastViewState extends State<_ToastView>
   }
 
   Color get _accent => switch (widget.kind) {
-    _ToastKind.success => FitGenieTheme.primary,
-    _ToastKind.error => FitGenieTheme.hot,
-    _ToastKind.warning => FitGenieTheme.warning,
-    _ToastKind.info => FitGenieTheme.teal,
-  };
+        _ToastKind.success => FitGenieTheme.primary,
+        _ToastKind.error => FitGenieTheme.hot,
+        _ToastKind.warning => FitGenieTheme.warning,
+        _ToastKind.info => FitGenieTheme.teal,
+      };
 
   IconData get _icon => switch (widget.kind) {
-    _ToastKind.success => Icons.check_rounded,
-    _ToastKind.error => Icons.refresh_rounded,
-    _ToastKind.warning => Icons.priority_high_rounded,
-    _ToastKind.info => Icons.info_outline_rounded,
-  };
+        _ToastKind.success => Icons.check_rounded,
+        _ToastKind.error => Icons.refresh_rounded,
+        _ToastKind.warning => Icons.priority_high_rounded,
+        _ToastKind.info => Icons.info_outline_rounded,
+      };
 
   String get _defaultTitle => switch (widget.kind) {
-    _ToastKind.success => 'Ho gaya!',
-    _ToastKind.error => 'Thora sa masla ho gaya',
-    _ToastKind.warning => 'Zara dhyan se',
-    _ToastKind.info => 'Note',
-  };
+        _ToastKind.success => 'Ho gaya!',
+        _ToastKind.error => 'Thora sa masla ho gaya',
+        _ToastKind.warning => 'Zara dhyan se',
+        _ToastKind.info => 'Note',
+      };
 
   @override
   Widget build(BuildContext context) {

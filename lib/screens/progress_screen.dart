@@ -848,7 +848,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.smart_toy, color: FitGenieTheme.primary, size: 20),
+                          Icon(Icons.smart_toy,
+                              color: FitGenieTheme.primary, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.get('progress_insight'),
@@ -882,7 +883,8 @@ Short motivating feedback do (2-3 lines max) with tips.''',
                         children: [
                           Icon(Icons.lightbulb_outline,
                               size: 40,
-                              color: FitGenieTheme.primary.withValues(alpha: 0.5)),
+                              color:
+                                  FitGenieTheme.primary.withValues(alpha: 0.5)),
                           const SizedBox(height: 8),
                           Text(
                             AppStrings.get('progress_tap_insight'),
