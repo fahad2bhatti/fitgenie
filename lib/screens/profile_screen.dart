@@ -237,100 +237,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       backgroundColor: FitGenieTheme.card,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(FitGenieTheme.radiusXL)),
       ),
       builder: (context) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(8, 18, 8, 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    AppStrings.get('profile_photo'),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              ListTile(
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickAndUploadPhoto(ImageSource.camera);
-                },
-                leading: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: FitGenieTheme.primary,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    AppStrings.get('profile_photo').toUpperCase(),
+                    style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ),
-                title: Text(AppStrings.get('profile_take')),
-                subtitle: Text(
-                  AppStrings.get('profile_take_sub'),
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
               ),
               const SizedBox(height: 8),
               ListTile(
                 onTap: () {
                   Navigator.pop(context);
+                  _pickAndUploadPhoto(ImageSource.camera);
+                },
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text(AppStrings.get('profile_take')),
+                subtitle: Text(
+                  AppStrings.get('profile_take_sub'),
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
                   _pickAndUploadPhoto(ImageSource.gallery);
                 },
-                leading: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.photo_library, color: FitGenieTheme.primary),
-                ),
+                leading: const Icon(Icons.photo_library_outlined),
                 title: Text(AppStrings.get('profile_gallery')),
                 subtitle: Text(
                   AppStrings.get('profile_gallery_sub'),
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
                 ),
-                trailing: const Icon(Icons.chevron_right, color: Colors.grey),
               ),
-              if (_photoBase64 != null) ...[
-                const SizedBox(height: 8),
+              if (_photoBase64 != null)
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
                     _removePhoto();
                   },
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.error.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.delete, color: FitGenieTheme.error),
-                  ),
+                  leading: const Icon(Icons.delete_outline_rounded,
+                      color: FitGenieTheme.error),
                   title: Text(
                     AppStrings.get('profile_remove'),
-                    style: TextStyle(color: FitGenieTheme.error),
+                    style: const TextStyle(color: FitGenieTheme.error),
                   ),
                   subtitle: Text(
                     AppStrings.get('profile_remove_sub'),
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    style:
+                        const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
                   ),
                 ),
-              ],
             ],
           ),
         ),
@@ -384,32 +354,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // profile-v2
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(FitGenieTheme.screenPadding),
       child: Column(
         children: [
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           _buildProfileHeader(),
-          const SizedBox(height: 24),
-          _buildBodyStatsCard(),
-          const SizedBox(height: 16),
-          _buildGoalsCard(),
-          const SizedBox(height: 16),
-          _buildGoogleFitStatusCard(),
-          const SizedBox(height: 16),
-          _buildSettingsCard(),
-          const SizedBox(height: 16),
-          _buildLogoutButton(),
           const SizedBox(height: 12),
-          _buildDeleteAccountButton(),
+          _buildGoalsCard(),
+          const SizedBox(height: 12),
+          _buildGoogleFitStatusCard(),
+          const SizedBox(height: 12),
+          _buildSettingsCard(),
           const SizedBox(height: 20),
+          _buildLogoutButton(),
+          const SizedBox(height: 4),
+          _buildDeleteAccountButton(),
+          const SizedBox(height: 16),
           Text(
             AppStrings.get('profile_version'),
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+            style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
           ),
           const SizedBox(height: 30),
         ],
@@ -419,85 +388,140 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // ============ PROFILE HEADER ============
   Widget _buildProfileHeader() {
-    return FGCard(
-      child: Column(
-        children: [
-          Stack(
+    final t = Theme.of(context).textTheme;
+    final initial = _name.isNotEmpty ? _name[0].toUpperCase() : 'U';
+
+    Widget stat(String value, String unit) => Expanded(
+          child: Column(
             children: [
-              GestureDetector(
-                onTap: _isUploadingPhoto ? null : _showPhotoOptions,
-                child: Container(
-                  width: 110,
-                  height: 110,
-                  decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: FitGenieTheme.primary, width: 3),
-                  ),
-                  child: ClipOval(child: _buildAvatarContent()),
-                ),
+              Text(
+                value,
+                style: t.headlineMedium,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: GestureDetector(
-                  onTap: _isUploadingPhoto ? null : _showPhotoOptions,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.primary,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black, width: 2),
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      size: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 2),
+              Text(unit.toUpperCase(), style: t.labelSmall),
             ],
           ),
-          const SizedBox(height: 16),
-          GestureDetector(
-            onTap: _showEditProfileDialog,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _name,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.edit, size: 16, color: Colors.grey),
-              ],
+        );
+
+    Widget vline() =>
+        Container(height: 36, width: 1, color: FitGenieTheme.border);
+
+    return FGCard(
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(
+            right: -6,
+            top: -34,
+            child: Text(
+              initial,
+              style: t.displayLarge?.copyWith(
+                fontSize: 150,
+                color: FitGenieTheme.text.withValues(alpha: 0.05),
+              ),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            _email,
-            style: const TextStyle(color: Colors.grey),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
+          Column(
             children: [
-              _buildBadge(
-                _fitnessLevel,
-                Icons.fitness_center,
-                _getLevelColor(_fitnessLevel),
+              Row(
+                children: [
+                  Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: _isUploadingPhoto ? null : _showPhotoOptions,
+                        child: Container(
+                          width: 88,
+                          height: 88,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border:
+                                Border.all(color: FitGenieTheme.border, width: 2),
+                          ),
+                          child: ClipOval(child: _buildAvatarContent()),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: _isUploadingPhoto ? null : _showPhotoOptions,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: FitGenieTheme.primary,
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(color: FitGenieTheme.card, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.camera_alt_rounded,
+                              size: 14,
+                              color: FitGenieTheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: _showEditProfileDialog,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _name,
+                            style: t.headlineMedium,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _email,
+                            style: const TextStyle(
+                                color: FitGenieTheme.muted, fontSize: 13),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '$_fitnessLevel · $_goal'.toUpperCase(),
+                            style: t.labelSmall
+                                ?.copyWith(color: FitGenieTheme.primary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined,
+                        size: 20, color: FitGenieTheme.muted),
+                    onPressed: _showEditProfileDialog,
+                  ),
+                ],
               ),
-              _buildBadge(_goal, Icons.flag, FitGenieTheme.primary),
+              const SizedBox(height: 18),
+              const Divider(height: 1),
+              const SizedBox(height: 14),
+              InkWell(
+                onTap: _showEditBodyStatsDialog,
+                child: Row(
+                  children: [
+                    stat(_weight.toStringAsFixed(1), 'kg'),
+                    vline(),
+                    stat(_height.toStringAsFixed(0), 'cm'),
+                    vline(),
+                    stat('$_age', 'yrs'),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
@@ -552,417 +576,187 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildBadge(String text, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
 
-  Color _getLevelColor(String level) {
-    switch (level.toLowerCase()) {
-      case 'beginner':
-        return FitGenieTheme.success;
-      case 'intermediate':
-        return FitGenieTheme.warning;
-      case 'advanced':
-        return FitGenieTheme.error;
-      default:
-        return FitGenieTheme.primary;
-    }
-  }
 
   // ============ BODY STATS ============
-  Widget _buildBodyStatsCard() {
-    return FGCard(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.person_outline,
-                    color: FitGenieTheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    AppStrings.get('profile_stats'),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-              IconButton(
-                icon: const Icon(Icons.edit, size: 20, color: Colors.grey),
-                onPressed: _showEditBodyStatsDialog,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _buildStatItem(
-                Icons.monitor_weight,
-                'Weight',
-                '${_weight.toStringAsFixed(1)} kg',
-              ),
-              Container(height: 40, width: 1, color: Colors.white12),
-              _buildStatItem(
-                Icons.height,
-                'Height',
-                '${_height.toStringAsFixed(0)} cm',
-              ),
-              Container(height: 40, width: 1, color: Colors.white12),
-              _buildStatItem(Icons.cake, 'Age', '$_age yrs'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildStatItem(IconData icon, String label, String value) {
-    return Expanded(
-      child: Column(
-        children: [
-          Icon(icon, color: FitGenieTheme.primary, size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
 
   // ============ GOALS ============
   Widget _buildGoalsCard() {
+    final t = Theme.of(context).textTheme;
+
+    Widget row(String label, String value, String unit) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                      color: FitGenieTheme.textSecondary, fontSize: 14),
+                ),
+              ),
+              Text(value, style: t.headlineSmall),
+              const SizedBox(width: 4),
+              Text(unit,
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
+            ],
+          ),
+        );
+
     return FGCard(
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.track_changes, color: FitGenieTheme.hot),
-                  const SizedBox(width: 8),
-                  Text(
-                    AppStrings.get('profile_goals'),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              Text(
+                AppStrings.get('profile_goals').toUpperCase(),
+                style: t.labelSmall,
               ),
+              const Spacer(),
               IconButton(
-                icon: const Icon(Icons.edit, size: 20, color: Colors.grey),
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.edit_outlined,
+                    size: 20, color: FitGenieTheme.muted),
                 onPressed: _showEditGoalsDialog,
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _buildGoalRow(
-            Icons.local_fire_department,
-            'Calories',
-            '$_caloriesGoal kcal',
-            FitGenieTheme.hot,
-          ),
-          const Divider(height: 24, color: Colors.white12),
-          _buildGoalRow(
-            Icons.egg_alt,
-            'Protein',
-            '$_proteinGoal g',
-            FitGenieTheme.teal,
-          ),
-          const Divider(height: 24, color: Colors.white12),
-          _buildGoalRow(
-            Icons.water_drop,
-            'Water',
-            '$_waterGoal glasses',
-            FitGenieTheme.primary,
-          ),
+          row('Calories', '$_caloriesGoal', 'kcal'),
+          const Divider(height: 1),
+          row('Protein', '$_proteinGoal', 'g'),
+          const Divider(height: 1),
+          row('Water', '$_waterGoal', 'glasses'),
         ],
       ),
     );
   }
 
-  Widget _buildGoalRow(IconData icon, String label, String value, Color color) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-        Text(
-          value,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
 
   // ???????????????????????????????????????????
   // ?? GOOGLE FIT STATUS CARD
   // ???????????????????????????????????????????
   Widget _buildGoogleFitStatusCard() {
+    final t = Theme.of(context).textTheme;
     final bool isConnected =
         _googleFitStatus == GoogleFitConnectionStatus.connected ||
-        _googleFitStatus == GoogleFitConnectionStatus.connectedNoData;
-
+            _googleFitStatus == GoogleFitConnectionStatus.connectedNoData;
     final Color statusColor = _getStatusColor(_googleFitStatus);
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: FitGenieTheme.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: statusColor.withValues(alpha: 0.5),
-          width: 1.5,
-        ),
-      ),
+    return FGCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
+              Text('GOOGLE FIT', style: t.labelSmall),
+              const Spacer(),
+              if (_isGoogleFitLoading)
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: FitGenieTheme.muted,
+                  ),
+                )
+              else
+                InkWell(
+                  onTap: _checkGoogleFitStatus,
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Icons.refresh_rounded,
+                        size: 18, color: FitGenieTheme.muted),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
               Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  isConnected ? Icons.check_circle : Icons.fitness_center,
-                  color: statusColor,
-                  size: 24,
-                ),
+                width: 8,
+                height: 8,
+                decoration:
+                    BoxDecoration(color: statusColor, shape: BoxShape.circle),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Google Fit',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _getStatusText(_googleFitStatus),
-                      style: TextStyle(
-                        color: statusColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                child: Text(
+                  _getStatusText(_googleFitStatus),
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              IconButton(
-                onPressed: _isGoogleFitLoading ? null : _checkGoogleFitStatus,
-                icon: _isGoogleFitLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(Icons.refresh, color: Colors.white70),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          _buildStatusCheckRow(
-            'Health Connect Available',
-            _healthConnectAvailable,
-            Icons.phone_android,
-          ),
-          const SizedBox(height: 8),
-          _buildStatusCheckRow(
-            'Activity Permission',
-            _activityPermission,
-            Icons.directions_walk,
-          ),
-          const SizedBox(height: 8),
-          _buildStatusCheckRow(
-            'Google Fit Authorized',
-            _healthAuthorized,
-            Icons.security,
-          ),
-          const SizedBox(height: 8),
-          _buildStatusCheckRow('Data Syncing', _dataAccessible, Icons.sync),
           if (isConnected) ...[
-            const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.success.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: FitGenieTheme.success.withValues(alpha: 0.3),
+            const SizedBox(height: 14),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('$_googleFitSteps', style: t.displaySmall),
+                const SizedBox(width: 8),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    AppStrings.get('profile_today_steps'),
+                    style: const TextStyle(
+                        color: FitGenieTheme.muted, fontSize: 12),
+                  ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.directions_run,
-                    color: FitGenieTheme.success,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppStrings.get('profile_today_steps'),
-                        style: TextStyle(color: Colors.white70, fontSize: 12),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '$_googleFitSteps',
-                        style: const TextStyle(
-                          color: FitGenieTheme.success,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: FitGenieTheme.success.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      AppStrings.get('profile_live_label'),
-                      style: TextStyle(
-                        color: FitGenieTheme.success,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
           ],
           if (_googleFitError.isNotEmpty && !isConnected) ...[
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.warning.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.info_outline,
-                    color: FitGenieTheme.warning,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _googleFitError,
-                      style: const TextStyle(
-                        color: FitGenieTheme.warning,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            const SizedBox(height: 10),
+            Text(
+              _googleFitError,
+              style: const TextStyle(color: FitGenieTheme.warning, fontSize: 12),
             ),
           ],
-          const SizedBox(height: 16),
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: EdgeInsets.zero,
+              iconColor: FitGenieTheme.muted,
+              collapsedIconColor: FitGenieTheme.muted,
+              title: const Text(
+                'Details',
+                style:
+                    TextStyle(color: FitGenieTheme.textSecondary, fontSize: 13),
+              ),
+              children: [
+                _buildStatusCheckRow('Health Connect Available',
+                    _healthConnectAvailable, Icons.phone_android),
+                _buildStatusCheckRow('Activity Permission', _activityPermission,
+                    Icons.directions_walk),
+                _buildStatusCheckRow(
+                    'Google Fit Authorized', _healthAuthorized, Icons.security),
+                _buildStatusCheckRow(
+                    'Data Syncing', _dataAccessible, Icons.sync),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _isGoogleFitLoading
-                  ? null
-                  : (isConnected ? _disconnectGoogleFit : _connectGoogleFit),
-              icon: Icon(isConnected ? Icons.link_off : Icons.link, size: 20),
-              label: Text(
-                isConnected ? 'Disconnect Google Fit' : 'Connect Google Fit',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isConnected
-                    ? FitGenieTheme.error.withValues(alpha: 0.8)
-                    : FitGenieTheme.success,
-                foregroundColor: isConnected ? Colors.white : Colors.black,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+            child: isConnected
+                ? OutlinedButton(
+                    onPressed: _isGoogleFitLoading ? null : _disconnectGoogleFit,
+                    child: const Text('Disconnect Google Fit'),
+                  )
+                : ElevatedButton(
+                    onPressed: _isGoogleFitLoading ? null : _connectGoogleFit,
+                    child: const Text('Connect Google Fit'),
+                  ),
           ),
         ],
       ),
@@ -970,31 +764,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildStatusCheckRow(String label, bool isOk, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.white38, size: 18),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            color: (isOk ? FitGenieTheme.success : FitGenieTheme.error).withValues(
-              alpha: 0.2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                  color: FitGenieTheme.textSecondary, fontSize: 13),
             ),
-            shape: BoxShape.circle,
           ),
-          child: Icon(
-            isOk ? Icons.check_circle : Icons.cancel,
+          Icon(
+            isOk ? Icons.check_rounded : Icons.close_rounded,
             color: isOk ? FitGenieTheme.success : FitGenieTheme.error,
             size: 18,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1003,7 +790,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case GoogleFitConnectionStatus.connected:
         return FitGenieTheme.success;
       case GoogleFitConnectionStatus.connectedNoData:
-        return Colors.yellowAccent;
+        return FitGenieTheme.warning;
       case GoogleFitConnectionStatus.connecting:
         return FitGenieTheme.info;
       case GoogleFitConnectionStatus.notAuthorized:
@@ -1011,9 +798,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case GoogleFitConnectionStatus.permissionDenied:
         return FitGenieTheme.error;
       case GoogleFitConnectionStatus.unavailable:
-        return Colors.grey;
+        return FitGenieTheme.muted;
       case GoogleFitConnectionStatus.disconnected:
-        return Colors.white54;
+        return FitGenieTheme.muted;
       case GoogleFitConnectionStatus.error:
         return FitGenieTheme.error;
     }
@@ -1022,70 +809,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _getStatusText(GoogleFitConnectionStatus status) {
     switch (status) {
       case GoogleFitConnectionStatus.connected:
-        return '? Connected & Syncing';
+        return 'Connected & syncing';
       case GoogleFitConnectionStatus.connectedNoData:
-        return '? Connected ? Walk to see data';
+        return 'Connected · walk to see data';
       case GoogleFitConnectionStatus.connecting:
-        return '? Connecting...';
+        return 'Connecting...';
       case GoogleFitConnectionStatus.notAuthorized:
-        return '? Authorization Required';
+        return 'Authorization required';
       case GoogleFitConnectionStatus.permissionDenied:
-        return '? Permission Denied';
+        return 'Permission denied';
       case GoogleFitConnectionStatus.unavailable:
-        return '? Health Connect Not Installed';
+        return 'Health Connect not installed';
       case GoogleFitConnectionStatus.disconnected:
-        return '? Not Connected';
+        return 'Not connected';
       case GoogleFitConnectionStatus.error:
-        return '?? Error Occurred';
+        return 'Something went wrong';
     }
   }
 
   // ============ SETTINGS ============
   Widget _buildSettingsCard() {
+    final t = Theme.of(context).textTheme;
     return FGCard(
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
         children: [
-          Row(
-            children: [
-              const Icon(Icons.settings, color: Colors.grey),
-              const SizedBox(width: 8),
-              Text(
-                AppStrings.get('profile_settings'),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 12, 18, 6),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                AppStrings.get('profile_settings').toUpperCase(),
+                style: t.labelSmall,
               ),
-            ],
+            ),
           ),
-          const SizedBox(height: 8),
-
-          // Notification Settings
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.warning.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.notifications,
-                color: FitGenieTheme.warning,
-                size: 20,
-              ),
-            ),
-            title: Text(AppStrings.get('profile_notifications')),
-            subtitle: Text(
-              AppStrings.get('profile_customize_reminders'),
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey,
-            ),
-            onTap: () {
+          _settingsRow(
+            AppStrings.get('profile_notifications'),
+            AppStrings.get('profile_customize_reminders'),
+            () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -1095,94 +857,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
           ),
-
-          // Language Option ? NEW
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.language,
-                color: FitGenieTheme.primary,
-                size: 20,
-              ),
-            ),
-            title: Text(AppStrings.get('profile_language')),
-            subtitle: Text(
-              AppStrings.get('profile_language_sub'),
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey,
-            ),
-            onTap: () => LanguageSelectorDialog.show(context),
+          const Divider(height: 1),
+          _settingsRow(
+            AppStrings.get('profile_language'),
+            AppStrings.get('profile_language_sub'),
+            () => LanguageSelectorDialog.show(context),
           ),
-
-          // About
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.info_outline,
-                color: FitGenieTheme.primary,
-                size: 20,
-              ),
-            ),
-            title: Text(AppStrings.get('profile_about')),
-            subtitle: Text(
-              AppStrings.get('profile_app_info'),
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey,
-            ),
-            onTap: _showAboutDialog,
-          ),
-
-          // ?? DELETE ACCOUNT ??
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.error.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.delete_forever,
-                color: FitGenieTheme.error,
-                size: 20,
-              ),
-            ),
-            title: Text(
-              AppStrings.get('profile_delete'),
-              style: const TextStyle(color: FitGenieTheme.error),
-            ),
-            subtitle: Text(
-              AppStrings.get('profile_delete_sub'),
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey,
-            ),
-            onTap: _showDeleteAccountDialog,
+          const Divider(height: 1),
+          _settingsRow(
+            AppStrings.get('profile_about'),
+            AppStrings.get('profile_app_info'),
+            _showAboutDialog,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _settingsRow(String title, String subtitle, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                        color: FitGenieTheme.muted, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_rounded,
+                size: 18, color: FitGenieTheme.muted),
+          ],
+        ),
       ),
     );
   }
@@ -1191,47 +907,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildLogoutButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton.icon(
+      child: OutlinedButton(
         onPressed: _showLogoutConfirmation,
-        icon: const Icon(Icons.logout, color: Colors.white),
-        label: Text(
-          AppStrings.get('profile_logout'),
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: FitGenieTheme.error,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
+        child: Text(AppStrings.get('profile_logout')),
       ),
     );
   }
 
   // ============ DELETE ACCOUNT BUTTON ============
   Widget _buildDeleteAccountButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: _showDeleteAccountDialog,
-        icon: const Icon(Icons.delete_forever, color: FitGenieTheme.error),
-        label: Text(
-          AppStrings.get('profile_delete'),
-          style: const TextStyle(
-            color: FitGenieTheme.error,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: FitGenieTheme.error),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+    return TextButton(
+      onPressed: _showDeleteAccountDialog,
+      child: Text(
+        AppStrings.get('profile_delete'),
+        style: TextStyle(
+          color: FitGenieTheme.error.withValues(alpha: 0.85),
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
