@@ -54,68 +54,41 @@ class _WorkoutScreenState extends State<WorkoutScreen>
 
   @override
   Widget build(BuildContext context) {
+    // workout-v2
+    final t = Theme.of(context).textTheme;
     return FadeTransition(
       opacity: _fadeAnim,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(FitGenieTheme.screenPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Header ──
-            Text(
-              AppStrings.get('workout_title'),
-              style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
-            ),
+            Text(AppStrings.get('workout_title'), style: t.displaySmall),
             const SizedBox(height: 4),
             Text(
               AppStrings.get('workout_sub'),
-              style: TextStyle(color: FitGenieTheme.muted, fontSize: 14),
+              style: const TextStyle(color: FitGenieTheme.muted, fontSize: 14),
             ),
             const SizedBox(height: 12),
             const MedicalDisclaimerBanner(compact: true),
-            const SizedBox(height: 20),
-
-            // ── 1. Quick Start (AI) ──
-            _buildSectionLabel(
-                '⚡', AppStrings.get('workout_quick'), 'AI powered workout'),
+            const SizedBox(height: 22),
+            _buildSectionLabel('', AppStrings.get('workout_quick'), ''),
             const SizedBox(height: 10),
             _buildQuickStartCard(),
-            const SizedBox(height: 28),
-
-            // ── 2. Muscle Groups ──
-            _buildSectionLabel('💪', AppStrings.get('workout_muscle'),
-                'Exercises with animated demos'),
+            const SizedBox(height: 26),
+            _buildSectionLabel('', AppStrings.get('workout_muscle'), ''),
             const SizedBox(height: 10),
             _buildMuscleGroupsGrid(),
-            const SizedBox(height: 28),
-
-            // ── 3. Workout Plans ──
-            _buildSectionLabel('📋', AppStrings.get('workout_plans'),
-                'Push, Pull, Legs & more'),
+            const SizedBox(height: 26),
+            _buildSectionLabel('', AppStrings.get('workout_plans'), ''),
             const SizedBox(height: 10),
             _buildWorkoutPlans(),
-            const SizedBox(height: 28),
-
-            // ── 4. Full Body ──
-            _buildSectionLabel('🏆', AppStrings.get('workout_full'),
-                'All muscles in one session'),
-            const SizedBox(height: 10),
-            _buildFullBodyCard(),
-            const SizedBox(height: 28),
-
-            // ── 5. My Library ──
-            _buildSectionLabel('📚', AppStrings.get('workout_library'),
-                'Your custom workouts'),
+            const SizedBox(height: 26),
+            _buildSectionLabel('', AppStrings.get('workout_library'), ''),
             const SizedBox(height: 10),
             _buildMyLibraryCard(),
-            const SizedBox(height: 28),
-
-            // ── 6. Recent Workouts ──
-            _buildSectionLabel('🕐', AppStrings.get('workout_recent'),
-                'Your training history'),
+            const SizedBox(height: 26),
+            _buildSectionLabel('', AppStrings.get('workout_recent'), ''),
             const SizedBox(height: 10),
             _buildRecentWorkouts(),
             const SizedBox(height: 40),
@@ -129,31 +102,11 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   // 🏷️ SECTION LABEL
   // ============================================================
   Widget _buildSectionLabel(String emoji, String title, String subtitle) {
-    return Row(
-      children: [
-        Text(emoji, style: const TextStyle(fontSize: 22)),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                subtitle,
-                style: TextStyle(fontSize: 12, color: FitGenieTheme.muted),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ],
+    return Text(
+      title.toUpperCase(),
+      style: Theme.of(context).textTheme.labelSmall,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 
@@ -161,120 +114,78 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   // 1️⃣ QUICK START (AI)
   // ============================================================
   Widget _buildQuickStartCard() {
+    final t = Theme.of(context).textTheme;
     final todayInfo = WorkoutPlansData.getTodayInfo();
     final isRestDay = todayInfo['tag'] == 'rest';
 
-    return GestureDetector(
-      onTap: isRestDay
-          ? null
-          : () {
-              final plan = WorkoutPlansData.getTodaysPlan();
-              if (plan != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ActiveWorkoutScreen(
-                      userId: widget.userId,
-                      workoutType: plan.category,
-                      workoutTitle: plan.name,
-                    ),
-                  ),
-                );
-              }
-            },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isRestDay
-                ? [Colors.grey.shade800, Colors.grey.shade700]
-                : [
-                    FitGenieTheme.primary,
-                    FitGenieTheme.primary.withValues(alpha: 0.7)
-                  ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    void start() {
+      final plan = WorkoutPlansData.getTodaysPlan();
+      if (plan != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ActiveWorkoutScreen(
+              userId: widget.userId,
+              workoutType: plan.category,
+              workoutTitle: plan.name,
+            ),
           ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: isRestDay
-              ? []
-              : [
-                  BoxShadow(
-                    color: FitGenieTheme.primary.withValues(alpha: 0.4),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                todayInfo['emoji'] ?? '🏋️',
-                style: const TextStyle(fontSize: 28),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    todayInfo['day'] ?? AppStrings.get('workout_today'),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.7),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isRestDay
-                        ? AppStrings.get('workout_rest')
-                        : todayInfo['type'] ??
-                            AppStrings.get('workout_fallback_type'),
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    isRestDay
-                        ? AppStrings.get('workout_rest_subtitle')
-                        : AppStrings.get('workout_ai_subtitle'),
-                    style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 13),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            if (!isRestDay)
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
+        );
+      }
+    }
+
+    return FGCard(
+      onTap: isRestDay ? null : start,
+      padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${todayInfo['day'] ?? AppStrings.get('workout_today')}'
+                      .toUpperCase(),
+                  style: t.labelSmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                child:
-                    const Icon(Icons.play_arrow, color: Colors.white, size: 24),
+                const SizedBox(height: 6),
+                Text(
+                  '${isRestDay ? AppStrings.get('workout_rest') : (todayInfo['type'] ?? AppStrings.get('workout_fallback_type'))}',
+                  style: t.displaySmall?.copyWith(
+                    color: isRestDay ? FitGenieTheme.muted : FitGenieTheme.text,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  isRestDay
+                      ? AppStrings.get('workout_rest_subtitle')
+                      : AppStrings.get('workout_ai_subtitle'),
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 13),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          if (!isRestDay) ...[
+            const SizedBox(width: 12),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: FitGenieTheme.primary,
+                borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
               ),
+              child: const Icon(Icons.play_arrow_rounded,
+                  color: FitGenieTheme.onPrimary, size: 30),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -284,55 +195,30 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   // ============================================================
   Widget _buildMuscleGroupsGrid() {
     final groups = [
-      {
-        'name': 'Chest',
-        'emoji': '🏋️',
-        'color': FitGenieTheme.error,
-        'count': ExerciseData.chest.length
-      },
-      {
-        'name': 'Back',
-        'emoji': '🔙',
-        'color': Colors.blue,
-        'count': ExerciseData.back.length
-      },
-      {
-        'name': 'Legs',
-        'emoji': '🦵',
-        'color': FitGenieTheme.success,
-        'count': ExerciseData.legs.length
-      },
+      {'name': 'Chest', 'emoji': '🏋️', 'count': ExerciseData.chest.length},
+      {'name': 'Back', 'emoji': '🔙', 'count': ExerciseData.back.length},
+      {'name': 'Legs', 'emoji': '🦵', 'count': ExerciseData.legs.length},
       {
         'name': 'Arms',
         'emoji': '💪',
-        'color': FitGenieTheme.warning,
         'count': ExerciseData.biceps.length + ExerciseData.triceps.length
       },
       {
         'name': 'Shoulders',
         'emoji': '🎯',
-        'color': Colors.purple,
         'count': ExerciseData.shoulders.length
       },
-      {
-        'name': 'Core',
-        'emoji': '🔥',
-        'color': Colors.teal,
-        'count': ExerciseData.core.length
-      },
+      {'name': 'Core', 'emoji': '🔥', 'count': ExerciseData.core.length},
     ];
-
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 380;
 
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isSmallScreen ? 2 : 3,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: isSmallScreen ? 1.05 : 0.82,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        childAspectRatio: 2.1,
       ),
       itemCount: groups.length,
       itemBuilder: (context, index) {
@@ -340,7 +226,6 @@ class _WorkoutScreenState extends State<WorkoutScreen>
         return _buildMuscleGroupCard(
           name: group['name'] as String,
           emoji: group['emoji'] as String,
-          color: group['color'] as Color,
           count: group['count'] as int,
         );
       },
@@ -350,10 +235,10 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   Widget _buildMuscleGroupCard({
     required String name,
     required String emoji,
-    required Color color,
     required int count,
   }) {
-    return GestureDetector(
+    final t = Theme.of(context).textTheme;
+    return FGCard(
       onTap: () {
         Navigator.push(
           context,
@@ -361,53 +246,28 @@ class _WorkoutScreenState extends State<WorkoutScreen>
             builder: (context) => MuscleGroupExercisesScreen(
               bodyPart: name,
               emoji: emoji,
-              color: color,
+              color: FitGenieTheme.primary,
             ),
           ),
         );
       },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: FitGenieTheme.card,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(emoji, style: const TextStyle(fontSize: 28)),
-            const SizedBox(height: 8),
-            Text(
-              name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 6),
-            FittedBox(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  '$count ex',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            name.toUpperCase(),
+            style: t.headlineSmall,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            '$count exercises',
+            style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+          ),
+        ],
       ),
     );
   }
@@ -417,6 +277,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   // ============================================================
   Widget _buildWorkoutPlans() {
     final plans = [
+      WorkoutPlansData.fullBody,
       WorkoutPlansData.pushDay,
       WorkoutPlansData.pullDay,
       WorkoutPlansData.legDay,
@@ -427,98 +288,63 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     ];
 
     return SizedBox(
-      height: 185,
+      height: 150,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: plans.length,
-        itemBuilder: (context, index) {
-          final plan = plans[index];
-          return _buildPlanCard(plan);
-        },
+        itemBuilder: (context, index) => _buildPlanCard(plans[index]),
       ),
     );
   }
 
   Widget _buildPlanCard(WorkoutPlan plan) {
-    final color = Color(plan.color);
+    final t = Theme.of(context).textTheme;
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WorkoutPlanScreen(
-              plan: plan,
-              userId: widget.userId,
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 12),
+      child: FGCard(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WorkoutPlanScreen(
+                plan: plan,
+                userId: widget.userId,
+              ),
             ),
-          ),
-        );
-      },
-      child: Container(
-        width: 210,
-        margin: const EdgeInsets.only(right: 14),
+          );
+        },
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: FitGenieTheme.card,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(plan.emoji, style: const TextStyle(fontSize: 26)),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '~${plan.estimatedMinutes} min',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: color,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
             Text(
-              plan.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+              plan.name.toUpperCase(),
+              style: t.headlineSmall,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(
               plan.subtitle,
-              style: TextStyle(fontSize: 11, color: FitGenieTheme.muted),
+              style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             const Spacer(),
             Row(
               children: [
-                Icon(Icons.fitness_center,
-                    size: 12, color: FitGenieTheme.muted),
-                const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    '${plan.totalExercises} exercises',
-                    style: TextStyle(fontSize: 11, color: FitGenieTheme.muted),
+                    '${plan.totalExercises} exercises · ~${plan.estimatedMinutes} min',
+                    style: const TextStyle(
+                        color: FitGenieTheme.muted, fontSize: 11),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios, size: 12, color: color),
+                const Icon(Icons.arrow_forward_rounded,
+                    size: 16, color: FitGenieTheme.primary),
               ],
             ),
           ],
@@ -530,81 +356,6 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   // ============================================================
   // 4️⃣ FULL BODY WORKOUT
   // ============================================================
-  Widget _buildFullBodyCard() {
-    final fullBodyPlan = WorkoutPlansData.fullBody;
-
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WorkoutPlanScreen(
-              plan: fullBodyPlan,
-              userId: widget.userId,
-            ),
-          ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFFFF6F00).withValues(alpha: 0.3),
-              const Color(0xFFFF6F00).withValues(alpha: 0.1),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(18),
-          border:
-              Border.all(color: const Color(0xFFFF6F00).withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFF6F00).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Text('🏆', style: TextStyle(fontSize: 30)),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppStrings.get('workout_full'),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${fullBodyPlan.totalExercises} exercises • ~${fullBodyPlan.estimatedMinutes} min',
-                    style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    AppStrings.get('workout_full_desc'),
-                    style: TextStyle(color: FitGenieTheme.muted, fontSize: 12),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios,
-                color: Color(0xFFFF6F00), size: 18),
-          ],
-        ),
-      ),
-    );
-  }
 
   // ============================================================
   // 5️⃣ MY LIBRARY
@@ -612,7 +363,6 @@ class _WorkoutScreenState extends State<WorkoutScreen>
   Widget _buildMyLibraryCard() {
     return Column(
       children: [
-        // Saved workouts from Firestore
         StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
@@ -624,145 +374,125 @@ class _WorkoutScreenState extends State<WorkoutScreen>
           builder: (context, snapshot) {
             final hasData = snapshot.hasData && snapshot.data!.docs.isNotEmpty;
 
-            return Column(
-              children: [
-                if (hasData)
-                  ...snapshot.data!.docs.map((doc) {
-                    final data = doc.data() as Map<String, dynamic>;
-                    final name = data['name'] ??
-                        AppStrings.get('workout_my_workout_fallback');
-                    final exerciseCount =
-                        (data['exercises'] as List?)?.length ?? 0;
+            if (!hasData) {
+              return FGCard(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.get('library_empty'),
+                        style: const TextStyle(
+                            color: FitGenieTheme.muted, fontSize: 13),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        AppStrings.get('library_empty_sub'),
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: FGCard(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MyLibraryScreen(
-                                userId: widget.userId,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color:
-                                    FitGenieTheme.teal.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(Icons.bookmark,
-                                  color: FitGenieTheme.teal, size: 20),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(name,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14)),
-                                  Text(
-                                    '$exerciseCount exercises',
-                                    style: TextStyle(
-                                        color: FitGenieTheme.muted,
-                                        fontSize: 12),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(Icons.arrow_forward_ios,
-                                size: 14, color: FitGenieTheme.muted),
-                          ],
+            return Column(
+              children: snapshot.data!.docs.map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                final name = data['name'] ??
+                    AppStrings.get('workout_my_workout_fallback');
+                final exerciseCount = (data['exercises'] as List?)?.length ?? 0;
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: FGCard(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              MyLibraryScreen(userId: widget.userId),
                         ),
-                      ),
-                    );
-                  }),
-                if (!hasData)
-                  FGCard(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          children: [
-                            Icon(Icons.library_add,
-                                size: 36, color: FitGenieTheme.muted),
-                            const SizedBox(height: 8),
-                            Text(
-                              AppStrings.get('library_empty'),
-                              style: TextStyle(
-                                  color: FitGenieTheme.muted, fontSize: 13),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              AppStrings.get('library_empty_sub'),
-                              style: TextStyle(fontSize: 13),
-                            ),
-                          ],
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$name',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700, fontSize: 14),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '$exerciseCount exercises',
+                                style: const TextStyle(
+                                    color: FitGenieTheme.muted, fontSize: 12),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                        const Icon(Icons.arrow_forward_rounded,
+                            size: 18, color: FitGenieTheme.muted),
+                      ],
                     ),
                   ),
-              ],
+                );
+              }).toList(),
             );
           },
         ),
         const SizedBox(height: 10),
-
-        // Create + View All buttons
         Row(
           children: [
             Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MyLibraryScreen(
-                        userId: widget.userId,
-                        openCreate: true,
-                      ),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: FitGenieTheme.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: FitGenieTheme.primary.withValues(alpha: 0.3)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.add,
-                          color: FitGenieTheme.primary, size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        AppStrings.get('library_create'),
-                        style: TextStyle(
-                          color: FitGenieTheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
+              child: Material(
+                color: FitGenieTheme.primary,
+                borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyLibraryScreen(
+                          userId: widget.userId,
+                          openCreate: true,
                         ),
                       ),
-                    ],
+                    );
+                  },
+                  child: SizedBox(
+                    height: 48,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.add_rounded,
+                            color: FitGenieTheme.onPrimary, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          AppStrings.get('library_create'),
+                          style: const TextStyle(
+                            color: FitGenieTheme.onPrimary,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: GestureDetector(
+              child: FGCard(
                 onTap: () {
                   Navigator.push(
                     context,
@@ -772,29 +502,15 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                     ),
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: FitGenieTheme.card,
-                    borderRadius: BorderRadius.circular(12),
-                    border:
-                        Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.library_books,
-                          color: FitGenieTheme.muted, size: 18),
-                      const SizedBox(width: 6),
-                      Text(
-                        AppStrings.get('workout_view_all'),
-                        style: TextStyle(
-                          color: FitGenieTheme.muted,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Center(
+                  child: Text(
+                    AppStrings.get('workout_view_all'),
+                    style: const TextStyle(
+                      color: FitGenieTheme.textSecondary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ),
@@ -824,25 +540,21 @@ class _WorkoutScreenState extends State<WorkoutScreen>
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return FGCard(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    Icon(Icons.fitness_center,
-                        size: 40, color: FitGenieTheme.muted),
-                    const SizedBox(height: 8),
-                    Text(
-                      AppStrings.get('workout_no_sets'),
-                      style: TextStyle(color: FitGenieTheme.muted),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      AppStrings.get('workout_tap_to_log'),
-                      style: TextStyle(fontSize: 13),
-                    ),
-                  ],
-                ),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppStrings.get('workout_no_sets'),
+                    style: const TextStyle(color: FitGenieTheme.muted),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    AppStrings.get('workout_tap_to_log'),
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                ],
               ),
             ),
           );
@@ -874,98 +586,60 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               }
             }
 
-            // Get emoji based on type
-            String emoji = '🏋️';
-            if (type.toLowerCase().contains('chest')) emoji = '🏋️';
-            if (type.toLowerCase().contains('back')) emoji = '🔙';
-            if (type.toLowerCase().contains('leg')) emoji = '🦵';
-            if (type.toLowerCase().contains('shoulder')) emoji = '🎯';
-            if (type.toLowerCase().contains('arm')) emoji = '💪';
-            if (type.toLowerCase().contains('core')) emoji = '🔥';
-            if (type.toLowerCase().contains('push')) emoji = '🔴';
-            if (type.toLowerCase().contains('pull')) emoji = '🔵';
-            if (type.toLowerCase().contains('full')) emoji = '🏆';
-            if (type.toLowerCase().contains('cardio')) emoji = '🏃';
-
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => WorkoutDetailScreen(
-                      workoutId: doc.id,
-                      userId: widget.userId,
-                      workoutData: data,
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: FGCard(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WorkoutDetailScreen(
+                        workoutId: doc.id,
+                        userId: widget.userId,
+                        workoutData: data,
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: FGCard(
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: FitGenieTheme.primary.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                            child: Text(emoji,
-                                style: const TextStyle(fontSize: 20))),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              type,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                _buildMiniStat(Icons.repeat, '$sets sets'),
-                                if (duration > 0) ...[
-                                  const SizedBox(width: 12),
-                                  _buildMiniStat(
-                                      Icons.timer_outlined, '$duration min'),
-                                ],
-                                const SizedBox(width: 12),
-                                _buildMiniStat(Icons.calendar_today, dateStr),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
+                  );
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            status == 'completed'
-                                ? Icons.check_circle
-                                : Icons.access_time,
-                            color: status == 'completed'
-                                ? FitGenieTheme.success
-                                : FitGenieTheme.warning,
-                            size: 22,
-                          ),
-                          const SizedBox(height: 4),
                           Text(
-                            AppStrings.get('workout_details'),
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: FitGenieTheme.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            '$type',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 15),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 4,
+                            children: [
+                              _buildMiniStat(Icons.repeat, '$sets sets'),
+                              if (duration > 0)
+                                _buildMiniStat(
+                                    Icons.timer_outlined, '$duration min'),
+                              _buildMiniStat(Icons.calendar_today, dateStr),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 10),
+                    Icon(
+                      status == 'completed'
+                          ? Icons.check_rounded
+                          : Icons.access_time_rounded,
+                      color: status == 'completed'
+                          ? FitGenieTheme.success
+                          : FitGenieTheme.warning,
+                      size: 22,
+                    ),
+                  ],
                 ),
               ),
             );
@@ -1197,7 +871,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                                   color: FitGenieTheme.success
                                       .withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(6)),
-                              child: Text('💪 $m',
+                              child: Text(m,
                                   style: const TextStyle(
                                       fontSize: 11,
                                       color: FitGenieTheme.success)),
@@ -1626,10 +1300,11 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                             Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                  color: Colors.purple.withValues(alpha: 0.2),
+                                  color: FitGenieTheme.primary
+                                      .withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(8)),
                               child: const Icon(Icons.smart_toy,
-                                  color: Colors.purple, size: 20),
+                                  color: FitGenieTheme.primary, size: 20),
                             ),
                             const SizedBox(width: 10),
                             Text(
@@ -1674,7 +1349,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                               fontSize: 16),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: FitGenieTheme.success,
+                          backgroundColor: FitGenieTheme.primary,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
