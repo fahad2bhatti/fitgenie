@@ -28,6 +28,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   final _service = NutritionService();
 
   bool _loading = true;
+  bool _hasLoaded = false;
   DateTime _selectedDate = DateTime.now();
 
   // Goals
@@ -72,13 +73,26 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   // ============================================================
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    // speedfix
+    // Poori screen par spinner sirf pehli baar. Baad mein purana content
+    // dikhta rehta hai aur peeche se naya data aa jata hai.
+    if (!_hasLoaded) {
+      setState(() => _loading = true);
+    }
 
     try {
-      final goals = await _service.getGoals(_uid);
-      final log = await _service.getTodayLog(_uid, date: _selectedDate);
-      final entries = await _service.getMealEntries(_uid, date: _selectedDate);
-      final recent = await _service.getRecentFoods(_uid);
+      // Chaaron reads ek saath shuru, ek ke baad ek nahi
+      final goalsF = _service.getGoals(_uid);
+      final logF = _service.getTodayLog(_uid, date: _selectedDate);
+      final entriesF = _service.getMealEntries(_uid, date: _selectedDate);
+      final recentF = _service.getRecentFoods(_uid);
+
+      await Future.wait([goalsF, logF, entriesF, recentF]);
+
+      final goals = await goalsF;
+      final log = await logF;
+      final entries = await entriesF;
+      final recent = await recentF;
 
       if (!mounted) return;
 
@@ -98,6 +112,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
         _entries = entries;
         _recentFoods = recent;
         _loading = false;
+        _hasLoaded = true;
       });
     } catch (e) {
       if (!mounted) return;
@@ -463,11 +478,15 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
   // ============================================================
 
   Future<void> _quickAddWater() async {
+    // Number foran badlo, server ko baad mein batao
+    setState(() => water++);
     await _service.incrementWater(_uid, date: _selectedDate);
     await _load();
   }
 
   Future<void> _removeWater() async {
+    if (water <= 0) return;
+    setState(() => water--);
     await _service.decrementWater(_uid, date: _selectedDate);
     await _load();
   }
