@@ -443,7 +443,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       ),
     );
 
-    controller.dispose();
+    _disposeLater([controller]);
 
     if (mealName == null || mealName.trim().isEmpty) return;
 
@@ -551,11 +551,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       ),
     );
 
-    caloriesCtrl.dispose();
-    proteinCtrl.dispose();
-    carbsCtrl.dispose();
-    fatsCtrl.dispose();
-    waterCtrl.dispose();
+    _disposeLater([
+      caloriesCtrl,
+      proteinCtrl,
+      carbsCtrl,
+      fatsCtrl,
+      waterCtrl,
+    ]);
   }
 
   // ============================================================
@@ -788,17 +790,29 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       ),
     );
 
-    nameCtrl.dispose();
-    quantityCtrl.dispose();
-    caloriesCtrl.dispose();
-    proteinCtrl.dispose();
-    carbsCtrl.dispose();
-    fatsCtrl.dispose();
+    _disposeLater([
+      nameCtrl,
+      quantityCtrl,
+      caloriesCtrl,
+      proteinCtrl,
+      carbsCtrl,
+      fatsCtrl,
+    ]);
   }
 
   // ============================================================
   // 🗑️ DELETE ENTRY
   // ============================================================
+
+  /// Bottom sheet ki close animation khatam hone ke baad controllers dispose karo.
+  /// (showModalBottomSheet ka future animation shuru hote hi complete ho jata ha.)
+  void _disposeLater(List<TextEditingController> controllers) {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      for (final c in controllers) {
+        c.dispose();
+      }
+    });
+  }
 
   Future<void> _deleteEntry(MealEntry entry) async {
     if (entry.id == null) return;
