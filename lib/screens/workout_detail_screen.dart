@@ -25,7 +25,7 @@ class WorkoutDetailScreen extends StatelessWidget {
     required this.workoutData,
   });
 
-  String get workoutType => (workoutData['type'] ?? 'Workout').toString();
+  String get workoutType => (workoutData['type'] ?? AppStrings.get('workout_fallback_type')).toString();
   String get status => (workoutData['status'] ?? 'completed').toString();
   int get totalSets => (workoutData['totalSets'] ?? 0) as int;
   int get duration => (workoutData['duration'] ?? 0) as int;
@@ -47,7 +47,7 @@ class WorkoutDetailScreen extends StatelessWidget {
   Map<String, List<Map<String, dynamic>>> get groupedSets {
     final Map<String, List<Map<String, dynamic>>> grouped = {};
     for (final set in loggedSets) {
-      final name = (set['exercise'] ?? 'Exercise').toString();
+      final name = (set['exercise'] ?? AppStrings.get('library_exercise_fallback')).toString();
       grouped.putIfAbsent(name, () => []);
       grouped[name]!.add(set);
     }
@@ -75,7 +75,7 @@ class WorkoutDetailScreen extends StatelessWidget {
   }
 
   String get formattedDate {
-    if (startedAt == null) return 'Unknown date';
+    if (startedAt == null) return AppStrings.get('workout_detail_unknown_date');
     final d = startedAt!.toDate();
     return '${d.day}/${d.month}/${d.year} • ${_formatTime(d)}';
   }
@@ -280,7 +280,7 @@ class WorkoutDetailScreen extends StatelessWidget {
               const SizedBox(width: 8),
               _infoPill(
                 Icons.fitness_center,
-                '$uniqueExercises exercises',
+                '$uniqueExercises ${AppStrings.get('label_exercises').toLowerCase()}',
               ),
             ],
           ),
@@ -507,7 +507,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (item['name'] ?? 'Exercise').toString(),
+                        (item['name'] ?? AppStrings.get('library_exercise_fallback')).toString(),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -619,7 +619,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${sets.length} sets completed',
+                            AppStrings.get('workout_detail_sets_completed', params: {'count': '${sets.length}'}),
                             style: TextStyle(
                               color: FitGenieTheme.muted,
                               fontSize: 12,
@@ -753,7 +753,7 @@ class WorkoutDetailScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (set['exercise'] ?? 'Exercise').toString(),
+                        (set['exercise'] ?? AppStrings.get('library_exercise_fallback')).toString(),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,

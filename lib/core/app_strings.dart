@@ -966,6 +966,8 @@ class AppStrings {
     'library_selected_count': '{count} selected exercises',
     // l10n-r3c
     'onboarding_save_error': 'Something went wrong: {error}',
+    // l10n-r3a
+    'workout_detail_sets_completed': '{count} sets completed',
   };
 
   static const Map<String, String> _ur = {
@@ -1943,6 +1945,8 @@ class AppStrings {
     'library_selected_count': '{count} chuni gayi exercises',
     // l10n-r3c
     'onboarding_save_error': 'Kuch masla ho gaya: {error}',
+    // l10n-r3a
+    'workout_detail_sets_completed': '{count} sets mukammal',
   };
 
   // ──────────────────────────────────────────

@@ -388,6 +388,20 @@ class _WorkoutScreenState extends State<WorkoutScreen>
     );
   }
 
+  // l10n-r3a: display name only; 'name' stays English because it is passed on as the body-part key
+  String _muscleLabel(String name) {
+    const keys = <String, String>{
+      'Chest': 'muscle_chest',
+      'Back': 'muscle_back',
+      'Legs': 'muscle_legs',
+      'Arms': 'muscle_arms',
+      'Shoulders': 'muscle_shoulders',
+      'Core': 'muscle_core',
+    };
+    final key = keys[name];
+    return key == null ? name : AppStrings.get(key);
+  }
+
   Widget _buildMuscleGroupCard({
     required String name,
     required String emoji,
@@ -454,13 +468,13 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name.toUpperCase(),
+                      _muscleLabel(name).toUpperCase(),
                       style: t.headlineSmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '${exercises.length} exercises',
+                      '${exercises.length} ${AppStrings.get('label_exercises').toLowerCase()}',
                       style: const TextStyle(
                           color: FitGenieTheme.textSecondary, fontSize: 12),
                     ),
@@ -544,7 +558,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                     border: Border.all(color: FitGenieTheme.border),
                   ),
                   child: Text(
-                    '~${plan.estimatedMinutes} MIN',
+                    '~${plan.estimatedMinutes} ${AppStrings.get('label_min').toUpperCase()}',
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
@@ -570,7 +584,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                 ),
                 const Spacer(),
                 Text(
-                  '${plan.totalExercises} exercises',
+                  '${plan.totalExercises} ${AppStrings.get('label_exercises').toLowerCase()}',
                   style:
                       const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
                 ),
@@ -660,7 +674,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '$exerciseCount exercises',
+                                '$exerciseCount ${AppStrings.get('label_exercises').toLowerCase()}',
                                 style: const TextStyle(
                                     color: FitGenieTheme.muted, fontSize: 12),
                               ),
@@ -848,10 +862,10 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                             spacing: 12,
                             runSpacing: 4,
                             children: [
-                              _buildMiniStat(Icons.repeat, '$sets sets'),
+                              _buildMiniStat(Icons.repeat, '$sets ${AppStrings.get('workout_detail_sets')}'),
                               if (duration > 0)
                                 _buildMiniStat(
-                                    Icons.timer_outlined, '$duration min'),
+                                    Icons.timer_outlined, '$duration ${AppStrings.get('label_min')}'),
                               _buildMiniStat(Icons.calendar_today, dateStr),
                             ],
                           ),
