@@ -321,7 +321,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: FitGenieTheme.card2,
-                      borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+                      borderRadius:
+                          BorderRadius.circular(FitGenieTheme.radiusMD),
                       border: Border.all(color: FitGenieTheme.border),
                     ),
                     child: Text(
@@ -913,8 +914,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   value: _progress(value, goal),
                   minHeight: 4,
                   backgroundColor: FitGenieTheme.border,
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(FitGenieTheme.primary),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                      FitGenieTheme.primary),
                 ),
               ),
             ],
@@ -961,18 +962,18 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
               value: _progress(calories, caloriesGoal),
               minHeight: 8,
               backgroundColor: FitGenieTheme.border,
-              valueColor: const AlwaysStoppedAnimation<Color>(FitGenieTheme.hot),
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(FitGenieTheme.hot),
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            remaining >= 0
-                ? '$remaining kcal left'
-                : '${-remaining} kcal over',
+            remaining >= 0 ? '$remaining kcal left' : '${-remaining} kcal over',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: remaining >= 0 ? FitGenieTheme.muted : FitGenieTheme.warning,
+              color:
+                  remaining >= 0 ? FitGenieTheme.muted : FitGenieTheme.warning,
             ),
           ),
           const SizedBox(height: 18),
@@ -991,7 +992,6 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
       ),
     );
   }
-
 
   // ============================================================
   // ⚡ QUICK ACTIONS
@@ -1064,7 +1064,6 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
     );
   }
 
-
   // ============================================================
   // 💧 WATER CONTROLS
   // ============================================================
@@ -1135,7 +1134,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
               ),
               circleButton(Icons.remove_rounded, _removeWater),
               const SizedBox(width: 10),
-              circleButton(Icons.add_rounded, _quickAddWater, filledStyle: true),
+              circleButton(Icons.add_rounded, _quickAddWater,
+                  filledStyle: true),
             ],
           ),
           const SizedBox(height: 14),
@@ -1146,7 +1146,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                   height: 8,
                   margin: EdgeInsets.only(right: i == segs - 1 ? 0 : 4),
                   decoration: BoxDecoration(
-                    color: i < filled ? FitGenieTheme.teal : FitGenieTheme.border,
+                    color:
+                        i < filled ? FitGenieTheme.teal : FitGenieTheme.border,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -1237,13 +1238,13 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
             ],
           ),
           const SizedBox(height: 10),
-
           if (items.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Text(
                 AppStrings.get('calories_empty'),
-                style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                style:
+                    const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
               ),
             )
           else
@@ -1257,7 +1258,6 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 onDelete: () => _deleteEntry(entry),
               ),
             ),
-
           const SizedBox(height: 10),
           Row(
             children: [
@@ -1391,8 +1391,8 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                 const SizedBox(height: 4),
                 Text(
                   AppStrings.get('calories_sub'),
-                  style: const TextStyle(
-                      color: FitGenieTheme.muted, fontSize: 13),
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 13),
                 ),
                 const SizedBox(height: 10),
                 const MedicalDisclaimerBanner(compact: true),
@@ -1487,8 +1487,8 @@ class _MealEntryTile extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   '${entry.quantity} · ${entry.protein}g P · ${entry.carbs}g C · ${entry.fats}g F',
-                  style: const TextStyle(
-                      color: FitGenieTheme.muted, fontSize: 11),
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1516,15 +1516,14 @@ class _MealEntryTile extends StatelessWidget {
               if (value == 'delete') onDelete();
             },
             itemBuilder: (context) => [
-              PopupMenuItem(
-                  value: 'edit', child: Text(AppStrings.get('edit'))),
+              PopupMenuItem(value: 'edit', child: Text(AppStrings.get('edit'))),
               PopupMenuItem(
                   value: 'delete', child: Text(AppStrings.get('delete'))),
             ],
             child: const Padding(
               padding: EdgeInsets.only(left: 6),
-              child: Icon(Icons.more_vert,
-                  size: 18, color: FitGenieTheme.muted),
+              child:
+                  Icon(Icons.more_vert, size: 18, color: FitGenieTheme.muted),
             ),
           ),
         ],

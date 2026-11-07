@@ -329,6 +329,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 userId: widget.userId,
                 workoutType: _resolveWorkoutTypeForTracker(),
                 workoutTitle: widget.plan.name,
+                plan: widget.plan,
               ),
             ),
           );

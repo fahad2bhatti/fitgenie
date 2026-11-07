@@ -1,5 +1,7 @@
 // lib/screens/workout_screen.dart
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/ads_service.dart';
@@ -131,6 +133,7 @@ class _WorkoutScreenState extends State<WorkoutScreen>
               userId: widget.userId,
               workoutType: plan.category,
               workoutTitle: plan.name,
+              plan: plan,
             ),
           ),
         );
@@ -903,11 +906,16 @@ class ActiveWorkoutScreen extends StatefulWidget {
   final String workoutType;
   final String workoutTitle;
 
+  /// Structured plan (exercises, sets, reps, rest). When null, a short list
+  /// is built from [workoutType] so older callers keep working.
+  final WorkoutPlan? plan;
+
   const ActiveWorkoutScreen({
     super.key,
     required this.userId,
     required this.workoutType,
     required this.workoutTitle,
+    this.plan,
   });
 
   @override
@@ -915,425 +923,280 @@ class ActiveWorkoutScreen extends StatefulWidget {
 }
 
 class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
+  // active-workout-v2
   final AIService _aiService = AIService();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  bool _isLoading = true;
-  String _workoutPlan = '';
-  String? _sessionId;
+  late final List<_WorkoutItem> _items;
   final List<Map<String, dynamic>> _loggedSets = [];
-  DateTime? _startTime;
-  bool _isWorkoutStarted = false;
+  final Map<String, double> _lastWeights = {};
+  final ValueNotifier<int> _elapsed = ValueNotifier<int>(0);
 
-  late List<Exercise> _availableExercises;
+  Timer? _ticker;
+  String? _sessionId;
+  DateTime? _startTime;
+  bool _started = false;
+  bool _starting = false;
+  bool _finishing = false;
+
+  String? _coachTip;
+  bool _tipLoading = true;
 
   @override
   void initState() {
     super.initState();
     showWorkoutInjuryWarningIfNeeded(context);
-    _availableExercises = ExerciseData.getByBodyPart(widget.workoutType);
-    _loadWorkoutPlan();
+    _items = _buildItems();
     AdsService.instance.loadInterstitialAd();
+    _loadLastWeights();
+    _loadCoachTip();
   }
 
-  Future<void> _loadWorkoutPlan() async {
-    setState(() => _isLoading = true);
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    _elapsed.dispose();
+    super.dispose();
+  }
+
+  // ============================================================
+  // 📋 ITEMS
+  // ============================================================
+
+  double _defaultWeight(Exercise? ex) {
+    final eq = (ex?.equipment ?? '').toLowerCase();
+    const noLoad = ['bodyweight', 'pull-up', 'dip', 'treadmill', 'bike'];
+    if (noLoad.any((k) => eq.contains(k))) return 0;
+    return 20;
+  }
+
+  double _weightFor(Exercise? ex) {
+    if (ex != null && _lastWeights.containsKey(ex.name)) {
+      return _lastWeights[ex.name]!;
+    }
+    return _defaultWeight(ex);
+  }
+
+  List<_WorkoutItem> _buildItems() {
+    final all = ExerciseData.getAllExercises();
+
+    Exercise? byId(String id) {
+      for (final e in all) {
+        if (e.id == id) return e;
+      }
+      return null;
+    }
+
+    final plan = widget.plan;
+    if (plan != null && plan.exercises.isNotEmpty) {
+      return plan.exercises.map((pe) {
+        final ex = byId(pe.exerciseId);
+        return _WorkoutItem(
+          name: ex?.name ?? pe.exerciseId,
+          exercise: ex,
+          sets: pe.sets,
+          reps: pe.reps,
+          restSeconds: pe.restSeconds,
+          notes: pe.notes,
+          weight: _weightFor(ex),
+        );
+      }).toList();
+    }
+
+    // Fallback: no structured plan -> first few exercises of the body part
+    return ExerciseData.getByBodyPart(widget.workoutType)
+        .take(5)
+        .map((ex) => _WorkoutItem(
+              name: ex.name,
+              exercise: ex,
+              sets: 3,
+              reps: '12',
+              restSeconds: 60,
+              weight: _weightFor(ex),
+            ))
+        .toList();
+  }
+
+  int get _currentIndex => _items.indexWhere((e) => !e.isDone);
+
+  String _fmtWeight(double w) =>
+      w % 1 == 0 ? '${w.toInt()}' : w.toStringAsFixed(1);
+
+  // ============================================================
+  // 📡 DATA
+  // ============================================================
+
+  Future<void> _loadLastWeights() async {
     try {
-      final plan = await _aiService.generateWorkout(
-        uid: widget.userId,
-        workoutType: widget.workoutType,
-      );
-      if (mounted) {
-        setState(() {
-          _workoutPlan = plan;
-          _isLoading = false;
-        });
+      final snap = await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('workouts')
+          .orderBy('startedAt', descending: true)
+          .limit(10)
+          .get();
+
+      for (final doc in snap.docs) {
+        if (doc.id == _sessionId) continue;
+        final sets = (doc.data()['sets'] as List?) ?? const [];
+        for (final s in sets.reversed) {
+          if (s is! Map) continue;
+          final name = s['exercise'];
+          final w = s['weight'];
+          if (name is String && w is num && !_lastWeights.containsKey(name)) {
+            _lastWeights[name] = w.toDouble();
+          }
+        }
       }
+
+      if (!mounted) return;
+      setState(() {
+        for (final item in _items) {
+          final w = _lastWeights[item.name];
+          if (w != null && item.doneSets == 0) item.weight = w;
+        }
+      });
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _workoutPlan = AppStrings.get('workout_plan_fallback');
-          _isLoading = false;
-        });
-      }
+      debugPrint('Last weights error: $e');
     }
   }
+
+  Future<void> _loadCoachTip() async {
+    try {
+      final names = _items.map((e) => e.name).join(', ');
+      final tip = await _aiService.chat(
+        uid: widget.userId,
+        userMessage:
+            'Aaj ka workout: ${widget.workoutTitle} ($names). Sirf 2 chhoti lines mein ek practical coach tip do (warm-up ya form ke baare mein). Koi list ya emoji nahi.',
+      );
+      if (!mounted) return;
+      setState(() {
+        _coachTip = tip.trim();
+        _tipLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Coach tip error: $e');
+      if (!mounted) return;
+      setState(() => _tipLoading = false);
+    }
+  }
+
+  // ============================================================
+  // ▶️ WORKOUT FLOW
+  // ============================================================
 
   Future<void> _startWorkout() async {
-    final docRef = await _firestore
-        .collection('users')
-        .doc(widget.userId)
-        .collection('workouts')
-        .add({
-      'type': widget.workoutTitle,
-      'startedAt': FieldValue.serverTimestamp(),
-      'status': 'active',
-      'sets': [],
-      'totalSets': 0,
-    });
+    if (_started || _starting) return;
+    setState(() => _starting = true);
 
-    setState(() {
-      _sessionId = docRef.id;
+    try {
+      final docRef = await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('workouts')
+          .add({
+        'type': widget.workoutTitle,
+        'startedAt': FieldValue.serverTimestamp(),
+        'status': 'active',
+        'sets': [],
+        'totalSets': 0,
+      });
+
+      if (!mounted) return;
+
       _startTime = DateTime.now();
-      _isWorkoutStarted = true;
-    });
+      _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+        final st = _startTime;
+        if (st != null) {
+          _elapsed.value = DateTime.now().difference(st).inSeconds;
+        }
+      });
 
-    if (mounted) {
-      AppSnackbar.showSuccess(
-        context,
-        AppStrings.get('workout_started'),
-      );
+      setState(() {
+        _sessionId = docRef.id;
+        _started = true;
+        _starting = false;
+      });
+    } catch (e) {
+      debugPrint('Start workout error: $e');
+      if (!mounted) return;
+      setState(() => _starting = false);
+      AppSnackbar.showError(context, '$e');
     }
   }
 
-  void _showLogSetDialog() {
-    Exercise? selectedExercise;
-    int selectedSets = 3;
-    int selectedReps = 12;
-    final weightController = TextEditingController(text: '20');
+  Future<void> _openExercise(int index) async {
+    final item = _items[index];
+    if (item.isDone) return;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: FitGenieTheme.cardDark,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppStrings.get('workout_log'),
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context)),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Exercise Selector
-                Text(
-                  AppStrings.get('library_select_exercise'),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w600, fontSize: 14),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: FitGenieTheme.background,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: FitGenieTheme.primary.withValues(alpha: 0.3)),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<Exercise>(
-                      isExpanded: true,
-                      value: selectedExercise,
-                      hint: Text(AppStrings.get('workout_choose_exercise'),
-                          style: TextStyle(color: FitGenieTheme.muted)),
-                      dropdownColor: FitGenieTheme.cardDark,
-                      items: _availableExercises.map((exercise) {
-                        return DropdownMenuItem(
-                            value: exercise,
-                            child: Text(exercise.name,
-                                style: const TextStyle(fontSize: 14)));
-                      }).toList(),
-                      onChanged: (value) =>
-                          setModalState(() => selectedExercise = value),
-                    ),
-                  ),
-                ),
-
-                // GIF Preview
-                if (selectedExercise != null && selectedExercise!.hasGif) ...[
-                  const SizedBox(height: 12),
-                  Container(
-                    height: 130,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: FitGenieTheme.primary.withValues(alpha: 0.2)),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        selectedExercise!.gifAsset,
-                        fit: BoxFit.cover,
-                        errorBuilder: (c, error, stackTrace) => Container(
-                          color: FitGenieTheme.background,
-                          child: const Center(
-                              child: Icon(Icons.fitness_center,
-                                  color: Colors.white24)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-
-                if (selectedExercise != null) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    children: selectedExercise!.musclesWorked
-                        .map((m) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                  color: FitGenieTheme.success
-                                      .withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(6)),
-                              child: Text(m,
-                                  style: const TextStyle(
-                                      fontSize: 11,
-                                      color: FitGenieTheme.success)),
-                            ))
-                        .toList(),
-                  ),
-                ],
-
-                const SizedBox(height: 20),
-
-                // Sets
-                Text(AppStrings.get('label_sets'),
-                    style: TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 8),
-                Row(
-                  children: ExerciseData.setsOptions.map((s) {
-                    final sel = selectedSets == s;
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () => setModalState(() => selectedSets = s),
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: sel
-                                ? FitGenieTheme.primary
-                                : FitGenieTheme.background,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                                color: sel
-                                    ? FitGenieTheme.primary
-                                    : Colors.white24),
-                          ),
-                          child: Center(
-                              child: Text('$s',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: sel
-                                          ? Colors.white
-                                          : FitGenieTheme.muted))),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Reps
-                Text(AppStrings.get('label_reps'),
-                    style: TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: ExerciseData.repsOptions.map((r) {
-                    final sel = selectedReps == r;
-                    return GestureDetector(
-                      onTap: () => setModalState(() => selectedReps = r),
-                      child: Container(
-                        width: 50,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        decoration: BoxDecoration(
-                          color: sel
-                              ? FitGenieTheme.teal
-                              : FitGenieTheme.background,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                              color: sel ? FitGenieTheme.teal : Colors.white24),
-                        ),
-                        child: Center(
-                            child: Text('$r',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: sel
-                                        ? Colors.white
-                                        : FitGenieTheme.muted))),
-                      ),
-                    );
-                  }).toList(),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Weight
-                Text(AppStrings.get('label_weight_kg'),
-                    style: TextStyle(fontWeight: FontWeight.w600)),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        final c = double.tryParse(weightController.text) ?? 0;
-                        if (c > 0) {
-                          weightController.text =
-                              (c - 2.5).clamp(0, 500).toString();
-                        }
-                      },
-                      icon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: FitGenieTheme.hot.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(8)),
-                        child:
-                            const Icon(Icons.remove, color: FitGenieTheme.hot),
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: weightController,
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: FitGenieTheme.background,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none),
-                          suffixText: 'kg',
-                          suffixStyle: TextStyle(color: FitGenieTheme.muted),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        final c = double.tryParse(weightController.text) ?? 0;
-                        weightController.text = (c + 2.5).toString();
-                      },
-                      icon: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: FitGenieTheme.success.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(8)),
-                        child:
-                            const Icon(Icons.add, color: FitGenieTheme.success),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                // Save
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: selectedExercise == null
-                        ? null
-                        : () {
-                            Navigator.pop(
-                                context); // close exercise-picker sheet
-                            _startExerciseSession(
-                              selectedExercise!,
-                              selectedSets,
-                              double.tryParse(weightController.text) ?? 20,
-                              '$selectedReps',
-                            );
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: selectedExercise == null
-                          ? Colors.grey
-                          : FitGenieTheme.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text(
-                      selectedExercise == null
-                          ? AppStrings.get('workout_select_exercise')
-                          : AppStrings.get('workout_save_sets',
-                              params: {'count': '$selectedSets'}),
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    if (!_started) {
+      await _startWorkout();
+      if (!_started || !mounted) return;
+    }
+    _showSetSheet(item);
   }
 
-  void _startExerciseSession(
-    Exercise exercise,
-    int totalSets,
-    double startWeight,
-    String startReps, {
-    int currentSet = 1,
-  }) {
+  void _showSetSheet(_WorkoutItem item) {
+    if (!mounted) return;
+    final setNo = item.doneSets + 1;
+
     showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       isDismissible: false,
       backgroundColor: Colors.transparent,
-      builder: (context) => ActiveSetSheet(
-        exercise: exercise,
-        exerciseNameFallback: exercise.name,
-        initialWeight: startWeight,
-        initialReps: startReps,
-        setLabel: AppStrings.get('workout_set_label',
-            params: {'current': '$currentSet', 'total': '$totalSets'}),
+      builder: (_) => ActiveSetSheet(
+        exercise: item.exercise,
+        exerciseNameFallback: item.name,
+        initialWeight: item.weight,
+        initialReps: item.reps,
+        setLabel: AppStrings.get('workout_set_label', params: {
+          'current': '$setNo',
+          'total': '${item.sets}',
+        }),
+        restSeconds: item.restSeconds, // REST_PARAM
         onSetLogged: (weight, reps, durationSeconds, toFailure) async {
-          await _logSet(exercise.name, weight, int.tryParse(reps) ?? 12);
+          await _logSet(item, weight, reps, durationSeconds);
         },
       ),
     ).then((completed) {
-      if (completed == true && currentSet < totalSets) {
-        _startExerciseSession(exercise, totalSets, startWeight, startReps,
-            currentSet: currentSet + 1);
+      if (!mounted) return;
+      if (completed == true && !item.isDone) {
+        _showSetSheet(item);
       }
     });
   }
 
-  Future<void> _logSet(String exercise, double weight, int reps) async {
+  Future<void> _logSet(
+    _WorkoutItem item,
+    double weight,
+    String reps,
+    int durationSeconds,
+  ) async {
+    // Timed exercises (e.g. "60 sec") are stored as 1 rep + durationSeconds.
+    final repsNum = item.isTimed
+        ? 1
+        : (int.tryParse(reps.replaceAll(RegExp(r'[^0-9]'), '')) ?? 12);
+
     final setData = {
-      'exercise': exercise,
+      'exercise': item.name,
       'weight': weight,
-      'reps': reps,
-      'timestamp': DateTime.now().toIso8601String()
+      'reps': repsNum,
+      'durationSeconds': durationSeconds,
+      'timestamp': DateTime.now().toIso8601String(),
     };
-    setState(() => _loggedSets.add(setData));
-    if (_sessionId != null) {
+
+    item.weight = weight;
+    item.doneSets++;
+    if (mounted) setState(() => _loggedSets.add(setData));
+
+    final id = _sessionId;
+    if (id != null) {
       await _firestore
           .collection('users')
           .doc(widget.userId)
           .collection('workouts')
-          .doc(_sessionId)
+          .doc(id)
           .update({
         'sets': FieldValue.arrayUnion([setData]),
         'totalSets': _loggedSets.length,
@@ -1341,417 +1204,721 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
     }
   }
 
-  Future<void> _finishWorkout() async {
-    if (_sessionId == null) return;
-    final duration = _startTime != null
-        ? DateTime.now().difference(_startTime!).inMinutes
-        : 0;
-    await _firestore
-        .collection('users')
-        .doc(widget.userId)
-        .collection('workouts')
-        .doc(_sessionId)
-        .update({
-      'endedAt': FieldValue.serverTimestamp(),
-      'status': 'completed',
-      'duration': duration,
-      'totalSets': _loggedSets.length,
-    });
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: FitGenieTheme.cardDark,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(
-            AppStrings.get('workout_complete'),
-            textAlign: TextAlign.center,
+  void _showAddExerciseSheet() {
+    var pool = ExerciseData.getByBodyPart(widget.workoutType);
+    if (pool.isEmpty) pool = ExerciseData.getAllExercises();
+    final used = _items.map((e) => e.exercise?.id).toSet();
+    final options = pool.where((e) => !used.contains(e.id)).toList();
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(ctx).size.height * 0.7,
           ),
-          content: Column(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppStrings.get('workout_great_job'),
-                  style: TextStyle(fontSize: 18)),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _completionStat('💪', '${_loggedSets.length}',
-                      AppStrings.get('workout_stat_sets')),
-                  _completionStat('⏱️', '$duration',
-                      AppStrings.get('workout_stat_minutes')),
-                ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                child: Text(
+                  AppStrings.get('workout_choose_exercise'),
+                  style: Theme.of(ctx).textTheme.titleLarge,
+                ),
+              ),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: options.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (_, i) {
+                    final ex = options[i];
+                    return ListTile(
+                      title: Text(
+                        ex.name,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
+                      subtitle: Text(
+                        ex.equipment,
+                        style: const TextStyle(
+                            color: FitGenieTheme.muted, fontSize: 12),
+                      ),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _addExtra(ex);
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _addExtra(Exercise ex) {
+    final item = _WorkoutItem(
+      name: ex.name,
+      exercise: ex,
+      sets: 3,
+      reps: '12',
+      restSeconds: 60,
+      weight: _weightFor(ex),
+    );
+    setState(() => _items.add(item));
+    _openExercise(_items.length - 1);
+  }
+
+  // ============================================================
+  // 🏁 FINISH / EXIT
+  // ============================================================
+
+  Future<void> _discardSession() async {
+    _ticker?.cancel();
+    final id = _sessionId;
+    if (id == null) return;
+    try {
+      await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('workouts')
+          .doc(id)
+          .delete();
+    } catch (e) {
+      debugPrint('Discard session error: $e');
+    }
+  }
+
+  Future<void> _handleBack() async {
+    if (!_started) {
+      Navigator.pop(context);
+      return;
+    }
+    if (_loggedSets.isEmpty) {
+      await _discardSession();
+      if (mounted) Navigator.pop(context);
+      return;
+    }
+    _showExitConfirmation();
+  }
+
+  Future<void> _finishWorkout() async {
+    final id = _sessionId;
+    if (id == null || _finishing) return;
+
+    // Nothing logged -> nothing to save
+    if (_loggedSets.isEmpty) {
+      await _discardSession();
+      if (mounted) Navigator.pop(context);
+      return;
+    }
+
+    setState(() => _finishing = true);
+    final duration = _startTime != null
+        ? DateTime.now().difference(_startTime!).inMinutes
+        : 0;
+
+    try {
+      await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('workouts')
+          .doc(id)
+          .update({
+        'endedAt': FieldValue.serverTimestamp(),
+        'status': 'completed',
+        'duration': duration,
+        'totalSets': _loggedSets.length,
+      });
+    } catch (e) {
+      debugPrint('Finish workout error: $e');
+      if (!mounted) return;
+      setState(() => _finishing = false);
+      AppSnackbar.showError(context, '$e');
+      return;
+    }
+
+    _ticker?.cancel();
+    if (!mounted) return;
+    _showCompleteDialog(duration);
+  }
+
+  void _showCompleteDialog(int duration) {
+    final t = Theme.of(context).textTheme;
+
+    Widget stat(String value, String label) => Column(
+          children: [
+            Text(value,
+                style: t.displaySmall?.copyWith(color: FitGenieTheme.primary)),
+            const SizedBox(height: 4),
+            Text(label.toUpperCase(), style: t.labelSmall),
+          ],
+        );
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          AppStrings.get('workout_complete'),
+          textAlign: TextAlign.center,
+          style: t.titleLarge,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              AppStrings.get('workout_great_job'),
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: FitGenieTheme.textSecondary),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                stat('${_loggedSets.length}',
+                    AppStrings.get('workout_stat_sets')),
+                stat('$duration', AppStrings.get('workout_stat_minutes')),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                AdsService.instance.showInterstitialAd(
+                  onDismissed: () {
+                    if (mounted) Navigator.pop(context);
+                  },
+                );
+              },
+              child: Text(AppStrings.get('done')),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showExitConfirmation() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppStrings.get('workout_exit_confirm')),
+        content: Text(AppStrings.get('workout_exit_sub')),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              await _discardSession();
+              if (mounted) Navigator.pop(context);
+            },
+            child: Text(
+              AppStrings.get('workout_discard'),
+              style: const TextStyle(color: FitGenieTheme.error),
+            ),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              _finishWorkout();
+            },
+            style: FilledButton.styleFrom(minimumSize: const Size(96, 46)),
+            child: Text(AppStrings.get('workout_save_exit')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // 🧱 BUILD
+  // ============================================================
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: !_started,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: FitGenieTheme.bg,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+            onPressed: _handleBack,
+          ),
+          title: Text(
+            widget.workoutTitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
           actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  AdsService.instance.showInterstitialAd(
-                    onDismissed: () {
-                      if (mounted) Navigator.pop(context);
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: FitGenieTheme.primary),
-                child: Text(
-                  AppStrings.get('done'),
-                  style: const TextStyle(color: Colors.white),
+            if (_started)
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Center(child: _buildElapsedChip()),
+              ),
+          ],
+        ),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            FitGenieTheme.screenPadding,
+            4,
+            FitGenieTheme.screenPadding,
+            24,
+          ),
+          children: [
+            _buildSummary(),
+            _buildCoachTip(),
+            const SizedBox(height: 22),
+            _sectionLabel('Exercises'),
+            const SizedBox(height: 10),
+            ...List.generate(_items.length, (i) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _buildExerciseTile(i),
+              );
+            }),
+            const SizedBox(height: 2),
+            _buildAddExercise(),
+          ],
+        ),
+        bottomNavigationBar: _buildBottomBar(),
+      ),
+    );
+  }
+
+  Widget _sectionLabel(String text) {
+    return Text(
+      text.toUpperCase(),
+      style: Theme.of(context).textTheme.labelSmall,
+    );
+  }
+
+  Widget _buildElapsedChip() {
+    return ValueListenableBuilder<int>(
+      valueListenable: _elapsed,
+      builder: (_, secs, __) {
+        final m = (secs ~/ 60).toString().padLeft(2, '0');
+        final s = (secs % 60).toString().padLeft(2, '0');
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: FitGenieTheme.border),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.timer_outlined,
+                  size: 14, color: FitGenieTheme.primary),
+              const SizedBox(width: 6),
+              Text(
+                '$m:$s',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
                 ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSummary() {
+    final t = Theme.of(context).textTheme;
+    final totalSets = _items.fold<int>(0, (sum, e) => sum + e.sets);
+    final doneSets = _items.fold<int>(
+        0, (sum, e) => sum + (e.doneSets > e.sets ? e.sets : e.doneSets));
+    final doneEx = _items.where((e) => e.isDone).length;
+    final minutes = widget.plan?.estimatedMinutes;
+    final progress = totalSets == 0 ? 0.0 : doneSets / totalSets;
+
+    return FGCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('$doneEx',
+                  style:
+                      t.displaySmall?.copyWith(color: FitGenieTheme.primary)),
+              Text(' / ${_items.length}',
+                  style: t.headlineSmall?.copyWith(color: FitGenieTheme.muted)),
+              const SizedBox(width: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text('EXERCISES', style: t.labelSmall),
+              ),
+              const Spacer(),
+              if (minutes != null)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: FitGenieTheme.border),
+                  ),
+                  child: Text(
+                    '~$minutes MIN',
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.6,
+                      color: FitGenieTheme.textSecondary,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 6,
+              backgroundColor: FitGenieTheme.border,
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(FitGenieTheme.primary),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '$doneSets / $totalSets sets',
+            style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCoachTip() {
+    final hasTip = _coachTip != null && _coachTip!.isNotEmpty;
+    if (!_tipLoading && !hasTip) return const SizedBox.shrink();
+
+    Widget bar(double? width) => Container(
+          width: width,
+          height: 10,
+          decoration: BoxDecoration(
+            color: FitGenieTheme.border,
+            borderRadius: BorderRadius.circular(5),
+          ),
+        );
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: FitGenieTheme.ai.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+          border: Border.all(color: FitGenieTheme.ai.withValues(alpha: 0.25)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.auto_awesome_rounded,
+                    size: 16, color: FitGenieTheme.ai),
+                const SizedBox(width: 8),
+                Text(
+                  'COACH TIP',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall
+                      ?.copyWith(color: FitGenieTheme.ai),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            if (_tipLoading) ...[
+              bar(double.infinity),
+              const SizedBox(height: 8),
+              bar(160),
+            ] else
+              Text(
+                _coachTip!,
+                style: const TextStyle(fontSize: 13, height: 1.5),
+                maxLines: 6,
+                overflow: TextOverflow.ellipsis,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExerciseTile(int index) {
+    final item = _items[index];
+    final done = item.isDone;
+    final isCurrent = _started && index == _currentIndex;
+    final hasNotes = item.notes != null && item.notes!.isNotEmpty;
+
+    final String subtitle = done
+        ? '${item.sets} × ${item.reps} · ${_fmtWeight(item.weight)} kg'
+        : '${item.sets} × ${item.reps} · rest ${item.restSeconds}s';
+
+    Widget trailing;
+    if (done) {
+      trailing = const SizedBox.shrink();
+    } else if (isCurrent) {
+      trailing = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: FitGenieTheme.primary,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.play_arrow_rounded,
+                size: 16, color: FitGenieTheme.onPrimary),
+            const SizedBox(width: 4),
+            Text(
+              'SET ${item.doneSets + 1}',
+              style: const TextStyle(
+                color: FitGenieTheme.onPrimary,
+                fontWeight: FontWeight.w800,
+                fontSize: 11,
+                letterSpacing: 0.5,
               ),
             ),
           ],
         ),
       );
+    } else {
+      trailing = const Icon(Icons.chevron_right_rounded,
+          size: 22, color: FitGenieTheme.muted);
     }
-  }
 
-  Widget _completionStat(String emoji, String value, String label) {
-    return Column(
-      children: [
-        Text(emoji, style: const TextStyle(fontSize: 28)),
-        const SizedBox(height: 4),
-        Text(value,
-            style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: FitGenieTheme.primary)),
-        Text(label, style: TextStyle(color: FitGenieTheme.muted, fontSize: 12)),
-      ],
-    );
-  }
-
-  void _showExitConfirmation() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: FitGenieTheme.cardDark,
-        title: Text(AppStrings.get('workout_exit_confirm')),
-        content: Text(AppStrings.get('workout_exit_sub')),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: Text(
-              AppStrings.get('workout_discard'),
-              style: TextStyle(color: FitGenieTheme.error),
+    return FGCard(
+      onTap: done ? null : () => _openExercise(index),
+      color: isCurrent ? FitGenieTheme.primary.withValues(alpha: 0.08) : null,
+      border: Border.all(
+        color: isCurrent
+            ? FitGenieTheme.primary.withValues(alpha: 0.6)
+            : FitGenieTheme.border,
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        children: [
+          _buildNumberBadge(index, done, isCurrent),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: done ? FitGenieTheme.muted : FitGenieTheme.text,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style:
+                      const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (isCurrent && hasNotes) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    item.notes!,
+                    style: const TextStyle(
+                      color: FitGenieTheme.textSecondary,
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                const SizedBox(height: 8),
+                Row(
+                  children: List.generate(item.sets, (s) {
+                    return Expanded(
+                      child: Container(
+                        height: 4,
+                        margin:
+                            EdgeInsets.only(right: s == item.sets - 1 ? 0 : 4),
+                        decoration: BoxDecoration(
+                          color: s < item.doneSets
+                              ? FitGenieTheme.primary
+                              : FitGenieTheme.border,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _finishWorkout();
-            },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: FitGenieTheme.success),
-            child: Text(
-              AppStrings.get('workout_save_exit'),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
+          const SizedBox(width: 12),
+          trailing,
         ],
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: FitGenieTheme.background,
-      appBar: AppBar(
-        backgroundColor: FitGenieTheme.cardDark,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () {
-            if (_isWorkoutStarted && _loggedSets.isNotEmpty) {
-              _showExitConfirmation();
-            } else {
-              Navigator.pop(context);
-            }
-          },
+  Widget _buildNumberBadge(int index, bool done, bool isCurrent) {
+    return Container(
+      width: 34,
+      height: 34,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: done ? FitGenieTheme.primary : Colors.transparent,
+        border: Border.all(
+          color: done
+              ? FitGenieTheme.primary
+              : (isCurrent ? FitGenieTheme.primary : FitGenieTheme.border),
+          width: isCurrent ? 1.5 : 1,
         ),
-        title: Text(
-          '${widget.workoutTitle} Workout',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        actions: [
-          if (_isWorkoutStarted)
-            TextButton(
-              onPressed: _finishWorkout,
-              child: Text(
-                AppStrings.get('workout_finish'),
+      ),
+      child: Center(
+        child: done
+            ? const Icon(Icons.check_rounded,
+                size: 18, color: FitGenieTheme.onPrimary)
+            : Text(
+                '${index + 1}',
                 style: TextStyle(
-                    color: FitGenieTheme.success, fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
+                  color:
+                      isCurrent ? FitGenieTheme.primary : FitGenieTheme.muted,
+                ),
               ),
-            ),
-        ],
       ),
-      body: _isLoading
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: FitGenieTheme.primary),
-                  const SizedBox(height: 20),
-                  Text(
-                    AppStrings.get('workout_ai_generating'),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    AppStrings.get('workout_wait'),
-                    style: TextStyle(color: FitGenieTheme.muted),
-                  ),
-                ],
-              ),
-            )
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // AI Plan
-                  FGCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                  color: FitGenieTheme.primary
-                                      .withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: const Icon(Icons.smart_toy,
-                                  color: FitGenieTheme.primary, size: 20),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              AppStrings.get('workout_ai_plan'),
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const Spacer(),
-                            IconButton(
-                                icon: const Icon(Icons.refresh, size: 20),
-                                onPressed: _loadWorkoutPlan),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                              color: FitGenieTheme.background,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(_workoutPlan,
-                              style: const TextStyle(height: 1.6)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  if (!_isWorkoutStarted)
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _startWorkout,
-                        icon: const Icon(Icons.play_arrow, color: Colors.white),
-                        label: Text(
-                          AppStrings.get('workout_start'),
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: FitGenieTheme.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-
-                  if (_isWorkoutStarted) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(AppStrings.get('library_logged'),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                              color:
-                                  FitGenieTheme.success.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.timer,
-                                  size: 16, color: FitGenieTheme.success),
-                              const SizedBox(width: 4),
-                              StreamBuilder(
-                                stream:
-                                    Stream.periodic(const Duration(seconds: 1)),
-                                builder: (c, s) {
-                                  final d = _startTime != null
-                                      ? DateTime.now()
-                                          .difference(_startTime!)
-                                          .inMinutes
-                                      : 0;
-                                  return Text('$d min',
-                                      style: const TextStyle(
-                                          color: FitGenieTheme.success,
-                                          fontWeight: FontWeight.bold));
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    if (_loggedSets.isEmpty)
-                      FGCard(
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              children: [
-                                Icon(Icons.add_circle_outline,
-                                    size: 40, color: FitGenieTheme.muted),
-                                const SizedBox(height: 8),
-                                Text(
-                                  AppStrings.get('workout_no_sets'),
-                                  style: TextStyle(color: FitGenieTheme.muted),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  AppStrings.get('workout_tap_to_log'),
-                                  style: const TextStyle(fontSize: 13),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ...List.generate(_loggedSets.length, (i) {
-                        final s = _loggedSets[i];
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: FGCard(
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                      color: FitGenieTheme.primary
-                                          .withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  child: Center(
-                                      child: Text('${i + 1}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: FitGenieTheme.primary))),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        s['exercise'],
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        '${s['weight']} kg × ${s['reps']} reps',
-                                        style: TextStyle(
-                                            color: FitGenieTheme.muted,
-                                            fontSize: 12),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(Icons.check_circle,
-                                    color: FitGenieTheme.success, size: 22),
-                              ],
-                            ),
-                          ),
-                        );
-                      }),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _showLogSetDialog,
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        label: Text(
-                          AppStrings.get('workout_log'),
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: FitGenieTheme.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: _finishWorkout,
-                        icon: const Icon(Icons.check,
-                            color: FitGenieTheme.success),
-                        label: Text(
-                          AppStrings.get('workout_finish'),
-                          style: TextStyle(
-                              color: FitGenieTheme.success,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: FitGenieTheme.success),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 30),
-                ],
-              ),
-            ),
     );
+  }
+
+  Widget _buildAddExercise() {
+    return InkWell(
+      onTap: _showAddExerciseSheet,
+      borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+          border: Border.all(color: FitGenieTheme.border),
+        ),
+        child: const Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.add_rounded, size: 18, color: FitGenieTheme.primary),
+              SizedBox(width: 6),
+              Text(
+                'Add exercise',
+                style: TextStyle(
+                  color: FitGenieTheme.textSecondary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    final allDone = _started && _currentIndex == -1;
+
+    final Widget button;
+    if (!_started) {
+      button = FilledButton.icon(
+        onPressed: _starting ? null : _startWorkout,
+        icon: _starting
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Colors.white),
+              )
+            : const Icon(Icons.play_arrow_rounded),
+        label: Text(AppStrings.get('workout_start').toUpperCase()),
+      );
+    } else if (allDone) {
+      button = FilledButton.icon(
+        onPressed: _finishing ? null : _finishWorkout,
+        icon: const Icon(Icons.check_rounded),
+        label: Text(AppStrings.get('workout_finish').toUpperCase()),
+      );
+    } else {
+      button = OutlinedButton.icon(
+        onPressed: _finishing ? null : _finishWorkout,
+        icon: const Icon(Icons.check_rounded),
+        label: Text(AppStrings.get('workout_finish').toUpperCase()),
+      );
+    }
+
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+        decoration: const BoxDecoration(
+          color: FitGenieTheme.bg,
+          border: Border(top: BorderSide(color: FitGenieTheme.border)),
+        ),
+        child: button,
+      ),
+    );
+  }
+}
+
+// ============================================================
+// 📋 One exercise in the live workout list
+// ============================================================
+
+class _WorkoutItem {
+  final String name;
+  final Exercise? exercise;
+  final int sets;
+  final String reps;
+  final int restSeconds;
+  final String? notes;
+  double weight;
+  int doneSets = 0;
+
+  _WorkoutItem({
+    required this.name,
+    required this.exercise,
+    required this.sets,
+    required this.reps,
+    required this.restSeconds,
+    required this.weight,
+    this.notes,
+  });
+
+  bool get isDone => doneSets >= sets;
+
+  bool get isTimed {
+    final r = reps.toLowerCase();
+    return r.contains('sec') || r.contains('min');
   }
 }

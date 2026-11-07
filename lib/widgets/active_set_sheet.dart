@@ -25,6 +25,10 @@ class ActiveSetSheet extends StatefulWidget {
   /// e.g. "Set 2 of 3"
   final String setLabel;
 
+  /// Rest between sets (from the workout plan). When null, a
+  /// difficulty-based suggestion is used.
+  final int? restSeconds;
+
   /// Called once the set is finished (before rest starts) so the parent
   /// can persist it to Firestore / local state.
   final Future<void> Function(
@@ -39,6 +43,7 @@ class ActiveSetSheet extends StatefulWidget {
     required this.initialReps,
     required this.setLabel,
     required this.onSetLogged,
+    this.restSeconds,
   });
 
   @override
@@ -90,10 +95,11 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
     if (!mounted) return;
 
     final difficulty = widget.exercise?.difficulty ?? 'Beginner';
-    _restSeconds = suggestedRestSeconds(
-      difficulty: difficulty,
-      toFailure: _toFailure,
-    );
+    _restSeconds = widget.restSeconds ??
+        suggestedRestSeconds(
+          difficulty: difficulty,
+          toFailure: _toFailure,
+        );
 
     setState(() => _phase = _SetPhase.resting);
   }
