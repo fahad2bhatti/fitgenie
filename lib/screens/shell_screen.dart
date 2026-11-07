@@ -13,6 +13,7 @@ import 'workout_screen.dart';
 import 'progress_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/banner_ad_widget.dart';
+import '../widgets/app_snackbar.dart';
 
 // ============ MAIN SHELL SCREEN ============
 
@@ -56,7 +57,7 @@ class _ShellScreenState extends State<ShellScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: FitGenieTheme.background,
+      backgroundColor: FitGenieTheme.bg,
       body: SafeArea(
         child: Column(
           children: [
@@ -66,15 +67,9 @@ class _ShellScreenState extends State<ShellScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: FitGenieTheme.card2,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+          border: Border(top: BorderSide(color: FitGenieTheme.border)),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
@@ -82,7 +77,7 @@ class _ShellScreenState extends State<ShellScreen> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: FitGenieTheme.card2,
           selectedItemColor: FitGenieTheme.primary,
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: FitGenieTheme.muted,
           selectedFontSize: 12,
           unselectedFontSize: 11,
           elevation: 0,
@@ -163,6 +158,7 @@ class _AICoachScreen extends StatefulWidget {
 
 class _AICoachScreenState extends State<_AICoachScreen>
     with TickerProviderStateMixin {
+  // chat-v2
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final AIService _aiService = AIService();
@@ -176,9 +172,19 @@ class _AICoachScreenState extends State<_AICoachScreen>
     super.initState();
     _typingAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat();
+      duration: const Duration(milliseconds: 1200),
+    );
     _addWelcomeMessage();
+  }
+
+  /// Loading flag + typing animation ek saath (animation sirf tab chale jab zaroorat ho)
+  void _setLoading(bool value) {
+    _isLoading = value;
+    if (value) {
+      _typingAnimationController.repeat();
+    } else {
+      _typingAnimationController.stop();
+    }
   }
 
   void _addWelcomeMessage() {
@@ -193,14 +199,13 @@ class _AICoachScreenState extends State<_AICoachScreen>
   }
 
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -218,8 +223,6 @@ class _AICoachScreenState extends State<_AICoachScreen>
     final watch = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: FitGenieTheme.card,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(AppStrings.get('ad_chat_limit_title')),
         content: Text(AppStrings.get('ad_chat_limit_body',
             params: {'count': '${ChatQuotaService.bonusPerAd}'})),
@@ -228,8 +231,9 @@ class _AICoachScreenState extends State<_AICoachScreen>
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(AppStrings.get('chat_cancel')),
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(minimumSize: const Size(96, 46)),
             child: Text(AppStrings.get('ad_watch')),
           ),
         ],
@@ -240,9 +244,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
     final result = await AdManager.instance.showRewarded(RewardKind.chat);
     if (!mounted) return;
     if (result == RewardResult.dismissed) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.get('ad_not_completed'))),
-      );
+      AppSnackbar.showInfo(context, AppStrings.get('ad_not_completed'));
       return;
     }
     await ChatQuotaService.instance.addBonus();
@@ -250,58 +252,60 @@ class _AICoachScreenState extends State<_AICoachScreen>
   }
 
   Future<void> _sendMessage(String text) async {
-    if (text.trim().isEmpty || _isLoading) return;
-
-    if (!await _consumeQuota()) {
-      await _offerChatBonus(text);
-      return;
-    }
-    if (!mounted) return;
-
     final userMessage = text.trim();
-    _controller.clear();
-    FocusScope.of(context).unfocus();
+    // Guard: pehle tap par hi lock lag jata hai, to 2-3 tap par 2-3 message nahi jate
+    if (userMessage.isEmpty || _isLoading) return;
 
+    // Foran (kisi await se pehle): text box saaf, user ka message screen par, lock
+    final userMsg = _ChatMessage(
+      text: userMessage,
+      isUser: true,
+      timestamp: DateTime.now(),
+    );
+    _controller.clear();
     setState(() {
-      _messages.add(_ChatMessage(
-        text: userMessage,
-        isUser: true,
-        timestamp: DateTime.now(),
-      ));
-      _isLoading = true;
+      _messages.add(userMsg);
+      _setLoading(true);
     });
     _scrollToBottom();
 
+    // Quota check ab baad mein (message pehle hi dikh chuka hai)
+    final allowed = await _consumeQuota();
+    if (!mounted) return;
+
+    if (!allowed) {
+      // Limit khatam: message wapas lo aur text box mein bhi wapas rakho
+      setState(() {
+        _messages.remove(userMsg);
+        _setLoading(false);
+      });
+      _controller.text = userMessage;
+      _controller.selection =
+          TextSelection.collapsed(offset: userMessage.length);
+      await _offerChatBonus(userMessage);
+      return;
+    }
+
+    String reply;
     try {
-      final response = await _aiService.chat(
+      reply = await _aiService.chat(
         uid: widget.userId,
         userMessage: userMessage,
       );
-
-      if (mounted) {
-        setState(() {
-          _messages.add(_ChatMessage(
-            text: response,
-            isUser: false,
-            timestamp: DateTime.now(),
-          ));
-          _isLoading = false;
-        });
-        _scrollToBottom();
-      }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _messages.add(_ChatMessage(
-            text: AppStrings.get('chat_error'),
-            isUser: false,
-            timestamp: DateTime.now(),
-          ));
-          _isLoading = false;
-        });
-        _scrollToBottom();
-      }
+      reply = AppStrings.get('chat_error');
     }
+
+    if (!mounted) return;
+    setState(() {
+      _messages.add(_ChatMessage(
+        text: reply,
+        isUser: false,
+        timestamp: DateTime.now(),
+      ));
+      _setLoading(false);
+    });
+    _scrollToBottom();
   }
 
   @override
@@ -315,7 +319,6 @@ class _AICoachScreenState extends State<_AICoachScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // Messages List
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
@@ -332,11 +335,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
                 },
               ),
             ),
-
-            // Quick Action Chips
             _buildQuickActions(),
-
-            // Input Area
             _buildInputArea(isSmallScreen),
           ],
         ),
@@ -345,167 +344,121 @@ class _AICoachScreenState extends State<_AICoachScreen>
   }
 
   PreferredSizeWidget _buildAppBar() {
+    final t = Theme.of(context).textTheme;
     return AppBar(
-      backgroundColor: FitGenieTheme.card,
-      elevation: 0,
+      backgroundColor: FitGenieTheme.bg,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
         onPressed: () => Navigator.pop(context),
       ),
       titleSpacing: 0,
-      title: Row(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // AI Avatar
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  FitGenieTheme.primary,
-                  FitGenieTheme.primary.withValues(alpha: 0.6),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          Text(AppStrings.get('shell_ai_coach_title'), style: t.headlineSmall),
+          const SizedBox(height: 2),
+          Row(
+            children: [
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: _isLoading
+                      ? FitGenieTheme.warning
+                      : FitGenieTheme.success,
+                  shape: BoxShape.circle,
+                ),
               ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: FitGenieTheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+              const SizedBox(width: 6),
+              Text(
+                _isLoading
+                    ? AppStrings.get('chat_thinking')
+                    : AppStrings.get('chat_online'),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: FitGenieTheme.muted,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
-            ),
-            child: const Icon(Icons.psychology, color: Colors.white, size: 22),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppStrings.get('shell_ai_coach_title'),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _isLoading
-                            ? FitGenieTheme.warning
-                            : FitGenieTheme.success,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      _isLoading
-                          ? AppStrings.get('chat_thinking')
-                          : AppStrings.get('chat_online'),
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: _isLoading
-                            ? FitGenieTheme.warning
-                            : FitGenieTheme.success,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
       actions: [
-        // Info Button
         IconButton(
-          icon: const Icon(Icons.info_outline, color: Colors.white70, size: 22),
+          icon: const Icon(Icons.info_outline,
+              color: FitGenieTheme.muted, size: 22),
           tooltip: AppStrings.get('shell_about_ai_coach'),
           onPressed: _showAboutDialog,
         ),
-        // Clear Chat Button
         IconButton(
-          icon:
-              const Icon(Icons.delete_outline, color: Colors.white70, size: 22),
+          icon: const Icon(Icons.delete_outline,
+              color: FitGenieTheme.muted, size: 22),
           tooltip: AppStrings.get('shell_clear_chat'),
           onPressed: _showClearChatDialog,
         ),
       ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1),
+        child: Container(height: 1, color: FitGenieTheme.border),
+      ),
     );
   }
 
   Widget _buildQuickActions() {
     return Container(
-      height: 52,
-      decoration: BoxDecoration(
-        color: FitGenieTheme.card2,
-        border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
-        ),
+      height: 50,
+      decoration: const BoxDecoration(
+        color: FitGenieTheme.bg,
+        border: Border(top: BorderSide(color: FitGenieTheme.border)),
       ),
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         children: [
-          _buildQuickChip('💪', AppStrings.get('chat_workout'),
+          _buildQuickChip(AppStrings.get('chat_workout'),
               'Aaj ke liye best workout plan batao'),
           _buildQuickChip(
-              '🍽️', AppStrings.get('chat_diet'), 'Mera diet plan bana do'),
+              AppStrings.get('chat_diet'), 'Mera diet plan bana do'),
           _buildQuickChip(
-              '🔥', AppStrings.get('chat_motivate'), 'Mujhe motivate karo!'),
+              AppStrings.get('chat_motivate'), 'Mujhe motivate karo!'),
           _buildQuickChip(
-              '📉', AppStrings.get('chat_weight_loss'), 'Weight loss tips do'),
+              AppStrings.get('chat_weight_loss'), 'Weight loss tips do'),
           _buildQuickChip(
-              '💪', AppStrings.get('chat_muscle_gain'), 'Muscle kaise banaye?'),
-          _buildQuickChip('💧', AppStrings.get('chat_hydration'),
-              'Pani kitna peena chahiye?'),
+              AppStrings.get('chat_muscle_gain'), 'Muscle kaise banaye?'),
           _buildQuickChip(
-              '😴', AppStrings.get('chat_recovery'), 'Recovery tips batao'),
+              AppStrings.get('chat_hydration'), 'Pani kitna peena chahiye?'),
+          _buildQuickChip(
+              AppStrings.get('chat_recovery'), 'Recovery tips batao'),
         ],
       ),
     );
   }
 
-  Widget _buildQuickChip(String emoji, String label, String message) {
+  Widget _buildQuickChip(String label, String message) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _isLoading ? null : () => _sendMessage(message),
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: FitGenieTheme.card,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: FitGenieTheme.primary.withValues(alpha: 0.3),
+      child: InkWell(
+        onTap: _isLoading ? null : () => _sendMessage(message),
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: FitGenieTheme.border),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: _isLoading
+                    ? FitGenieTheme.muted
+                    : FitGenieTheme.textSecondary,
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(emoji, style: const TextStyle(fontSize: 14)),
-                const SizedBox(width: 6),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
@@ -517,94 +470,80 @@ class _AICoachScreenState extends State<_AICoachScreen>
     return Container(
       padding: EdgeInsets.fromLTRB(
         isSmallScreen ? 12 : 16,
+        10,
+        isSmallScreen ? 12 : 16,
         12,
-        isSmallScreen ? 12 : 16,
-        isSmallScreen ? 12 : 16,
       ),
-      decoration: BoxDecoration(
-        color: FitGenieTheme.card,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: FitGenieTheme.bg,
+        border: Border(top: BorderSide(color: FitGenieTheme.border)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Text Field
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: FitGenieTheme.card2,
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                ),
+                color: FitGenieTheme.card,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: FitGenieTheme.border),
               ),
               child: TextField(
                 controller: _controller,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: isSmallScreen ? 14 : 15,
+                style: const TextStyle(
+                  color: FitGenieTheme.text,
+                  fontSize: 15,
                 ),
                 maxLines: 4,
                 minLines: 1,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  hintText: AppStrings.get('chat_placeholder'),
-                  hintStyle: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: isSmallScreen ? 13 : 14,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: isSmallScreen ? 16 : 20,
-                    vertical: isSmallScreen ? 12 : 14,
-                  ),
-                  isDense: true,
-                ),
                 textInputAction: TextInputAction.send,
                 onSubmitted: _sendMessage,
-                enabled: !_isLoading,
+                decoration: InputDecoration(
+                  hintText: AppStrings.get('chat_placeholder'),
+                  hintStyle: const TextStyle(
+                    color: FitGenieTheme.muted,
+                    fontSize: 14,
+                  ),
+                  filled: false,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
+                ),
               ),
             ),
           ),
           const SizedBox(width: 10),
-          // Send Button
           GestureDetector(
             onTap: _isLoading ? null : () => _sendMessage(_controller.text),
-            child: Container(
-              width: isSmallScreen ? 46 : 52,
-              height: isSmallScreen ? 46 : 52,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: _isLoading
-                      ? [Colors.grey, Colors.grey.shade700]
-                      : [
-                          FitGenieTheme.primary,
-                          FitGenieTheme.primary.withValues(alpha: 0.7)
-                        ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
                 shape: BoxShape.circle,
-                boxShadow: _isLoading
-                    ? []
-                    : [
-                        BoxShadow(
-                          color: FitGenieTheme.primary.withValues(alpha: 0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                color:
+                    _isLoading ? FitGenieTheme.border : FitGenieTheme.primary,
               ),
-              child: Icon(
-                _isLoading ? Icons.hourglass_empty : Icons.send_rounded,
-                color: Colors.white,
-                size: isSmallScreen ? 20 : 24,
-              ),
+              child: _isLoading
+                  ? const Padding(
+                      padding: EdgeInsets.all(14),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: FitGenieTheme.muted,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.arrow_upward_rounded,
+                      color: FitGenieTheme.onPrimary,
+                      size: 22,
+                    ),
             ),
           ),
         ],
@@ -614,160 +553,78 @@ class _AICoachScreenState extends State<_AICoachScreen>
 
   Widget _buildMessageBubble(_ChatMessage message, bool isSmallScreen) {
     final maxWidth =
-        MediaQuery.of(context).size.width * (isSmallScreen ? 0.85 : 0.78);
+        MediaQuery.of(context).size.width * (isSmallScreen ? 0.86 : 0.8);
     final isUser = message.isUser;
+    final textColor = isUser ? FitGenieTheme.onPrimary : FitGenieTheme.text;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: isSmallScreen ? 12 : 16),
-      child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // AI Avatar (left side for AI messages)
-          if (!isUser) ...[
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    FitGenieTheme.primary,
-                    FitGenieTheme.primary.withValues(alpha: 0.6),
-                  ],
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Align(
+        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Column(
+            crossAxisAlignment:
+                isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallScreen ? 14 : 16,
+                  vertical: 12,
                 ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child:
-                  const Icon(Icons.psychology, color: Colors.white, size: 18),
-            ),
-            const SizedBox(width: 8),
-          ],
-
-          // Message Bubble
-          Flexible(
-            child: Container(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 14 : 16,
-                vertical: isSmallScreen ? 12 : 14,
-              ),
-              decoration: BoxDecoration(
-                color: isUser ? FitGenieTheme.primary : FitGenieTheme.card,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(18),
-                  topRight: const Radius.circular(18),
-                  bottomLeft: Radius.circular(isUser ? 18 : 4),
-                  bottomRight: Radius.circular(isUser ? 4 : 18),
+                decoration: BoxDecoration(
+                  color: isUser ? FitGenieTheme.primary : FitGenieTheme.card,
+                  border:
+                      isUser ? null : Border.all(color: FitGenieTheme.border),
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(16),
+                    topRight: const Radius.circular(16),
+                    bottomLeft: Radius.circular(isUser ? 16 : 4),
+                    bottomRight: Radius.circular(isUser ? 4 : 16),
+                  ),
                 ),
-                border: isUser
-                    ? null
-                    : Border.all(color: Colors.white.withValues(alpha: 0.05)),
-                boxShadow: [
-                  BoxShadow(
-                    color: isUser
-                        ? FitGenieTheme.primary.withValues(alpha: 0.3)
-                        : Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                child:
+                    _buildFormattedText(message.text, isSmallScreen, textColor),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Message Text with formatting
-                  _buildFormattedText(message.text, isSmallScreen),
-
-                  // Timestamp
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _formatTime(message.timestamp),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: isUser ? Colors.white70 : Colors.grey,
-                        ),
-                      ),
-                      if (isUser) ...[
-                        const SizedBox(width: 4),
-                        const Icon(Icons.done_all,
-                            size: 12, color: Colors.white70),
-                      ],
-                    ],
-                  ),
-                ],
+              const SizedBox(height: 4),
+              Text(
+                _formatTime(message.timestamp),
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: FitGenieTheme.muted,
+                ),
               ),
-            ),
+            ],
           ),
-
-          // User Avatar (right side for user messages)
-          if (isUser) ...[
-            const SizedBox(width: 8),
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade800,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Text(
-                  widget.userName.isNotEmpty
-                      ? widget.userName[0].toUpperCase()
-                      : 'U',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildFormattedText(String text, bool isSmallScreen) {
-    // Simple markdown-like formatting
+  Widget _buildFormattedText(String text, bool isSmallScreen, Color color) {
     final lines = text.split('\n');
     final List<Widget> widgets = [];
+    final fontSize = isSmallScreen ? 13.5 : 14.5;
 
-    for (var line in lines) {
+    for (final line in lines) {
       if (line.trim().isEmpty) {
         widgets.add(const SizedBox(height: 8));
         continue;
       }
 
-      // Handle bold text with **
       if (line.contains('**')) {
-        widgets.add(_buildRichText(line, isSmallScreen));
-      }
-      // Handle headers with ━━━
-      else if (line.contains('━━━')) {
+        widgets.add(_buildRichText(line, fontSize, color));
+      } else if (line.contains('━━━')) {
         widgets.add(Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Container(
-            height: 1,
-            color: FitGenieTheme.primary.withValues(alpha: 0.3),
-          ),
+          child: Container(height: 1, color: FitGenieTheme.border),
         ));
-      }
-      // Regular text
-      else {
+      } else {
         widgets.add(Padding(
           padding: const EdgeInsets.only(bottom: 2),
           child: Text(
             line,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: isSmallScreen ? 13.5 : 14.5,
-              height: 1.5,
-            ),
+            style: TextStyle(color: color, fontSize: fontSize, height: 1.5),
           ),
         ));
       }
@@ -779,110 +636,61 @@ class _AICoachScreenState extends State<_AICoachScreen>
     );
   }
 
-  Widget _buildRichText(String line, bool isSmallScreen) {
+  Widget _buildRichText(String line, double fontSize, Color color) {
     final regex = RegExp(r'\*\*(.*?)\*\*');
     final matches = regex.allMatches(line);
+    final baseStyle = TextStyle(color: color, fontSize: fontSize, height: 1.5);
 
-    if (matches.isEmpty) {
-      return Text(
-        line,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: isSmallScreen ? 13.5 : 14.5,
-          height: 1.5,
-        ),
-      );
-    }
+    if (matches.isEmpty) return Text(line, style: baseStyle);
 
     final List<TextSpan> spans = [];
     int lastEnd = 0;
 
-    for (var match in matches) {
-      // Add text before the match
+    for (final match in matches) {
       if (match.start > lastEnd) {
         spans.add(TextSpan(text: line.substring(lastEnd, match.start)));
       }
-      // Add bold text
       spans.add(TextSpan(
         text: match.group(1),
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.w800),
       ));
       lastEnd = match.end;
     }
-
-    // Add remaining text
     if (lastEnd < line.length) {
       spans.add(TextSpan(text: line.substring(lastEnd)));
     }
 
-    return RichText(
-      text: TextSpan(
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: isSmallScreen ? 13.5 : 14.5,
-          height: 1.5,
-        ),
-        children: spans,
-      ),
-    );
+    return RichText(text: TextSpan(style: baseStyle, children: spans));
   }
 
   Widget _buildTypingIndicator() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // AI Avatar
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  FitGenieTheme.primary,
-                  FitGenieTheme.primary.withValues(alpha: 0.6),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.psychology, color: Colors.white, size: 18),
-          ),
-          const SizedBox(width: 8),
-          // Typing Bubble
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: FitGenieTheme.card,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18),
-                topRight: Radius.circular(18),
-                bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(18),
-              ),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildTypingDot(0),
-                const SizedBox(width: 4),
-                _buildTypingDot(1),
-                const SizedBox(width: 4),
-                _buildTypingDot(2),
-                const SizedBox(width: 12),
-                Text(
-                  AppStrings.get('chat_typing'),
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: FitGenieTheme.card,
+            border: Border.all(color: FitGenieTheme.border),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+              bottomLeft: Radius.circular(4),
+              bottomRight: Radius.circular(16),
             ),
           ),
-        ],
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTypingDot(0),
+              const SizedBox(width: 4),
+              _buildTypingDot(1),
+              const SizedBox(width: 4),
+              _buildTypingDot(2),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -892,14 +700,15 @@ class _AICoachScreenState extends State<_AICoachScreen>
       animation: _typingAnimationController,
       builder: (context, child) {
         final value = (_typingAnimationController.value + index * 0.2) % 1.0;
-        final size = 6.0 + (2.0 * (0.5 - (value - 0.5).abs()) * 2);
-        final opacity = 0.3 + (0.7 * (0.5 - (value - 0.5).abs()) * 2);
+        final wave = 0.5 - (value - 0.5).abs();
+        final size = 6.0 + (2.0 * wave * 2);
+        final opacity = 0.3 + (0.7 * wave * 2);
 
         return Container(
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: FitGenieTheme.primary.withValues(alpha: opacity),
+            color: FitGenieTheme.textSecondary.withValues(alpha: opacity),
             shape: BoxShape.circle,
           ),
         );
@@ -916,44 +725,22 @@ class _AICoachScreenState extends State<_AICoachScreen>
   }
 
   void _showAboutDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: FitGenieTheme.card,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: FitGenieTheme.primary.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.psychology,
-                  color: FitGenieTheme.primary, size: 24),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                AppStrings.get('chat_about_title'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
+        title: Text(AppStrings.get('chat_about_title')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               AppStrings.get('chat_about_powered'),
-              style: const TextStyle(color: Colors.grey),
+              style: const TextStyle(color: FitGenieTheme.muted),
             ),
             const SizedBox(height: 16),
             Text(
               AppStrings.get('chat_about_features'),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
             Text(AppStrings.get('chat_about_workouts')),
@@ -963,7 +750,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
             const SizedBox(height: 16),
             Text(
               AppStrings.get('chat_about_data'),
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
+              style: const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
             ),
           ],
         ),
@@ -978,31 +765,17 @@ class _AICoachScreenState extends State<_AICoachScreen>
   }
 
   void _showClearChatDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: FitGenieTheme.card,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            const Icon(Icons.delete_outline, color: FitGenieTheme.error),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                AppStrings.get('chat_clear_title'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
+        title: Text(AppStrings.get('chat_clear_title')),
         content: Text(AppStrings.get('chat_clear_sub')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(AppStrings.get('chat_cancel')),
           ),
-          ElevatedButton(
+          FilledButton(
             onPressed: () {
               Navigator.pop(context);
               setState(() {
@@ -1011,12 +784,11 @@ class _AICoachScreenState extends State<_AICoachScreen>
               });
               HapticFeedback.lightImpact();
             },
-            style:
-                ElevatedButton.styleFrom(backgroundColor: FitGenieTheme.error),
-            child: Text(
-              AppStrings.get('chat_clear'),
-              style: const TextStyle(color: Colors.white),
+            style: FilledButton.styleFrom(
+              backgroundColor: FitGenieTheme.error,
+              minimumSize: const Size(96, 46),
             ),
+            child: Text(AppStrings.get('chat_clear')),
           ),
         ],
       ),
