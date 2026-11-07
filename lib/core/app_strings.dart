@@ -992,6 +992,23 @@ class AppStrings {
     'snackbar_title_warning': 'Heads up',
     'snackbar_title_info': 'Note',
     'snackbar_friendly_error': 'That didn\'t work. Please try again, everything is safe.',
+    // l10n-r5b
+    'saved_meals_more_items': '+{count} more items',
+    'saved_meal_type_breakfast': 'Breakfast',
+    'saved_meal_type_lunch': 'Lunch',
+    'saved_meal_type_dinner': 'Dinner',
+    'saved_meal_type_snacks': 'Snacks',
+    'food_cat_breakfast': 'Breakfast',
+    'food_cat_daily_meals': 'Daily Meals',
+    'food_cat_dairy': 'Dairy',
+    'food_cat_desi_dishes': 'Desi Dishes',
+    'food_cat_drinks': 'Drinks',
+    'food_cat_fruits': 'Fruits',
+    'food_cat_legumes': 'Legumes',
+    'food_cat_protein': 'Protein',
+    'food_cat_snacks': 'Snacks',
+    'food_cat_staples': 'Staples',
+    'food_cat_vegetables': 'Vegetables',
   };
 
   static const Map<String, String> _ur = {
@@ -1999,6 +2016,23 @@ class AppStrings {
     'snackbar_title_warning': 'Zara dhyan se',
     'snackbar_title_info': 'Note',
     'snackbar_friendly_error': 'Kuch theek se nahi hua. Dobara try karo, sab safe hai.',
+    // l10n-r5b
+    'saved_meals_more_items': '+{count} aur items',
+    'saved_meal_type_breakfast': 'Nashta',
+    'saved_meal_type_lunch': 'Lunch',
+    'saved_meal_type_dinner': 'Dinner',
+    'saved_meal_type_snacks': 'Snacks',
+    'food_cat_breakfast': 'Nashta',
+    'food_cat_daily_meals': 'Roz ka Khana',
+    'food_cat_dairy': 'Dairy',
+    'food_cat_desi_dishes': 'Desi Khane',
+    'food_cat_drinks': 'Drinks',
+    'food_cat_fruits': 'Phal',
+    'food_cat_legumes': 'Daalein',
+    'food_cat_protein': 'Protein',
+    'food_cat_snacks': 'Snacks',
+    'food_cat_staples': 'Bunyadi Khana',
+    'food_cat_vegetables': 'Sabziyan',
   };
 
   // ──────────────────────────────────────────

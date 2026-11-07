@@ -21,6 +21,25 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
   String _query = '';
   String _selectedCategory = 'All';
 
+  // l10n-r5b: display label only; category value stays English (database key)
+  String _categoryLabel(String category) {
+    const keys = <String, String>{
+      'Breakfast': 'food_cat_breakfast',
+      'Daily Meals': 'food_cat_daily_meals',
+      'Dairy': 'food_cat_dairy',
+      'Desi Dishes': 'food_cat_desi_dishes',
+      'Drinks': 'food_cat_drinks',
+      'Fruits': 'food_cat_fruits',
+      'Legumes': 'food_cat_legumes',
+      'Protein': 'food_cat_protein',
+      'Snacks': 'food_cat_snacks',
+      'Staples': 'food_cat_staples',
+      'Vegetables': 'food_cat_vegetables',
+    };
+    final key = keys[category];
+    return key == null ? category : AppStrings.get(key);
+  }
+
   List<FoodItem> get _results {
     return FoodDatabase.search(
       _query,
@@ -106,7 +125,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '${food.category} • ${food.servingLabel}',
+                    '${_categoryLabel(food.category)} • ${food.servingLabel}',
                     style: const TextStyle(
                       color: FitGenieTheme.muted,
                       fontSize: 12,
@@ -353,7 +372,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${food.category} • ${food.servingLabel}',
+                      '${_categoryLabel(food.category)} • ${food.servingLabel}',
                       style: const TextStyle(
                         color: FitGenieTheme.muted,
                         fontSize: 11,
@@ -459,7 +478,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen> {
                 final selected = _selectedCategory == category;
                 final displayName = category == 'All'
                     ? AppStrings.get('food_search_all')
-                    : category;
+                    : _categoryLabel(category);
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: GestureDetector(

@@ -81,6 +81,22 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
     }
   }
 
+  // l10n-r5b: display label only; mealType value stays English
+  String _mealLabel(String mealType) {
+    switch (mealType) {
+      case 'breakfast':
+        return AppStrings.get('saved_meal_type_breakfast');
+      case 'lunch':
+        return AppStrings.get('saved_meal_type_lunch');
+      case 'dinner':
+        return AppStrings.get('saved_meal_type_dinner');
+      case 'snacks':
+        return AppStrings.get('saved_meal_type_snacks');
+      default:
+        return mealType;
+    }
+  }
+
   String _mealEmoji(String mealType) {
     switch (mealType) {
       case 'breakfast':
@@ -236,7 +252,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                             _infoTag('${meal.protein}g P', FitGenieTheme.teal),
                             _infoTag('${meal.carbs}g C', FitGenieTheme.warning),
                             _infoTag('${meal.fats}g F', FitGenieTheme.primary),
-                            _infoTag(meal.mealType.toUpperCase(),
+                            _infoTag(_mealLabel(meal.mealType).toUpperCase(),
                                 FitGenieTheme.primary),
                           ],
                         ),
@@ -266,7 +282,8 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              '+${meal.items.length - 4} more items',
+                              AppStrings.get('saved_meals_more_items',
+                                  params: {'count': '${meal.items.length - 4}'}),
                               style: TextStyle(
                                 color: FitGenieTheme.muted,
                                 fontSize: 11,
