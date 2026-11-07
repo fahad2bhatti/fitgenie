@@ -175,15 +175,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
 
       if (connected) {
-        AppSnackbar.showSuccess(context, AppStrings.get('profile_googlefit_connected'));
+        AppSnackbar.showSuccess(
+            context, AppStrings.get('profile_googlefit_connected'));
       } else {
-        AppSnackbar.showError(context, AppStrings.get('profile_connection_failed'));
+        AppSnackbar.showError(
+            context, AppStrings.get('profile_connection_failed'));
       }
 
       await _checkGoogleFitStatus();
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showWarning(context, AppStrings.get('profile_generic_error', params: {'error': '$e'}));
+      AppSnackbar.showWarning(context,
+          AppStrings.get('profile_generic_error', params: {'error': '$e'}));
       setState(() => _isGoogleFitLoading = false);
     }
   }
@@ -310,7 +313,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final image = await _imageService.pickImage(source: source);
     if (!mounted) return;
     if (image == null) {
-      AppSnackbar.showWarning(context, AppStrings.get('profile_no_image_selected'));
+      AppSnackbar.showWarning(
+          context, AppStrings.get('profile_no_image_selected'));
       return;
     }
 
@@ -326,7 +330,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isUploadingPhoto = false;
       if (result != null) {
         _photoBase64 = result;
-        AppSnackbar.showSuccess(context, AppStrings.get('profile_photo_updated'));
+        AppSnackbar.showSuccess(
+            context, AppStrings.get('profile_photo_updated'));
       } else {
         AppSnackbar.showError(context, AppStrings.get('profile_upload_failed'));
       }
@@ -343,7 +348,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isUploadingPhoto = false;
       if (success) {
         _photoBase64 = null;
-        AppSnackbar.showWarning(context, AppStrings.get('profile_photo_removed'));
+        AppSnackbar.showWarning(
+            context, AppStrings.get('profile_photo_removed'));
       }
     });
   }
@@ -488,7 +494,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '${_displayValue(_fitnessLevel)} · ${_displayValue(_goal)}'.toUpperCase(),
+                            '${_displayValue(_fitnessLevel)} · ${_displayValue(_goal)}'
+                                .toUpperCase(),
                             style: t.labelSmall
                                 ?.copyWith(color: FitGenieTheme.primary),
                             maxLines: 1,
@@ -619,12 +626,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           row(AppStrings.get('calories_field_calories'), '$_caloriesGoal',
-            AppStrings.get('label_kcal')),
+              AppStrings.get('label_kcal')),
           const Divider(height: 1),
           row(AppStrings.get('calories_field_protein'), '$_proteinGoal', 'g'),
           const Divider(height: 1),
           row(AppStrings.get('label_water'), '$_waterGoal',
-            AppStrings.get('label_glasses')),
+              AppStrings.get('label_glasses')),
         ],
       ),
     );
@@ -732,14 +739,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     TextStyle(color: FitGenieTheme.textSecondary, fontSize: 13),
               ),
               children: [
-                _buildStatusCheckRow(AppStrings.get('profile_gfit_health_connect'),
-                    _healthConnectAvailable, Icons.phone_android),
-                _buildStatusCheckRow(AppStrings.get('profile_gfit_activity_permission'), _activityPermission,
+                _buildStatusCheckRow(
+                    AppStrings.get('profile_gfit_health_connect'),
+                    _healthConnectAvailable,
+                    Icons.phone_android),
+                _buildStatusCheckRow(
+                    AppStrings.get('profile_gfit_activity_permission'),
+                    _activityPermission,
                     Icons.directions_walk),
+                _buildStatusCheckRow(AppStrings.get('profile_gfit_authorized'),
+                    _healthAuthorized, Icons.security),
                 _buildStatusCheckRow(
-                    AppStrings.get('profile_gfit_authorized'), _healthAuthorized, Icons.security),
-                _buildStatusCheckRow(
-                    AppStrings.get('profile_gfit_data_syncing'), _dataAccessible, Icons.sync),
+                    AppStrings.get('profile_gfit_data_syncing'),
+                    _dataAccessible,
+                    Icons.sync),
               ],
             ),
           ),
@@ -1014,7 +1027,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           controller: controller,
           obscureText: true,
           autofocus: true,
-          decoration: InputDecoration(hintText: AppStrings.get('profile_enter_password')),
+          decoration: InputDecoration(
+              hintText: AppStrings.get('profile_enter_password')),
         ),
         actions: [
           TextButton(
@@ -1171,7 +1185,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 TextField(
                   controller: nameController,
                   style: const TextStyle(color: Colors.white),
-                  decoration: _inputDecoration(AppStrings.get('field_full_name'), Icons.person),
+                  decoration: _inputDecoration(
+                      AppStrings.get('field_full_name'), Icons.person),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -1357,14 +1372,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 controller: hc,
                 keyboardType: TextInputType.number,
                 style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration(AppStrings.get('profile_height_cm'), Icons.height),
+                decoration: _inputDecoration(
+                    AppStrings.get('profile_height_cm'), Icons.height),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: ac,
                 keyboardType: TextInputType.number,
                 style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration(AppStrings.get('profile_age'), Icons.cake),
+                decoration:
+                    _inputDecoration(AppStrings.get('profile_age'), Icons.cake),
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -1461,10 +1478,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _fitnessLevel = fitnessLevel;
         _goal = goal;
       });
-      AppSnackbar.showSuccess(context, AppStrings.get('profile_profile_updated'));
+      AppSnackbar.showSuccess(
+          context, AppStrings.get('profile_profile_updated'));
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showError(context, AppStrings.get('profile_profile_update_failed'));
+      AppSnackbar.showError(
+          context, AppStrings.get('profile_profile_update_failed'));
     }
   }
 
@@ -1505,7 +1524,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       AppSnackbar.showSuccess(context, AppStrings.get('profile_stats_updated'));
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showError(context, AppStrings.get('profile_stats_update_failed'));
+      AppSnackbar.showError(
+          context, AppStrings.get('profile_stats_update_failed'));
     }
   }
 
@@ -1534,7 +1554,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       AppSnackbar.showSuccess(context, AppStrings.get('profile_goals_updated'));
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showError(context, AppStrings.get('profile_goals_update_failed'));
+      AppSnackbar.showError(
+          context, AppStrings.get('profile_goals_update_failed'));
     }
   }
 
@@ -1674,7 +1695,8 @@ class _EditGoalsSheetState extends State<_EditGoalsSheet> {
             controller: pc,
             keyboardType: TextInputType.number,
             style: const TextStyle(color: Colors.white),
-            decoration: widget.inputDecoration(AppStrings.get('profile_protein_g'), Icons.egg_alt),
+            decoration: widget.inputDecoration(
+                AppStrings.get('profile_protein_g'), Icons.egg_alt),
           ),
           const SizedBox(height: 12),
           TextField(

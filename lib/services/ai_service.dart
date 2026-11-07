@@ -185,8 +185,7 @@ All numbers should be integers. isHealthy should be boolean.''';
       fiber: 3,
       quantity: '1 serving',
       isHealthy: true,
-      healthTip:
-          AppStrings.get('ai_analysis_failed_tip'),
+      healthTip: AppStrings.get('ai_analysis_failed_tip'),
     );
   }
 

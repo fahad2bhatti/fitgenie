@@ -974,12 +974,16 @@ class AppStrings {
     'ai_msg_too_long': 'Keep your message shorter, 500 characters max! ✂️',
     'ai_no_response': 'No response received, please try again.',
     'ai_image_too_large': 'Image Too Large',
-    'ai_image_too_large_tip': 'The photo must be under 10MB. Compress it and try again.',
-    'ai_analysis_failed_tip': 'Could not analyze. Enter it manually or take a clearer photo.',
+    'ai_image_too_large_tip':
+        'The photo must be under 10MB. Compress it and try again.',
+    'ai_analysis_failed_tip':
+        'Could not analyze. Enter it manually or take a clearer photo.',
     // l10n-r4b
-    'step_err_no_health_connect': 'Health Connect app is not installed on this device',
+    'step_err_no_health_connect':
+        'Health Connect app is not installed on this device',
     'step_err_no_permission': 'Activity Recognition permission not granted',
-    'step_err_not_authorized': 'Google Fit is not authorized. Tap Connect to sign in.',
+    'step_err_not_authorized':
+        'Google Fit is not authorized. Tap Connect to sign in.',
     'step_err_no_data': 'Connected but no step data yet. Walk a few steps!',
     'step_err_check_failed': 'Error checking status: {error}',
   };
@@ -1928,7 +1932,8 @@ class AppStrings {
     'profile_gfit_authorized': 'Google Fit authorize hai',
     'profile_gfit_data_syncing': 'Data sync ho raha hai',
     'profile_gfit_status_connected': 'Connect hai aur sync ho raha hai',
-    'profile_gfit_status_connected_no_data': 'Connect hai · data dekhne ke liye chalein',
+    'profile_gfit_status_connected_no_data':
+        'Connect hai · data dekhne ke liye chalein',
     'profile_gfit_status_connecting': 'Connect ho raha hai...',
     'profile_gfit_status_not_authorized': 'Authorization zaroori hai',
     'profile_gfit_status_permission_denied': 'Ijazat nahi mili',
@@ -1938,7 +1943,8 @@ class AppStrings {
     'profile_confirm_password': 'Password confirm karein',
     'profile_enter_password': 'Apna password likhein',
     'profile_confirm': 'Confirm karein',
-    'profile_verification_failed': 'Verification nakaam ho gayi. Dobara koshish karein.',
+    'profile_verification_failed':
+        'Verification nakaam ho gayi. Dobara koshish karein.',
     // l10n-r1c
     'profile_height_cm': 'Qad (cm)',
     'profile_age': 'Umar',
@@ -1964,16 +1970,22 @@ class AppStrings {
     // l10n-r4a
     'ai_chat_empty': 'Kuch toh likh bhai! 😄',
     'ai_not_configured': '❌ AI service set nahi hai. Baad mein try kar.',
-    'ai_msg_too_long': 'Bhai message thoda chhota rakh — 500 characters max! ✂️',
+    'ai_msg_too_long':
+        'Bhai message thoda chhota rakh — 500 characters max! ✂️',
     'ai_no_response': 'Koi response nahi aaya, dobara try kar.',
     'ai_image_too_large': 'Photo bahut badi hai',
-    'ai_image_too_large_tip': 'Photo 10MB se chhoti honi chahiye. Compress karke bhejo.',
-    'ai_analysis_failed_tip': 'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
+    'ai_image_too_large_tip':
+        'Photo 10MB se chhoti honi chahiye. Compress karke bhejo.',
+    'ai_analysis_failed_tip':
+        'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
     // l10n-r4b
-    'step_err_no_health_connect': 'Is device par Health Connect app install nahi hai',
+    'step_err_no_health_connect':
+        'Is device par Health Connect app install nahi hai',
     'step_err_no_permission': 'Activity Recognition ki permission nahi mili',
-    'step_err_not_authorized': 'Google Fit authorize nahi hai. Connect dabao aur sign in karo.',
-    'step_err_no_data': 'Connect ho gaya par abhi step data nahi hai. Thode kadam chalo!',
+    'step_err_not_authorized':
+        'Google Fit authorize nahi hai. Connect dabao aur sign in karo.',
+    'step_err_no_data':
+        'Connect ho gaya par abhi step data nahi hai. Thode kadam chalo!',
     'step_err_check_failed': 'Status check karne mein error: {error}',
   };
 

@@ -5,7 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../core/app_strings.dart'; import 'google_fit_service.dart';
+import '../core/app_strings.dart';
+import 'google_fit_service.dart';
 
 class StepCounterService {
   static final StepCounterService _instance = StepCounterService._internal();
@@ -124,8 +125,7 @@ class StepCounterService {
       status.healthAuthorized = await _googleFit.isAuthorized();
 
       if (!status.healthAuthorized) {
-        status.errorMessage =
-            AppStrings.get('step_err_not_authorized');
+        status.errorMessage = AppStrings.get('step_err_not_authorized');
         status.overallStatus = GoogleFitConnectionStatus.notAuthorized;
         onGoogleFitStatusChanged?.call(status.overallStatus);
         return status;
@@ -140,15 +140,15 @@ class StepCounterService {
         status.errorMessage = '';
       } else {
         status.overallStatus = GoogleFitConnectionStatus.connectedNoData;
-        status.errorMessage =
-            AppStrings.get('step_err_no_data');
+        status.errorMessage = AppStrings.get('step_err_no_data');
       }
 
       // Check 5: Last sync time
       status.lastSyncTime = DateTime.now();
       status.isActivelysyncing = _useGoogleFit;
     } catch (e) {
-      status.errorMessage = AppStrings.get('step_err_check_failed', params: {'error': '$e'});
+      status.errorMessage =
+          AppStrings.get('step_err_check_failed', params: {'error': '$e'});
       status.overallStatus = GoogleFitConnectionStatus.error;
       debugPrint('❌ Google Fit status check error: $e');
     }
