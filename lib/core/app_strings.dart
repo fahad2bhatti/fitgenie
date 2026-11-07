@@ -960,6 +960,10 @@ class AppStrings {
     // l10n-r2b
     'dashboard_meal_pick_title': 'Add to which meal? 🍽️',
     'dashboard_coach_hint': 'Ask your coach anything',
+    // l10n-r3b
+    'library_body_mixed': 'Mixed',
+    'library_more_exercises': '+{count} more exercises',
+    'library_selected_count': '{count} selected exercises',
   };
 
   static const Map<String, String> _ur = {
@@ -1931,6 +1935,10 @@ class AppStrings {
     // l10n-r2b
     'dashboard_meal_pick_title': 'Kis meal mein add karein? 🍽️',
     'dashboard_coach_hint': 'Apne coach se kuch bhi poochein',
+    // l10n-r3b
+    'library_body_mixed': 'Mix',
+    'library_more_exercises': '+{count} aur exercises',
+    'library_selected_count': '{count} chuni gayi exercises',
   };
 
   // ──────────────────────────────────────────

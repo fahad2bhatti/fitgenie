@@ -15,6 +15,25 @@ import '../services/ads_service.dart';
 // Custom workout builder + saved custom workouts + custom session
 // ============================================================
 
+// l10n-r3b: display label only; stored values stay English (used for filtering and colors)
+String _l10nBodyPart(String raw) {
+  const keys = <String, String>{
+    'All': 'exercise_all',
+    'Mixed': 'library_body_mixed',
+    'Chest': 'muscle_chest',
+    'Back': 'muscle_back',
+    'Legs': 'muscle_legs',
+    'Arms': 'muscle_arms',
+    'Shoulders': 'muscle_shoulders',
+    'Biceps': 'muscle_biceps',
+    'Triceps': 'muscle_triceps',
+    'Core': 'muscle_core',
+    'Cardio': 'muscle_cardio',
+  };
+  final key = keys[raw];
+  return key == null ? raw : AppStrings.get(key);
+}
+
 class MyLibraryScreen extends StatefulWidget {
   final String userId;
   final bool openCreate;
@@ -298,10 +317,10 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                                       const SizedBox(height: 4),
                                       Row(
                                         children: [
-                                          _miniTag(bodyPart, color),
+                                          _miniTag(_l10nBodyPart(bodyPart), color),
                                           const SizedBox(width: 6),
                                           _miniTag(
-                                            '${exercises.length} exercises',
+                                            '${exercises.length} ${AppStrings.get('label_exercises').toLowerCase()}',
                                             FitGenieTheme.teal,
                                           ),
                                         ],
@@ -340,7 +359,7 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                             if (exercises.length > 4) ...[
                               const SizedBox(height: 6),
                               Text(
-                                '+${exercises.length - 4} more exercises',
+                                AppStrings.get('library_more_exercises', params: {'count': '${exercises.length - 4}'}),
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: FitGenieTheme.muted,
@@ -907,7 +926,7 @@ class _CustomWorkoutBuilderScreenState
                         ),
                       ),
                       child: Text(
-                        part == 'All' ? 'All' : '${_bodyPartEmoji(part)} $part',
+                        part == 'All' ? AppStrings.get('exercise_all') : '${_bodyPartEmoji(part)} ${_l10nBodyPart(part)}',
                         style: TextStyle(
                           color: selected
                               ? FitGenieTheme.primary
@@ -1070,7 +1089,7 @@ class _CustomWorkoutBuilderScreenState
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${exercise.bodyPart} • ${exercise.equipment}',
+                                  '${_l10nBodyPart(exercise.bodyPart)} • ${exercise.equipment}',
                                   style: TextStyle(
                                     color: FitGenieTheme.muted,
                                     fontSize: 12,
@@ -1418,7 +1437,7 @@ class _CustomWorkoutSessionScreenState
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '${widget.exercises.length} selected exercises',
+                    AppStrings.get('library_selected_count', params: {'count': '${widget.exercises.length}'}),
                     style: TextStyle(color: FitGenieTheme.muted),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1480,7 +1499,7 @@ class _CustomWorkoutSessionScreenState
                                     .inMinutes
                                 : 0;
                             return Text(
-                              '$minutes min',
+                              '$minutes ${AppStrings.get('label_min')}',
                               style: const TextStyle(
                                 color: FitGenieTheme.success,
                                 fontWeight: FontWeight.bold,
