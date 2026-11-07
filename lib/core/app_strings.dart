@@ -1009,6 +1009,14 @@ class AppStrings {
     'food_cat_snacks': 'Snacks',
     'food_cat_staples': 'Staples',
     'food_cat_vegetables': 'Vegetables',
+    // l10n-r5c
+    'chat_msg_workout': 'Give me the best workout plan for today',
+    'chat_msg_diet': 'Make me a diet plan',
+    'chat_msg_motivate': 'Motivate me!',
+    'chat_msg_weight_loss': 'Give me weight loss tips',
+    'chat_msg_muscle_gain': 'How do I build muscle?',
+    'chat_msg_hydration': 'How much water should I drink?',
+    'challenges_badge_unlocked': '✅ Unlocked!',
   };
 
   static const Map<String, String> _ur = {
@@ -2033,6 +2041,14 @@ class AppStrings {
     'food_cat_snacks': 'Snacks',
     'food_cat_staples': 'Bunyadi Khana',
     'food_cat_vegetables': 'Sabziyan',
+    // l10n-r5c
+    'chat_msg_workout': 'Aaj ke liye best workout plan batao',
+    'chat_msg_diet': 'Mera diet plan bana do',
+    'chat_msg_motivate': 'Mujhe motivate karo!',
+    'chat_msg_weight_loss': 'Weight loss tips do',
+    'chat_msg_muscle_gain': 'Muscle kaise banaye?',
+    'chat_msg_hydration': 'Pani kitna peena chahiye?',
+    'challenges_badge_unlocked': '✅ Unlock ho gaya!',
   };
 
   // ──────────────────────────────────────────

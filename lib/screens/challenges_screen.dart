@@ -1228,7 +1228,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                isUnlocked ? '✅ Unlocked!' : '+${achievement.points} XP',
+                isUnlocked ? AppStrings.get('challenges_badge_unlocked') : '+${achievement.points} XP',
                 style: TextStyle(
                   color: isUnlocked
                       ? FitGenieTheme.success

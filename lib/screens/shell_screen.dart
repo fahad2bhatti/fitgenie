@@ -417,17 +417,17 @@ class _AICoachScreenState extends State<_AICoachScreen>
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         children: [
           _buildQuickChip(AppStrings.get('chat_workout'),
-              'Aaj ke liye best workout plan batao'),
+              AppStrings.get('chat_msg_workout')),
           _buildQuickChip(
-              AppStrings.get('chat_diet'), 'Mera diet plan bana do'),
+              AppStrings.get('chat_diet'), AppStrings.get('chat_msg_diet')),
           _buildQuickChip(
-              AppStrings.get('chat_motivate'), 'Mujhe motivate karo!'),
+              AppStrings.get('chat_motivate'), AppStrings.get('chat_msg_motivate')),
           _buildQuickChip(
-              AppStrings.get('chat_weight_loss'), 'Weight loss tips do'),
+              AppStrings.get('chat_weight_loss'), AppStrings.get('chat_msg_weight_loss')),
           _buildQuickChip(
-              AppStrings.get('chat_muscle_gain'), 'Muscle kaise banaye?'),
+              AppStrings.get('chat_muscle_gain'), AppStrings.get('chat_msg_muscle_gain')),
           _buildQuickChip(
-              AppStrings.get('chat_hydration'), 'Pani kitna peena chahiye?'),
+              AppStrings.get('chat_hydration'), AppStrings.get('chat_msg_hydration')),
           _buildQuickChip(
               AppStrings.get('chat_recovery'), 'Recovery tips batao'),
         ],
