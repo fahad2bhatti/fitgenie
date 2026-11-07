@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'google_fit_service.dart';
+import '../core/app_strings.dart'; import 'google_fit_service.dart';
 
 class StepCounterService {
   static final StepCounterService _instance = StepCounterService._internal();
@@ -103,7 +103,7 @@ class StepCounterService {
           await _googleFit.isHealthConnectAvailable();
 
       if (!status.healthConnectAvailable) {
-        status.errorMessage = 'Health Connect app not installed on this device';
+        status.errorMessage = AppStrings.get('step_err_no_health_connect');
         status.overallStatus = GoogleFitConnectionStatus.unavailable;
         onGoogleFitStatusChanged?.call(status.overallStatus);
         return status;
@@ -114,7 +114,7 @@ class StepCounterService {
       status.activityPermissionGranted = activityPerm.isGranted;
 
       if (!status.activityPermissionGranted) {
-        status.errorMessage = 'Activity Recognition permission not granted';
+        status.errorMessage = AppStrings.get('step_err_no_permission');
         status.overallStatus = GoogleFitConnectionStatus.permissionDenied;
         onGoogleFitStatusChanged?.call(status.overallStatus);
         return status;
@@ -125,7 +125,7 @@ class StepCounterService {
 
       if (!status.healthAuthorized) {
         status.errorMessage =
-            'Google Fit not authorized. Tap Connect to sign in.';
+            AppStrings.get('step_err_not_authorized');
         status.overallStatus = GoogleFitConnectionStatus.notAuthorized;
         onGoogleFitStatusChanged?.call(status.overallStatus);
         return status;
@@ -141,14 +141,14 @@ class StepCounterService {
       } else {
         status.overallStatus = GoogleFitConnectionStatus.connectedNoData;
         status.errorMessage =
-            'Connected but no step data yet. Walk a few steps!';
+            AppStrings.get('step_err_no_data');
       }
 
       // Check 5: Last sync time
       status.lastSyncTime = DateTime.now();
       status.isActivelysyncing = _useGoogleFit;
     } catch (e) {
-      status.errorMessage = 'Error checking status: $e';
+      status.errorMessage = AppStrings.get('step_err_check_failed', params: {'error': '$e'});
       status.overallStatus = GoogleFitConnectionStatus.error;
       debugPrint('❌ Google Fit status check error: $e');
     }

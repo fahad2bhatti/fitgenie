@@ -976,6 +976,12 @@ class AppStrings {
     'ai_image_too_large': 'Image Too Large',
     'ai_image_too_large_tip': 'The photo must be under 10MB. Compress it and try again.',
     'ai_analysis_failed_tip': 'Could not analyze. Enter it manually or take a clearer photo.',
+    // l10n-r4b
+    'step_err_no_health_connect': 'Health Connect app is not installed on this device',
+    'step_err_no_permission': 'Activity Recognition permission not granted',
+    'step_err_not_authorized': 'Google Fit is not authorized. Tap Connect to sign in.',
+    'step_err_no_data': 'Connected but no step data yet. Walk a few steps!',
+    'step_err_check_failed': 'Error checking status: {error}',
   };
 
   static const Map<String, String> _ur = {
@@ -1963,6 +1969,12 @@ class AppStrings {
     'ai_image_too_large': 'Photo bahut badi hai',
     'ai_image_too_large_tip': 'Photo 10MB se chhoti honi chahiye. Compress karke bhejo.',
     'ai_analysis_failed_tip': 'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
+    // l10n-r4b
+    'step_err_no_health_connect': 'Is device par Health Connect app install nahi hai',
+    'step_err_no_permission': 'Activity Recognition ki permission nahi mili',
+    'step_err_not_authorized': 'Google Fit authorize nahi hai. Connect dabao aur sign in karo.',
+    'step_err_no_data': 'Connect ho gaya par abhi step data nahi hai. Thode kadam chalo!',
+    'step_err_check_failed': 'Status check karne mein error: {error}',
   };
 
   // ──────────────────────────────────────────
