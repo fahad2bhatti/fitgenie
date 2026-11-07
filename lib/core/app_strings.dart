@@ -968,6 +968,14 @@ class AppStrings {
     'onboarding_save_error': 'Something went wrong: {error}',
     // l10n-r3a
     'workout_detail_sets_completed': '{count} sets completed',
+    // l10n-r4a
+    'ai_chat_empty': 'Write something first! 😄',
+    'ai_not_configured': '❌ AI service is not set up. Try again later.',
+    'ai_msg_too_long': 'Keep your message shorter, 500 characters max! ✂️',
+    'ai_no_response': 'No response received, please try again.',
+    'ai_image_too_large': 'Image Too Large',
+    'ai_image_too_large_tip': 'The photo must be under 10MB. Compress it and try again.',
+    'ai_analysis_failed_tip': 'Could not analyze. Enter it manually or take a clearer photo.',
   };
 
   static const Map<String, String> _ur = {
@@ -1947,6 +1955,14 @@ class AppStrings {
     'onboarding_save_error': 'Kuch masla ho gaya: {error}',
     // l10n-r3a
     'workout_detail_sets_completed': '{count} sets mukammal',
+    // l10n-r4a
+    'ai_chat_empty': 'Kuch toh likh bhai! 😄',
+    'ai_not_configured': '❌ AI service set nahi hai. Baad mein try kar.',
+    'ai_msg_too_long': 'Bhai message thoda chhota rakh — 500 characters max! ✂️',
+    'ai_no_response': 'Koi response nahi aaya, dobara try kar.',
+    'ai_image_too_large': 'Photo bahut badi hai',
+    'ai_image_too_large_tip': 'Photo 10MB se chhoti honi chahiye. Compress karke bhejo.',
+    'ai_analysis_failed_tip': 'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
   };
 
   // ──────────────────────────────────────────

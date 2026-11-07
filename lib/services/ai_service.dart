@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../core/app_strings.dart';
 import '../core/language_provider.dart';
 
 class AIService {
@@ -90,7 +91,7 @@ class AIService {
   }
 
   static String _validateResponse(String response) {
-    if (response.isEmpty) return 'Koi response nahi aaya, dobara try kar.';
+    if (response.isEmpty) return AppStrings.get('ai_no_response');
     String cleaned = response.trim();
     cleaned = cleaned.replaceAll(
         RegExp(r'<script[^>]*>.*?</script>', caseSensitive: false), '');
@@ -119,8 +120,8 @@ class AIService {
 
     if (bytes.length > 10 * 1024 * 1024) {
       return MealAnalysis(
-        foodName: 'Image Too Large',
-        foodNameHindi: 'Photo bahut badi hai',
+        foodName: AppStrings.get('ai_image_too_large'),
+        foodNameHindi: AppStrings.get('ai_image_too_large'),
         calories: 0,
         protein: 0,
         carbs: 0,
@@ -128,7 +129,7 @@ class AIService {
         fiber: 0,
         quantity: '0',
         isHealthy: false,
-        healthTip: 'Photo 10MB se chhoti honi chahiye. Compress karke bhejo.',
+        healthTip: AppStrings.get('ai_image_too_large_tip'),
       );
     }
 
@@ -184,7 +185,7 @@ All numbers should be integers. isHealthy should be boolean.''';
       quantity: '1 serving',
       isHealthy: true,
       healthTip:
-          'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
+          AppStrings.get('ai_analysis_failed_tip'),
     );
   }
 
@@ -197,10 +198,10 @@ All numbers should be integers. isHealthy should be boolean.''';
     debugPrint('🚀 AI Chat Started');
 
     final cleanMessage = _sanitizeInput(userMessage);
-    if (cleanMessage.isEmpty) return 'Kuch toh likh bhai! 😄';
-    if (!isConfigured) return '❌ AI service set nahi hai. Baad mein try kar.';
+    if (cleanMessage.isEmpty) return AppStrings.get('ai_chat_empty');
+    if (!isConfigured) return AppStrings.get('ai_not_configured');
     if (cleanMessage.length > 500) {
-      return 'Bhai message thoda chhota rakh — 500 characters max! ✂️';
+      return AppStrings.get('ai_msg_too_long');
     }
 
     try {
