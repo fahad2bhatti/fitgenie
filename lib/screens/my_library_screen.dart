@@ -317,7 +317,8 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                                       const SizedBox(height: 4),
                                       Row(
                                         children: [
-                                          _miniTag(_l10nBodyPart(bodyPart), color),
+                                          _miniTag(
+                                              _l10nBodyPart(bodyPart), color),
                                           const SizedBox(width: 6),
                                           _miniTag(
                                             '${exercises.length} ${AppStrings.get('label_exercises').toLowerCase()}',
@@ -359,7 +360,10 @@ class _MyLibraryScreenState extends State<MyLibraryScreen> {
                             if (exercises.length > 4) ...[
                               const SizedBox(height: 6),
                               Text(
-                                AppStrings.get('library_more_exercises', params: {'count': '${exercises.length - 4}'}),
+                                AppStrings.get('library_more_exercises',
+                                    params: {
+                                      'count': '${exercises.length - 4}'
+                                    }),
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: FitGenieTheme.muted,
@@ -926,7 +930,9 @@ class _CustomWorkoutBuilderScreenState
                         ),
                       ),
                       child: Text(
-                        part == 'All' ? AppStrings.get('exercise_all') : '${_bodyPartEmoji(part)} ${_l10nBodyPart(part)}',
+                        part == 'All'
+                            ? AppStrings.get('exercise_all')
+                            : '${_bodyPartEmoji(part)} ${_l10nBodyPart(part)}',
                         style: TextStyle(
                           color: selected
                               ? FitGenieTheme.primary
@@ -1437,7 +1443,8 @@ class _CustomWorkoutSessionScreenState
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    AppStrings.get('library_selected_count', params: {'count': '${widget.exercises.length}'}),
+                    AppStrings.get('library_selected_count',
+                        params: {'count': '${widget.exercises.length}'}),
                     style: TextStyle(color: FitGenieTheme.muted),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

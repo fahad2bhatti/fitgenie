@@ -1,3 +1,4 @@
+import 'dart:async';
 // lib/services/ai_service.dart
 
 import 'dart:convert';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../core/app_strings.dart';
 import '../core/language_provider.dart';
 
 class AIService {
@@ -90,7 +92,7 @@ class AIService {
   }
 
   static String _validateResponse(String response) {
-    if (response.isEmpty) return 'Koi response nahi aaya, dobara try kar.';
+    if (response.isEmpty) return AppStrings.get('ai_no_response');
     String cleaned = response.trim();
     cleaned = cleaned.replaceAll(
         RegExp(r'<script[^>]*>.*?</script>', caseSensitive: false), '');
@@ -119,8 +121,8 @@ class AIService {
 
     if (bytes.length > 10 * 1024 * 1024) {
       return MealAnalysis(
-        foodName: 'Image Too Large',
-        foodNameHindi: 'Photo bahut badi hai',
+        foodName: AppStrings.get('ai_image_too_large'),
+        foodNameHindi: AppStrings.get('ai_image_too_large'),
         calories: 0,
         protein: 0,
         carbs: 0,
@@ -128,7 +130,7 @@ class AIService {
         fiber: 0,
         quantity: '0',
         isHealthy: false,
-        healthTip: 'Photo 10MB se chhoti honi chahiye. Compress karke bhejo.',
+        healthTip: AppStrings.get('ai_image_too_large_tip'),
       );
     }
 
@@ -183,8 +185,7 @@ All numbers should be integers. isHealthy should be boolean.''';
       fiber: 3,
       quantity: '1 serving',
       isHealthy: true,
-      healthTip:
-          'Analysis nahi ho payi. Manually enter karo ya clear photo lo.',
+      healthTip: AppStrings.get('ai_analysis_failed_tip'),
     );
   }
 
@@ -197,10 +198,10 @@ All numbers should be integers. isHealthy should be boolean.''';
     debugPrint('🚀 AI Chat Started');
 
     final cleanMessage = _sanitizeInput(userMessage);
-    if (cleanMessage.isEmpty) return 'Kuch toh likh bhai! 😄';
-    if (!isConfigured) return '❌ AI service set nahi hai. Baad mein try kar.';
+    if (cleanMessage.isEmpty) return AppStrings.get('ai_chat_empty');
+    if (!isConfigured) return AppStrings.get('ai_not_configured');
     if (cleanMessage.length > 500) {
-      return 'Bhai message thoda chhota rakh — 500 characters max! ✂️';
+      return AppStrings.get('ai_msg_too_long');
     }
 
     try {
@@ -242,7 +243,7 @@ Max 150 words:''';
       final result = await _callProxy(task: 'chat', prompt: prompt);
       if (result != null) {
         final formatted = _formatResponse(_validateResponse(result));
-        await _saveChatHistory(uid, cleanMessage, formatted);
+        unawaited(_saveChatHistory(uid, cleanMessage, formatted));
         return formatted;
       }
 
@@ -259,60 +260,72 @@ Max 150 words:''';
   }
 
   Future<Map<String, dynamic>> _getUserContext(String uid) async {
+    // ai-speed-v1
     if (uid.isEmpty || uid.length > 128) return _getDefaultContext();
 
+    // 90 second ke andar dobara poochho to Firestore dobara nahi jata
+    final cached = _aiCtxCache[uid];
+    final cachedAt = _aiCtxCacheAt[uid];
+    if (cached != null &&
+        cachedAt != null &&
+        DateTime.now().difference(cachedAt) < const Duration(seconds: 90)) {
+      return cached;
+    }
+
+    // Ek read fail ho to baqi context phir bhi chale
+    Future<T?> safe<T>(Future<T> f) async {
+      try {
+        return await f;
+      } catch (_) {
+        return null;
+      }
+    }
+
     try {
-      final userDoc = await _firestore.collection('users').doc(uid).get();
-      final userData = userDoc.data() ?? {};
+      final today = DateTime.now();
+      final dateStr =
+          '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+      final startOfDay = DateTime(today.year, today.month, today.day);
+      final endOfDay = startOfDay.add(const Duration(days: 1));
+      final userRef = _firestore.collection('users').doc(uid);
+
+      // Chaaron reads ek saath shuru (pehle ek ke baad ek hote the)
+      final userF = safe(userRef.get());
+      final goalsF = safe(userRef.collection('goals').doc('main').get());
+      final logF = safe(userRef.collection('dailyLogs').doc(dateStr).get());
+      final workoutsF = safe(
+        userRef
+            .collection('workouts')
+            .where('startedAt',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+            .where('startedAt', isLessThan: Timestamp.fromDate(endOfDay))
+            .get(),
+      );
+
+      final userDoc = await userF;
+      final goalsDoc = await goalsF;
+      final logDoc = await logF;
+      final workoutsSnap = await workoutsF;
+
+      final userData = userDoc?.data() ?? {};
 
       Map<String, dynamic> goals = {
         'caloriesGoal': 2000,
         'proteinGoal': 100,
         'waterGoal': 8
       };
-      try {
-        final goalsDoc = await _firestore
-            .collection('users')
-            .doc(uid)
-            .collection('goals')
-            .doc('main')
-            .get();
-        if (goalsDoc.exists) goals = {...goals, ...?goalsDoc.data()};
-      } catch (_) {}
+      if (goalsDoc != null && goalsDoc.exists) {
+        goals = {...goals, ...?goalsDoc.data()};
+      }
 
       Map<String, dynamic> todayLog = {'calories': 0, 'protein': 0, 'water': 0};
-      try {
-        final today = DateTime.now();
-        final dateStr =
-            '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
-        final todayLogDoc = await _firestore
-            .collection('users')
-            .doc(uid)
-            .collection('dailyLogs')
-            .doc(dateStr)
-            .get();
-        if (todayLogDoc.exists) {
-          todayLog = {...todayLog, ...?todayLogDoc.data()};
-        }
-      } catch (_) {}
+      if (logDoc != null && logDoc.exists) {
+        todayLog = {...todayLog, ...?logDoc.data()};
+      }
 
-      int todayWorkouts = 0;
-      try {
-        final today = DateTime.now();
-        final startOfDay = DateTime(today.year, today.month, today.day);
-        final endOfDay = startOfDay.add(const Duration(days: 1));
-        final q = await _firestore
-            .collection('users')
-            .doc(uid)
-            .collection('workouts')
-            .where('startedAt',
-                isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
-            .where('startedAt', isLessThan: Timestamp.fromDate(endOfDay))
-            .get();
-        todayWorkouts = q.docs.length;
-      } catch (_) {}
+      final todayWorkouts = workoutsSnap?.docs.length ?? 0;
 
-      return {
+      final result = <String, dynamic>{
         'name': _sanitizeInput(userData['name']?.toString() ?? 'Champ'),
         'fitnessLevel': _sanitizeInput(
             userData['fitnessLevel']?.toString() ?? 'Intermediate'),
@@ -327,6 +340,10 @@ Max 150 words:''';
         'todayWater': (todayLog['water'] as num?)?.toInt() ?? 0,
         'todayWorkouts': todayWorkouts,
       };
+
+      _aiCtxCache[uid] = result;
+      _aiCtxCacheAt[uid] = DateTime.now();
+      return result;
     } catch (_) {
       return _getDefaultContext();
     }
@@ -546,3 +563,7 @@ class MealAnalysis {
         'healthTip': healthTip,
       };
 }
+
+// Chat context cache (90 second): har message par Firestore dobara na jaye
+final Map<String, Map<String, dynamic>> _aiCtxCache = {};
+final Map<String, DateTime> _aiCtxCacheAt = {};

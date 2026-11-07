@@ -862,10 +862,11 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                             spacing: 12,
                             runSpacing: 4,
                             children: [
-                              _buildMiniStat(Icons.repeat, '$sets ${AppStrings.get('workout_detail_sets')}'),
+                              _buildMiniStat(Icons.repeat,
+                                  '$sets ${AppStrings.get('workout_detail_sets')}'),
                               if (duration > 0)
-                                _buildMiniStat(
-                                    Icons.timer_outlined, '$duration ${AppStrings.get('label_min')}'),
+                                _buildMiniStat(Icons.timer_outlined,
+                                    '$duration ${AppStrings.get('label_min')}'),
                               _buildMiniStat(Icons.calendar_today, dateStr),
                             ],
                           ),

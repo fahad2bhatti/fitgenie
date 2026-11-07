@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../app/fitgenie_theme.dart';
 import '../core/app_strings.dart';
 import '../services/auth_service.dart';
+import '../widgets/app_snackbar.dart';
 import 'signup_screen.dart';
 
 const String _kPrivacyPolicyUrl =
@@ -165,25 +166,12 @@ class _LoginScreenState extends State<LoginScreen>
   // ? SNACKBAR
   // ============================================
   void _showSnackBar(String message, {required bool isError}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              isError ? Icons.error_outline : Icons.check_circle_outline,
-              color: Colors.white,
-              size: 20,
-            ),
-            const SizedBox(width: 10),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: isError ? FitGenieTheme.error : FitGenieTheme.success,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+    if (!mounted) return;
+    if (isError) {
+      AppSnackbar.showError(context, message);
+    } else {
+      AppSnackbar.showSuccess(context, message);
+    }
   }
 
   // ============================================
@@ -202,15 +190,12 @@ class _LoginScreenState extends State<LoginScreen>
   void _forgotPassword() {
     final emailText = email.text.trim();
 
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) {
         final resetEmailController = TextEditingController(text: emailText);
 
         return AlertDialog(
-          backgroundColor: FitGenieTheme.card,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(AppStrings.get('login_reset_password')),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -223,17 +208,9 @@ class _LoginScreenState extends State<LoginScreen>
               const SizedBox(height: 16),
               TextField(
                 controller: resetEmailController,
-                style: const TextStyle(color: Colors.white),
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: AppStrings.get('login_email_hint'),
-                  hintStyle: const TextStyle(color: FitGenieTheme.muted),
-                  filled: true,
-                  fillColor: FitGenieTheme.background,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
                 ),
               ),
             ],
@@ -265,9 +242,7 @@ class _LoginScreenState extends State<LoginScreen>
                   }
                 }
               },
-              style: FilledButton.styleFrom(
-                backgroundColor: FitGenieTheme.primary,
-              ),
+              style: FilledButton.styleFrom(minimumSize: const Size(96, 46)),
               child: Text(AppStrings.get('login_send')),
             ),
           ],
@@ -281,252 +256,214 @@ class _LoginScreenState extends State<LoginScreen>
   // ============================================
   @override
   Widget build(BuildContext context) {
+    // auth-v2
+    final t = Theme.of(context).textTheme;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 1.2,
-            colors: [FitGenieTheme.card, FitGenieTheme.bg],
-          ),
-        ),
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                    child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 30),
-
-                            // Logo
-                            _buildLogo(),
-
-                            const SizedBox(height: 20),
-                            const Text(
-                              // Brand name — not localized
-                              'FitGenie',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              AppStrings.get('login_tagline'),
-                              style: const TextStyle(
-                                color: FitGenieTheme.muted,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 40),
-
-                            // Email Field
-                            _buildTextField(
-                              controller: email,
-                              icon: Icons.mail_outline,
-                              hint: AppStrings.get('login_email_hint'),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(height: 12),
-
-                            // Password Field
-                            _buildTextField(
-                              controller: password,
-                              icon: Icons.lock_outline,
-                              hint: AppStrings.get('login_password_hint'),
-                              obscure: !_showPassword,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _showPassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: FitGenieTheme.muted,
-                                  size: 20,
-                                ),
-                                onPressed: () => setState(
-                                    () => _showPassword = !_showPassword),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-
-                            // Remember & Forgot
-                            Row(
+      backgroundColor: FitGenieTheme.bg,
+      body: SafeArea(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight - 48),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 16),
+                          _buildLogo(),
+                          const SizedBox(height: 22),
+                          Text.rich(
+                            const TextSpan(
                               children: [
-                                SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: Checkbox(
-                                    value: rememberMe,
-                                    activeColor: FitGenieTheme.primary,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
+                                TextSpan(
+                                  text: 'FIT',
+                                  style:
+                                      TextStyle(color: FitGenieTheme.primary),
+                                ),
+                                TextSpan(text: 'GENIE'),
+                              ],
+                            ),
+                            style: t.displayMedium?.copyWith(letterSpacing: 2),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            AppStrings.get('login_tagline'),
+                            style: const TextStyle(
+                              color: FitGenieTheme.muted,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 36),
+
+                          _buildTextField(
+                            controller: email,
+                            hint: AppStrings.get('login_email_hint'),
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildTextField(
+                            controller: password,
+                            hint: AppStrings.get('login_password_hint'),
+                            obscure: !_showPassword,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _showPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: FitGenieTheme.muted,
+                                size: 20,
+                              ),
+                              onPressed: () => setState(
+                                  () => _showPassword = !_showPassword),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Remember & Forgot
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Checkbox(
+                                  value: rememberMe,
+                                  onChanged: (v) =>
+                                      setState(() => rememberMe = v ?? true),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                AppStrings.get('login_remember'),
+                                style: const TextStyle(
+                                    color: FitGenieTheme.muted, fontSize: 12),
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                onPressed: _forgotPassword,
+                                child: Text(
+                                  AppStrings.get('login_forgot'),
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+
+                          // Terms & Privacy Policy agreement
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Checkbox(
+                                  value: _agreedToTerms,
+                                  onChanged: (v) => setState(
+                                      () => _agreedToTerms = v ?? false),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(
+                                      () => _agreedToTerms = !_agreedToTerms),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: const TextStyle(
+                                        color: FitGenieTheme.muted,
+                                        fontSize: 12,
+                                        height: 1.4,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                            text: AppStrings.get(
+                                                'login_terms_prefix')),
+                                        TextSpan(
+                                          text: AppStrings.get(
+                                              'login_terms_link'),
+                                          style: const TextStyle(
+                                            color: FitGenieTheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = _openPrivacyPolicy,
+                                        ),
+                                        TextSpan(
+                                            text: AppStrings.get(
+                                                'login_terms_suffix')),
+                                      ],
                                     ),
-                                    onChanged: (v) =>
-                                        setState(() => rememberMe = v ?? true),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  AppStrings.get('login_remember'),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Sign In Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed:
+                                  (loading || !_agreedToTerms) ? null : _signIn,
+                              child: loading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: FitGenieTheme.onPrimary,
+                                      ),
+                                    )
+                                  : Text(
+                                      AppStrings.get('login_button')
+                                          .toUpperCase(),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Divider
+                          Row(
+                            children: [
+                              const Expanded(child: Divider(height: 1)),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  AppStrings.get('login_or'),
                                   style: const TextStyle(
                                       color: FitGenieTheme.muted, fontSize: 12),
                                 ),
-                                const Spacer(),
-                                TextButton(
-                                  onPressed: _forgotPassword,
-                                  child: Text(
-                                    AppStrings.get('login_forgot'),
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                )
-                              ],
-                            ),
-
-                            const SizedBox(height: 6),
-
-                            // Terms & Privacy Policy agreement
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: Checkbox(
-                                    value: _agreedToTerms,
-                                    activeColor: FitGenieTheme.primary,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    onChanged: (v) => setState(
-                                        () => _agreedToTerms = v ?? false),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () => setState(
-                                        () => _agreedToTerms = !_agreedToTerms),
-                                    child: RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(
-                                          color: FitGenieTheme.muted,
-                                          fontSize: 12,
-                                          height: 1.4,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                              text: AppStrings.get(
-                                                  'login_terms_prefix')),
-                                          TextSpan(
-                                            text: AppStrings.get(
-                                                'login_terms_link'),
-                                            style: const TextStyle(
-                                              color: FitGenieTheme.primary,
-                                              fontWeight: FontWeight.w600,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                            recognizer: TapGestureRecognizer()
-                                              ..onTap = _openPrivacyPolicy,
-                                          ),
-                                          TextSpan(
-                                              text: AppStrings.get(
-                                                  'login_terms_suffix')),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 20),
-
-                            // Sign In Button
-                            SizedBox(
-                              width: double.infinity,
-                              child: FilledButton(
-                                onPressed: (loading || !_agreedToTerms)
-                                    ? null
-                                    : _signIn,
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: FitGenieTheme.primary,
-                                  disabledBackgroundColor: FitGenieTheme.primary
-                                      .withValues(alpha: 0.35),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: loading
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(
-                                        AppStrings.get('login_button'),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 16,
-                                        ),
-                                      ),
                               ),
-                            ),
+                              const Expanded(child: Divider(height: 1)),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
 
-                            const SizedBox(height: 20),
+                          _GoogleSignInButton(
+                            onTap: _signInWithGoogle,
+                            loading: googleLoading,
+                            enabled: _agreedToTerms,
+                          ),
 
-                            // Divider
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Divider(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.1))),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  child: Text(
-                                    AppStrings.get('login_or'),
-                                    style: const TextStyle(
-                                        color: FitGenieTheme.muted,
-                                        fontSize: 12),
-                                  ),
-                                ),
-                                Expanded(
-                                    child: Divider(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.1))),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
+                          const Spacer(),
+                          const SizedBox(height: 20),
 
-                            // Google Sign-in Button
-                            _GoogleSignInButton(
-                              onTap: _signInWithGoogle,
-                              loading: googleLoading,
-                              enabled: _agreedToTerms,
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Sign Up Link
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          // Sign Up Link
+                          Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   AppStrings.get('login_signup'),
@@ -543,16 +480,13 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                               ],
                             ),
-
-                            const Spacer(),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -564,43 +498,18 @@ class _LoginScreenState extends State<LoginScreen>
   // ?? LOGO WIDGET
   // ============================================
   Widget _buildLogo() {
-    return Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: FitGenieTheme.primary.withValues(alpha: 0.5),
-            blurRadius: 100,
-            offset: const Offset(0, 0),
-          ),
-        ],
-      ),
-      child: ClipOval(
-        child: Image.asset(
-          'assets/images/fitgenie_logo.png',
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    FitGenieTheme.primary,
-                    FitGenieTheme.primary.withValues(alpha: 0.7),
-                  ],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.fitness_center,
-                size: 50,
-                color: Colors.white,
-              ),
-            );
-          },
-        ),
-      ),
+    return Image.asset(
+      'assets/images/fitgenie_logo.png',
+      width: 72,
+      height: 72,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(
+          Icons.fitness_center,
+          size: 43.199999999999996,
+          color: FitGenieTheme.primary,
+        );
+      },
     );
   }
 
@@ -609,31 +518,19 @@ class _LoginScreenState extends State<LoginScreen>
   // ============================================
   Widget _buildTextField({
     required TextEditingController controller,
-    required IconData icon,
     required String hint,
     bool obscure = false,
     Widget? suffixIcon,
     TextInputType? keyboardType,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: FitGenieTheme.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: obscure,
-        keyboardType: keyboardType,
-        style: const TextStyle(color: FitGenieTheme.text),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          prefixIcon: Icon(icon, color: FitGenieTheme.muted),
-          suffixIcon: suffixIcon,
-          hintText: hint,
-          hintStyle: const TextStyle(color: FitGenieTheme.muted),
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
-        ),
+    return TextField(
+      controller: controller,
+      obscureText: obscure,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: FitGenieTheme.text),
+      decoration: InputDecoration(
+        hintText: hint,
+        suffixIcon: suffixIcon,
       ),
     );
   }
@@ -655,17 +552,19 @@ class _GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(FitGenieTheme.radiusLG);
+
     return Opacity(
       opacity: enabled ? 1.0 : 0.4,
       child: InkWell(
         onTap: (loading || !enabled) ? null : onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: radius,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          height: 54,
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: radius,
+            border: Border.all(color: FitGenieTheme.border, width: 1.5),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -676,7 +575,7 @@ class _GoogleSignInButton extends StatelessWidget {
                   width: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.black54,
+                    color: FitGenieTheme.muted,
                   ),
                 )
               else ...[
@@ -686,7 +585,7 @@ class _GoogleSignInButton extends StatelessWidget {
                   width: 20,
                   errorBuilder: (context, error, stackTrace) {
                     return const Icon(Icons.g_mobiledata,
-                        color: FitGenieTheme.error, size: 24);
+                        color: FitGenieTheme.text, size: 24);
                   },
                 ),
                 const SizedBox(width: 10),
@@ -694,7 +593,7 @@ class _GoogleSignInButton extends StatelessWidget {
                   AppStrings.get('login_google'),
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                    color: FitGenieTheme.text,
                   ),
                 ),
               ],

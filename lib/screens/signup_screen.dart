@@ -126,226 +126,191 @@ class _SignupScreenState extends State<SignupScreen>
 
   @override
   Widget build(BuildContext context) {
+    // auth-v2
+    final t = Theme.of(context).textTheme;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 1.2,
-            colors: [FitGenieTheme.card, FitGenieTheme.bg],
-          ),
-        ),
-        child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-                    child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 10),
-
-                            // Back Button
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: IconButton(
-                                onPressed: _goToLogin,
-                                icon: const Icon(Icons.arrow_back_ios,
-                                    color: Colors.white),
-                              ),
+      backgroundColor: FitGenieTheme.bg,
+      body: SafeArea(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight - 32),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Back
+                          IconButton(
+                            onPressed: _goToLogin,
+                            padding: EdgeInsets.zero,
+                            alignment: Alignment.centerLeft,
+                            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                                size: 20),
+                          ),
+                          const SizedBox(height: 8),
+                          _buildLogo(),
+                          const SizedBox(height: 18),
+                          Text(
+                            AppStrings.get('signup_title').toUpperCase(),
+                            style: t.displayMedium,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            AppStrings.get('signup_subtitle'),
+                            style: const TextStyle(
+                              color: FitGenieTheme.muted,
+                              fontSize: 14,
                             ),
+                          ),
+                          const SizedBox(height: 28),
 
-                            const SizedBox(height: 10),
-
-                            // Logo
-                            _buildLogo(),
-
-                            const SizedBox(height: 20),
-
-                            Text(
-                              AppStrings.get('signup_title'),
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              AppStrings.get('signup_subtitle'),
-                              style: TextStyle(
+                          _buildTextField(
+                            controller: _nameController,
+                            hint: AppStrings.get('field_full_name'),
+                            textCapitalization: TextCapitalization.words,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildTextField(
+                            controller: _emailController,
+                            hint: AppStrings.get('login_email_hint'),
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildTextField(
+                            controller: _passwordController,
+                            hint: AppStrings.get('signup_password_hint'),
+                            obscure: !_showPassword,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _showPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
                                 color: FitGenieTheme.muted,
-                                fontSize: 14,
+                                size: 20,
                               ),
+                              onPressed: () => setState(
+                                  () => _showPassword = !_showPassword),
                             ),
-                            const SizedBox(height: 30),
-
-                            // Name Field
-                            _buildTextField(
-                              controller: _nameController,
-                              icon: Icons.person_outline,
-                              hint: AppStrings.get('field_full_name'),
-                              textCapitalization: TextCapitalization.words,
-                            ),
-                            const SizedBox(height: 12),
-
-                            // Email Field
-                            _buildTextField(
-                              controller: _emailController,
-                              icon: Icons.mail_outline,
-                              hint: AppStrings.get('login_email_hint'),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(height: 12),
-
-                            // Password Field
-                            _buildTextField(
-                              controller: _passwordController,
-                              icon: Icons.lock_outline,
-                              hint: AppStrings.get('signup_password_hint'),
-                              obscure: !_showPassword,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _showPassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: FitGenieTheme.muted,
-                                  size: 20,
-                                ),
-                                onPressed: () => setState(
-                                    () => _showPassword = !_showPassword),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildTextField(
+                            controller: _confirmPasswordController,
+                            hint:
+                                AppStrings.get('signup_confirm_password_hint'),
+                            obscure: !_showConfirmPassword,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _showConfirmPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: FitGenieTheme.muted,
+                                size: 20,
                               ),
+                              onPressed: () => setState(() =>
+                                  _showConfirmPassword = !_showConfirmPassword),
                             ),
-                            const SizedBox(height: 12),
+                          ),
+                          const SizedBox(height: 16),
 
-                            // Confirm Password Field
-                            _buildTextField(
-                              controller: _confirmPasswordController,
-                              icon: Icons.lock_outline,
-                              hint: AppStrings.get('signup_confirm_password_hint'),
-                              obscure: !_showConfirmPassword,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _showConfirmPassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: FitGenieTheme.muted,
-                                  size: 20,
+                          // Terms & Conditions
+                          Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Checkbox(
+                                  value: _agreeToTerms,
+                                  onChanged: (v) => setState(
+                                      () => _agreeToTerms = v ?? false),
                                 ),
-                                onPressed: () => setState(() =>
-                                    _showConfirmPassword =
-                                        !_showConfirmPassword),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Terms & Conditions
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: Checkbox(
-                                    value: _agreeToTerms,
-                                    activeColor: FitGenieTheme.primary,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    onChanged: (v) => setState(
-                                        () => _agreeToTerms = v ?? false),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () => setState(
-                                        () => _agreeToTerms = !_agreeToTerms),
-                                    child: RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(
-                                          color: FitGenieTheme.muted,
-                                          fontSize: 12,
-                                        ),
-                                        children: [
-                                          TextSpan(text: AppStrings.get('login_terms_prefix')),
-                                          TextSpan(
-                                            text: AppStrings.get('signup_terms_of_service'),
-                                            style: TextStyle(
-                                              color: FitGenieTheme.primary,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          TextSpan(text: AppStrings.get('signup_and')),
-                                          TextSpan(
-                                            text: AppStrings.get('signup_privacy_policy'),
-                                            style: TextStyle(
-                                              color: FitGenieTheme.primary,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          TextSpan(text: AppStrings.get('signup_terms_suffix')),
-                                        ],
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () => setState(
+                                      () => _agreeToTerms = !_agreeToTerms),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      style: const TextStyle(
+                                        color: FitGenieTheme.muted,
+                                        fontSize: 12,
                                       ),
+                                      children: [
+                                        TextSpan(
+                                            text: AppStrings.get(
+                                                'login_terms_prefix')),
+                                        TextSpan(
+                                          text: AppStrings.get(
+                                              'signup_terms_of_service'),
+                                          style: const TextStyle(
+                                            color: FitGenieTheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                            text: AppStrings.get('signup_and')),
+                                        TextSpan(
+                                          text: AppStrings.get(
+                                              'signup_privacy_policy'),
+                                          style: const TextStyle(
+                                            color: FitGenieTheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                            text: AppStrings.get(
+                                                'signup_terms_suffix')),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 28),
-
-                            // Sign Up Button
-                            SizedBox(
-                              width: double.infinity,
-                              child: FilledButton(
-                                onPressed: _loading ? null : _signUp,
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: FitGenieTheme.primary,
-                                  disabledBackgroundColor: FitGenieTheme.primary
-                                      .withValues(alpha: 0.5),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: _loading
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(
-                                        AppStrings.get('signup_button'),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 16,
-                                        ),
-                                      ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Sign Up Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: _loading ? null : _signUp,
+                              child: _loading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: FitGenieTheme.onPrimary,
+                                      ),
+                                    )
+                                  : Text(
+                                      AppStrings.get('signup_button')
+                                          .toUpperCase(),
+                                    ),
                             ),
+                          ),
 
-                            const SizedBox(height: 28),
+                          const Spacer(),
+                          const SizedBox(height: 20),
 
-                            // Already have account + Google hint
-                            Column(
+                          // Already have account + Google hint
+                          Center(
+                            child: Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       AppStrings.get('signup_have_account'),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: FitGenieTheme.muted,
                                           fontSize: 13),
                                     ),
@@ -353,7 +318,7 @@ class _SignupScreenState extends State<SignupScreen>
                                       onPressed: _goToLogin,
                                       child: Text(
                                         AppStrings.get('signup_sign_in'),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -363,23 +328,20 @@ class _SignupScreenState extends State<SignupScreen>
                                   AppStrings.get('signup_google_hint'),
                                   style: TextStyle(
                                     color: FitGenieTheme.muted
-                                        .withValues(alpha: 0.5),
+                                        .withValues(alpha: 0.6),
                                     fontSize: 11,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
-
-                            const Spacer(),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -388,75 +350,38 @@ class _SignupScreenState extends State<SignupScreen>
   }
 
   Widget _buildLogo() {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: FitGenieTheme.primary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: ClipOval(
-        child: Image.asset(
-          'assets/images/fitgenie_logo.png',
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    FitGenieTheme.primary,
-                    FitGenieTheme.primary.withValues(alpha: 0.7),
-                  ],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.fitness_center,
-                size: 45,
-                color: Colors.white,
-              ),
-            );
-          },
-        ),
-      ),
+    return Image.asset(
+      'assets/images/fitgenie_logo.png',
+      width: 64,
+      height: 64,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(
+          Icons.fitness_center,
+          size: 38.4,
+          color: FitGenieTheme.primary,
+        );
+      },
     );
   }
 
   Widget _buildTextField({
     required TextEditingController controller,
-    required IconData icon,
     required String hint,
     bool obscure = false,
     Widget? suffixIcon,
     TextInputType? keyboardType,
     TextCapitalization textCapitalization = TextCapitalization.none,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: FitGenieTheme.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: obscure,
-        keyboardType: keyboardType,
-        textCapitalization: textCapitalization,
-        style: const TextStyle(color: FitGenieTheme.text),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          prefixIcon: Icon(icon, color: FitGenieTheme.muted),
-          suffixIcon: suffixIcon,
-          hintText: hint,
-          hintStyle: const TextStyle(color: FitGenieTheme.muted),
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
-        ),
+    return TextField(
+      controller: controller,
+      obscureText: obscure,
+      keyboardType: keyboardType,
+      textCapitalization: textCapitalization,
+      style: const TextStyle(color: FitGenieTheme.text),
+      decoration: InputDecoration(
+        hintText: hint,
+        suffixIcon: suffixIcon,
       ),
     );
   }

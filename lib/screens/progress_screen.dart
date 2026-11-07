@@ -309,7 +309,7 @@ Short motivating feedback do (2-3 lines max) with tips.''',
       debugPrint('AI insight error: $e');
       if (!mounted) return;
       setState(() => _loadingInsight = false);
-      AppSnackbar.showError(context, '$e');
+      AppSnackbar.showError(context, AppStrings.get('snackbar_error'));
     }
   }
 
@@ -1258,7 +1258,9 @@ Short motivating feedback do (2-3 lines max) with tips.''',
       await _loadWeightHistory();
     } catch (e) {
       debugPrint('Save weight error: $e');
-      if (mounted) AppSnackbar.showError(context, '$e');
+      if (mounted) {
+        AppSnackbar.showError(context, AppStrings.get('snackbar_error'));
+      }
     }
   }
 }

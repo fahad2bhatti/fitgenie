@@ -545,8 +545,9 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ==========================================
   @override
   Widget build(BuildContext context) {
-    final name =
-        widget.userName.trim().isEmpty ? AppStrings.get('dashboard_user_fallback') : widget.userName.trim();
+    final name = widget.userName.trim().isEmpty
+        ? AppStrings.get('dashboard_user_fallback')
+        : widget.userName.trim();
 
     return Scaffold(
       backgroundColor: FitGenieTheme.bg,
@@ -670,8 +671,10 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   String _getStepStatusText() {
-    if (!_stepCounterHasPermission) return AppStrings.get('dashboard_step_tap_enable');
-    if (!_stepCounterInitialized) return AppStrings.get('dashboard_step_initializing');
+    if (!_stepCounterHasPermission)
+      return AppStrings.get('dashboard_step_tap_enable');
+    if (!_stepCounterInitialized)
+      return AppStrings.get('dashboard_step_initializing');
 
     if (!_stepCounterService.isSensorAvailable) {
       return AppStrings.get('dashboard_step_sensor_unavailable');
@@ -1012,11 +1015,17 @@ class _DashboardScreenState extends State<DashboardScreen>
         // Baqi: chhote text pills
         Row(
           children: [
-            Expanded(child: _logButton(AppStrings.get('label_water'), _showAddWaterDialog)),
+            Expanded(
+                child: _logButton(
+                    AppStrings.get('label_water'), _showAddWaterDialog)),
             const SizedBox(width: 10),
-            Expanded(child: _logButton(AppStrings.get('dashboard_stat_steps'), _showAddStepsDialog)),
+            Expanded(
+                child: _logButton(AppStrings.get('dashboard_stat_steps'),
+                    _showAddStepsDialog)),
             const SizedBox(width: 10),
-            Expanded(child: _logButton(AppStrings.get('dashboard_stat_active'), _showAddActiveMinutesDialog)),
+            Expanded(
+                child: _logButton(AppStrings.get('dashboard_stat_active'),
+                    _showAddActiveMinutesDialog)),
           ],
         ),
       ],
