@@ -43,13 +43,10 @@ class WelcomeIntroScreen extends StatefulWidget {
 class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
     with TickerProviderStateMixin {
   late final AnimationController _logoController;
-  late final AnimationController _shineController;
   late final AnimationController _introController;
 
   late final Animation<double> _logoScale;
   late final Animation<double> _logoOpacity;
-  late final Animation<double> _logoRotation;
-  late final Animation<double> _logoReveal; // circular "draw-in" mask 0→1
 
   late final Animation<double> _introOpacity;
   late final Animation<Offset> _introSlide;
@@ -65,24 +62,9 @@ class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
       duration: const Duration(milliseconds: 1400),
     );
 
-    // Runs once, right after the logo has finished revealing — a soft
-    // diagonal light sweep passing over the icon (the "polish" moment).
-    _shineController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    );
-
     _introController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
-    );
-
-    // Logo grows from a small dot into full size via a circular clip —
-    // the closest honest Flutter equivalent of the video's "assembling"
-    // logo, since that clip is a raster PNG rather than an SVG path.
-    _logoReveal = CurvedAnimation(
-      parent: _logoController,
-      curve: const Interval(0.0, 0.65, curve: Curves.easeOutCubic),
     );
 
     _logoScale = Tween<double>(begin: 0.6, end: 1.0).animate(
@@ -96,13 +78,6 @@ class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
       CurvedAnimation(
         parent: _logoController,
         curve: const Interval(0.0, 0.3, curve: Curves.easeIn),
-      ),
-    );
-
-    _logoRotation = Tween<double>(begin: -0.15, end: 0).animate(
-      CurvedAnimation(
-        parent: _logoController,
-        curve: const Interval(0.0, 0.65, curve: Curves.easeOutCubic),
       ),
     );
 
@@ -132,7 +107,6 @@ class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
   @override
   void dispose() {
     _logoController.dispose();
-    _shineController.dispose();
     _introController.dispose();
     super.dispose();
   }
@@ -299,27 +273,6 @@ class _WelcomeIntroScreenState extends State<WelcomeIntroScreen>
       ],
     );
   }
-}
-
-// ==========================================
-// ✨ Circular reveal clip — logo "draws itself in" from the center
-// outward as `fraction` goes 0 → 1.
-// ==========================================
-class _CircleRevealClipper extends CustomClipper<Path> {
-  final double fraction;
-  _CircleRevealClipper(this.fraction);
-
-  @override
-  Path getClip(Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final maxRadius = size.longestSide * 0.75; // slightly over-scan corners
-    final radius = maxRadius * fraction;
-    return Path()..addOval(Rect.fromCircle(center: center, radius: radius));
-  }
-
-  @override
-  bool shouldReclip(covariant _CircleRevealClipper oldClipper) =>
-      oldClipper.fraction != fraction;
 }
 
 // ==========================================

@@ -1,6 +1,5 @@
 // lib/screens/splash_screen.dart
 
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../app/fitgenie_theme.dart';
 import '../core/app_strings.dart';
