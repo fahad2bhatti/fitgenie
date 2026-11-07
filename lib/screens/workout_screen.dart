@@ -1060,16 +1060,73 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
   }
 
   Future<void> _loadCoachTip() async {
+    // workout-fixes-v1
+    // Din mein sirf ek baar AI: pehle memory, phir Firestore, phir (sirf zaroorat par) AI.
+    final today = DateTime.now();
+    final dayKey =
+        '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+    final safeTitle = widget.workoutTitle
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+    final cacheKey = '${widget.userId}|$dayKey|$safeTitle';
+
+    final cached = _coachTipCache[cacheKey];
+    if (cached != null) {
+      if (!mounted) return;
+      setState(() {
+        _coachTip = cached;
+        _tipLoading = false;
+      });
+      return;
+    }
+
+    final ref = _firestore
+        .collection('users')
+        .doc(widget.userId)
+        .collection('coachTips')
+        .doc('${dayKey}_$safeTitle');
+
+    // Aaj ka tip Firestore mein pehle se hai? (rules ya net ka masla ho to chhod do)
+    try {
+      final snap = await ref.get().timeout(const Duration(seconds: 4));
+      final saved = snap.data()?['tip'];
+      if (saved is String && saved.trim().isNotEmpty) {
+        _coachTipCache[cacheKey] = saved;
+        if (!mounted) return;
+        setState(() {
+          _coachTip = saved;
+          _tipLoading = false;
+        });
+        return;
+      }
+    } catch (e) {
+      debugPrint('Coach tip read skipped: $e');
+    }
+
+    // Nahi mila: AI se sirf ek baar maango
     try {
       final names = _items.map((e) => e.name).join(', ');
-      final tip = await _aiService.chat(
+      final tip = (await _aiService.chat(
         uid: widget.userId,
         userMessage:
             'Aaj ka workout: ${widget.workoutTitle} ($names). Sirf 2 chhoti lines mein ek practical coach tip do (warm-up ya form ke baare mein). Koi list ya emoji nahi.',
-      );
+      ))
+          .trim();
+
+      if (tip.isNotEmpty) {
+        _coachTipCache[cacheKey] = tip;
+        unawaited(
+          ref.set({
+            'tip': tip,
+            'createdAt': FieldValue.serverTimestamp(),
+          }).catchError((Object e) {
+            debugPrint('Coach tip save skipped: $e');
+          }),
+        );
+      }
       if (!mounted) return;
       setState(() {
-        _coachTip = tip.trim();
+        _coachTip = tip;
         _tipLoading = false;
       });
     } catch (e) {
@@ -1088,17 +1145,24 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
     setState(() => _starting = true);
 
     try {
-      final docRef = await _firestore
+      // doc() local ID foran deta hai; set() ka ack (net) ka intezaar nahi
+      final docRef = _firestore
           .collection('users')
           .doc(widget.userId)
           .collection('workouts')
-          .add({
-        'type': widget.workoutTitle,
-        'startedAt': FieldValue.serverTimestamp(),
-        'status': 'active',
-        'sets': [],
-        'totalSets': 0,
-      });
+          .doc();
+
+      unawaited(
+        docRef.set({
+          'type': widget.workoutTitle,
+          'startedAt': FieldValue.serverTimestamp(),
+          'status': 'active',
+          'sets': [],
+          'totalSets': 0,
+        }).catchError((Object e) {
+          debugPrint('Start workout write error: $e');
+        }),
+      );
 
       if (!mounted) return;
 
@@ -1127,6 +1191,12 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
     final item = _items[index];
     if (item.isDone) return;
 
+    // Sirf current exercise khulti hai, baqi locked
+    if (index != _currentIndex) {
+      AppSnackbar.showInfo(context, 'Pehle upar wali exercise khatam karo');
+      return;
+    }
+
     if (!_started) {
       await _startWorkout();
       if (!_started || !mounted) return;
@@ -1136,6 +1206,9 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
 
   void _showSetSheet(_WorkoutItem item) {
     if (!mounted) return;
+
+    // Is set ki shuruaat yaad rakho: sheet band karke dobara kholo to stopwatch resume
+    item.setStartedAt ??= DateTime.now();
     final setNo = item.doneSets + 1;
 
     showModalBottomSheet<bool>(
@@ -1153,14 +1226,22 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
           'total': '${item.sets}',
         }),
         restSeconds: item.restSeconds, // REST_PARAM
+        initialElapsedSeconds: item.setElapsedSeconds, // ELAPSED_PARAM
         onSetLogged: (weight, reps, durationSeconds, toFailure) async {
           await _logSet(item, weight, reps, durationSeconds);
         },
       ),
     ).then((completed) {
       if (!mounted) return;
-      if (completed == true && !item.isDone) {
-        _showSetSheet(item);
+      if (completed == true) {
+        if (!item.isDone) {
+          // Agla set
+          _showSetSheet(item);
+        } else {
+          // Exercise khatam: agli exercise khud khul jaye
+          final next = _currentIndex;
+          if (next != -1) _showSetSheet(_items[next]);
+        }
       }
     });
   }
@@ -1186,19 +1267,25 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
 
     item.weight = weight;
     item.doneSets++;
+    item.setStartedAt = null; // agla set naye stopwatch se
     if (mounted) setState(() => _loggedSets.add(setData));
 
     final id = _sessionId;
     if (id != null) {
-      await _firestore
-          .collection('users')
-          .doc(widget.userId)
-          .collection('workouts')
-          .doc(id)
-          .update({
-        'sets': FieldValue.arrayUnion([setData]),
-        'totalSets': _loggedSets.length,
-      });
+      // Net kamzor/band ho tab bhi set screen na atke: write queue ho jata hai
+      unawaited(
+        _firestore
+            .collection('users')
+            .doc(widget.userId)
+            .collection('workouts')
+            .doc(id)
+            .update({
+          'sets': FieldValue.arrayUnion([setData]),
+          'totalSets': _loggedSets.length,
+        }).catchError((Object e) {
+          debugPrint('Log set write error: $e');
+        }),
+      );
     }
   }
 
@@ -1270,7 +1357,13 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
       weight: _weightFor(ex),
     );
     setState(() => _items.add(item));
-    _openExercise(_items.length - 1);
+
+    if (_currentIndex == _items.length - 1) {
+      // Baqi sab ho chuki: seedha khol do
+      _openExercise(_items.length - 1);
+    } else {
+      AppSnackbar.showInfo(context, '${ex.name} list mein jud gayi');
+    }
   }
 
   // ============================================================
@@ -1281,16 +1374,17 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
     _ticker?.cancel();
     final id = _sessionId;
     if (id == null) return;
-    try {
-      await _firestore
+    unawaited(
+      _firestore
           .collection('users')
           .doc(widget.userId)
           .collection('workouts')
           .doc(id)
-          .delete();
-    } catch (e) {
-      debugPrint('Discard session error: $e');
-    }
+          .delete()
+          .catchError((Object e) {
+        debugPrint('Discard session error: $e');
+      }),
+    );
   }
 
   Future<void> _handleBack() async {
@@ -1322,8 +1416,9 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         ? DateTime.now().difference(_startTime!).inMinutes
         : 0;
 
-    try {
-      await _firestore
+    // Server ke ack ka intezaar nahi: offline mein bhi screen aage badhe
+    unawaited(
+      _firestore
           .collection('users')
           .doc(widget.userId)
           .collection('workouts')
@@ -1333,14 +1428,10 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         'status': 'completed',
         'duration': duration,
         'totalSets': _loggedSets.length,
-      });
-    } catch (e) {
-      debugPrint('Finish workout error: $e');
-      if (!mounted) return;
-      setState(() => _finishing = false);
-      AppSnackbar.showError(context, '$e');
-      return;
-    }
+      }).catchError((Object e) {
+        debugPrint('Finish workout write error: $e');
+      }),
+    );
 
     _ticker?.cancel();
     if (!mounted) return;
@@ -1393,11 +1484,24 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
             child: FilledButton(
               onPressed: () {
                 Navigator.pop(dialogContext);
-                AdsService.instance.showInterstitialAd(
-                  onDismissed: () {
-                    if (mounted) Navigator.pop(context);
-                  },
-                );
+
+                // Screen band karne ka raasta ek hi baar chale (ad ka callback ya fallback)
+                var exited = false;
+                void exitScreen() {
+                  if (exited || !mounted) return;
+                  exited = true;
+                  Navigator.pop(context);
+                }
+
+                try {
+                  AdsService.instance
+                      .showInterstitialAd(onDismissed: exitScreen);
+                } catch (e) {
+                  debugPrint('Interstitial error: $e');
+                  exitScreen();
+                }
+                // Ad load na hua ho ya callback na aaye to bhi screen na atke
+                Future.delayed(const Duration(seconds: 6), exitScreen);
               },
               child: Text(AppStrings.get('done')),
             ),
@@ -1542,7 +1646,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
     final totalSets = _items.fold<int>(0, (sum, e) => sum + e.sets);
     final doneSets = _items.fold<int>(
         0, (sum, e) => sum + (e.doneSets > e.sets ? e.sets : e.doneSets));
-    final doneEx = _items.where((e) => e.isDone).length;
+    final doneEx = _items.where((e) => e.doneSets >= e.sets).length;
     final minutes = widget.plan?.estimatedMinutes;
     final progress = totalSets == 0 ? 0.0 : doneSets / totalSets;
 
@@ -1681,118 +1785,155 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
 
   Widget _buildExerciseTile(int index) {
     final item = _items[index];
-    final done = item.isDone;
-    final isCurrent = _started && index == _currentIndex;
+    final cur = _currentIndex;
+    final isCurrent = index == cur;
+    final locked = !item.isDone && !isCurrent;
+    final finished = item.doneSets >= item.sets;
+    final active = isCurrent && _started;
     final hasNotes = item.notes != null && item.notes!.isNotEmpty;
 
-    final String subtitle = done
-        ? '${item.sets} × ${item.reps} · ${_fmtWeight(item.weight)} kg'
-        : '${item.sets} × ${item.reps} · rest ${item.restSeconds}s';
+    final String subtitle = item.skipped
+        ? 'Skipped'
+        : finished
+            ? '${item.sets} × ${item.reps} · ${_fmtWeight(item.weight)} kg'
+            : '${item.sets} × ${item.reps} · rest ${item.restSeconds}s';
 
     Widget trailing;
-    if (done) {
+    if (item.isDone) {
       trailing = const SizedBox.shrink();
-    } else if (isCurrent) {
+    } else if (active) {
       trailing = Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: FitGenieTheme.primary,
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'SET ${item.doneSets + 1}',
-              style: const TextStyle(
-                color: FitGenieTheme.onPrimary,
-                fontWeight: FontWeight.w800,
-                fontSize: 11,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
+        child: Text(
+          'SET ${item.doneSets + 1}',
+          style: const TextStyle(
+            color: FitGenieTheme.onPrimary,
+            fontWeight: FontWeight.w800,
+            fontSize: 11,
+            letterSpacing: 0.5,
+          ),
         ),
       );
+    } else if (locked) {
+      trailing = const Icon(Icons.lock_outline_rounded,
+          size: 18, color: FitGenieTheme.muted);
     } else {
       trailing = const Icon(Icons.chevron_right_rounded,
           size: 22, color: FitGenieTheme.muted);
     }
 
-    return FGCard(
-      onTap: done ? null : () => _openExercise(index),
-      color: isCurrent ? FitGenieTheme.primary.withValues(alpha: 0.08) : null,
-      border: Border.all(
-        color: isCurrent
-            ? FitGenieTheme.primary.withValues(alpha: 0.6)
-            : FitGenieTheme.border,
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        children: [
-          _buildNumberBadge(index, done, isCurrent),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    color: done ? FitGenieTheme.muted : FitGenieTheme.text,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style:
-                      const TextStyle(color: FitGenieTheme.muted, fontSize: 12),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (isCurrent && hasNotes) ...[
-                  const SizedBox(height: 3),
+    return Opacity(
+      opacity: locked ? 0.55 : 1,
+      child: FGCard(
+        onTap: item.isDone ? null : () => _openExercise(index),
+        color: active ? FitGenieTheme.primary.withValues(alpha: 0.08) : null,
+        border: Border.all(
+          color: active
+              ? FitGenieTheme.primary.withValues(alpha: 0.6)
+              : FitGenieTheme.border,
+        ),
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            _buildNumberBadge(index, finished && !item.skipped, active),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    item.notes!,
-                    style: const TextStyle(
-                      color: FitGenieTheme.textSecondary,
-                      fontSize: 11,
-                      fontStyle: FontStyle.italic,
+                    item.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      color: item.isDone
+                          ? FitGenieTheme.muted
+                          : FitGenieTheme.text,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ],
-                const SizedBox(height: 8),
-                Row(
-                  children: List.generate(item.sets, (s) {
-                    return Expanded(
-                      child: Container(
-                        height: 4,
-                        margin:
-                            EdgeInsets.only(right: s == item.sets - 1 ? 0 : 4),
-                        decoration: BoxDecoration(
-                          color: s < item.doneSets
-                              ? FitGenieTheme.primary
-                              : FitGenieTheme.border,
-                          borderRadius: BorderRadius.circular(2),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                        color: FitGenieTheme.muted, fontSize: 12),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (active && hasNotes) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      item.notes!,
+                      style: const TextStyle(
+                        color: FitGenieTheme.textSecondary,
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Row(
+                    children: List.generate(item.sets, (s) {
+                      return Expanded(
+                        child: Container(
+                          height: 4,
+                          margin: EdgeInsets.only(
+                              right: s == item.sets - 1 ? 0 : 4),
+                          decoration: BoxDecoration(
+                            color: s < item.doneSets
+                                ? FitGenieTheme.primary
+                                : FitGenieTheme.border,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  if (active) ...[
+                    const SizedBox(height: 6),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () => _skipExercise(index),
+                        child: const Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                          child: Text(
+                            'SKIP',
+                            style: TextStyle(
+                              color: FitGenieTheme.muted,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
                         ),
                       ),
-                    );
-                  }),
-                ),
-              ],
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          trailing,
-        ],
+            const SizedBox(width: 12),
+            trailing,
+          ],
+        ),
       ),
     );
+  }
+
+  void _skipExercise(int index) {
+    setState(() {
+      _items[index].skipped = true;
+      _items[index].setStartedAt = null;
+    });
   }
 
   Widget _buildNumberBadge(int index, bool done, bool isCurrent) {
@@ -1915,6 +2056,12 @@ class _WorkoutItem {
   double weight;
   int doneSets = 0;
 
+  /// User ne "SKIP" dabaya
+  bool skipped = false;
+
+  /// Current set kab shuru hua (sheet band/khol karne par stopwatch resume ke liye)
+  DateTime? setStartedAt;
+
   _WorkoutItem({
     required this.name,
     required this.exercise,
@@ -1925,10 +2072,18 @@ class _WorkoutItem {
     this.notes,
   });
 
-  bool get isDone => doneSets >= sets;
+  bool get isDone => skipped || doneSets >= sets;
+
+  int get setElapsedSeconds {
+    final s = setStartedAt;
+    return s == null ? 0 : DateTime.now().difference(s).inSeconds;
+  }
 
   bool get isTimed {
     final r = reps.toLowerCase();
     return r.contains('sec') || r.contains('min');
   }
 }
+
+// Coach tip: isi app session mein dobara AI ko request na jaye
+final Map<String, String> _coachTipCache = {};

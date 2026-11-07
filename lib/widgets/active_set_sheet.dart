@@ -25,6 +25,9 @@ class ActiveSetSheet extends StatefulWidget {
   /// e.g. "Set 2 of 3"
   final String setLabel;
 
+  /// Is set ka guzra hua waqt (sheet band karke dobara kholne par resume).
+  final int initialElapsedSeconds;
+
   /// Rest between sets (from the workout plan). When null, a
   /// difficulty-based suggestion is used.
   final int? restSeconds;
@@ -43,6 +46,7 @@ class ActiveSetSheet extends StatefulWidget {
     required this.initialReps,
     required this.setLabel,
     required this.onSetLogged,
+    this.initialElapsedSeconds = 0,
     this.restSeconds,
   });
 
@@ -194,7 +198,13 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
                   ),
                   const SizedBox(height: 16),
                 ],
-                Center(child: CircularStopwatch(key: _stopwatchKey, size: 170)),
+                Center(
+                    child: CircularStopwatch(
+                  key: _stopwatchKey,
+                  size: 170,
+                  initialElapsed:
+                      Duration(seconds: widget.initialElapsedSeconds),
+                )),
                 const SizedBox(height: 20),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

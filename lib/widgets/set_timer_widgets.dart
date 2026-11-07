@@ -45,16 +45,17 @@ int suggestedRestSeconds({
 // ============================================================
 
 class CircularStopwatch extends StatefulWidget {
-  /// Called every second with the elapsed duration so far.
+  final double size;
   final ValueChanged<Duration>? onTick;
 
-  /// Diameter of the circle.
-  final double size;
+  /// Pehle se guzra hua waqt, taake sheet dobara khulne par stopwatch wahin se chale.
+  final Duration initialElapsed;
 
   const CircularStopwatch({
     super.key,
+    this.size = 170,
     this.onTick,
-    this.size = 220,
+    this.initialElapsed = Duration.zero,
   });
 
   @override
@@ -64,7 +65,7 @@ class CircularStopwatch extends StatefulWidget {
 class CircularStopwatchState extends State<CircularStopwatch> {
   // timer-v2
   Timer? _timer;
-  Duration _elapsed = Duration.zero;
+  late Duration _elapsed = widget.initialElapsed;
   bool _running = false;
 
   void start() {
