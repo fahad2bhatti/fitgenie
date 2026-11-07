@@ -553,7 +553,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         gradient: LinearGradient(
           colors: [
             FitGenieTheme.primary.withValues(alpha: 0.2),
-            Colors.purple.withValues(alpha: 0.1),
+            FitGenieTheme.primary.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -568,7 +568,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                 height: 60,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [FitGenieTheme.primary, Colors.purple],
+                    colors: [FitGenieTheme.primary, FitGenieTheme.primaryDark],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
@@ -948,7 +948,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                           decoration: BoxDecoration(
                             color: isCompleted
                                 ? FitGenieTheme.success.withValues(alpha: 0.2)
-                                : Colors.amber.withValues(alpha: 0.2),
+                                : FitGenieTheme.warning.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -956,7 +956,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                             style: TextStyle(
                               color: isCompleted
                                   ? FitGenieTheme.success
-                                  : Colors.amber,
+                                  : FitGenieTheme.warning,
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1028,19 +1028,19 @@ class _ChallengesScreenState extends State<ChallengesScreen>
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: unlocked
-              ? Colors.amber.withValues(alpha: 0.1)
+              ? FitGenieTheme.warning.withValues(alpha: 0.1)
               : FitGenieTheme.card,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: unlocked
-                ? Colors.amber.withValues(alpha: 0.5)
+                ? FitGenieTheme.warning.withValues(alpha: 0.5)
                 : Colors.white.withValues(alpha: 0.06),
             width: unlocked ? 2 : 1,
           ),
           boxShadow: unlocked
               ? [
                   BoxShadow(
-                    color: Colors.amber.withValues(alpha: 0.2),
+                    color: FitGenieTheme.warning.withValues(alpha: 0.2),
                     blurRadius: 8,
                   ),
                 ]
@@ -1132,7 +1132,7 @@ class _ChallengesScreenState extends State<ChallengesScreen>
                           value: progress,
                           backgroundColor: Colors.white.withValues(alpha: 0.1),
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.amber.withValues(alpha: 0.7),
+                            FitGenieTheme.warning.withValues(alpha: 0.7),
                           ),
                           minHeight: 6,
                         ),
@@ -1189,11 +1189,11 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               height: 80,
               decoration: BoxDecoration(
                 color: isUnlocked
-                    ? Colors.amber.withValues(alpha: 0.2)
+                    ? FitGenieTheme.warning.withValues(alpha: 0.2)
                     : Colors.grey.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isUnlocked ? Colors.amber : Colors.grey,
+                  color: isUnlocked ? FitGenieTheme.warning : Colors.grey,
                   width: 3,
                 ),
               ),
@@ -1224,13 +1224,15 @@ class _ChallengesScreenState extends State<ChallengesScreen>
               decoration: BoxDecoration(
                 color: isUnlocked
                     ? FitGenieTheme.success.withValues(alpha: 0.2)
-                    : Colors.amber.withValues(alpha: 0.2),
+                    : FitGenieTheme.warning.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 isUnlocked ? '✅ Unlocked!' : '+${achievement.points} XP',
                 style: TextStyle(
-                  color: isUnlocked ? FitGenieTheme.success : Colors.amber,
+                  color: isUnlocked
+                      ? FitGenieTheme.success
+                      : FitGenieTheme.warning,
                   fontWeight: FontWeight.bold,
                 ),
               ),

@@ -52,7 +52,7 @@ class _MealScannerScreenState extends State<MealScannerScreen>
     final watch = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(AppStrings.get('ad_scan_title')),
         content: Text(AppStrings.get('ad_scan_body')),
@@ -640,7 +640,7 @@ class _MealScannerScreenState extends State<MealScannerScreen>
         _NutritionTile(
           label: AppStrings.get('scanner_fat'),
           value: '${_analysis!.fat}g',
-          color: Colors.amber,
+          color: FitGenieTheme.warning,
           icon: Icons.opacity_rounded,
         ),
         _NutritionTile(

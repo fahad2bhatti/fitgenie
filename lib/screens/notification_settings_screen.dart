@@ -188,7 +188,7 @@ class _NotificationSettingsScreenState
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
               primary: FitGenieTheme.primary,
-              surface: Color(0xFF1A1A1A),
+              surface: FitGenieTheme.card,
             ),
           ),
           child: child!,
@@ -207,7 +207,7 @@ class _NotificationSettingsScreenState
     return Scaffold(
       backgroundColor: FitGenieTheme.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         title: Text(AppStrings.get('notifications_title')),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -290,7 +290,7 @@ class _NotificationSettingsScreenState
                   // Evening Reminder
                   _buildNotificationCard(
                     icon: Icons.nightlight_round,
-                    iconColor: Colors.purple,
+                    iconColor: FitGenieTheme.primary,
                     title: AppStrings.get('notifications_evening'),
                     subtitle: AppStrings.get('notifications_evening_sub'),
                     enabled: _eveningEnabled,
@@ -353,7 +353,7 @@ class _NotificationSettingsScreenState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: enabled
@@ -451,7 +451,7 @@ class _NotificationSettingsScreenState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: FitGenieTheme.card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _waterEnabled
@@ -466,11 +466,11 @@ class _NotificationSettingsScreenState
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha: 0.2),
+                  color: FitGenieTheme.teal.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child:
-                    const Icon(Icons.water_drop, color: Colors.blue, size: 24),
+                child: const Icon(Icons.water_drop,
+                    color: FitGenieTheme.teal, size: 24),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -525,7 +525,7 @@ class _NotificationSettingsScreenState
                   ),
                   DropdownButton<int>(
                     value: _waterIntervalHours,
-                    dropdownColor: const Color(0xFF1A1A1A),
+                    dropdownColor: FitGenieTheme.card,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: FitGenieTheme.primary,

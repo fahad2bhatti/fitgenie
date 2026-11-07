@@ -235,7 +235,7 @@ class _SavedMealsScreenState extends State<SavedMealsScreen> {
                           children: [
                             _infoTag('${meal.protein}g P', FitGenieTheme.teal),
                             _infoTag('${meal.carbs}g C', FitGenieTheme.warning),
-                            _infoTag('${meal.fats}g F', Colors.purple),
+                            _infoTag('${meal.fats}g F', FitGenieTheme.primary),
                             _infoTag(meal.mealType.toUpperCase(),
                                 FitGenieTheme.primary),
                           ],

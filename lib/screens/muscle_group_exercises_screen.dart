@@ -54,6 +54,18 @@ class _MuscleGroupExercisesScreenState
     }).toList();
   }
 
+  // l10n-r3b: filter values stay English (used for filtering), only the chip text is translated
+  String _filterLabel(String v) {
+    const keys = <String, String>{
+      'All': 'exercise_all',
+      'Beginner': 'level_beginner',
+      'Intermediate': 'level_intermediate',
+      'Advanced': 'level_advanced',
+    };
+    final key = keys[v];
+    return key == null ? v : AppStrings.get(key);
+  }
+
   List<String> get _equipmentOptions {
     final Set<String> equipment = {'All'};
     for (var e in _allExercises) {
@@ -252,7 +264,7 @@ class _MuscleGroupExercisesScreenState
                         ),
                       ),
                       child: Text(
-                        eq,
+                        _filterLabel(eq),
                         style: TextStyle(
                           fontSize: 12,
                           color:
@@ -306,7 +318,7 @@ class _MuscleGroupExercisesScreenState
                     ),
                     child: Center(
                       child: Text(
-                        diff,
+                        _filterLabel(diff),
                         style: TextStyle(
                           fontSize: 11,
                           color: isSelected ? diffColor : FitGenieTheme.muted,
@@ -796,11 +808,11 @@ class _MuscleGroupExercisesScreenState
                     if (tips.isNotEmpty) ...[
                       _buildSectionTitle(
                           AppStrings.get('muscle_exercises_tips'),
-                          Colors.amber),
+                          FitGenieTheme.warning),
                       const SizedBox(height: 14),
                       for (int i = 0; i < tips.length; i++)
-                        _buildBulletItem(
-                            tips[i], Colors.amber, Icons.lightbulb_outline),
+                        _buildBulletItem(tips[i], FitGenieTheme.warning,
+                            Icons.lightbulb_outline),
                       const SizedBox(height: 24),
                     ],
 

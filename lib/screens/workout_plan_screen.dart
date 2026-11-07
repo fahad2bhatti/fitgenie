@@ -329,6 +329,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                 userId: widget.userId,
                 workoutType: _resolveWorkoutTypeForTracker(),
                 workoutTitle: widget.plan.name,
+                plan: widget.plan,
               ),
             ),
           );
@@ -876,13 +877,13 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
                     if (tips.isNotEmpty) ...[
                       _buildSectionTitle(
                         AppStrings.get('muscle_exercises_tips'),
-                        Colors.amber,
+                        FitGenieTheme.warning,
                       ),
                       const SizedBox(height: 14),
                       for (final tip in tips)
                         _buildBulletItem(
                           tip,
-                          Colors.amber,
+                          FitGenieTheme.warning,
                           Icons.lightbulb_outline,
                         ),
                       const SizedBox(height: 24),

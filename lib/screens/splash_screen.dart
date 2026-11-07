@@ -151,9 +151,9 @@ class _SplashScreenState extends State<SplashScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF0A0A0F),
-              Color(0xFF0D1117),
-              Color(0xFF0A0A0F),
+              FitGenieTheme.bg,
+              FitGenieTheme.card2,
+              FitGenieTheme.bg,
             ],
             stops: [0.0, 0.5, 1.0],
           ),

@@ -194,7 +194,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       setState(() => _isSaving = false);
       AppSnackbar.showError(
         context,
-        'Kuch masla ho gaya: $e',
+        AppStrings.get('onboarding_save_error', params: {'error': '$e'}),
       );
     }
   }
@@ -718,7 +718,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         'display': AppStrings.get('goal_get_fit'),
         'icon': Icons.favorite
       },
-      {'label': 'Gain Strength', 'icon': Icons.bolt},
+      {
+        'label': 'Gain Strength',
+        'display': AppStrings.get('goal_gain_strength'),
+        'icon': Icons.bolt
+      },
     ];
 
     return _pageWrapper(

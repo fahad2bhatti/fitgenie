@@ -67,7 +67,7 @@ class _ShellScreenState extends State<ShellScreen> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: FitGenieTheme.card2,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.3),
@@ -80,7 +80,7 @@ class _ShellScreenState extends State<ShellScreen> {
           currentIndex: _currentIndex,
           onTap: (index) => setState(() => _currentIndex = index),
           type: BottomNavigationBarType.fixed,
-          backgroundColor: const Color(0xFF1A1A1A),
+          backgroundColor: FitGenieTheme.card2,
           selectedItemColor: FitGenieTheme.primary,
           unselectedItemColor: Colors.grey,
           selectedFontSize: 12,
@@ -218,7 +218,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
     final watch = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(AppStrings.get('ad_chat_limit_title')),
         content: Text(AppStrings.get('ad_chat_limit_body',
@@ -310,7 +310,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
     final isSmallScreen = screenWidth < 400;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
+      backgroundColor: FitGenieTheme.bg,
       appBar: _buildAppBar(),
       body: SafeArea(
         child: Column(
@@ -346,7 +346,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: FitGenieTheme.card,
       elevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
@@ -445,7 +445,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
     return Container(
       height: 52,
       decoration: BoxDecoration(
-        color: const Color(0xFF121212),
+        color: FitGenieTheme.card2,
         border: Border(
           top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
@@ -484,7 +484,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E1E),
+              color: FitGenieTheme.card,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: FitGenieTheme.primary.withValues(alpha: 0.3),
@@ -522,7 +522,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
         isSmallScreen ? 12 : 16,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: FitGenieTheme.card,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
@@ -537,7 +537,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF0D0D0D),
+                color: FitGenieTheme.card2,
                 borderRadius: BorderRadius.circular(25),
                 border: Border.all(
                   color: FitGenieTheme.primary.withValues(alpha: 0.2),
@@ -653,7 +653,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
                 vertical: isSmallScreen ? 12 : 14,
               ),
               decoration: BoxDecoration(
-                color: isUser ? FitGenieTheme.primary : const Color(0xFF1E1E1E),
+                color: isUser ? FitGenieTheme.primary : FitGenieTheme.card,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
@@ -853,7 +853,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E1E),
+              color: FitGenieTheme.card,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(18),
                 topRight: Radius.circular(18),
@@ -919,7 +919,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
@@ -981,7 +981,7 @@ class _AICoachScreenState extends State<_AICoachScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A1A),
+        backgroundColor: FitGenieTheme.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [

@@ -9,6 +9,7 @@
 // was taken to failure.
 
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../core/app_strings.dart';
 import '../app/fitgenie_theme.dart';
@@ -44,16 +45,17 @@ int suggestedRestSeconds({
 // ============================================================
 
 class CircularStopwatch extends StatefulWidget {
-  /// Called every second with the elapsed duration so far.
+  final double size;
   final ValueChanged<Duration>? onTick;
 
-  /// Diameter of the circle.
-  final double size;
+  /// Pehle se guzra hua waqt, taake sheet dobara khulne par stopwatch wahin se chale.
+  final Duration initialElapsed;
 
   const CircularStopwatch({
     super.key,
+    this.size = 170,
     this.onTick,
-    this.size = 220,
+    this.initialElapsed = Duration.zero,
   });
 
   @override
@@ -61,14 +63,16 @@ class CircularStopwatch extends StatefulWidget {
 }
 
 class CircularStopwatchState extends State<CircularStopwatch> {
+  // timer-v2
   Timer? _timer;
-  Duration _elapsed = Duration.zero;
+  late Duration _elapsed = widget.initialElapsed;
   bool _running = false;
 
   void start() {
     if (_running) return;
     _running = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
       setState(() => _elapsed += const Duration(seconds: 1));
       widget.onTick?.call(_elapsed);
     });
@@ -101,22 +105,21 @@ class CircularStopwatchState extends State<CircularStopwatch> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final progress = (_elapsed.inSeconds % 60) / 60;
+
     return SizedBox(
       width: widget.size,
       height: widget.size,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          SizedBox(
-            width: widget.size,
-            height: widget.size,
-            child: CircularProgressIndicator(
-              value: null, // indeterminate spinner style while active
-              strokeWidth: 8,
-              backgroundColor: FitGenieTheme.background,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                _running ? FitGenieTheme.primary : FitGenieTheme.muted,
-              ),
+          CustomPaint(
+            size: Size.square(widget.size),
+            painter: _RingPainter(
+              progress: progress,
+              color: _running ? FitGenieTheme.primary : FitGenieTheme.muted,
+              trackColor: FitGenieTheme.border,
             ),
           ),
           Column(
@@ -124,23 +127,15 @@ class CircularStopwatchState extends State<CircularStopwatch> {
             children: [
               Text(
                 _formatted,
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: t.displayLarge?.copyWith(fontSize: widget.size * 0.3),
               ),
               const SizedBox(height: 4),
               Text(
-                _running
-                    ? AppStrings.get('timer_in_progress')
-                    : AppStrings.get('timer_ready'),
-                style: TextStyle(
-                  fontSize: 12,
-                  letterSpacing: 1.2,
-                  fontWeight: FontWeight.w600,
-                  color: FitGenieTheme.muted,
-                ),
+                (_running
+                        ? AppStrings.get('timer_in_progress')
+                        : AppStrings.get('timer_ready'))
+                    .toUpperCase(),
+                style: t.labelSmall,
               ),
             ],
           ),
@@ -194,6 +189,7 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
   void _start() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
       if (_remaining <= 1) {
         _timer?.cancel();
         setState(() => _remaining = 0);
@@ -225,7 +221,9 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
 
   @override
   Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
     final progress = _totalSeconds == 0 ? 0.0 : _remaining / _totalSeconds;
+    final urgent = _remaining > 0 && _remaining <= 5;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -236,16 +234,12 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              SizedBox(
-                width: widget.size,
-                height: widget.size,
-                child: CircularProgressIndicator(
-                  value: progress,
-                  strokeWidth: 8,
-                  backgroundColor: FitGenieTheme.background,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    FitGenieTheme.success,
-                  ),
+              CustomPaint(
+                size: Size.square(widget.size),
+                painter: _RingPainter(
+                  progress: progress,
+                  color: urgent ? FitGenieTheme.hot : FitGenieTheme.primary,
+                  trackColor: FitGenieTheme.border,
                 ),
               ),
               Column(
@@ -253,23 +247,18 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
                 children: [
                   Text(
                     _formatted,
-                    style: const TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    style: t.displayLarge?.copyWith(
+                      fontSize: widget.size * 0.3,
+                      color: urgent ? FitGenieTheme.hot : FitGenieTheme.text,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _remaining == 0
-                        ? AppStrings.get('timer_go_next')
-                        : AppStrings.get('timer_rest'),
-                    style: TextStyle(
-                      fontSize: 12,
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.w600,
-                      color: FitGenieTheme.muted,
-                    ),
+                    (_remaining == 0
+                            ? AppStrings.get('timer_go_next')
+                            : AppStrings.get('timer_rest'))
+                        .toUpperCase(),
+                    style: t.labelSmall,
                   ),
                 ],
               ),
@@ -280,41 +269,98 @@ class _CircularRestTimerState extends State<CircularRestTimer> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _pillButton('-15s', () => _addTime(-15)),
+            _pill('-15s', () => _addTime(-15)),
             const SizedBox(width: 10),
-            _pillButton('+15s', () => _addTime(15)),
-            const SizedBox(width: 10),
-            _pillButton(AppStrings.get('timer_skip_rest'), () {
+            _pill('+15s', () => _addTime(15)),
+          ],
+        ),
+        const SizedBox(height: 14),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: () {
               _timer?.cancel();
               widget.onSkip?.call();
-            }, filled: true),
-          ],
+            },
+            child: Text(AppStrings.get('timer_skip_rest').toUpperCase()),
+          ),
         ),
       ],
     );
   }
 
-  Widget _pillButton(String label, VoidCallback onTap, {bool filled = false}) {
-    return GestureDetector(
+  Widget _pill(String label, VoidCallback onTap) {
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 11),
         decoration: BoxDecoration(
-          color: filled ? FitGenieTheme.primary : FitGenieTheme.card,
           borderRadius: BorderRadius.circular(24),
-          border: filled
-              ? null
-              : Border.all(color: FitGenieTheme.muted.withValues(alpha: 0.3)),
+          border: Border.all(color: FitGenieTheme.border),
         ),
         child: Text(
           label,
-          style: TextStyle(
-            color: filled ? Colors.white : FitGenieTheme.muted,
-            fontWeight: FontWeight.w600,
+          style: const TextStyle(
+            color: FitGenieTheme.textSecondary,
+            fontWeight: FontWeight.w700,
             fontSize: 13,
           ),
         ),
       ),
     );
   }
+}
+
+// ============================================================
+// ⭕ THIN PROGRESS RING (used by stopwatch + rest timer)
+// ============================================================
+
+class _RingPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color trackColor;
+  final double strokeWidth;
+
+  const _RingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+    this.strokeWidth = 6,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.shortestSide - strokeWidth) / 2;
+
+    final track = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..color = trackColor;
+    canvas.drawCircle(center, radius, track);
+
+    if (progress <= 0) return;
+
+    final arc = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..color = color;
+    final sweep = 2 * math.pi * progress.clamp(0.0, 1.0);
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -math.pi / 2,
+      sweep,
+      false,
+      arc,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _RingPainter old) =>
+      old.progress != progress ||
+      old.color != color ||
+      old.trackColor != trackColor ||
+      old.strokeWidth != strokeWidth;
 }

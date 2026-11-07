@@ -69,13 +69,13 @@ class _SignupScreenState extends State<SignupScreen>
       return AppStrings.get('error_invalid_password');
     }
     if (_confirmPasswordController.text.isEmpty) {
-      return 'Please confirm your password.';
+      return AppStrings.get('signup_confirm_required');
     }
     if (_passwordController.text != _confirmPasswordController.text) {
-      return 'Passwords do not match.';
+      return AppStrings.get('signup_passwords_mismatch');
     }
     if (!_agreeToTerms) {
-      return 'Please accept the Terms & Conditions.';
+      return AppStrings.get('signup_accept_terms');
     }
     return null;
   }
@@ -132,7 +132,7 @@ class _SignupScreenState extends State<SignupScreen>
           gradient: RadialGradient(
             center: Alignment.topCenter,
             radius: 1.2,
-            colors: [Color(0xFF0D1530), FitGenieTheme.bg],
+            colors: [FitGenieTheme.card, FitGenieTheme.bg],
           ),
         ),
         child: SafeArea(
@@ -191,7 +191,7 @@ class _SignupScreenState extends State<SignupScreen>
                             _buildTextField(
                               controller: _nameController,
                               icon: Icons.person_outline,
-                              hint: 'Full Name',
+                              hint: AppStrings.get('field_full_name'),
                               textCapitalization: TextCapitalization.words,
                             ),
                             const SizedBox(height: 12),
@@ -200,7 +200,7 @@ class _SignupScreenState extends State<SignupScreen>
                             _buildTextField(
                               controller: _emailController,
                               icon: Icons.mail_outline,
-                              hint: 'Email Address',
+                              hint: AppStrings.get('login_email_hint'),
                               keyboardType: TextInputType.emailAddress,
                             ),
                             const SizedBox(height: 12),
@@ -209,7 +209,7 @@ class _SignupScreenState extends State<SignupScreen>
                             _buildTextField(
                               controller: _passwordController,
                               icon: Icons.lock_outline,
-                              hint: 'Password (8+ chars, A-Z, 0-9, @#)',
+                              hint: AppStrings.get('signup_password_hint'),
                               obscure: !_showPassword,
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -229,7 +229,7 @@ class _SignupScreenState extends State<SignupScreen>
                             _buildTextField(
                               controller: _confirmPasswordController,
                               icon: Icons.lock_outline,
-                              hint: 'Confirm Password',
+                              hint: AppStrings.get('signup_confirm_password_hint'),
                               obscure: !_showConfirmPassword,
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -274,23 +274,23 @@ class _SignupScreenState extends State<SignupScreen>
                                           fontSize: 12,
                                         ),
                                         children: [
-                                          const TextSpan(
-                                              text: 'I agree to the '),
+                                          TextSpan(text: AppStrings.get('login_terms_prefix')),
                                           TextSpan(
-                                            text: 'Terms of Service',
+                                            text: AppStrings.get('signup_terms_of_service'),
                                             style: TextStyle(
                                               color: FitGenieTheme.primary,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
-                                          const TextSpan(text: ' and '),
+                                          TextSpan(text: AppStrings.get('signup_and')),
                                           TextSpan(
-                                            text: 'Privacy Policy',
+                                            text: AppStrings.get('signup_privacy_policy'),
                                             style: TextStyle(
                                               color: FitGenieTheme.primary,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
+                                          TextSpan(text: AppStrings.get('signup_terms_suffix')),
                                         ],
                                       ),
                                     ),

@@ -36,7 +36,6 @@ dependencies:
   # Google sign-in
   google_sign_in: ^6.2.1
   # Security
-  flutter_dotenv: ^5.1.0
   flutter_secure_storage: ^9.2.2
   cached_network_image: ^3.3.1
   mobile_scanner: ^7.4.0
@@ -58,4 +57,3 @@ flutter:
     - assets/images/preview/
     - assets/icon/
     - assets/exercises/
-    - .env

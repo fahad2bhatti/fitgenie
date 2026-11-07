@@ -287,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen>
           gradient: RadialGradient(
             center: Alignment.topCenter,
             radius: 1.2,
-            colors: [Color(0xFF0D1530), FitGenieTheme.bg],
+            colors: [FitGenieTheme.card, FitGenieTheme.bg],
           ),
         ),
         child: SafeArea(

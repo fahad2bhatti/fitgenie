@@ -6,84 +6,74 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../core/language_provider.dart';
 
 class AIService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // ═══════════════════════════════════════════
-  // 🔒 SECURE API KEY
-  // Prefers --dart-define (never bundled into the app package).
-  // Falls back to .env only for local dev convenience —
-  // do NOT rely on .env for release builds (it ships inside the APK).
-  // ═══════════════════════════════════════════
-  static const String _dartDefineKey =
-      String.fromEnvironment('GEMINI_API_KEY', defaultValue: '');
-
-  static String get _apiKey {
-    if (_dartDefineKey.isNotEmpty) return _dartDefineKey;
-
-    final key = dotenv.env['GEMINI_API_KEY'] ?? '';
-    if (key.isEmpty) {
-      debugPrint(
-          '❌ GEMINI_API_KEY not found (checked --dart-define and .env)!');
-    }
-    return key;
-  }
-
-  static bool get isConfigured {
-    // Proxy ready hai to Gemini key optional
-    if (!_proxyUrl.contains('YOUR-SUBDOMAIN') && _proxyUrl.isNotEmpty) {
-      return true;
-    }
-    return _apiKey.isNotEmpty && _apiKey.length > 20;
-  }
-
-  static const Duration _timeout = Duration(seconds: 30);
-
-  // ═══════════════════════════════════════════
-  // 🚀 GROQ PROXY (Cloudflare Worker) — Groq key server pe rehti hai
-  // Deploy ke baad apna worker URL yahan paste karo.
-  // Jab tak YOUR-SUBDOMAIN hai, proxy skip hoti hai aur Gemini chalta hai.
+  // 🚀 GROQ PROXY (Cloudflare Worker)
+  // Groq key sirf Worker pe rehti hai. App mein koi API key nahi.
   // ═══════════════════════════════════════════
   static const String _proxyUrl =
       'https://fitgenie-ai.fahadsaeed2622.workers.dev';
+
+  static bool get isConfigured =>
+      _proxyUrl.isNotEmpty && !_proxyUrl.contains('YOUR-SUBDOMAIN');
 
   Future<String?> _callProxy({
     required String task, // 'chat' | 'scan'
     required String prompt,
     String? imageBase64,
   }) async {
-    if (_proxyUrl.contains('YOUR-SUBDOMAIN')) return null;
+    if (!isConfigured) return null;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return null;
+
+    String token;
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return null;
-      final token = await user.getIdToken();
-      final res = await http
-          .post(
-            Uri.parse(_proxyUrl),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token',
-            },
-            body: jsonEncode({
-              'task': task,
-              'prompt': prompt,
-              if (imageBase64 != null) 'imageBase64': imageBase64,
-            }),
-          )
-          .timeout(const Duration(seconds: 45));
-      if (res.statusCode == 200) {
-        final text = jsonDecode(res.body)['text'];
-        if (text is String && text.trim().isNotEmpty) {
-          debugPrint('✅ Proxy ok (${jsonDecode(res.body)['model']})');
-          return text.trim();
-        }
-      }
-      debugPrint('⚠️ Proxy failed: ${res.statusCode} ${res.body}');
+      token = await user.getIdToken() ?? '';
     } catch (e) {
-      debugPrint('⚠️ Proxy error: $e');
+      debugPrint('⚠️ Token error: $e');
+      return null;
+    }
+    if (token.isEmpty) return null;
+
+    for (int attempt = 0; attempt < 2; attempt++) {
+      try {
+        final res = await http
+            .post(
+              Uri.parse(_proxyUrl),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+              body: jsonEncode({
+                'task': task,
+                'prompt': prompt,
+                if (imageBase64 != null) 'imageBase64': imageBase64,
+              }),
+            )
+            .timeout(const Duration(seconds: 45));
+
+        if (res.statusCode == 200) {
+          final data = jsonDecode(res.body);
+          final text = data['text'];
+          if (text is String && text.trim().isNotEmpty) {
+            debugPrint('✅ Proxy ok (${data['model']})');
+            return text.trim();
+          }
+          return null;
+        }
+
+        debugPrint('⚠️ Proxy failed: ${res.statusCode} ${res.body}');
+        final retryable = res.statusCode == 429 || res.statusCode >= 500;
+        if (!retryable) return null;
+      } catch (e) {
+        debugPrint('⚠️ Proxy error: $e');
+      }
+      if (attempt == 0) await Future.delayed(const Duration(seconds: 2));
     }
     return null;
   }
@@ -176,101 +166,9 @@ Return ONLY a valid JSON object (no markdown, no code blocks, just pure JSON):
 $tipLanguage
 All numbers should be integers. isHealthy should be boolean.''';
 
-    // 1) Groq via proxy (fast + free), 2) Gemini fallback
     final proxied = await _callProxy(
         task: 'scan', prompt: prompt, imageBase64: base64Image);
     if (proxied != null) return MealAnalysis.fromJson(proxied);
-    if (_apiKey.isEmpty) return _getDefaultMealAnalysis();
-
-    final url =
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$_apiKey';
-    const maxRetries = 2;
-
-    for (int attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        final response = await http
-            .post(
-              Uri.parse(url),
-              headers: {'Content-Type': 'application/json'},
-              body: jsonEncode({
-                'contents': [
-                  {
-                    'parts': [
-                      {'text': prompt},
-                      {
-                        'inlineData': {
-                          'mimeType': 'image/jpeg',
-                          'data': base64Image
-                        }
-                      }
-                    ]
-                  }
-                ],
-                'generationConfig': {
-                  'temperature': 0.1,
-                  'maxOutputTokens': 4096
-                },
-                'safetySettings': [
-                  {
-                    'category': 'HARM_CATEGORY_HARASSMENT',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                  {
-                    'category': 'HARM_CATEGORY_HATE_SPEECH',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                  {
-                    'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                  {
-                    'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                ],
-              }),
-            )
-            .timeout(const Duration(seconds: 60));
-
-        debugPrint(
-            '📡 Response status: ${response.statusCode} (attempt ${attempt + 1})');
-
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          final candidates = data['candidates'] as List?;
-          if (candidates != null && candidates.isNotEmpty) {
-            if (candidates[0]['finishReason'] == 'SAFETY') {
-              return _getDefaultMealAnalysis();
-            }
-            final parts = candidates[0]['content']?['parts'] as List?;
-            if (parts != null && parts.isNotEmpty) {
-              final text = parts[0]['text'] as String?;
-              if (text != null && text.isNotEmpty) {
-                return MealAnalysis.fromJson(text);
-              }
-            }
-          }
-          return _getDefaultMealAnalysis();
-        }
-
-        if ((response.statusCode == 503 || response.statusCode == 429) &&
-            attempt < maxRetries) {
-          debugPrint(
-              '⚠️ Meal scan got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
-          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
-          continue;
-        }
-
-        return _getDefaultMealAnalysis();
-      } catch (e) {
-        debugPrint('❌ Meal analysis exception: $e');
-        if (attempt < maxRetries) {
-          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
-          continue;
-        }
-        return _getDefaultMealAnalysis();
-      }
-    }
     return _getDefaultMealAnalysis();
   }
 
@@ -300,7 +198,7 @@ All numbers should be integers. isHealthy should be boolean.''';
 
     final cleanMessage = _sanitizeInput(userMessage);
     if (cleanMessage.isEmpty) return 'Kuch toh likh bhai! 😄';
-    if (!isConfigured) return '❌ API Key set nahi hai! .env file check kar.';
+    if (!isConfigured) return '❌ AI service set nahi hai. Baad mein try kar.';
     if (cleanMessage.length > 500) {
       return 'Bhai message thoda chhota rakh — 500 characters max! ✂️';
     }
@@ -341,9 +239,9 @@ Tu "FitGenie" hai ek friendly AI Fitness Coach!
 
 Max 150 words:''';
 
-      final directResult = await _tryDirectModel(prompt);
-      if (directResult != null) {
-        final formatted = _formatResponse(_validateResponse(directResult));
+      final result = await _callProxy(task: 'chat', prompt: prompt);
+      if (result != null) {
+        final formatted = _formatResponse(_validateResponse(result));
         await _saveChatHistory(uid, cleanMessage, formatted);
         return formatted;
       }
@@ -354,103 +252,6 @@ Max 150 words:''';
       if (kDebugMode) debugPrintStack(stackTrace: st);
       return _getSmartOfflineResponse(cleanMessage, {});
     }
-  }
-
-  Future<String?> _tryDirectModel(String prompt) async {
-    final viaProxy = await _callProxy(task: 'chat', prompt: prompt);
-    if (viaProxy != null) return viaProxy;
-    try {
-      return await _callGeminiAPI('models/gemini-flash-latest', prompt);
-    } catch (e) {
-      debugPrint('⚠️ Direct model failed: $e');
-      return null;
-    }
-  }
-
-  Future<String?> _callGeminiAPI(String modelName, String prompt) async {
-    if (_apiKey.isEmpty) return null;
-
-    final url =
-        'https://generativelanguage.googleapis.com/v1beta/$modelName:generateContent?key=$_apiKey';
-    const maxRetries = 2;
-
-    for (int attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        final response = await http
-            .post(
-              Uri.parse(url),
-              headers: {'Content-Type': 'application/json'},
-              body: jsonEncode({
-                'contents': [
-                  {
-                    'role': 'user',
-                    'parts': [
-                      {'text': prompt}
-                    ]
-                  }
-                ],
-                'generationConfig': {
-                  'temperature': 0.7,
-                  'maxOutputTokens': 4096,
-                  'topP': 0.9,
-                  'topK': 40
-                },
-                'safetySettings': [
-                  {
-                    'category': 'HARM_CATEGORY_HARASSMENT',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                  {
-                    'category': 'HARM_CATEGORY_HATE_SPEECH',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                  {
-                    'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                  {
-                    'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
-                    'threshold': 'BLOCK_NONE'
-                  },
-                ],
-              }),
-            )
-            .timeout(_timeout);
-
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          final candidates = data['candidates'] as List?;
-          if (candidates != null && candidates.isNotEmpty) {
-            final text = candidates[0]['content']?['parts']?[0]?['text'];
-            if (text is String && text.trim().isNotEmpty) {
-              debugPrint('✅ Success with $modelName (attempt ${attempt + 1})');
-              return text.trim();
-            }
-          }
-          return null;
-        }
-
-        if ((response.statusCode == 503 || response.statusCode == 429) &&
-            attempt < maxRetries) {
-          debugPrint(
-              '⚠️ $modelName got ${response.statusCode}, retrying (${attempt + 1}/$maxRetries)...');
-          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
-          continue;
-        }
-
-        debugPrint(
-            '❌ $modelName failed: ${response.statusCode} ${response.body}');
-        return null;
-      } catch (e) {
-        if (attempt < maxRetries) {
-          await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
-          continue;
-        }
-        debugPrint('❌ API call error: $e');
-        return null;
-      }
-    }
-    return null;
   }
 
   String _formatResponse(String response) {
@@ -585,7 +386,6 @@ Max 150 words:''';
       String level = 'intermediate'}) async {
     final cleanType = _sanitizeInput(workoutType);
     if (cleanType.isEmpty) return _getOfflineWorkout('chest');
-    // isConfigured check hata diya — proxy se chalega
 
     try {
       final userContext = await _getUserContext(uid);
@@ -615,7 +415,7 @@ All workout plans are for general fitness purposes only. $cleanType workout plan
 Client: ${userContext['name']}, Level: $level
 Format: 🔥 Name | ⚡ Warm-up | 💪 Main (5-6 exercises sets x reps) | 🧘 Cool down | 💡 Tip''';
 
-      final result = await _tryDirectModel(prompt);
+      final result = await _callProxy(task: 'chat', prompt: prompt);
       if (result != null) return _formatResponse(_validateResponse(result));
       return _getOfflineWorkout(cleanType);
     } catch (e) {

@@ -127,7 +127,7 @@ class AppStrings {
     'ad_watch': 'Watch ad',
     'ad_not_completed': 'Ad was not completed.',
     'chat_about_title': 'FitGenie AI Coach',
-    'chat_about_powered': 'Powered by Google Gemini AI',
+    'chat_about_powered': 'Powered by AI',
     'chat_about_features': '🎯 Features:',
     'chat_about_workouts': '• Personalized workout plans',
     'chat_about_nutrition': '• Diet & nutrition advice',
@@ -915,6 +915,59 @@ class AppStrings {
     'muscle_cardio': 'Cardio',
 
     'shell_clear_chat': 'Clear Chat',
+    // l10n-r1a
+    'field_full_name': 'Full Name',
+    'progress_weekdays_short': 'MON,TUE,WED,THU,FRI,SAT,SUN',
+    'progress_weight_since': '{arrow} {kg} kg since {date}',
+    'signup_confirm_required': 'Please confirm your password.',
+    'signup_passwords_mismatch': 'Passwords do not match.',
+    'signup_accept_terms': 'Please accept the Terms & Conditions.',
+    'signup_password_hint': 'Password (8+ chars, A-Z, 0-9, @#)',
+    'signup_confirm_password_hint': 'Confirm Password',
+    'signup_terms_of_service': 'Terms of Service',
+    'signup_and': ' and ',
+    'signup_privacy_policy': 'Privacy Policy',
+    'signup_terms_suffix': '',
+    // l10n-r1b
+    'profile_details': 'Details',
+    'profile_gfit_health_connect': 'Health Connect Available',
+    'profile_gfit_activity_permission': 'Activity Permission',
+    'profile_gfit_authorized': 'Google Fit Authorized',
+    'profile_gfit_data_syncing': 'Data Syncing',
+    'profile_gfit_status_connected': 'Connected & syncing',
+    'profile_gfit_status_connected_no_data': 'Connected · walk to see data',
+    'profile_gfit_status_connecting': 'Connecting...',
+    'profile_gfit_status_not_authorized': 'Authorization required',
+    'profile_gfit_status_permission_denied': 'Permission denied',
+    'profile_gfit_status_unavailable': 'Health Connect not installed',
+    'profile_gfit_status_disconnected': 'Not connected',
+    'profile_gfit_status_error': 'Something went wrong',
+    'profile_confirm_password': 'Confirm password',
+    'profile_enter_password': 'Enter your password',
+    'profile_confirm': 'Confirm',
+    'profile_verification_failed': 'Verification failed. Please try again.',
+    // l10n-r1c
+    'profile_height_cm': 'Height (cm)',
+    'profile_age': 'Age',
+    'profile_calories_kcal': 'Calories (kcal)',
+    'profile_protein_g': 'Protein (g)',
+    'goal_stay_fit': 'Stay Fit',
+    'goal_gain_strength': 'Gain Strength',
+    // l10n-r2a
+    'calories_kcal_left': '{n} kcal left',
+    'calories_kcal_over': '{n} kcal over',
+    'calories_food_fallback': 'Food',
+    // l10n-r2b
+    'dashboard_meal_pick_title': 'Add to which meal? 🍽️',
+    'dashboard_coach_hint': 'Ask your coach anything',
+    // l10n-r3b
+    'library_body_mixed': 'Mixed',
+    'library_more_exercises': '+{count} more exercises',
+    'library_selected_count': '{count} selected exercises',
+    // l10n-r3c
+    'onboarding_save_error': 'Something went wrong: {error}',
+    // l10n-r3a
+    'workout_detail_sets_completed': '{count} sets completed',
   };
 
   static const Map<String, String> _ur = {
@@ -1037,7 +1090,7 @@ class AppStrings {
     'ad_watch': 'Ad dekho',
     'ad_not_completed': 'Ad poora nahi hua.',
     'chat_about_title': 'FitGenie AI Coach',
-    'chat_about_powered': 'Google Gemini AI se powered',
+    'chat_about_powered': 'AI se powered',
     'chat_about_features': '🎯 Features:',
     'chat_about_workouts': '• Personalized workout plans',
     'chat_about_nutrition': '• Diet aur nutrition advice',
@@ -1841,6 +1894,59 @@ class AppStrings {
     'muscle_cardio': 'Cardio',
 
     'shell_clear_chat': 'Chat Clear Karein',
+    // l10n-r1a
+    'field_full_name': 'Poora Naam',
+    'progress_weekdays_short': 'PIR,MNG,BDH,JMT,JMA,HFT,ITW',
+    'progress_weight_since': '{date} se {arrow} {kg} kg',
+    'signup_confirm_required': 'Apna password confirm karein.',
+    'signup_passwords_mismatch': 'Passwords match nahi karte.',
+    'signup_accept_terms': 'Meherbani karke Terms & Conditions accept karein.',
+    'signup_password_hint': 'Password (8+ characters, A-Z, 0-9, @#)',
+    'signup_confirm_password_hint': 'Password Confirm Karein',
+    'signup_terms_of_service': 'Terms of Service',
+    'signup_and': ' aur ',
+    'signup_privacy_policy': 'Privacy Policy',
+    'signup_terms_suffix': ' se agree karta hoon.',
+    // l10n-r1b
+    'profile_details': 'Tafseel',
+    'profile_gfit_health_connect': 'Health Connect available hai',
+    'profile_gfit_activity_permission': 'Activity ki ijazat',
+    'profile_gfit_authorized': 'Google Fit authorize hai',
+    'profile_gfit_data_syncing': 'Data sync ho raha hai',
+    'profile_gfit_status_connected': 'Connect hai aur sync ho raha hai',
+    'profile_gfit_status_connected_no_data': 'Connect hai · data dekhne ke liye chalein',
+    'profile_gfit_status_connecting': 'Connect ho raha hai...',
+    'profile_gfit_status_not_authorized': 'Authorization zaroori hai',
+    'profile_gfit_status_permission_denied': 'Ijazat nahi mili',
+    'profile_gfit_status_unavailable': 'Health Connect install nahi hai',
+    'profile_gfit_status_disconnected': 'Connect nahi hai',
+    'profile_gfit_status_error': 'Kuch masla ho gaya',
+    'profile_confirm_password': 'Password confirm karein',
+    'profile_enter_password': 'Apna password likhein',
+    'profile_confirm': 'Confirm karein',
+    'profile_verification_failed': 'Verification nakaam ho gayi. Dobara koshish karein.',
+    // l10n-r1c
+    'profile_height_cm': 'Qad (cm)',
+    'profile_age': 'Umar',
+    'profile_calories_kcal': 'Calories (kcal)',
+    'profile_protein_g': 'Protein (g)',
+    'goal_stay_fit': 'Fit Raho',
+    'goal_gain_strength': 'Taqat Badhao',
+    // l10n-r2a
+    'calories_kcal_left': '{n} kcal baqi',
+    'calories_kcal_over': '{n} kcal zyada',
+    'calories_food_fallback': 'Khana',
+    // l10n-r2b
+    'dashboard_meal_pick_title': 'Kis meal mein add karein? 🍽️',
+    'dashboard_coach_hint': 'Apne coach se kuch bhi poochein',
+    // l10n-r3b
+    'library_body_mixed': 'Mix',
+    'library_more_exercises': '+{count} aur exercises',
+    'library_selected_count': '{count} chuni gayi exercises',
+    // l10n-r3c
+    'onboarding_save_error': 'Kuch masla ho gaya: {error}',
+    // l10n-r3a
+    'workout_detail_sets_completed': '{count} sets mukammal',
   };
 
   // ──────────────────────────────────────────

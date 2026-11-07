@@ -90,3 +90,5 @@ app/google-services*.json
 .agents/
 .claude/
 skills-lock.json
+*.bak*
+.env
