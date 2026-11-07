@@ -953,6 +953,10 @@ class AppStrings {
     'profile_protein_g': 'Protein (g)',
     'goal_stay_fit': 'Stay Fit',
     'goal_gain_strength': 'Gain Strength',
+    // l10n-r2a
+    'calories_kcal_left': '{n} kcal left',
+    'calories_kcal_over': '{n} kcal over',
+    'calories_food_fallback': 'Food',
   };
 
   static const Map<String, String> _ur = {
@@ -1917,6 +1921,10 @@ class AppStrings {
     'profile_protein_g': 'Protein (g)',
     'goal_stay_fit': 'Fit Raho',
     'goal_gain_strength': 'Taqat Badhao',
+    // l10n-r2a
+    'calories_kcal_left': '{n} kcal baqi',
+    'calories_kcal_over': '{n} kcal zyada',
+    'calories_food_fallback': 'Khana',
   };
 
   // ──────────────────────────────────────────

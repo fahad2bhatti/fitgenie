@@ -708,7 +708,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                           controller: caloriesCtrl,
                           keyboardType: TextInputType.number,
                           style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration('Calories'),
+                          decoration: _inputDecoration(AppStrings.get('calories_field_calories')),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -717,7 +717,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                           controller: proteinCtrl,
                           keyboardType: TextInputType.number,
                           style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration('Protein'),
+                          decoration: _inputDecoration(AppStrings.get('calories_field_protein')),
                         ),
                       ),
                     ],
@@ -730,7 +730,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                           controller: carbsCtrl,
                           keyboardType: TextInputType.number,
                           style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration('Carbs'),
+                          decoration: _inputDecoration(AppStrings.get('calories_field_carbs')),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -739,7 +739,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                           controller: fatsCtrl,
                           keyboardType: TextInputType.number,
                           style: const TextStyle(color: Colors.white),
-                          decoration: _inputDecoration('Fats'),
+                          decoration: _inputDecoration(AppStrings.get('calories_field_fats')),
                         ),
                       ),
                     ],
@@ -968,7 +968,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            remaining >= 0 ? '$remaining kcal left' : '${-remaining} kcal over',
+            remaining >= 0 ? AppStrings.get('calories_kcal_left', params: {'n': '$remaining'}) : AppStrings.get('calories_kcal_over', params: {'n': '${-remaining}'}),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -981,11 +981,11 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
           const SizedBox(height: 14),
           Row(
             children: [
-              macro('Protein', protein, proteinGoal),
+              macro(AppStrings.get('calories_field_protein'), protein, proteinGoal),
               const SizedBox(width: 16),
-              macro('Carbs', carbs, carbsGoal),
+              macro(AppStrings.get('calories_field_carbs'), carbs, carbsGoal),
               const SizedBox(width: 16),
-              macro('Fats', fats, fatsGoal),
+              macro(AppStrings.get('calories_field_fats'), fats, fatsGoal),
             ],
           ),
         ],
@@ -1344,7 +1344,7 @@ class _CaloriesScreenState extends State<CaloriesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (food['name'] ?? 'Food').toString(),
+                        (food['name'] ?? AppStrings.get('calories_food_fallback')).toString(),
                         style: const TextStyle(
                             fontWeight: FontWeight.w700, fontSize: 12),
                       ),
