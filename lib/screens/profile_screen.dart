@@ -488,7 +488,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '$_fitnessLevel · $_goal'.toUpperCase(),
+                            '${_displayValue(_fitnessLevel)} · ${_displayValue(_goal)}'.toUpperCase(),
                             style: t.labelSmall
                                 ?.copyWith(color: FitGenieTheme.primary),
                             maxLines: 1,
@@ -1171,7 +1171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 TextField(
                   controller: nameController,
                   style: const TextStyle(color: Colors.white),
-                  decoration: _inputDecoration('Full Name', Icons.person),
+                  decoration: _inputDecoration(AppStrings.get('field_full_name'), Icons.person),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -1242,6 +1242,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  // l10n-r1c: values saved in Firestore stay English, only the label shown is translated
+  String _displayValue(String raw) {
+    const keys = <String, String>{
+      'Male': 'gender_male',
+      'Female': 'gender_female',
+      'Other': 'gender_other',
+      'Beginner': 'level_beginner',
+      'Intermediate': 'level_intermediate',
+      'Advanced': 'level_advanced',
+      'Lose Weight': 'goal_lose_weight',
+      'Build Muscle': 'goal_build_muscle',
+      'Stay Fit': 'goal_stay_fit',
+      'Gain Strength': 'goal_gain_strength',
+    };
+    final key = keys[raw];
+    return key == null ? raw : AppStrings.get(key);
+  }
+
   Widget _buildDropdown(
     String value,
     List<String> items,
@@ -1262,7 +1280,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               .map(
                 (e) => DropdownMenuItem(
                   value: e,
-                  child: Text(e, style: const TextStyle(color: Colors.white)),
+                  child: Text(_displayValue(e),
+                      style: const TextStyle(color: Colors.white)),
                 ),
               )
               .toList(),
@@ -1329,7 +1348,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 keyboardType: TextInputType.number,
                 style: const TextStyle(color: Colors.white),
                 decoration: _inputDecoration(
-                  'Weight (kg)',
+                  AppStrings.get('label_weight_kg'),
                   Icons.monitor_weight,
                 ),
               ),
@@ -1338,14 +1357,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 controller: hc,
                 keyboardType: TextInputType.number,
                 style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Height (cm)', Icons.height),
+                decoration: _inputDecoration(AppStrings.get('profile_height_cm'), Icons.height),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: ac,
                 keyboardType: TextInputType.number,
                 style: const TextStyle(color: Colors.white),
-                decoration: _inputDecoration('Age', Icons.cake),
+                decoration: _inputDecoration(AppStrings.get('profile_age'), Icons.cake),
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -1442,10 +1461,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _fitnessLevel = fitnessLevel;
         _goal = goal;
       });
-      AppSnackbar.showSuccess(context, 'Profile updated!');
+      AppSnackbar.showSuccess(context, AppStrings.get('profile_profile_updated'));
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showError(context, 'Failed to update profile');
+      AppSnackbar.showError(context, AppStrings.get('profile_profile_update_failed'));
     }
   }
 
@@ -1483,10 +1502,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _height = height;
         _age = age;
       });
-      AppSnackbar.showSuccess(context, 'Stats updated!');
+      AppSnackbar.showSuccess(context, AppStrings.get('profile_stats_updated'));
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showError(context, 'Failed to update stats');
+      AppSnackbar.showError(context, AppStrings.get('profile_stats_update_failed'));
     }
   }
 
@@ -1512,10 +1531,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _proteinGoal = protein;
         _waterGoal = water;
       });
-      AppSnackbar.showSuccess(context, 'Goals updated!');
+      AppSnackbar.showSuccess(context, AppStrings.get('profile_goals_updated'));
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showError(context, 'Failed to update goals');
+      AppSnackbar.showError(context, AppStrings.get('profile_goals_update_failed'));
     }
   }
 
@@ -1646,7 +1665,7 @@ class _EditGoalsSheetState extends State<_EditGoalsSheet> {
             keyboardType: TextInputType.number,
             style: const TextStyle(color: Colors.white),
             decoration: widget.inputDecoration(
-              'Calories (kcal)',
+              AppStrings.get('profile_calories_kcal'),
               Icons.local_fire_department,
             ),
           ),
@@ -1655,7 +1674,7 @@ class _EditGoalsSheetState extends State<_EditGoalsSheet> {
             controller: pc,
             keyboardType: TextInputType.number,
             style: const TextStyle(color: Colors.white),
-            decoration: widget.inputDecoration('Protein (g)', Icons.egg_alt),
+            decoration: widget.inputDecoration(AppStrings.get('profile_protein_g'), Icons.egg_alt),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -1663,7 +1682,7 @@ class _EditGoalsSheetState extends State<_EditGoalsSheet> {
             keyboardType: TextInputType.number,
             style: const TextStyle(color: Colors.white),
             decoration: widget.inputDecoration(
-              'Water (glasses)',
+              AppStrings.get('dashboard_water_glasses'),
               Icons.water_drop,
             ),
           ),

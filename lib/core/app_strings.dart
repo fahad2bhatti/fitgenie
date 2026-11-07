@@ -946,6 +946,13 @@ class AppStrings {
     'profile_enter_password': 'Enter your password',
     'profile_confirm': 'Confirm',
     'profile_verification_failed': 'Verification failed. Please try again.',
+    // l10n-r1c
+    'profile_height_cm': 'Height (cm)',
+    'profile_age': 'Age',
+    'profile_calories_kcal': 'Calories (kcal)',
+    'profile_protein_g': 'Protein (g)',
+    'goal_stay_fit': 'Stay Fit',
+    'goal_gain_strength': 'Gain Strength',
   };
 
   static const Map<String, String> _ur = {
@@ -1903,6 +1910,13 @@ class AppStrings {
     'profile_enter_password': 'Apna password likhein',
     'profile_confirm': 'Confirm karein',
     'profile_verification_failed': 'Verification nakaam ho gayi. Dobara koshish karein.',
+    // l10n-r1c
+    'profile_height_cm': 'Qad (cm)',
+    'profile_age': 'Umar',
+    'profile_calories_kcal': 'Calories (kcal)',
+    'profile_protein_g': 'Protein (g)',
+    'goal_stay_fit': 'Fit Raho',
+    'goal_gain_strength': 'Taqat Badhao',
   };
 
   // ──────────────────────────────────────────
