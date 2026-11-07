@@ -397,7 +397,7 @@ class _WorkoutPlanScreenState extends State<WorkoutPlanScreen> {
             title: Text(planExercise.exerciseId,
                 maxLines: 1, overflow: TextOverflow.ellipsis),
             subtitle: Text(
-              '${planExercise.sets} sets × ${planExercise.reps}',
+              '${planExercise.sets} ${AppStrings.get('workout_detail_sets')} × ${planExercise.reps}',
               style: TextStyle(color: FitGenieTheme.muted),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
