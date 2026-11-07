@@ -229,9 +229,6 @@ class _WorkoutScreenState extends State<WorkoutScreen>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.play_arrow_rounded,
-                              color: FitGenieTheme.primary, size: 20),
-                          const SizedBox(width: 6),
                           Text(
                             AppStrings.get('workout_start').toUpperCase(),
                             style: const TextStyle(
@@ -941,6 +938,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
 
   String? _coachTip;
   bool _tipLoading = true;
+  bool _tipExpanded = false;
 
   @override
   void initState() {
@@ -1608,8 +1606,11 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
   }
 
   Widget _buildCoachTip() {
-    final hasTip = _coachTip != null && _coachTip!.isNotEmpty;
-    if (!_tipLoading && !hasTip) return const SizedBox.shrink();
+    // coach-tip-v2
+    final tip = _coachTip ?? '';
+    if (!_tipLoading && tip.isEmpty) return const SizedBox.shrink();
+
+    final isLong = tip.length > 120;
 
     Widget bar(double? width) => Container(
           width: width,
@@ -1622,29 +1623,32 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 12),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: FitGenieTheme.ai.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
-          border: Border.all(color: FitGenieTheme.ai.withValues(alpha: 0.25)),
-        ),
+      child: FGCard(
+        padding: const EdgeInsets.all(16),
+        onTap: (!_tipLoading && isLong)
+            ? () => setState(() => _tipExpanded = !_tipExpanded)
+            : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.auto_awesome_rounded,
-                    size: 16, color: FitGenieTheme.ai),
-                const SizedBox(width: 8),
-                Text(
-                  'COACH TIP',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelSmall
-                      ?.copyWith(color: FitGenieTheme.ai),
+                Expanded(
+                  child: Text(
+                    'COACH TIP',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
                 ),
+                if (!_tipLoading && isLong)
+                  Text(
+                    _tipExpanded ? 'LESS' : 'MORE',
+                    style: const TextStyle(
+                      color: FitGenieTheme.primary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 10),
@@ -1653,11 +1657,21 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
               const SizedBox(height: 8),
               bar(160),
             ] else
-              Text(
-                _coachTip!,
-                style: const TextStyle(fontSize: 13, height: 1.5),
-                maxLines: 6,
-                overflow: TextOverflow.ellipsis,
+              AnimatedSize(
+                duration: FitGenieTheme.animNormal,
+                alignment: Alignment.topCenter,
+                child: Text(
+                  tip,
+                  maxLines: _tipExpanded ? null : 3,
+                  overflow: _tipExpanded
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: FitGenieTheme.textSecondary,
+                  ),
+                ),
               ),
           ],
         ),
@@ -1688,9 +1702,6 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.play_arrow_rounded,
-                size: 16, color: FitGenieTheme.onPrimary),
-            const SizedBox(width: 4),
             Text(
               'SET ${item.doneSets + 1}',
               style: const TextStyle(
@@ -1851,29 +1862,28 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
 
     final Widget button;
     if (!_started) {
-      button = FilledButton.icon(
+      button = FilledButton(
         onPressed: _starting ? null : _startWorkout,
-        icon: _starting
+        child: _starting
             ? const SizedBox(
-                width: 18,
-                height: 18,
+                width: 20,
+                height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
               )
-            : const Icon(Icons.play_arrow_rounded),
-        label: Text(AppStrings.get('workout_start').toUpperCase()),
+            : Text(AppStrings.get('workout_start').toUpperCase()),
       );
     } else if (allDone) {
-      button = FilledButton.icon(
+      button = FilledButton(
         onPressed: _finishing ? null : _finishWorkout,
-        icon: const Icon(Icons.check_rounded),
-        label: Text(AppStrings.get('workout_finish').toUpperCase()),
+        child: Text(AppStrings.get('workout_finish').toUpperCase()),
       );
     } else {
-      button = OutlinedButton.icon(
+      button = OutlinedButton(
         onPressed: _finishing ? null : _finishWorkout,
-        icon: const Icon(Icons.check_rounded),
-        label: Text(AppStrings.get('workout_finish').toUpperCase()),
+        child: Text(AppStrings.get('workout_finish').toUpperCase()),
       );
     }
 

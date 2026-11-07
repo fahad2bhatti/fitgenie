@@ -106,142 +106,165 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // set-sheet-v2
+    final t = Theme.of(context).textTheme;
     final name = widget.exercise?.name ?? widget.exerciseNameFallback;
+    final performing = _phase == _SetPhase.performing;
+    final hasGif = widget.exercise != null && widget.exercise!.hasGif;
 
-    return Container(
-      padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.92,
       ),
-      decoration: BoxDecoration(
-        color: FitGenieTheme.cardDark,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: FitGenieTheme.card,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(FitGenieTheme.radiusXL),
+          ),
+          border: Border(top: BorderSide(color: FitGenieTheme.border)),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            12,
+            20,
+            MediaQuery.of(context).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: FitGenieTheme.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.setLabel.toUpperCase(),
+                          style: t.labelSmall,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          name.toUpperCase(),
+                          style: t.headlineSmall,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (performing)
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded,
+                          color: FitGenieTheme.muted),
+                      onPressed: () {
+                        _stopwatchKey.currentState?.stop();
+                        Navigator.pop(context, false);
+                      },
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (performing) ...[
+                if (hasGif) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+                    child: Image.asset(
+                      widget.exercise!.gifAsset,
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (c, error, stackTrace) =>
+                          const SizedBox.shrink(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                Center(child: CircularStopwatch(key: _stopwatchKey, size: 170)),
+                const SizedBox(height: 20),
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: _stepperRow(
+                        label: AppStrings.get('set_weight'),
+                        value:
+                            _weight.toStringAsFixed(_weight % 1 == 0 ? 0 : 1),
+                        unit: 'kg',
+                        onMinus: () => _adjustWeight(-2.5),
+                        onPlus: () => _adjustWeight(2.5),
                       ),
                     ),
-                    Text(
-                      widget.setLabel,
-                      style:
-                          TextStyle(color: FitGenieTheme.muted, fontSize: 13),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _stepperRow(
+                        label: AppStrings.get('set_reps'),
+                        value: _reps,
+                        onMinus: () => _adjustReps(-1),
+                        onPlus: () => _adjustReps(1),
+                      ),
                     ),
                   ],
                 ),
-              ),
-              if (_phase == _SetPhase.performing)
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    _stopwatchKey.currentState?.stop();
-                    Navigator.pop(context, false);
+                const SizedBox(height: 12),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(FitGenieTheme.radiusMD),
+                    border: Border.all(color: FitGenieTheme.border),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          AppStrings.get('set_failure'),
+                          style: const TextStyle(
+                            color: FitGenieTheme.textSecondary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: _toFailure,
+                        onChanged: (v) => setState(() => _toFailure = v),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: _finishSet,
+                  child: Text(AppStrings.get('set_finish').toUpperCase()),
+                ),
+              ] else
+                CircularRestTimer(
+                  initialSeconds: _restSeconds,
+                  onComplete: () {
+                    if (mounted) Navigator.pop(context, true);
+                  },
+                  onSkip: () {
+                    if (mounted) Navigator.pop(context, true);
                   },
                 ),
             ],
           ),
-          const SizedBox(height: 20),
-          if (_phase == _SetPhase.performing) ...[
-            if (widget.exercise != null && widget.exercise!.hasGif)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  widget.exercise!.gifAsset,
-                  height: 180,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (c, error, stackTrace) => Container(
-                    height: 180,
-                    color: FitGenieTheme.background,
-                    child: const Icon(Icons.fitness_center,
-                        color: Colors.white24, size: 40),
-                  ),
-                ),
-              ),
-            const SizedBox(height: 16),
-            CircularStopwatch(key: _stopwatchKey, size: 200),
-
-            const SizedBox(height: 24),
-
-            // Weight stepper
-            _stepperRow(
-              label: AppStrings.get('set_weight'),
-              value: '${_weight.toStringAsFixed(_weight % 1 == 0 ? 0 : 1)} kg',
-              onMinus: () => _adjustWeight(-2.5),
-              onPlus: () => _adjustWeight(2.5),
-            ),
-            const SizedBox(height: 12),
-
-            // Reps stepper
-            _stepperRow(
-              label: AppStrings.get('set_reps'),
-              value: _reps,
-              onMinus: () => _adjustReps(-1),
-              onPlus: () => _adjustReps(1),
-            ),
-            const SizedBox(height: 16),
-
-            // To failure toggle
-            Row(
-              children: [
-                Switch(
-                  value: _toFailure,
-                  activeThumbColor: FitGenieTheme.primary,
-                  onChanged: (v) => setState(() => _toFailure = v),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  AppStrings.get('set_failure'),
-                  style: TextStyle(color: FitGenieTheme.muted, fontSize: 13),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _finishSet,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: FitGenieTheme.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(
-                  AppStrings.get('set_finish'),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ] else ...[
-            CircularRestTimer(
-              initialSeconds: _restSeconds,
-              onComplete: () {
-                if (mounted) Navigator.pop(context, true);
-              },
-              onSkip: () {
-                if (mounted) Navigator.pop(context, true);
-              },
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }
@@ -249,48 +272,88 @@ class _ActiveSetSheetState extends State<ActiveSetSheet> {
   Widget _stepperRow({
     required String label,
     required String value,
+    String? unit,
     required VoidCallback onMinus,
     required VoidCallback onPlus,
   }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        Row(
-          children: [
-            _circleIconButton(Icons.remove, onMinus),
-            SizedBox(
-              width: 70,
-              child: Text(
-                value,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+    final t = Theme.of(context).textTheme;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: FitGenieTheme.card2,
+        borderRadius: BorderRadius.circular(FitGenieTheme.radiusLG),
+        border: Border.all(color: FitGenieTheme.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label.toUpperCase(),
+            style: t.labelSmall,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 6),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(value, style: t.displaySmall),
+                if (unit != null) ...[
+                  const SizedBox(width: 4),
+                  Text(
+                    unit,
+                    style: const TextStyle(
+                      color: FitGenieTheme.muted,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
             ),
-            _circleIconButton(Icons.add, onPlus),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _circleIconButton(Icons.remove_rounded, onMinus),
+              _circleIconButton(Icons.add_rounded, onPlus, filled: true),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _circleIconButton(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
+  Widget _circleIconButton(
+    IconData icon,
+    VoidCallback onTap, {
+    bool filled = false,
+  }) {
+    return InkResponse(
       onTap: onTap,
+      radius: 26,
       child: Container(
-        width: 36,
-        height: 36,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
-          color: FitGenieTheme.background,
-          borderRadius: BorderRadius.circular(10),
+          shape: BoxShape.circle,
+          color: filled ? FitGenieTheme.primary : Colors.transparent,
+          border: Border.all(
+            color: filled ? FitGenieTheme.primary : FitGenieTheme.border,
+          ),
         ),
-        child: Icon(icon, size: 18, color: Colors.white),
+        child: Icon(
+          icon,
+          size: 20,
+          color: filled ? FitGenieTheme.onPrimary : FitGenieTheme.text,
+        ),
       ),
     );
   }
