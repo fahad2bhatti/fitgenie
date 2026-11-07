@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../core/app_strings.dart';
 import 'ai_service.dart'; // reuses the existing MealAnalysis model
 
 // ==========================================
@@ -52,15 +53,16 @@ class OpenFoodFactsService {
       final brand = product['brands']?.toString().trim() ?? '';
       final displayName = rawName.isNotEmpty
           ? rawName
-          : (brand.isNotEmpty ? brand : 'Unknown Product');
+          : (brand.isNotEmpty ? brand : AppStrings.get('off_unknown_product'));
 
       final grade = product['nutriscore_grade']?.toString().toLowerCase();
       final isHealthy = grade == null || grade == 'a' || grade == 'b';
 
       final quantityLabel =
           (product['serving_size']?.toString().isNotEmpty ?? false)
-              ? '${product['serving_size']} (per 100g values)'
-              : 'per 100g';
+              ? AppStrings.get('off_serving_per_100g',
+                  params: {'size': '${product['serving_size']}'})
+              : AppStrings.get('off_per_100g');
 
       return MealAnalysis(
         foodName: _truncate(displayName, 100),
@@ -73,8 +75,9 @@ class OpenFoodFactsService {
         quantity: quantityLabel,
         isHealthy: isHealthy,
         healthTip: grade != null
-            ? 'Nutri-Score: ${grade.toUpperCase()} — ${isHealthy ? "acha choice hai!" : "kam khao, ya alternative dhoondo."}'
-            : 'Nutri-Score is product ke lia available nahi hai.',
+            ? AppStrings.get(isHealthy ? 'off_nutri_good' : 'off_nutri_bad',
+                params: {'grade': grade.toUpperCase()})
+            : AppStrings.get('off_nutri_na'),
       );
     } catch (e) {
       debugPrint('❌ OpenFoodFacts exception: $e');

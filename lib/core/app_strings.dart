@@ -1017,6 +1017,13 @@ class AppStrings {
     'chat_msg_muscle_gain': 'How do I build muscle?',
     'chat_msg_hydration': 'How much water should I drink?',
     'challenges_badge_unlocked': '✅ Unlocked!',
+    // l10n-r5d
+    'off_unknown_product': 'Unknown Product',
+    'off_per_100g': 'per 100g',
+    'off_serving_per_100g': '{size} (per 100g values)',
+    'off_nutri_good': 'Nutri-Score: {grade} — a good choice!',
+    'off_nutri_bad': 'Nutri-Score: {grade} — eat less, or find an alternative.',
+    'off_nutri_na': 'Nutri-Score is not available for this product.',
   };
 
   static const Map<String, String> _ur = {
@@ -2049,6 +2056,13 @@ class AppStrings {
     'chat_msg_muscle_gain': 'Muscle kaise banaye?',
     'chat_msg_hydration': 'Pani kitna peena chahiye?',
     'challenges_badge_unlocked': '✅ Unlock ho gaya!',
+    // l10n-r5d
+    'off_unknown_product': 'Anjaan Product',
+    'off_per_100g': '100g ke hisaab se',
+    'off_serving_per_100g': '{size} (100g ke hisaab se values)',
+    'off_nutri_good': 'Nutri-Score: {grade} — acha choice hai!',
+    'off_nutri_bad': 'Nutri-Score: {grade} — kam khao, ya alternative dhoondo.',
+    'off_nutri_na': 'Nutri-Score is product ke lia available nahi hai.',
   };
 
   // ──────────────────────────────────────────
