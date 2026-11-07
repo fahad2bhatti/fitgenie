@@ -26,15 +26,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AIService _aiService = AIService();
 
-  static const List<String> _dayLabels = [
-    'MON',
-    'TUE',
-    'WED',
-    'THU',
-    'FRI',
-    'SAT',
-    'SUN',
-  ];
+  // l10n-r1a: weekday labels follow the selected language
+  static List<String> get _dayLabels =>
+      AppStrings.get('progress_weekdays_short').split(',');
 
   bool _isLoading = true;
   String _aiInsight = '';
@@ -992,8 +986,11 @@ Short motivating feedback do (2-3 lines max) with tips.''',
   String _weightTrendLabel() {
     final diff = _weightHistory.last.weight - _weightHistory.first.weight;
     final arrow = diff > 0 ? '↑' : (diff < 0 ? '↓' : '→');
-    return '$arrow ${diff.abs().toStringAsFixed(1)} kg since '
-        '${DateFormat('MMM d').format(_weightHistory.first.date)}';
+    return AppStrings.get('progress_weight_since', params: {
+      'arrow': arrow,
+      'kg': diff.abs().toStringAsFixed(1),
+      'date': DateFormat('MMM d').format(_weightHistory.first.date),
+    });
   }
 
   Color _weightTrendColor() {

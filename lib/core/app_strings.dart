@@ -915,6 +915,19 @@ class AppStrings {
     'muscle_cardio': 'Cardio',
 
     'shell_clear_chat': 'Clear Chat',
+    // l10n-r1a
+    'field_full_name': 'Full Name',
+    'progress_weekdays_short': 'MON,TUE,WED,THU,FRI,SAT,SUN',
+    'progress_weight_since': '{arrow} {kg} kg since {date}',
+    'signup_confirm_required': 'Please confirm your password.',
+    'signup_passwords_mismatch': 'Passwords do not match.',
+    'signup_accept_terms': 'Please accept the Terms & Conditions.',
+    'signup_password_hint': 'Password (8+ chars, A-Z, 0-9, @#)',
+    'signup_confirm_password_hint': 'Confirm Password',
+    'signup_terms_of_service': 'Terms of Service',
+    'signup_and': ' and ',
+    'signup_privacy_policy': 'Privacy Policy',
+    'signup_terms_suffix': '',
   };
 
   static const Map<String, String> _ur = {
@@ -1841,6 +1854,19 @@ class AppStrings {
     'muscle_cardio': 'Cardio',
 
     'shell_clear_chat': 'Chat Clear Karein',
+    // l10n-r1a
+    'field_full_name': 'Poora Naam',
+    'progress_weekdays_short': 'PIR,MNG,BDH,JMT,JMA,HFT,ITW',
+    'progress_weight_since': '{date} se {arrow} {kg} kg',
+    'signup_confirm_required': 'Apna password confirm karein.',
+    'signup_passwords_mismatch': 'Passwords match nahi karte.',
+    'signup_accept_terms': 'Meherbani karke Terms & Conditions accept karein.',
+    'signup_password_hint': 'Password (8+ characters, A-Z, 0-9, @#)',
+    'signup_confirm_password_hint': 'Password Confirm Karein',
+    'signup_terms_of_service': 'Terms of Service',
+    'signup_and': ' aur ',
+    'signup_privacy_policy': 'Privacy Policy',
+    'signup_terms_suffix': ' se agree karta hoon.',
   };
 
   // ──────────────────────────────────────────
