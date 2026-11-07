@@ -928,6 +928,24 @@ class AppStrings {
     'signup_and': ' and ',
     'signup_privacy_policy': 'Privacy Policy',
     'signup_terms_suffix': '',
+    // l10n-r1b
+    'profile_details': 'Details',
+    'profile_gfit_health_connect': 'Health Connect Available',
+    'profile_gfit_activity_permission': 'Activity Permission',
+    'profile_gfit_authorized': 'Google Fit Authorized',
+    'profile_gfit_data_syncing': 'Data Syncing',
+    'profile_gfit_status_connected': 'Connected & syncing',
+    'profile_gfit_status_connected_no_data': 'Connected · walk to see data',
+    'profile_gfit_status_connecting': 'Connecting...',
+    'profile_gfit_status_not_authorized': 'Authorization required',
+    'profile_gfit_status_permission_denied': 'Permission denied',
+    'profile_gfit_status_unavailable': 'Health Connect not installed',
+    'profile_gfit_status_disconnected': 'Not connected',
+    'profile_gfit_status_error': 'Something went wrong',
+    'profile_confirm_password': 'Confirm password',
+    'profile_enter_password': 'Enter your password',
+    'profile_confirm': 'Confirm',
+    'profile_verification_failed': 'Verification failed. Please try again.',
   };
 
   static const Map<String, String> _ur = {
@@ -1867,6 +1885,24 @@ class AppStrings {
     'signup_and': ' aur ',
     'signup_privacy_policy': 'Privacy Policy',
     'signup_terms_suffix': ' se agree karta hoon.',
+    // l10n-r1b
+    'profile_details': 'Tafseel',
+    'profile_gfit_health_connect': 'Health Connect available hai',
+    'profile_gfit_activity_permission': 'Activity ki ijazat',
+    'profile_gfit_authorized': 'Google Fit authorize hai',
+    'profile_gfit_data_syncing': 'Data sync ho raha hai',
+    'profile_gfit_status_connected': 'Connect hai aur sync ho raha hai',
+    'profile_gfit_status_connected_no_data': 'Connect hai · data dekhne ke liye chalein',
+    'profile_gfit_status_connecting': 'Connect ho raha hai...',
+    'profile_gfit_status_not_authorized': 'Authorization zaroori hai',
+    'profile_gfit_status_permission_denied': 'Ijazat nahi mili',
+    'profile_gfit_status_unavailable': 'Health Connect install nahi hai',
+    'profile_gfit_status_disconnected': 'Connect nahi hai',
+    'profile_gfit_status_error': 'Kuch masla ho gaya',
+    'profile_confirm_password': 'Password confirm karein',
+    'profile_enter_password': 'Apna password likhein',
+    'profile_confirm': 'Confirm karein',
+    'profile_verification_failed': 'Verification nakaam ho gayi. Dobara koshish karein.',
   };
 
   // ──────────────────────────────────────────

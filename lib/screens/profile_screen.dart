@@ -175,15 +175,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
 
       if (connected) {
-        AppSnackbar.showSuccess(context, 'Google Fit connected!');
+        AppSnackbar.showSuccess(context, AppStrings.get('profile_googlefit_connected'));
       } else {
-        AppSnackbar.showError(context, 'Connection failed. Try again.');
+        AppSnackbar.showError(context, AppStrings.get('profile_connection_failed'));
       }
 
       await _checkGoogleFitStatus();
     } catch (e) {
       if (!mounted) return;
-      AppSnackbar.showWarning(context, 'Error: $e');
+      AppSnackbar.showWarning(context, AppStrings.get('profile_generic_error', params: {'error': '$e'}));
       setState(() => _isGoogleFitLoading = false);
     }
   }
@@ -310,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final image = await _imageService.pickImage(source: source);
     if (!mounted) return;
     if (image == null) {
-      AppSnackbar.showWarning(context, 'No image selected');
+      AppSnackbar.showWarning(context, AppStrings.get('profile_no_image_selected'));
       return;
     }
 
@@ -326,9 +326,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isUploadingPhoto = false;
       if (result != null) {
         _photoBase64 = result;
-        AppSnackbar.showSuccess(context, 'Photo updated!');
+        AppSnackbar.showSuccess(context, AppStrings.get('profile_photo_updated'));
       } else {
-        AppSnackbar.showError(context, 'Failed to upload');
+        AppSnackbar.showError(context, AppStrings.get('profile_upload_failed'));
       }
     });
   }
@@ -343,7 +343,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isUploadingPhoto = false;
       if (success) {
         _photoBase64 = null;
-        AppSnackbar.showWarning(context, 'Photo removed');
+        AppSnackbar.showWarning(context, AppStrings.get('profile_photo_removed'));
       }
     });
   }
@@ -618,11 +618,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
-          row('Calories', '$_caloriesGoal', 'kcal'),
+          row(AppStrings.get('calories_field_calories'), '$_caloriesGoal',
+            AppStrings.get('label_kcal')),
           const Divider(height: 1),
-          row('Protein', '$_proteinGoal', 'g'),
+          row(AppStrings.get('calories_field_protein'), '$_proteinGoal', 'g'),
           const Divider(height: 1),
-          row('Water', '$_waterGoal', 'glasses'),
+          row(AppStrings.get('label_water'), '$_waterGoal',
+            AppStrings.get('label_glasses')),
         ],
       ),
     );
@@ -644,7 +646,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           Row(
             children: [
-              Text('GOOGLE FIT', style: t.labelSmall),
+              Text(AppStrings.get('dashboard_google_fit').toUpperCase(),
+                  style: t.labelSmall),
               const Spacer(),
               if (_isGoogleFitLoading)
                 const SizedBox(
@@ -723,20 +726,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               childrenPadding: EdgeInsets.zero,
               iconColor: FitGenieTheme.muted,
               collapsedIconColor: FitGenieTheme.muted,
-              title: const Text(
-                'Details',
+              title: Text(
+                AppStrings.get('profile_details'),
                 style:
                     TextStyle(color: FitGenieTheme.textSecondary, fontSize: 13),
               ),
               children: [
-                _buildStatusCheckRow('Health Connect Available',
+                _buildStatusCheckRow(AppStrings.get('profile_gfit_health_connect'),
                     _healthConnectAvailable, Icons.phone_android),
-                _buildStatusCheckRow('Activity Permission', _activityPermission,
+                _buildStatusCheckRow(AppStrings.get('profile_gfit_activity_permission'), _activityPermission,
                     Icons.directions_walk),
                 _buildStatusCheckRow(
-                    'Google Fit Authorized', _healthAuthorized, Icons.security),
+                    AppStrings.get('profile_gfit_authorized'), _healthAuthorized, Icons.security),
                 _buildStatusCheckRow(
-                    'Data Syncing', _dataAccessible, Icons.sync),
+                    AppStrings.get('profile_gfit_data_syncing'), _dataAccessible, Icons.sync),
               ],
             ),
           ),
@@ -747,11 +750,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ? OutlinedButton(
                     onPressed:
                         _isGoogleFitLoading ? null : _disconnectGoogleFit,
-                    child: const Text('Disconnect Google Fit'),
+                    child: Text(AppStrings.get('profile_disconnect_googlefit')),
                   )
                 : ElevatedButton(
                     onPressed: _isGoogleFitLoading ? null : _connectGoogleFit,
-                    child: const Text('Connect Google Fit'),
+                    child: Text(AppStrings.get('profile_connect_googlefit')),
                   ),
           ),
         ],
@@ -805,21 +808,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _getStatusText(GoogleFitConnectionStatus status) {
     switch (status) {
       case GoogleFitConnectionStatus.connected:
-        return 'Connected & syncing';
+        return AppStrings.get('profile_gfit_status_connected');
       case GoogleFitConnectionStatus.connectedNoData:
-        return 'Connected · walk to see data';
+        return AppStrings.get('profile_gfit_status_connected_no_data');
       case GoogleFitConnectionStatus.connecting:
-        return 'Connecting...';
+        return AppStrings.get('profile_gfit_status_connecting');
       case GoogleFitConnectionStatus.notAuthorized:
-        return 'Authorization required';
+        return AppStrings.get('profile_gfit_status_not_authorized');
       case GoogleFitConnectionStatus.permissionDenied:
-        return 'Permission denied';
+        return AppStrings.get('profile_gfit_status_permission_denied');
       case GoogleFitConnectionStatus.unavailable:
-        return 'Health Connect not installed';
+        return AppStrings.get('profile_gfit_status_unavailable');
       case GoogleFitConnectionStatus.disconnected:
-        return 'Not connected';
+        return AppStrings.get('profile_gfit_status_disconnected');
       case GoogleFitConnectionStatus.error:
-        return 'Something went wrong';
+        return AppStrings.get('profile_gfit_status_error');
     }
   }
 
@@ -945,8 +948,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        content: const Text(
-          'This will permanently delete your account and ALL data including:\n\n? Workouts & custom plans\n? Nutrition logs & saved meals\n? Profile & goals\n? AI chat history\n\nThis action CANNOT be undone.',
+        content: Text(
+          AppStrings.get('profile_delete_account_warning'),
           style: TextStyle(color: Colors.white70, height: 1.5),
         ),
         actions: [
@@ -1006,12 +1009,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: FitGenieTheme.card,
-        title: const Text('Confirm password'),
+        title: Text(AppStrings.get('profile_confirm_password')),
         content: TextField(
           controller: controller,
           obscureText: true,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'Enter your password'),
+          decoration: InputDecoration(hintText: AppStrings.get('profile_enter_password')),
         ),
         actions: [
           TextButton(
@@ -1020,7 +1023,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, controller.text),
-            child: const Text('Confirm'),
+            child: Text(AppStrings.get('profile_confirm')),
           ),
         ],
       ),
@@ -1050,7 +1053,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         AppSnackbar.showError(
           context,
-          'Verification failed. Please try again.',
+          AppStrings.get('profile_verification_failed'),
         );
       }
       return false;
@@ -1115,7 +1118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.of(context, rootNavigator: true).pop();
         AppSnackbar.showError(
           context,
-          'Error deleting account. Please try again.',
+          AppStrings.get('profile_delete_account_error'),
         );
       }
     }
