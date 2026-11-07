@@ -498,8 +498,8 @@ class _DashboardScreenState extends State<DashboardScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Kis meal mein add karein? 🍽️',
+            Text(
+              AppStrings.get('dashboard_meal_pick_title'),
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             const SizedBox(height: 16),
@@ -507,10 +507,10 @@ class _DashboardScreenState extends State<DashboardScreen>
               spacing: 10,
               runSpacing: 10,
               children: {
-                'breakfast': '🍳 Breakfast',
-                'lunch': '🍲 Lunch',
-                'dinner': '🍛 Dinner',
-                'snacks': '🍪 Snacks',
+                'breakfast': AppStrings.get('meal_breakfast'),
+                'lunch': AppStrings.get('meal_lunch'),
+                'dinner': AppStrings.get('meal_dinner'),
+                'snacks': AppStrings.get('meal_snacks'),
               }.entries.map((entry) {
                 return GestureDetector(
                   onTap: () => Navigator.pop(context, entry.key),
@@ -546,7 +546,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   Widget build(BuildContext context) {
     final name =
-        widget.userName.trim().isEmpty ? 'User' : widget.userName.trim();
+        widget.userName.trim().isEmpty ? AppStrings.get('dashboard_user_fallback') : widget.userName.trim();
 
     return Scaffold(
       backgroundColor: FitGenieTheme.bg,
@@ -670,28 +670,28 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   String _getStepStatusText() {
-    if (!_stepCounterHasPermission) return 'Tap to enable';
-    if (!_stepCounterInitialized) return 'Initializing...';
+    if (!_stepCounterHasPermission) return AppStrings.get('dashboard_step_tap_enable');
+    if (!_stepCounterInitialized) return AppStrings.get('dashboard_step_initializing');
 
     if (!_stepCounterService.isSensorAvailable) {
-      return 'Sensor unavailable';
+      return AppStrings.get('dashboard_step_sensor_unavailable');
     }
 
     if (_stepCounterService.isUsingHealthConnect) {
-      return 'Google Fit • Live';
+      return AppStrings.get('dashboard_step_googlefit_live');
     }
 
     switch (_pedestrianStatus) {
       case 'walking':
-        return 'Walking • Live';
+        return AppStrings.get('dashboard_step_walking_live');
       case 'stopped':
-        return 'Idle';
+        return AppStrings.get('dashboard_step_idle');
       case 'unavailable':
-        return 'Use real device';
+        return AppStrings.get('dashboard_step_use_real_device');
       case 'error':
-        return 'Sensor error';
+        return AppStrings.get('dashboard_step_sensor_error');
       default:
-        return 'Tracking';
+        return AppStrings.get('dashboard_step_tracking');
     }
   }
 
@@ -1012,11 +1012,11 @@ class _DashboardScreenState extends State<DashboardScreen>
         // Baqi: chhote text pills
         Row(
           children: [
-            Expanded(child: _logButton('Water', _showAddWaterDialog)),
+            Expanded(child: _logButton(AppStrings.get('label_water'), _showAddWaterDialog)),
             const SizedBox(width: 10),
-            Expanded(child: _logButton('Steps', _showAddStepsDialog)),
+            Expanded(child: _logButton(AppStrings.get('dashboard_stat_steps'), _showAddStepsDialog)),
             const SizedBox(width: 10),
-            Expanded(child: _logButton('Active', _showAddActiveMinutesDialog)),
+            Expanded(child: _logButton(AppStrings.get('dashboard_stat_active'), _showAddActiveMinutesDialog)),
           ],
         ),
       ],
@@ -1030,9 +1030,9 @@ class _DashboardScreenState extends State<DashboardScreen>
       padding: const EdgeInsets.fromLTRB(18, 8, 8, 8),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Text(
-              'Ask your coach anything',
+              AppStrings.get('dashboard_coach_hint'),
               style: TextStyle(color: FitGenieTheme.muted, fontSize: 14),
             ),
           ),
@@ -1163,7 +1163,7 @@ class _DashboardScreenState extends State<DashboardScreen>
               ),
               const Spacer(),
               Text(
-                '$_thisWeekWorkoutCount workouts',
+                '$_thisWeekWorkoutCount ${AppStrings.get('dashboard_workouts').toLowerCase()}',
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,

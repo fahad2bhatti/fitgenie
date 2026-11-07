@@ -957,6 +957,9 @@ class AppStrings {
     'calories_kcal_left': '{n} kcal left',
     'calories_kcal_over': '{n} kcal over',
     'calories_food_fallback': 'Food',
+    // l10n-r2b
+    'dashboard_meal_pick_title': 'Add to which meal? 🍽️',
+    'dashboard_coach_hint': 'Ask your coach anything',
   };
 
   static const Map<String, String> _ur = {
@@ -1925,6 +1928,9 @@ class AppStrings {
     'calories_kcal_left': '{n} kcal baqi',
     'calories_kcal_over': '{n} kcal zyada',
     'calories_food_fallback': 'Khana',
+    // l10n-r2b
+    'dashboard_meal_pick_title': 'Kis meal mein add karein? 🍽️',
+    'dashboard_coach_hint': 'Apne coach se kuch bhi poochein',
   };
 
   // ──────────────────────────────────────────
