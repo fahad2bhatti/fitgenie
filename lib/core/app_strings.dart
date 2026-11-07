@@ -986,6 +986,12 @@ class AppStrings {
         'Google Fit is not authorized. Tap Connect to sign in.',
     'step_err_no_data': 'Connected but no step data yet. Walk a few steps!',
     'step_err_check_failed': 'Error checking status: {error}',
+    // l10n-r5a
+    'snackbar_title_success': 'Done!',
+    'snackbar_title_error': 'Something went wrong',
+    'snackbar_title_warning': 'Heads up',
+    'snackbar_title_info': 'Note',
+    'snackbar_friendly_error': 'That didn\'t work. Please try again, everything is safe.',
   };
 
   static const Map<String, String> _ur = {
@@ -1987,6 +1993,12 @@ class AppStrings {
     'step_err_no_data':
         'Connect ho gaya par abhi step data nahi hai. Thode kadam chalo!',
     'step_err_check_failed': 'Status check karne mein error: {error}',
+    // l10n-r5a
+    'snackbar_title_success': 'Ho gaya!',
+    'snackbar_title_error': 'Thora sa masla ho gaya',
+    'snackbar_title_warning': 'Zara dhyan se',
+    'snackbar_title_info': 'Note',
+    'snackbar_friendly_error': 'Kuch theek se nahi hua. Dobara try karo, sab safe hai.',
   };
 
   // ──────────────────────────────────────────

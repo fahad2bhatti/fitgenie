@@ -15,6 +15,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../app/fitgenie_theme.dart';
+import '../core/app_strings.dart';
 
 enum _ToastKind { success, error, warning, info }
 
@@ -48,7 +49,7 @@ class AppSnackbar {
         lower.contains('[') ||
         lower.contains('null');
     return looksTechnical
-        ? 'Kuch theek se nahi hua. Dobara try karo, sab safe hai.'
+        ? AppStrings.get('snackbar_friendly_error')
         : m;
   }
 
@@ -152,10 +153,10 @@ class _ToastViewState extends State<_ToastView>
       };
 
   String get _defaultTitle => switch (widget.kind) {
-        _ToastKind.success => 'Ho gaya!',
-        _ToastKind.error => 'Thora sa masla ho gaya',
-        _ToastKind.warning => 'Zara dhyan se',
-        _ToastKind.info => 'Note',
+        _ToastKind.success => AppStrings.get('snackbar_title_success'),
+        _ToastKind.error => AppStrings.get('snackbar_title_error'),
+        _ToastKind.warning => AppStrings.get('snackbar_title_warning'),
+        _ToastKind.info => AppStrings.get('snackbar_title_info'),
       };
 
   @override
